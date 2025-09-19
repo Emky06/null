@@ -33,9 +33,9 @@ let handler = async (m, { text, conn, usedPrefix, command, __dirname }) => {
 
   archive.pipe(output);
 
-  // Usa glob per includere tutti i file e cartelle tranne "node_modules" e "333BotSession"
+  // Usa glob per includere tutti i file e cartelle tranne "node_modules" e "AxtralBotSession"
   archive.glob('**/*', {
-    ignore: ['node_modules/**', '333BotSession/**']
+    ignore: ['node_modules/**', 'AxtralBotSession/**']
   });
 
   await archive.finalize();

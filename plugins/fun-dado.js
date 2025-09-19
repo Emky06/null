@@ -11,8 +11,7 @@ let handler = async (m, { conn }) => {
 }
 handler.help = ['dado']
 handler.tags = ['game']
-handler.customPrefix = ['dado'];
-handler.command = new RegExp
+handler.command = ['dado'];
 export default handler
 
 function pickRandom(list) {

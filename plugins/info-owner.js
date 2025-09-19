@@ -1,15 +1,44 @@
-function handler(m) {
-  const data = global.owner.filter(([id, isCreator]) => id && isCreator)
-  const prova = { "key": {"participants":"0@s.whatsapp.net", "fromMe": false, "id": "Halo"
-    }, "message": { 
-    "locationMessage": { name: 'Ꮻ𝐖𝐍𝚵𝐑    ꙰ 𝟥𝟥𝟥 ꙰ 𝔹𝕆𝕋  ꙰', "jpegThumbnail": fs.readFileSync('./icone/bal.png'),
-    "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
-    }}, "participant": "0@s.whatsapp.net"}
-  this.sendContact(m.chat, data.map(([id, name]) => [id, name]), prova)
+//info-owner di RIad
+let handler = async (m, { conn }) => {
+  try {
+    let owners = global.owner.filter(([id]) => id).map(([id]) => id)
 
+    // qui ci metti le frasi personalizzate, nello stesso ordine degli owner
+    let frasi = [
+      "𝛬𝑿𝑻𝑹𝜜𝑳 (𝑜𝑤𝑛𝑒𝑟)︎ ",
+      "ꪶ𝑲̸͢𝑰𝑵𝑫𝑬𝑹𝑰𝑵𝜣 (𝑐𝑜-𝑜𝑤𝑛𝑒𝑟) ",
+      "ℝ𝕀𝔸𝔻 ☪ (𝑐𝑜-𝑜𝑤𝑛𝑒𝑟)",
+    ]
+
+    let buttons = owners.map((id, index) => {
+      let waLink = `https://wa.me/${id}`
+      return {
+        name: "cta_url",
+        buttonParamsJson: JSON.stringify({
+          display_text: frasi[index] || ``,
+          url: waLink,
+          merchant_url: waLink
+        })
+      }
+    })
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        text: "𝐎𝐰𝐧𝐞𝐫 𝐝𝐢 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 ☄️",
+        footer: "𝒄𝒐𝒏𝒕𝒂𝒕𝒕𝒊:",
+        interactiveButtons: buttons
+      },
+      { quoted: m }
+    )
+  } catch (e) {
+    console.error(e)
+    m.reply("❌ Errore durante l’invio dei contatti degli owner.")
+  }
 }
 
-handler.help = ['owner']
-handler.tags = ['main']
-handler.command = ['padroni','proprietario'] 
+handler.help = ['proprietario']
+handler.tags = ['info']
+handler.command = ['proprietario', 'proprietari']
+
 export default handler

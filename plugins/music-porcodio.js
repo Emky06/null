@@ -1,8 +1,8 @@
-  //crediti: Yabs*
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
   try {
     // Percorso del file musicale
-    let audioPath = './storage/mp3/porcodio.mp3';
+    let audioPath = './storage/mp3/germanomosconi.mp3';
 
     // Invia il file audio come messaggio nel gruppo
     await conn.sendMessage(m.chat, { audio: { url: audioPath }, mimetype: 'audio/mp4', ptt: true });

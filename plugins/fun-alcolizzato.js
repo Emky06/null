@@ -9,11 +9,11 @@ let handler = async (m, { conn, command, text }) => {
 
     // Messaggio 🥵
     let message = `
-━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━
 *MOMENTO DEL TEST DELL'ALCOL!🍷* 
-━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━
  *${text} è alcolizzato del *${width}%🍷!* 
-━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━
 ${finalPhrase}
 `.trim();
 

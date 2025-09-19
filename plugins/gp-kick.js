@@ -6,6 +6,10 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
   const mention = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : m.quoted
   if (!mention) return m.reply('ⓘ 𝐌𝐞𝐧𝐳𝐢𝐨𝐧𝐚 𝐥𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚 𝐝𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞.')
 
+  const motivo = text
+    ? text.replace(/@[\d\-]+/, '').trim() || 'non specificato'
+    : 'non specificato'
+
   const ownerBot = global.owner[0][0] + '@s.whatsapp.net'
 
   if (mention === ownerBot) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.')
@@ -31,20 +35,27 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
     message: {
       locationMessage: {
         name: '𝐑𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...',
-        jpegThumbnail: await (await fetch('https://telegra.ph/file/ed97f8c272e8e88f77cc0.png')).buffer(),
+        jpegThumbnail: fs.readFileSync('./icone/kick.png'),
       }
     },
     participant: "0@s.whatsapp.net"
   }
 
-  const reason = text ? `\n\n𝐌𝐨𝐭𝐢𝐯𝐨: ${text.replace(m.sender, '')}` : ''
+  const userTag = `@${mention.split`@`[0]}`
+  const senderTag = `@${m.sender.split`@`[0]}`
 
-  conn.reply(m.chat, `@${mention.split`@`[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚 @${m.sender.split`@`[0]}${reason}`, fake, { mentions: [mention, m.sender, conn.parseMention(text)] })
+  const messaggio = 
+`╭━━━[ *Rimozione utente* ]━━━╮
+┃ 👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${userTag}
+┃ ⚠️ 𝐑𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚: ${senderTag}
+┃ ❓ 𝐌𝐨𝐭𝐢𝐯𝐨: ${motivo}
+╰━━━━━━━━━━━━━━━━━━━╯`
 
+  conn.reply(m.chat, messaggio, fake, { mentions: [mention, m.sender] })
   conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
 }
 
-handler.customPrefix = /kick|avadakedavra|sparisci|puffo/i
+handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar/i
 handler.command = new RegExp
 handler.admin = true
 

@@ -1,5 +1,5 @@
 let handler = async (m, { conn, args, command }) => {
-    const groupToExclude = '120363368641021092@g.us'; // Inserisci l'ID del gruppo da non lasciare
+    const groupToExclude = '120363401299996798@g.us'; // Inserisci l'ID del gruppo da non lasciare
     let groups = await conn.groupFetchAllParticipating();
     let leftGroups = [];
 
@@ -12,7 +12,7 @@ let handler = async (m, { conn, args, command }) => {
     }
 
     let message = `🛑 Report:\nSono uscito da ${leftGroups.length} gruppi.\n\n📋 Elenco dei gruppi:\n- ${leftGroups.join('\n- ') || 'Nessun gruppo lasciato'}`;
-    let ownerId = '46737807114@s.whatsapp.net'; // Inserisci l'ID del proprietario del bot
+    let ownerId = '393755435365@s.whatsapp.net'; // Inserisci l'ID del proprietario del bot
     await conn.reply(ownerId + '@s.whatsapp.net', message); // Invia il report in privato all'owner
 }
 

@@ -36,11 +36,11 @@ const handler = async (m, { conn }) => {
     const message = `✅ *STATO DEL SISTEMA*
 
 🚩 *Host ⪼* ${hostname}
-🏆 *Sistema Operativo ⪼* ${platform}
+💻 *Sistema Operativo ⪼* ${platform}
 💫 *Architettura ⪼* ${arch}
-🥷 *RAM Totale ⪼* ${formatBytes(totalMem)}
+💽 *RAM Totale ⪼* ${formatBytes(totalMem)}
 🚀 *RAM Libera ⪼* ${formatBytes(freeMem)}
-⌛ *RAM Usata ⪼* ${formatBytes(usedMem)}
+💾 *RAM Usata ⪼* ${formatBytes(usedMem)}
 🕒 *Uptime ⪼* ${muptime}
 
 🪴 *Memoria Node.js:* 

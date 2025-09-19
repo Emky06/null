@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 import syntaxError from 'syntax-error'
 import path from 'path'
@@ -6,20 +7,21 @@ const _fs = fs.promises
 
 let handler = async (m, { text, usedPrefix, command, __dirname, conn }) => {
   if (!text) throw `
-> Utilizzo: ${usedPrefix + command} <nome file/percorso> (file/script)
+> Utilizzo: ${usedPrefix + command} <nome file/percorso>
 Esempi:
-  ${usedPrefix}getplugin menu-gruppo file
-  ${usedPrefix}getplugin menu-gruppo script
-  ${usedPrefix}getfile config.js file
-  ${usedPrefix}getfile config.js script
+  ${usedPrefix}getplugin menu-gruppo
+  ${usedPrefix}getfile config.js
   `.trim()
 
-  const args = text.split(' ')
-  if (args.length < 2) throw '❌ Devi specificare "file" o "script".'
-  const option = args[1].toLowerCase()
+  // Separiamo correttamente fileArg e option
+  const args = text.trim().split(' ')
+  let option = ''
+  if (args.length > 1 && (args[args.length - 1].toLowerCase() === 'file' || args[args.length - 1].toLowerCase() === 'script')) {
+    option = args.pop().toLowerCase() // prende l'ultimo elemento
+  }
+  const fileArg = args.join(' ') // ricompone il nome del file senza "file"/"script"
 
   let isPlugin = /p(lugin)?/i.test(command)
-  let fileArg = args[0]
   let filename, pathFile
 
   if (isPlugin) {
@@ -30,8 +32,8 @@ Esempi:
     pathFile = fileArg
   }
 
-  const header = "//Plugin fatto da Gabs & 333 Staff\n"
-  
+  const header = "//Plugin fatto da Axtral_WiZaRd\n"
+
   try {
     const isJS = /\.js$/i.test(filename)
     let fileContent
@@ -41,30 +43,46 @@ Esempi:
     } else {
       fileContent = await _fs.readFile(pathFile)
     }
-    
+
+    // Se non è stata specificata opzione, mostriamo i pulsanti
+    if (!option) {
+      await conn.sendMessage(m.chat, {
+        text: `📂 Vuoi ricevere *${filename}* come file o come script?`,
+        footer: 'Scegli un\'opzione:',
+        buttons: [
+          {
+            buttonId: `${usedPrefix + command} ${fileArg} file`,
+            buttonText: { displayText: '📂 File' },
+            type: 1
+          },
+          {
+            buttonId: `${usedPrefix + command} ${fileArg} script`,
+            buttonText: { displayText: '📜 Script' },
+            type: 1
+          }
+        ],
+        headerType: 1
+      }, { quoted: m })
+      return
+    }
+
+    // Invia file o script in base all'opzione
     if (option === 'file') {
-      if (isJS) {
-        const contentToSend = header + fileContent
-        await conn.sendMessage(m.chat, {
-          document: Buffer.from(contentToSend, 'utf8'),
-          mimetype: 'application/javascript',
-          fileName: filename,
-          caption: isPlugin ? `Ecco il plugin: ${filename}` : `Ecco il file: ${filename}`
-        }, { quoted: m })
-      } else {
-        await conn.sendMessage(m.chat, {
-          document: fileContent,
-          fileName: filename,
-          caption: `Ecco il file: ${filename}`
-        }, { quoted: m })
-      }
+      const contentToSend = isJS ? header + fileContent : fileContent
+      await conn.sendMessage(m.chat, {
+        document: Buffer.from(contentToSend, isJS ? 'utf8' : undefined),
+        mimetype: isJS ? 'application/javascript' : undefined,
+        fileName: filename,
+        caption: isPlugin ? `Ecco il plugin: ${filename}` : `Ecco il file: ${filename}`
+      }, { quoted: m })
     } else if (option === 'script') {
       if (!isJS) throw '❌ L\'opzione script è disponibile solo per file JavaScript.'
-      await m.reply(`Codice di ${filename}:\n\n\`\`\`js\n${fileContent}\n\`\`\``)
+      await m.reply(`// Codice di ${filename}\n\n${fileContent}`)
     } else {
       throw '❌ Opzione non valida! Usa "file" o "script".'
     }
 
+    // Controllo sintassi JS
     if (isJS) {
       const error = syntaxError(fileContent, filename, {
         sourceType: 'module',
@@ -80,7 +98,7 @@ Esempi:
   }
 }
 
-handler.help = ['getplugin <nome file> (file/script)', 'getfile <percorso file> (file/script)']
+handler.help = ['getplugin <nome file>', 'getfile <percorso file>']
 handler.tags = ['owner']
 handler.command = /^g(et)?(p(lugin)?|f(ile)?)$/i
 handler.rowner = true

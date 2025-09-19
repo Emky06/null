@@ -1,17 +1,16 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m) => {
-    const allowedNumber = '46737807114@s.whatsapp.net'; // Sostituisci con il numero autorizzato
-
-    if (m.sender !== allowedNumber) {
-        await m.reply('Non hai il permesso di usare questo comando!');
-        return;
-    }
-
-    global.db.data.chats[m.chat].isBanned = true;
-    m.reply('il bot si è addormentato 💤');
+  global.db.data.chats[m.chat].isBanned = false;
+  let message = '*𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚 ✓*';
+  await conn.sendMessage(m.chat, { 
+      text: message,
+      contextInfo: {
+      }
+  }, { quoted: m });
 };
 
-handler.help = ['banchat'];
+handler.help = ['unbanchat'];
 handler.tags = ['owner'];
-handler.command = /^banchat|off$/i;
+handler.command = /^reveal$/i;
 handler.rowner = true;
 export default handler;

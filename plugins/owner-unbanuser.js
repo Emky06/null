@@ -1,13 +1,20 @@
+import fs from 'fs/promises';
+
 async function handler(m, { conn, text }) {
   if (!text) return;
   let target;
   if (m.isGroup) {
-    target = m.mentionedJid[0];
+    target = m.mentionedJid?.[0];
   } else {
     target = m.chat;
   }
   if (!target) return;
+
   global.db.data.users[target].banned = false;
+
+  // Usa solo file locale
+  const thumbnail = await fs.readFile('icone/unbanuser.png');
+
   const vcardMessage = {
     key: {
       participants: "0@s.whatsapp.net",
@@ -16,8 +23,8 @@ async function handler(m, { conn, text }) {
     },
     message: {
       locationMessage: {
-        name: "𝐔𝐭𝐞𝐧𝐭𝐞 sbloccato",
-        jpegThumbnail: await (await fetch("https://telegra.ph/file/592a9dbbe01cfaecbefb8.png")).buffer(),
+        name: "𝐔𝐭𝐞𝐧𝐭𝐞 𝐬𝐛𝐥𝐨𝐜𝐜𝐚𝐭𝐨",
+        jpegThumbnail: thumbnail,
         vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;Unlimited;;;
@@ -33,7 +40,8 @@ END:VCARD`
     },
     participant: "0@s.whatsapp.net"
   };
-  conn.reply(m.chat, "𝐐𝐮𝐞𝐬𝐭𝐨 utente potrà eseguire di nuovo i comandi", vcardMessage);
+
+  conn.reply(m.chat, "𝐐𝐮𝐞𝐬𝐭𝐨 𝐮𝐭𝐞𝐧𝐭𝐞 𝐩𝐨𝐭𝐫𝐚̀ 𝐞𝐬𝐞𝐠𝐮𝐢𝐫𝐞 𝐝𝐢 𝐧𝐮𝐨𝐯𝐨 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢.", vcardMessage);
 }
 
 handler.help = ['unbanuser'];

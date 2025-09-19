@@ -1,4 +1,4 @@
-//crediti: Onix, di Riad
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
   try {
     // Percorso del file musicale

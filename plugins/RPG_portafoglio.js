@@ -1,13 +1,17 @@
 const handler = async (m, { conn, command, text, args }) => {
-  const mention = m.mentionedJid[0] || (m.quoted ? m.quoted.sender : m.quoted);
+  const mention = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : m.quoted);
   const who = mention || m.sender;
   const users = global.db.data.users;
   const user = users[who];
 
-  let nfurti = user.furti;
-  let data_furto = user.datafurto;
+  // Formatta numeri con separatore di migliaia
+  const formatNumber = (n) => n.toLocaleString('it-IT');
 
-  let prova = {
+  const contanti = user.money !== undefined ? `${formatNumber(user.money)} €` : 'Sei povero';
+  const banca = user.bank !== undefined ? `${formatNumber(user.bank)} €` : 'Nessun conto bancario';
+  const totale = formatNumber((user.money || 0) + (user.bank || 0));
+
+  const prova = {
     "key": {
       "participants": "0@s.whatsapp.net",
       "fromMe": false,
@@ -22,9 +26,15 @@ const handler = async (m, { conn, command, text, args }) => {
     "participant": "0@s.whatsapp.net"
   };
 
-  let testo = `═════ ೋೋ═════\n𝐏𝐎𝐑𝐓𝐀𝐅𝐎𝐆𝐋𝐈𝐎 👛\n𝐂𝐨𝐧𝐭𝐚𝐧𝐭𝐢: ${user.money !== undefined ? `${user.money} €` : 'Sei povero'}\n𝐁𝐚𝐧𝐜𝐚: ${user.bank} €\n═════ ೋೋ═════\n𝐅𝐔𝐑𝐓𝐈 🥷\n𝐅𝐮𝐫𝐭𝐢 𝐭𝐨𝐭𝐚𝐥𝐢: ${nfurti}\n𝐔𝐥𝐭𝐢𝐦𝐨 𝐟𝐮𝐫𝐭𝐨: ${data_furto}\n𝐓𝐨𝐭𝐚𝐥𝐞: ${user.rubati} €\n═════ ೋೋ═════`;
+  const testo = `\n*𝐏𝐎𝐑𝐓𝐀𝐅𝐎𝐆𝐋𝐈𝐎 👛*\n═══════ ೋೋ═══════
+💵 *Contanti:* ${contanti}
+🏦 *Banca:* ${banca}
+🧾 *Totale:* ${totale} €
+═══════ ೋೋ═══════`;
 
   conn.reply(m.chat, testo, prova);
+
+  global.db.write(); // Salva i dati aggiornati nel database
 };
 
 handler.command = /^portafoglio|budget|soldi|tasca|cash$/i;

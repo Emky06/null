@@ -1,19 +1,93 @@
-let user = a => '@' + a.split('@')[0]
-  let handler = async (m, { conn, command, text, groupMetadata, usedPrefix, args}) => {
+let user = a => '@' + a.split('@')[0];
 
+let handler = async (m, { conn, command }) => {
+  const pickRandom = list => list[Math.floor(Math.random() * list.length)];
+  let mentionedJid = m.mentionedJid?.[0];
 
+  if (!mentionedJid) {
+    return conn.reply(m.chat, 'Devi taggare una persona per usare questo comando.', m);
+  }
 
-  if (command == 'obbligo') { 
- conn.reply(m.chat, `══════ ೋೋ ═════\n${pickRandom(['manda un nudino ad una persona a tua scelta e dici a chi lo mandi','fatti fare un obbligo da una persona a tua scelta','manda foto del tuo intimo preferito al gruppo','decidi con chi fare sexcam del gruppo','decidi con chi fare sexchat del gruppo','Fatti un selfie con le labbra a bacio a mandalo','Invia un vocale in cui ripeti il mio nome di chi ti faresti di questo gruppo in modo seducente','manda un video dove twerki','Ricrea il pompino perfetto con una banana o un cetriolo.','manda un video mentre fai la tua faccia sensuale per rimorchiare','dici 3 nomi di persone di questo gruppo che ti faresti'])}\n═════•⊰✰⊱•═════`)
-function pickRandom(list) {
-return list[Math.floor(Math.random() * list.length)]}
-}
+  let obblighi = [
+    'Fai 10 flessioni e manda il video.',
+    'Manda un audio cantando una canzone a caso a squarciagola.',
+    'Fai una foto con il miglior sorriso finto che riesci a fare.',
+    'Dichiara il tuo amore eterno a qualcuno del gruppo a caso.',
+    'Scrivi nel gruppo usando solo maiuscole per 5 minuti.',
+    'Racconta una barzelletta terribile.',
+    'Fai finta di essere un venditore e prova a vendere qualcosa di assurdo.',
+    'Cambia la tua foto profilo con una foto buffa per 1 ora.',
+    'Metti un nickname ridicolo a te stesso nel gruppo per 1 ora.',
+    'Imita un animale a scelta in vocale.',
+    'Manda una foto facendo una posa da modello/a.',
+    'Rispondi a ogni messaggio solo con emoji per 10 minuti.',
+    'Recita una poesia inventata sul momento in vocale.',
+    'Fai la dichiarazione più romantica che ti viene in mente a un membro casuale.',
+    'Scrivi nel gruppo un tuo segreto (non troppo serio!).',
+    'Fai un selfie con un oggetto strano in mano.',
+    'Fingi di essere una celebrità per 5 minuti.',
+    'Manda una foto di quello che hai ai piedi in questo momento.',
+    'Prova a parlare senza vocali per 5 messaggi consecutivi.',
+    'Manda un audio dove parli come un robot.',
+    'Invita qualcuno a una finta cena romantica nel gruppo.',
+    'Canta l\'inno nazionale in vocale come se fossi ubriaco.',
+    'Fai una dichiarazione di guerra a un membro a caso (in modo scherzoso).',
+    'Descrivi la tua ultima foto della galleria senza mostrarla.',
+    'Scrivi una frase in cui ogni parola comincia con la stessa lettera.',
+    'Manda una foto con il primo oggetto che hai sulla scrivania.',
+    'Canta una canzone usando solo versi di animali.',
+    'Scrivi nel gruppo come se fossi un personaggio medievale per 10 minuti.',
+    'Fai il tuo miglior urlo da film horror in vocale.',
+    'Manda una foto facendo la faccia più buffa che puoi.'
+  ];
 
- if (command == 'verità') {
-  conn.reply(m.chat, `══════ ೋೋ ═════\n${pickRandom(['quante volte ti masturbi al giorno?','dimmi il massimo numero di persone che ti sei scopat* in tutta la tua vita','dimmi il massimo numero di vote che ti sei masturbat* in un giorno','ti sei mai scopato o solo fatto pensieri perversi su un ex o il tipo/tipe del tuo amico/amica?','Hai mai rubato i soldi di tua madre o di tuo padre? La ragione?','cosa ti rende felice quando sei triste?','sei vergine? se è un no racconta la volta tua prima volta e dagli un voto da 1 a 10','chi è la persona più influente nella tua vita?','racconta la scopata più imbarazzante che hai fatto','chi è la persona che ti fa arrapare più di tutti?', 'dici 3 nomi di persone di questo gruppo che ti faresti','Chi è il più vicino al tuo tipo di partner ideale qui?','preferisci essere sottomess* o dominare a letto?','dicci un fetish strano che hai','dicci un fetish vhe fai sempre quando scopi','dicci un tuo sogno erotico','Qual è la cosa più strana che ti è capitata in camera da letto?','Hai mai giocato a strip poker? se si con chi? se no con chi lo faresti in questa stanza?','Qual è la tua frase da rimorchio più sexy?','Che tipo di abbigliamento ti eccita di più?','il posto più strano dove hai scopato?', ' con chi faresti la doccia di questo gruppo?','Qual è la tua posizione sessuale preferita?','Qual è la cosa più sconcia che hai pensato di qualcuno di questo gruppo? ovviamente dici il nome','Quale posizione sessuale hai sempre voluto provare, ma non ne hai mai avuto occasione di farla?','Hai mai fatto sesso in pubblico?','Guardi i porno? se si che categoria?','hai mai visto un porno non etero? se si racconta','Registreresti mai un video hard?','Hai mai fatto sesso con più di una persona alla volta?','da chi ti farebbe piacere ricevere una foto hot o nudini di questo gruppo?','chi è l admin con cui faresti zozzerie?'])}\n══════ ೋೋ ═════`)
-function pickRandom(list) {
-return list[Math.floor(Math.random() * list.length)]}
-}}
-handler.command = ['obbligo', 'verità']
-handler.group = true
-export default handler
+  let verita = [
+    'Qual è stato il tuo momento più imbarazzante di sempre?',
+    'Hai mai detto una bugia importante? Quale?',
+    'Chi è il tuo crush famoso?',
+    'Qual è la cosa più strana che sai fare?',
+    'Se potessi essere invisibile per un giorno, cosa faresti?',
+    'Hai mai fatto qualcosa di stupido per impressionare qualcuno?',
+    'Qual è il tuo talento nascosto?',
+    'Se potessi mangiare solo un cibo per il resto della tua vita, quale sarebbe?',
+    'Qual è il sogno più strano che hai mai fatto?',
+    'Qual è stata la tua figuraccia più epica?',
+    'Hai mai preso una cotta per un professore o una professoressa?',
+    'Se potessi viaggiare nel tempo, in che epoca andresti?',
+    'Qual è la bugia più assurda che hai detto ai tuoi genitori?',
+    'Qual è la cosa più coraggiosa che hai fatto?',
+    'Hai mai mandato un messaggio alla persona sbagliata? Racconta!',
+    'Qual è l\'ultima cosa che hai cercato su Google?',
+    'Qual è un obiettivo che vuoi assolutamente raggiungere?',
+    'Se potessi scambiare vita con qualcuno per un giorno, chi sarebbe?',
+    'Qual è stato il tuo più grande fail in cucina?',
+    'Se vincessi alla lotteria oggi, qual è la prima cosa che compreresti?',
+    'Qual è il posto più strano dove ti sei addormentato?',
+    'Se potessi essere un animale per un giorno, quale saresti?',
+    'Cosa ti imbarazza di più in pubblico?',
+    'Hai mai fatto finta di essere malato per evitare qualcosa?',
+    'Qual è il tuo più grande sogno segreto?',
+    'Hai mai avuto un colpo di fulmine?',
+    'Qual è una cosa che nessuno sa di te?',
+    'Chi è la persona del gruppo che ti fa più ridere?',
+    'Se potessi scegliere un superpotere, quale vorresti?',
+    'Qual è la cosa più folle che faresti per soldi?'
+  ];
+
+  let testo = command === 'obbligo' ? pickRandom(obblighi) : pickRandom(verita);
+
+  let messaggio = `════════ ೋೋ ════════
+*${command.charAt(0).toUpperCase() + command.slice(1)} per ${user(mentionedJid)}:*
+${testo}
+════════ ೋೋ ════════`;
+
+  await conn.sendMessage(m.chat, {
+    text: messaggio,
+    mentions: [mentionedJid]
+  }, { quoted: m });
+};
+
+handler.command = ['obbligo', 'verita'];
+handler.group = true;
+
+export default handler;

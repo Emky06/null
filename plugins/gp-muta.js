@@ -1,1 +1,51 @@
-function _0x54b2(){const _0x4e23d2=['jid','𝐓𝐚𝐠𝐠𝐚\x20𝐥𝐚\x20𝐩𝐞𝐫𝐬𝐨𝐧𝐚\x20𝐝𝐚\x20𝐦𝐮𝐭𝐚𝐫𝐞\x20👤','muta','buffer','https://telegra.ph/file/f8324d9798fa2ed2317bc.png','users','6485072XXbmrN','0@s.whatsapp.net','admin','20962053YoAbPg','quoted','𝐈\x20𝐬𝐮𝐨𝐢\x20𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\x20𝐧𝐨𝐧\x20𝐯𝐞𝐫𝐫𝐚𝐧𝐧𝐨\x20𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢','𝐈\x20𝐬𝐮𝐨𝐢\x20𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\x20𝐯𝐞𝐫𝐫𝐚𝐧𝐧𝐨\x20𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢','user','smuta','owner','Halo','sender','7304730oXHXur','77924HBlPJg','𝐐𝐮𝐞𝐬𝐭𝐨\x20𝐮𝐭𝐞𝐧𝐭𝐞\x20𝐞\x27\x20𝐠𝐢𝐚\x20𝐬𝐭𝐚𝐭𝐨\x20𝐦𝐮𝐭𝐚𝐭𝐨/𝐚\x20🔇','muto','https://telegra.ph/file/aea704d0b242b8c41bf15.png','1WRmOHA','BEGIN:VCARD\x0aVERSION:3.0\x0aN:;Unlimited;;;\x0aFN:Unlimited\x0aORG:Unlimited\x0aTITLE:\x0aitem1.TEL;waid=19709001746:+1\x20(970)\x20900-1746\x0aitem1.X-ABLabel:Unlimited\x0aX-WA-BIZ-DESCRIPTION:ofc\x0aX-WA-BIZ-NAME:Unlimited\x0aEND:VCARD','𝐔𝐭𝐞𝐧𝐭𝐞\x20𝐬𝐦𝐮𝐭𝐚𝐭𝐨/𝐚','𝐓𝐚𝐠𝐠𝐚\x20𝐥𝐚\x20𝐩𝐞𝐫𝐬𝐨𝐧𝐚\x20𝐝𝐚\x20𝐬𝐦𝐮𝐭𝐚𝐫𝐞\x20👤','reply','group','command','10CKuSZT','ⓘ\x20𝐍𝐨𝐧\x20𝐩𝐮𝐨𝐢\x20𝐦𝐮𝐭𝐚𝐫𝐞\x20𝐢𝐥\x20𝐛𝐨𝐭','@s.whatsapp.net','11634259gmNibf','69CffKnS','data','ⓘ\x20𝐈𝐥\x20𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞\x20𝐝𝐞𝐥\x20𝐠𝐫𝐮𝐩𝐩𝐨\x20𝐧𝐨𝐧\x20𝐩𝐮𝐨\x27\x20𝐞𝐬𝐬𝐞𝐫𝐞\x20𝐦𝐮𝐭𝐚𝐭𝐨','230894JZnbEu','3762690rUGPly','groupMetadata','mentionedJid','chat','botAdmin','𝐒𝐨𝐥𝐨\x20𝐮𝐧\x20𝐚𝐦𝐦𝐢𝐧𝐢𝐬𝐭𝐫𝐚𝐭𝐨𝐫𝐞\x20𝐩𝐮𝐨\x27\x20𝐞𝐬𝐞𝐠𝐮𝐢𝐫𝐞\x20𝐪𝐮𝐞𝐬𝐭𝐨\x20𝐜𝐨𝐦𝐚𝐧𝐝𝐨\x20👑'];_0x54b2=function(){return _0x4e23d2;};return _0x54b2();}const _0x2d4b3b=_0x1702;(function(_0x4476b4,_0x3b50b0){const _0x5545cd=_0x1702,_0xb2617b=_0x4476b4();while(!![]){try{const _0x13c3d4=-parseInt(_0x5545cd(0x1c5))/0x1*(parseInt(_0x5545cd(0x1d3))/0x2)+-parseInt(_0x5545cd(0x1d0))/0x3*(-parseInt(_0x5545cd(0x1c1))/0x4)+parseInt(_0x5545cd(0x1c0))/0x5+parseInt(_0x5545cd(0x1d4))/0x6+parseInt(_0x5545cd(0x1cf))/0x7+-parseInt(_0x5545cd(0x1b4))/0x8+-parseInt(_0x5545cd(0x1b7))/0x9*(parseInt(_0x5545cd(0x1cc))/0xa);if(_0x13c3d4===_0x3b50b0)break;else _0xb2617b['push'](_0xb2617b['shift']());}catch(_0x33f477){_0xb2617b['push'](_0xb2617b['shift']());}}}(_0x54b2,0xe6373));import _0x27c62f from'node-fetch';import _0x4e526c from'fs';const handler=async(_0x498b4a,{conn:_0xcfc2c5,command:_0x83d41,text:_0x36ac4b,isAdmin:_0x3f0569})=>{const _0x4553b5=_0x1702;if(_0x83d41===_0x4553b5(0x1b0)){if(!_0x3f0569)throw _0x4553b5(0x1ad);const _0x118dd0=await _0xcfc2c5[_0x4553b5(0x1d5)](_0x498b4a['chat']),_0x10df5d=_0x118dd0[_0x4553b5(0x1bd)]||_0x498b4a[_0x4553b5(0x1ab)]['split']`-`[0x0]+_0x4553b5(0x1ce);if(_0x498b4a[_0x4553b5(0x1d6)][0x0]===_0x10df5d)throw _0x4553b5(0x1d2);let _0x2da675=_0x498b4a[_0x4553b5(0x1d6)][0x0]?_0x498b4a[_0x4553b5(0x1d6)][0x0]:_0x498b4a[_0x4553b5(0x1b8)]?_0x498b4a[_0x4553b5(0x1b8)]['sender']:_0x36ac4b;if(_0x2da675===_0xcfc2c5[_0x4553b5(0x1bb)][_0x4553b5(0x1ae)])throw _0x4553b5(0x1cd);let _0x5c8760=global['db'][_0x4553b5(0x1d1)]['users'][_0x2da675],_0x1edd03={'key':{'participants':_0x4553b5(0x1b5),'fromMe':![],'id':_0x4553b5(0x1be)},'message':{'locationMessage':{'name':'𝐔𝐭𝐞𝐧𝐭𝐞\x20𝐦𝐮𝐭𝐚𝐭𝐨/𝐚','jpegThumbnail':await(await _0x27c62f(_0x4553b5(0x1b2)))[_0x4553b5(0x1b1)](),'vcard':_0x4553b5(0x1c6)}},'participant':_0x4553b5(0x1b5)},_0x613dce=_0x4553b5(0x1af);if(!_0x498b4a[_0x4553b5(0x1d6)][0x0]&&!_0x498b4a['quoted'])return _0xcfc2c5[_0x4553b5(0x1c9)](_0x498b4a[_0x4553b5(0x1ab)],_0x613dce,_0x498b4a);if(_0x5c8760['muto']===!![])throw _0x4553b5(0x1c2);_0xcfc2c5[_0x4553b5(0x1c9)](_0x498b4a[_0x4553b5(0x1ab)],_0x4553b5(0x1ba),_0x1edd03,null,{'mentions':[_0x2da675]}),global['db']['data'][_0x4553b5(0x1b3)][_0x2da675]['muto']=!![];}if(_0x83d41===_0x4553b5(0x1bc)){if(!_0x3f0569)throw _0x498b4a[_0x4553b5(0x1c9)](_0x4553b5(0x1ad));let _0x4eeda1=_0x498b4a[_0x4553b5(0x1d6)][0x0]?_0x498b4a['mentionedJid'][0x0]:_0x498b4a[_0x4553b5(0x1b8)]?_0x498b4a['quoted']['sender']:_0x36ac4b,_0x3379f1=global['db'][_0x4553b5(0x1d1)][_0x4553b5(0x1b3)][_0x4eeda1],_0xbe95d6={'key':{'participants':'0@s.whatsapp.net','fromMe':![],'id':_0x4553b5(0x1be)},'message':{'locationMessage':{'name':_0x4553b5(0x1c7),'jpegThumbnail':await(await _0x27c62f(_0x4553b5(0x1c4)))['buffer'](),'vcard':'BEGIN:VCARD\x0aVERSION:3.0\x0aN:;Unlimited;;;\x0aFN:Unlimited\x0aORG:Unlimited\x0aTITLE:\x0aitem1.TEL;waid=19709001746:+1\x20(970)\x20900-1746\x0aitem1.X-ABLabel:Unlimited\x0aX-WA-BIZ-DESCRIPTION:ofc\x0aX-WA-BIZ-NAME:Unlimited\x0aEND:VCARD'}},'participant':_0x4553b5(0x1b5)},_0x2c3922=_0x4553b5(0x1c8);if(_0x4eeda1===_0x498b4a[_0x4553b5(0x1bf)])throw'ⓘ\x20𝐂𝐡𝐢𝐞𝐝𝐢\x20𝐚𝐝\x20𝐮𝐧\x20𝐚𝐦𝐦𝐢𝐧𝐢𝐬𝐭𝐫𝐚𝐭𝐨𝐫𝐞\x20𝐝𝐢\x20𝐬𝐦𝐮𝐭𝐚𝐫𝐭𝐢';if(!_0x498b4a[_0x4553b5(0x1d6)][0x0]&&!_0x498b4a[_0x4553b5(0x1b8)])return _0xcfc2c5[_0x4553b5(0x1c9)](_0x498b4a[_0x4553b5(0x1ab)],_0x2c3922,_0x498b4a);global['db'][_0x4553b5(0x1d1)]['users'][_0x4eeda1][_0x4553b5(0x1c3)]=![],_0xcfc2c5[_0x4553b5(0x1c9)](_0x498b4a[_0x4553b5(0x1ab)],_0x4553b5(0x1b9),_0xbe95d6,null,{'mentions':[_0x4eeda1]});}};handler[_0x2d4b3b(0x1cb)]=/^(muta|smuta)$/i,handler[_0x2d4b3b(0x1ca)]=!![],handler[_0x2d4b3b(0x1b6)]=!![],handler[_0x2d4b3b(0x1ac)]=!![];function _0x1702(_0x27af0b,_0x80b7a0){const _0x54b2dc=_0x54b2();return _0x1702=function(_0x1702ee,_0x5ca768){_0x1702ee=_0x1702ee-0x1ab;let _0x54019d=_0x54b2dc[_0x1702ee];return _0x54019d;},_0x1702(_0x27af0b,_0x80b7a0);}export default handler;
+import fs from 'fs';
+
+const handler = async (msg, { conn, command, text, isAdmin }) => {
+  const mentionedJid = msg.mentionedJid?.[0] || msg.quoted?.sender;
+  const sender = msg.sender;
+  const chatId = msg.chat;
+  const botNumber = conn.user.jid;
+  const groupMetadata = await conn.groupMetadata(chatId);
+  const groupOwner = groupMetadata.owner || chatId.split('-')[0] + '@s.whatsapp.net';
+
+  if (!isAdmin) throw '𝐍𝐨𝐧 𝐬𝐞𝐢 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧 𝐩𝐞𝐫 𝐩𝐨𝐭𝐞𝐫𝐥𝐨 𝐟𝐚𝐫𝐞.';
+  if (!mentionedJid) return conn.reply(chatId, `𝐓𝐚𝐠𝐠𝐚 𝐥'𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐚 ${command === 'muta' ? '𝐦𝐮𝐭𝐚𝐫𝐞 🔇' : '𝐬𝐦𝐮𝐭𝐚𝐫𝐞 🔊'}`, msg);
+  if (mentionedJid === groupOwner) throw '𝐈𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐩𝐮𝐨̀ 𝐞𝐬𝐬𝐞𝐫𝐞 𝐦𝐮𝐭𝐚𝐭𝐨 ✘';
+  if (mentionedJid === botNumber) throw '𝐇𝐚𝐢 𝐚𝐩𝐩𝐞𝐧𝐚 𝐜𝐞𝐫𝐜𝐚𝐭𝐨 𝐝𝐢 𝐦𝐮𝐭𝐚𝐫𝐦𝐢? 𝐒𝐞𝐫𝐢𝐚𝐦𝐞𝐧𝐭𝐞? 🤡';
+
+  const protectedNumbers = [
+    '573161874043@s.whatsapp.net',
+    '35795191323@s.whatsapp.net',
+  ];
+
+  const user = global.db.data.users[mentionedJid];
+  const isMute = command === 'muta';
+  const thumbnail = fs.readFileSync(`icone/${isMute ? 'muta.png' : 'smuta.png'}`);
+  const miniaturaText = isMute ? '𝑼𝒕𝒆𝒏𝒕𝒆 𝒎𝒖𝒕𝒂𝒕𝒐 🔇' : '𝑼𝒕𝒆𝒏𝒕𝒆 𝒔𝒎𝒖𝒕𝒂𝒕𝒐 🔊';
+
+  const fakeReply = {
+    key: { participants: '0@s.whatsapp.net', fromMe: false, id: 'Halo' },
+    message: { locationMessage: { name: miniaturaText, jpegThumbnail: thumbnail } },
+    participant: '0@s.whatsapp.net',
+  };
+
+  const userTag = '@' + mentionedJid.split('@')[0];
+
+  if (isMute) {
+    if (protectedNumbers.includes(mentionedJid)) return conn.reply(chatId, '𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐮𝐭𝐚𝐫𝐞 𝐀𝐱𝐭𝐫𝐚𝐥. 𝐅𝐚𝐧𝐜𝐮𝐥𝐨🖕🏻', msg);
+    if (user.muto) throw '𝐋`𝐮𝐭𝐞𝐧𝐭𝐞 𝐞̀ 𝐠𝐢𝐚̀ 𝐦𝐮𝐭𝐚𝐭𝐨!';
+    user.muto = true;
+    return conn.sendMessage(chatId, { text: `${userTag} 𝐞̇ 𝐬𝐭𝐚𝐭𝐨/𝐚 𝐦𝐮𝐭𝐚𝐭𝐨/𝐚 ✓ \n> 𝑺𝒐𝒍𝒐 𝒂𝒅𝒎𝒊𝒏 𝒆 𝒎𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊 𝒑𝒐𝒔𝒔𝒐𝒏𝒐 𝒔𝒎𝒖𝒕𝒂𝒓𝒕𝒊.`, mentions: [mentionedJid] }, { quoted: fakeReply });
+  }
+
+  if (!user.muto) throw '𝐋`𝐮𝐭𝐞𝐧𝐭𝐞 𝐞̀ 𝐠𝐢𝐚̀ 𝐬𝐦𝐮𝐭𝐚𝐭𝐨!';
+  user.muto = false;
+  return conn.sendMessage(chatId, { text: `${userTag} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨/𝐚 𝐬𝐦𝐮𝐭𝐚𝐭𝐨/𝐚 ✓ \n> 𝑶𝒓𝒂 𝒓𝒊𝒏𝒈𝒓𝒂𝒛𝒊𝒂!`, mentions: [mentionedJid] }, { quoted: fakeReply });
+};
+
+handler.command = /^(muta|smuta)$/i;
+handler.group = true;
+handler.botAdmin = true;
+handler.admin = true;
+
+export default handler;

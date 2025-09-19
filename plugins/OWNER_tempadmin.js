@@ -1,54 +1,47 @@
-import os from 'os'
-import util from 'util'
-import sizeFormatter from 'human-readable'
-import MessageType from '@whiskeysockets/baileys'
-import fs from 'fs'
-import { performance } from 'perf_hooks'
+let handler = async (m, { conn, args, text }) => {
+    if (!args[0] || isNaN(args[0])) return m.reply('𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥𝐥`𝐮𝐬𝐨 𝐝𝐞𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨.\n𝐋`𝐮𝐬𝐨 𝐜𝐨𝐫𝐫𝐞𝐭𝐭𝐨 𝐞̀ 𝐢𝐥 𝐬𝐞𝐠𝐮𝐞𝐧𝐭𝐞:\n.𝐭𝐞𝐦𝐩𝐚𝐝𝐦𝐢𝐧 + 𝐧𝐮𝐦𝐞𝐫𝐨 𝐢𝐧 𝐦𝐢𝐧𝐮𝐭𝐢 + @𝐭𝐚𝐠');
 
-let handler = async (m, { conn, text, usedPrefix }) => {
-  if (!text || !text.includes('@')) {
-    m.reply('⚠️ 𝐅𝐨𝐫𝐦𝐚𝐭𝐨 𝐝𝐞𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐨! 𝐔𝐭𝐢𝐥𝐢𝐳𝐳𝐨 𝐜𝐨𝐫𝐫𝐞𝐭𝐭𝐨: tempadmin <durata> @user *(durata in m/h)*');
-    return;
-  }
+    const minutes = parseInt(args[0]);
+    if (minutes <= 0) return m.reply('𝐍𝐮𝐦𝐞𝐫𝐨 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐨');
 
-  let durationText = "⛔ 𝐃𝐮𝐫𝐚𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚, 𝐬𝐩𝐞𝐜𝐢𝐟𝐢𝐜𝐚 𝐮𝐧 𝐭𝐞𝐦𝐩𝐨 𝐭𝐫𝐚 *1𝐦* 𝐞 *24𝐡*";
-  let duration = 0;
-  let menzione = m.mentionedJid[0] || "";
+    let users = [];
 
-  if (!menzione) {
-    m.reply('⚠️ 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐚 𝐩𝐫𝐨𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐚𝐝 𝐚𝐝𝐦𝐢𝐧');
-    return;
-  }
-
-  let timeInput = text.split(' ')[0].toLowerCase();
-  if (timeInput.endsWith('m')) {
-    duration = parseInt(timeInput) * 60 * 1000; // Minuti
-    let minuteText = parseInt(timeInput) === 1 ? 'minuto' : 'minuti';
-    durationText = `✅ *@${menzione.split`@`[0]}* è stato promosso a **admin** per *${parseInt(timeInput)}* ${minuteText}. 🏆`;
-  } else if (timeInput.endsWith('h')) {
-    duration = parseInt(timeInput) * 60 * 60 * 1000; // Ore
-    let hourText = parseInt(timeInput) === 1 ? 'ora' : 'ore';
-    durationText = `✅ *@${menzione.split`@`[0]}* è stato promosso a **admin** per *${parseInt(timeInput)}* ${hourText}. 🔥`;
-  }
-
-  if (duration >= 60000 && duration <= 86400000) {
-    try {
-      await conn.groupParticipantsUpdate(m.chat, [menzione], "promote");
-      m.reply(durationText);
-
-      setTimeout(async () => {
-        await conn.groupParticipantsUpdate(m.chat, [menzione], "demote");
-        m.reply(`⚠️ Il tempo da admin di *@${menzione.split`@`[0]}* è terminato. È stato retrocesso. 😬`);
-      }, duration);
-    } catch (e) {
-      m.reply("❌ Errore durante l'assegnazione/rimozione del ruolo di admin.");
-      console.error(e);
+    if (m.mentionedJid.length) {
+        users = m.mentionedJid;
+    } else if (m.quoted) {
+        users.push(m.quoted.sender);
+    } else {
+        return m.reply('𝐂𝐡𝐢 𝐝𝐞𝐯𝐨 𝐩𝐫𝐨𝐦𝐮𝐨𝐯𝐞𝐫𝐞❔');
     }
-  } else {
-    m.reply(durationText);
-  }
+
+    for (let user of users) {
+        try {
+            await conn.groupParticipantsUpdate(m.chat, [user], 'promote');
+
+            let unit = minutes === 1 ? '𝒎𝒊𝒏𝒖𝒕𝒐' : '𝒎𝒊𝒏𝒖𝒕𝒊';
+            m.reply(`@${user.split('@')[0]}  𝒔𝒂𝒓𝒂̀ 𝒂𝒅𝒎𝒊𝒏 𝒑𝒆𝒓 ${minutes} ${unit} 💎`, null, {
+                mentions: [user]
+            });
+
+            setTimeout(async () => {
+                try {
+                    await conn.groupParticipantsUpdate(m.chat, [user], 'demote');
+                    await conn.sendMessage(m.chat, { text: `𝑻𝒆𝒎𝒑𝒐 𝒔𝒄𝒂𝒅𝒖𝒕𝒐. @${user.split('@')[0]}  𝒏𝒐𝒏 𝒆̀ 𝒑𝒊𝒖̀ 𝒂𝒅𝒎𝒊𝒏 🚫 `, mentions: [user] });
+                } catch (e) {
+                    console.error(`Errore nel retrocedere ${user}:`, e);
+                }
+            }, minutes * 60 * 1000);
+
+        } catch (e) {
+            console.error(`Errore nel promuovere ${user}:`, e);
+            m.reply(`𝐄𝐫𝐫𝐨𝐫𝐞 𝐜𝐨𝐧 @${user.split('@')[0]}`, null, { mentions: [user] });
+        }
+    }
 };
 
-handler.command = /^tempadmin$/i;
+handler.command = /^(tempadmin)$/i;
+handler.group = true;
 handler.admin = true;
+handler.botAdmin = true;
+
 export default handler;

@@ -18,9 +18,9 @@ const handler = async (m, { conn, text, usedPrefix }) => {
       target.instagram = instagramUsername
     }
       
-    conn.reply(m.chat, `ⓘ 𝐇𝐚𝐢 𝐢𝐦𝐩𝐨𝐬𝐭𝐚𝐭𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨 𝐢𝐥 𝐭𝐮𝐨 𝐧𝐨𝐦𝐞 𝐢𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦 𝐜𝐨𝐦𝐞 ${text}\n> 𝐓𝐢 𝐬𝐞𝐢 𝐩𝐞𝐧𝐭𝐢𝐭𝐨 𝐝𝐢 𝐪𝐮𝐞𝐬𝐭𝐚 𝐬𝐜𝐞𝐥𝐭𝐚 𝐞 𝐯𝐮𝐨𝐢 𝐫𝐢𝐦𝐞𝐝𝐢𝐚𝐫𝐞? 𝐔𝐬𝐚 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 ${usedPrefix}𝐫𝐢𝐦𝐮𝐨𝐯𝐢𝐢𝐠 𝐩𝐞𝐫 𝐟𝐚𝐫𝐞 𝐮𝐧 𝐩𝐚𝐬𝐬𝐨 𝐢𝐧𝐝𝐢𝐞𝐭𝐫𝐨!`, m);
+    conn.reply(m.chat, `ⓘ 𝐇𝐚𝐢 𝐢𝐦𝐩𝐨𝐬𝐭𝐚𝐭𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨 𝐢𝐥 𝐭𝐮𝐨 𝐧𝐨𝐦𝐞 𝐢𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦 𝐜𝐨𝐦𝐞: ${text}\n`, m);
   }
 };
       
-handler.command = ['setig','seting'];
+handler.command = ['setig'];
 export default handler;

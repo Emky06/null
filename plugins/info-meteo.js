@@ -24,7 +24,7 @@ let handler = async (msg, { args }) => {
     const weatherDescription = weather[0].description;
 
     // Formatta il messaggio di risposta
-    const replyMessage = `⬣━❰🌍*Informazioni Meteo*🌍❱━⬣
+    const replyMessage = `⬣━━━━❰🌍 *Meteo* 🌍❱━━━━⬣
 
 📍 *Città*: ${cityName}  
 🗺️ *Nazione*: ${country}  
@@ -40,7 +40,7 @@ let handler = async (msg, { args }) => {
 💦 *Umidità*: ${humidity}%  
 🌬️ *Vento*: ${windSpeed} km/h  
 
-⬣━━━━━━━━━❰🌦️❱━━━━━━━━━⬣`;
+⬣━━━━━━━❰🌦️❱━━━━━━━⬣`;
 
     // Invia la risposta all'utente
     msg.reply(replyMessage);

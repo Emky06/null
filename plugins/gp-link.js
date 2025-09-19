@@ -15,4 +15,5 @@ conn.reply(m.chat, link, prova, m, {detectLink: true})
 handler.command = /^link(gro?up)?$/i
 handler.group = true
 handler.botAdmin = true
+handler.admin = true
 export default handler

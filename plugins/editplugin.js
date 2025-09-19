@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-let handler = async (message, { text, usedPrefix, command }) => {
+let handler = async (message, { text, usedPrefix, command, conn }) => {
   if (!text) throw '𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐨𝐦𝐞 𝐝𝐞𝐥 𝐩𝐥𝐮𝐠𝐢𝐧 𝐝𝐚 𝐞𝐝𝐢𝐭𝐚𝐫𝐞';
   if (!message.quoted || !message.quoted.text) throw '𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚𝐥 𝐦𝐞𝐬𝐬𝐚𝐠𝐢𝐨 𝐜𝐡𝐞 𝐜𝐨𝐧𝐭𝐢𝐞𝐧𝐞 𝐢𝐥 𝐧𝐮𝐨𝐯𝐨 𝐜𝐨𝐝𝐢𝐜𝐞 𝐝𝐚 𝐢𝐧𝐬𝐞𝐫𝐢𝐫𝐞';
 
@@ -21,7 +21,7 @@ let handler = async (message, { text, usedPrefix, command }) => {
     message: {
       locationMessage: {
         name: 'Plugin Editato',
-        jpegThumbnail: await (await fetch('https://telegra.ph/file/876cc3f192ec040e33aba.png')).buffer(),
+        jpegThumbnail: fs.readFileSync('./icone/saveditpl.png'),
         vcard: 'BEGIN:VCARD\nVERSION:3.0\nN:;Plugin;;;\nFN:Plugin\nEND:VCARD'
       }
     },
@@ -32,7 +32,7 @@ let handler = async (message, { text, usedPrefix, command }) => {
 };
 
 handler.tags = ['owner'];
-handler.command = /^editplugin$/i;
+handler.command = /^editplugin|ep$/i;
 handler.rowner = true;
 
 export default handler;

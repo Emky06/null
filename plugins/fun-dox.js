@@ -31,11 +31,10 @@ let handler = async (m, { conn, text }) => {
         '806a:9b5d:c5b3:e852:b490:0492:bef9:085b',
     ])}
 📶 *ISP:* ${pickRandom([
-        'Telecom Italia',
         'Vodafone',
         'WINDTRE',
         'Fastweb',
-        'Tiscali',
+        'TIM',
     ])}
 📡 *DNS:* ${pickRandom(['8.8.8.8', '8.8.4.4', '1.1.1.1'])}
 🖥️ *MAC Address:* ${pickRandom([
@@ -44,14 +43,12 @@ let handler = async (m, { conn, text }) => {
         'AD:7E:2A:FB:81:B3',
     ])}
 📟 *Router Vendor:* ${pickRandom([
-        'ERICCSON',
-        'Alcatel',
+        'Realme',
         'Asus',
-        'Cisco',
+        'Xiaomi',
         'Huawei',
         'Samsung',
         'IPhone',
-        'Motorola',
         'Oppo',
         'Redmi',
     ])}

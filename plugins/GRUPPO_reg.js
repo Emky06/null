@@ -1,65 +1,59 @@
-import { createHash } from 'crypto'
+//Plugin fatto da Axtral_WiZaRd
+let Reg = /^\s*(Maschio|Femmina|Altro)\s+(\d{1,2})$/i
 
-let Reg = /\|?(.*)\s+(Maschio|Femmina|Altro)\s+(\d{2}\/\d{2}\/\d{4})$/i
-
-let handler = async function (m, { conn, text, usedPrefix, command }) {
+let handler = async function (m, { conn, text, args, usedPrefix, command }) {
   let user = global.db.data.users[m.sender]
-  let name2 = conn.getName(m.sender)
-  let pp = await conn.profilePictureUrl(m.sender, 'image').catch(_ => './src/profilo.png')
 
-  if (user.registered === true) {
-    throw `✳️ *Sei già registrato!*\n\n🔄 Vuoi registrarti di nuovo?\n\n📌 Usa questo comando per rimuovere la tua registrazione:\n\n*${usedPrefix}unreg <sn>*`
+  // ===== COMANDO: .reg =====
+  if (['reg', 'verify', 'register', 'registrar'].includes(command)) {
+    if (user.registered === true) {
+      throw `✳️ *Sei già registrato!*\n\n🔄 Vuoi annullare la registrazione?\n📌 Usa:\n*${usedPrefix}unreg*`
+    }
+
+    let usage = `🔹 *Uso del comando:* *${usedPrefix + command} Genere Età*\n\n📌 *Esempio:*\n  ${usedPrefix + command} Maschio 18\n\n🔹 *Generi disponibili:*\n  - Maschio\n  - Femmina\n  - Altro`
+
+    if (!Reg.test(text)) throw usage
+
+    let [_, gender, ageStr] = text.match(Reg)
+    let age = parseInt(ageStr)
+
+    if (age > 80) throw `👴🏻 *Sei troppo vecchio per registrarti!*`
+    if (age < 10) throw `⚠️ *Sei troppo piccolo per registrarti!*`
+
+    let genStr = gender.toLowerCase() === 'maschio' ? `Maschio` :
+                gender.toLowerCase() === 'femmina' ? `Femmina` :
+                gender.toLowerCase() === 'altro' ? `Non binario` : null
+
+    if (!genStr) throw `⚠️ *Genere non valido.* Usa uno di questi:\n- Maschio\n- Femmina\n- Altro`
+
+    user.name = conn.getName(m.sender)
+    user.age = age
+    user.gender = genStr
+    user.regTime = +new Date()
+    user.registered = true
+
+    let confirmation = `✅ *Registrazione completata!*\n\n▢ *Nome:* ${user.name}\n▢ *Genere:* ${genStr}\n▢ *Età:* ${age}\n\n📌 Usa *${usedPrefix}unreg* per annullare la registrazione.`
+    return conn.reply(m.chat, confirmation, m)
   }
 
-  let usage = `🔹 *Uso del comando:* *${usedPrefix + command} Nome Genere Data di Nascita*\n\n📌 *Esempio:*\n  ${usedPrefix + command} Gabs Maschio  16/09/2008\n\n🔹 *Generi utilizzabili:*\n  - *Maschio* = Maschio\n  - *Femmina* = Femmina\n  - *Altro* = Altro`
+  // ===== COMANDO: .unreg =====
+  if (['unreg', 'unregister'].includes(command)) {
+    if (!user.registered) {
+      throw `❌ *Non sei registrato.*\n📌 Usa *${usedPrefix}reg Maschio 18* per registrarti.`
+    }
 
-  if (!Reg.test(text)) throw usage
+    user.registered = false
+    user.name = ''
+    user.age = -1
+    user.gender = ''
+    user.regTime = 0
 
-  let [_, name, gender, birthDate] = text.match(Reg)
-
-  if (!name || !birthDate) throw usage
-  if (name.length >= 30) throw `⚠️ Il nome è troppo lungo!`
-
-  // Calcolo dell'età dalla data di nascita
-  let [day, month, year] = birthDate.split('/').map(Number)
-  let birth = new Date(year, month - 1, day)
-  let now = new Date()
-  let age = now.getFullYear() - birth.getFullYear()
-  let monthDiff = now.getMonth() - birth.getMonth()
-
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-    age--
+    return conn.reply(m.chat, `✅ *Registrazione annullata con successo!*`, m)
   }
-
-  // Verifica validità della data di nascita
-  if (isNaN(birth) || age < 0) age = -1
-
-  if (age > 60) throw `👴🏻 *Sei troppo vecchio per registrarti!*`
-  if (age < 10) throw `⚠️ *Sei troppo piccolo per registrarti!*`
-
-  let genStr = gender.toLowerCase() === 'maschio' ? `Maschio` :
-               gender.toLowerCase() === 'femmina' ? `Femmina` :
-               gender.toLowerCase() === 'altro' ? `Non binario` : null
-
-  if (!genStr) throw `⚠️ *Scegli tra i seguenti generi:*\n  - *Maschio*\n  - *Femmina*\n  - *Altro*`
-
-  user.name = name.trim()
-  user.birthDate = birthDate
-  user.age = isFinite(age) && age >= 0 ? age : -1
-  user.gender = genStr
-  user.regTime = +new Date()
-  user.registered = true
-
-  let sn = createHash('md5').update(m.sender).digest('hex')
-
-  let regi = `✅ *Registrazione completata!*\n\n▢ *Nome:* ${name}\n▢ *Genere:* ${genStr}\n▢ *Data di Nascita:* ${birthDate}\n▢ *Età:* ${age}\n\n📌 *Numero seriale:*\n${sn}`
-
-  conn.reply(m.chat, regi, m)
-  console.log(user)
 }
 
-handler.help = ['reg'].map(v => v + ' <nome genere data_di_nascita>')
+handler.help = ['reg <genere età>', 'unreg']
 handler.tags = ['rg']
-handler.command = ['verify', 'reg', 'register', 'registrar'] 
+handler.command = ['verify', 'reg', 'register', 'registrar', 'unreg', 'unregister']
 
 export default handler

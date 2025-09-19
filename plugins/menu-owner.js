@@ -1,116 +1,120 @@
-//Plugin fatto da Gabs & 333 Staff
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { performance } from 'perf_hooks';
+import fetch from 'node-fetch'; // Assicurati di avere node-fetch installato
 
-let handler = async (m, { conn }) => {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const handler = async (message, { conn, usedPrefix, command }) => {
+    const userCount = Object.keys(global.db.data.users).length;
+    const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
-    let settingsImagePath = path.join(__dirname, 'icone', 'settings.png');
-    let adminImagePath = path.join(__dirname, 'icone', 'admin.png');
+    if (command === 'menu') {
+        return await (await import('./menu-principale.js')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'admin') {
+        return await (await import('./menu-admin.js')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'mod') {
+        return await (await import('./menu-mod')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'funzioni') {
+        return await (await import('./menu-funzioni.js')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'gruppo') {
+        return await (await import('./menu-gruppo.js')).default(message, { conn, usedPrefix });
+    }    
+    if (command === 'giochi') {
+        return await (await import('./menu-giochi.js')).default(message, { conn, usedPrefix });   
+    }
 
-    let settingsImageBuffer = fs.existsSync(settingsImagePath) ? fs.readFileSync(settingsImagePath) : null;
-    let adminImageBuffer = fs.existsSync(adminImagePath) ? fs.readFileSync(adminImagePath) : null;
+    const menuText = generateMenuText(usedPrefix, botName, userCount);
 
-    let quotedMsg = {
-        key: { 
-            fromMe: false,
-            participant: "0@s.whatsapp.net",
-            id: 'Halo'
-        },
-        message: {
-            locationMessage: {
-                name: "𝐌𝐞𝐧𝐮 𝐎𝐰𝐧𝐞𝐫",
-                jpegThumbnail: settingsImageBuffer || adminImageBuffer // Usa settings.png, se non esiste usa admin.png
-            }
+
+    await conn.sendMessage(
+        message.chat,
+        {
+            text: menuText,
+            footer: 'Scegli un menu:',
+            buttons: [
+                { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 Menu Principale" }, type: 1 },
+                { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ Menu Admin" }, type: 1 },
+                { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
+                { buttonId: `${usedPrefix}funzioni`, buttonText: { displayText: "🔧 Menu Funzioni" }, type: 1 },
+                { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 Menu Gruppo" }, type: 1 },
+                { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
+            ],
+            viewOnce: true,
         }
-    };
-
-    let menuText = `
-╔════════════════════════════════════╗
-║ ⚡ *𝐏𝐀𝐍𝐄𝐋𝐋𝐎 𝐃𝐄𝐋𝐋'𝐎𝐖𝐍𝐄𝐑* ⚡
-╚════════════════════════════════════╝
-
-📌 *𝐂𝐨𝐦𝐚𝐧𝐝𝐢 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐢:*  
-
-🛠️ *Gestione Nome & Gruppi:*  
-➤ .impostanome  
-➤ .resettanome  
-➤ .setgruppi  
-➤ .aggiungigruppi @  
-➤ .resetgruppi @  
-➤ .setpp (immagine)  
-
-🔒 *Gestione Utenti:*  
-➤ .gestisci @  
-➤ .banuser @  
-➤ .unbanuser @  
-➤ .blockuser @  
-➤ .unblockuser @  
-
-⚙️ *Strumenti di Controllo:*  
-➤ .pulizia (+)  
-➤ .out  
-➤ .prefisso (?)  
-➤ .resettaprefisso  
-➤ .godmode {autoadmin}  
-➤ .azzera @  
-➤ .aggiungi (num. messaggi) @  
-➤ .rimuovi (num. messaggi) @  
-➤ .nuke  
-➤ .nukeall  
-
-👑 *Gestione Owner:*  
-➤ .addowner @  
-➤ .delowner @  
-➤ .downall  
-➤ .upall  
-
-🚧 *Blacklist & Protezioni:*  
-➤ .blocklist  
-➤ .banlist  
-➤ .banghost  
-➤ .lock  
-➤ .safe  
-
-📂 *File & Plugin Management:*  
-➤ .getplugin  
-➤ .getfile  
-➤ .saveplugin  
-➤ .deleteplugin  
-
-🔰 *Altri Comandi:*  
-➤ .sponsor  
-➤ .bigtag  
-➤ .enc <testo>  
-
-❌𝗡𝘂𝗺𝗲𝗿𝗶 𝗔𝘂𝘁𝗼𝗿𝗶𝘇𝘇𝗮𝘁𝗶:
-➤.menucrash
-
-╔════════════════════════════════════╗
-║ ⚡ 𝟥𝟥𝟥 𝔹𝕆𝕋 ⚡
-╚════════════════════════════════════╝
-`;
-
-    let botName = global.db.data.nomedelbot || " ꙰ 𝟥𝟥𝟥 ꙰ 𝔹𝕆𝕋 ꙰ ";
-
-    await conn.sendMessage(m.chat, { 
-        text: menuText, 
-        contextInfo: {
-            mentionedJid: conn.parseMention(menuText),
-            forwardingScore: 1,
-            isForwarded: true,
-            forwardedNewsletterMessageInfo: {
-                newsletterJid: "120363341274693350@newsletter",
-                serverMessageId: '',
-                newsletterName: botName
-            }
-        } 
-    }, { quoted: quotedMsg });
+    );
 };
 
-handler.help = ["menu"];
+handler.help = ['owner', 'menu', 'admin', 'funzioni', 'gruppo'];
 handler.tags = ['menu'];
-handler.command = /^(owner|menuowner|pannello)$/i;
+handler.command = /^(owner|menu|admin|funzioni|gruppo|giochi)$/i;
 
 export default handler;
+
+function generateMenuText(prefix, botName, userCount) {
+    return `
+┏━━━━━━━━━━━━━━━━━━━┓
+┃       🔱𝐌𝐄𝐍𝐔 𝐎𝐖𝐍𝐄𝐑🔱      ┃
+┗━━━━━━━━━━━━━━━━━━━┛
+
+📂 *Gestione Bot*
+┣━ 🔧 .impostanome ┃ Imposta nome bot
+┣━ ♻️ .resettanome ┃ Resetta nome
+┣━ 🖼️ .setpp ┃ Cambia immagine profilo
+
+👥 *Gestione Gruppi*
+┣━ ➕ .setgruppi ┃ Gruppi autorizzati
+┣━ ➕ .aggiungigruppi @
+┣━ ➖ .resetgruppi @
+
+🙎 *Gestione Utenti*
+┣━ ⛔ .banuser @ / .unbanuser @
+┣━ 🚫 .blockuser @ / .unblockuser @
+┣━ 👋🏻 .pulizia <prefisso>
+┣━ 📑 .setcategoria ┃ Assegna una categoria
+┣━ 📑 .delcategoria ┃ Rimuovi categoria 
+
+📊 *Controllo Utenti*
+┣━ 📉 .azzera @ ┃ Azzera msg
+┣━ 📉 .azzeratutti ┃ Azzera msg e bestemmie di tutti
+┣━ 📉 .azzeramoney @ ┃ Azzera soldi
+┣━ 📉 .removeallmoney ┃ Azzera soldi di tutti gli utenti del gruppo
+┣━ ➕ .aggiungi 10 @ ┃ Aggiunge msg
+┣━ ➖ .rimuovi 10 @ ┃ Rimuove msg
+┣━➕💶 .addmoney 10 @ ┃ Aggiunge soldi
+┣━➖💶 .rmoney 10 @ ┃ Rimuove soldi
+
+🔒 *Sicurezza*
+┣━ 📃 .blocklist ┃ Lista bloccati
+┣━ 📃 .banlist ┃ Utenti bannati
+┣━ 👮🏻‍♂️ .addmod @ ┃ Aggiungi moderatori
+┣━ 👮🏻‍♂️ .delmod @ ┃ Rimuovi moderatori
+
+🛠️ *Strumenti Avanzati*
+┣━ 🕒 .timer ┃ Timer automatico per attivare e disattivare soloadmin
+┣━ 🔴 .timeroff ┃ Disattiva il timer
+┣━ 🚪 .out ┃ Il bot esce dal gruppo
+┣━ 🚪 .outall ┃ Da tutti i gruppi
+┣━ ⚙️ .prefisso / .resettaprefisso
+┣━ 👑 .godmode ┃ Auto-admin
+
+📦 *Plugin & File*
+┣━ 📥 .getplugin / .getfile
+┣━ ✏️ .editplugin
+┣━ 💾 .saveplugin
+┣━ 🗑️ .deleteplugin
+
+👑 *Permessi Owner*
+┣━ 👥 .addowner @ / .delowner @
+┣━ 🛡️ .tempadmin
+
+
+🚀 *Extra Tools*
+┗━ 📢 .bigtag ┃ Tag continui
+
+━━━━━━━━━━━━━━━━━━━━━
+┏━━━━━━━━━━━━━━━━━━━┓
+┃        ☄️𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕☄️     ┃
+┗━━━━━━━━━━━━━━━━━━━┛
+`.trim();
+}

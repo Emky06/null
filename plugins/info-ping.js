@@ -1,62 +1,83 @@
-import fs from 'fs';
+//by kinderino, mod da axtral
 import os from 'os';
+import 'util';
+import '@whiskeysockets/baileys';
 import { performance } from 'perf_hooks';
 
-const toMathematicalAlphanumericSymbols = number => {
-  const map = {
-    '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒', '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
-  };
-  return number.toString().split('').map(digit => map[digit] || digit).join('');
+let handler = async (m, { conn, usedPrefix }) => {
+  try {
+    const uptimeMs = process.uptime() * 1000;
+    const uptimeStr = clockString(uptimeMs);
+    const startTime = performance.now();
+    const endTime = performance.now();
+    const speed = (endTime - startTime).toFixed(4);
+
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+    const percentUsed = ((usedMem / totalMem) * 100).toFixed(2);
+
+    const totalMemGB = (totalMem / 1024 / 1024 / 1024).toFixed(2);
+    const usedMemGB = (usedMem / 1024 / 1024 / 1024).toFixed(2);
+
+    const botName = global.db?.data?.nomedelbot || "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
+    
+    const botStartTime = new Date(Date.now() - uptimeMs);
+    const activationTime = botStartTime.toLocaleString('it-IT', {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    const message = `
+╭━━━━━━•✦•━━━━━━╮
+                  𝑷𝑰𝑵𝑮
+         𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
+╰━━━━━━•✦•━━━━━━╯
+
+𝑼𝒑𝒕𝒊𝒎𝒆: ${uptimeStr}  
+𝑽𝒆𝒍𝒐𝒄𝒊𝒕𝒂̀: ${speed} ms  
+𝑹𝑨𝑴 𝒖𝒔𝒂𝒕𝒂: ${usedMemGB} / ${totalMemGB} GB (${percentUsed}%)  
+𝑨𝒗𝒗𝒊𝒐: ${activationTime}
+
+╭━━━━━━•✦•━━━━━━╮
+   𝑶𝒘𝒏𝒆𝒓: 𝛬𝑿𝑻𝑹𝜜𝑳  
+   𝑺𝒕𝒂𝒕𝒐: _Online_  
+╰━━━━━━•✦•━━━━━━╯
+`.trim();
+
+    await conn.sendMessage(m.chat, {
+      text: message,
+      footer: `𝐏𝐢𝐧𝐠 ${botName}`,
+      buttons: [
+        { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "🔄 𝐑𝐢𝐟𝐚𝐢 𝐩𝐢𝐧𝐠" }, type: 1 },
+        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🗑️ 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
+      ],
+      headerType: 1,
+      contextInfo: {
+        mentionedJid: conn.parseMention(botName),
+      },
+    });
+  } catch (err) {
+    console.error("Errore nell'handler:", err);
+  }
 };
 
-const clockString = ms => {
-  const days = Math.floor(ms / 86400000);
-  const hours = Math.floor((ms % 86400000) / 3600000);
-  const minutes = Math.floor((ms % 3600000) / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
+function clockString(ms) {
+  let h = Math.floor(ms / 3600000);
+  let m = Math.floor((ms % 3600000) / 60000);
+  let s = Math.floor((ms % 60000) / 1000);
+  return [h, m, s]
+    .map(v => v.toString().padStart(2, '0'))
+    .join(':');
+}
 
-  return `${toMathematicalAlphanumericSymbols(days.toString().padStart(2, '0'))}:${toMathematicalAlphanumericSymbols(hours.toString().padStart(2, '0'))}:${toMathematicalAlphanumericSymbols(minutes.toString().padStart(2, '0'))}:${toMathematicalAlphanumericSymbols(seconds.toString().padStart(2, '0'))}`;
-};
-
-const handler = async (m, { conn, usedPrefix }) => {
-  const _uptime = process.uptime() * 1000;
-  const uptime = clockString(_uptime);
-
-  const old = performance.now();
-  const neww = performance.now();
-  const speed = (neww - old).toFixed(4);
-  const speedWithFont = toMathematicalAlphanumericSymbols(speed);
-
-  const totalMemBytes = os.totalmem();
-  const freeMemBytes = os.freemem();
-  const usedMemBytes = totalMemBytes - freeMemBytes;
-  const totalMemMB = (totalMemBytes / (1024 * 1024)).toFixed(2);
-  const usedMemMB = (usedMemBytes / (1024 * 1024)).toFixed(2);
-
-  const processMemory = process.memoryUsage();
-  const heapUsedMB = (processMemory.heapUsed / (1024 * 1024)).toFixed(2);
-  const heapTotalMB = (processMemory.heapTotal / (1024 * 1024)).toFixed(2);
-
-  const mention = m.mentionedJid[0] || m.quoted?.sender || m.quoted;
-  const who = mention || m.sender;
-  const user = global.db.data.users[who];
-  const image = fs.readFileSync('./icone/ping.png');
-  let nomeDelBot = global.db.data.nomedelbot || ' ꙰ 𝟥𝟥𝟥 𝔹𝕆𝕋  ꙰⇝';
-  const prova = {
-    key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
-    message: { documentMessage: { title: `${nomeDelBot} 𝐏𝕀𝐍𝐆 🏓`, jpegThumbnail: image } },
-    participant: "0@s.whatsapp.net"
-  };
-
-  const info = `ೋೋ══ • ══ೋೋ
-𝚲𝐓𝐓𝕀𝐕𝕀𝐓𝚲: ${uptime}
-𝐕𝚵𝐋͎Ꮻ𝐂𝕀𝐓𝚲: ${speedWithFont} 𝐒𝚵𝐂Ꮻ𝐍𝐃𝕀
-𝐑𝐀𝐌 (server): ${usedMemMB} MB / ${totalMemMB} MB
-𝐌𝐄𝐌 (process): ${heapUsedMB} MB / ${heapTotalMB} MB
-ೋೋ══ • ══ೋೋ`.trim();
-
-  conn.reply(m.chat, info, prova, m);
-};
-
+handler.help = ['ping'];
+handler.tags = ['info'];
 handler.command = /^(ping)$/i;
+
 export default handler;

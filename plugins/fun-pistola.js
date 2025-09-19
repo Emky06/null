@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, usedPrefix, command, text }) => {
     let who;
 
@@ -17,7 +18,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     if (!who) return m.reply(`Menziona chi vuoi mirare! 🎯`);
 
     // Invia il messaggio dell'abbraccio
-    let abrazo = await conn.reply(m.chat, `@${m.sender.split('@')[0]} 𝐬𝐭𝐚 𝐦𝐢𝐫𝐚𝐧𝐝𝐨 𝐚 @${who.split('@')[0]} 𝐜𝐨𝐧 𝐮𝐧𝐚 𝐀𝐊-47 🔫`, m, { mentions: [who, m.sender] });
+    let abrazo = await conn.reply(m.chat, `@${m.sender.split('@')[0]} 𝐬𝐭𝐚 𝐦𝐢𝐫𝐚𝐧𝐝𝐨 𝐚 @${who.split('@')[0]} 𝐜𝐨𝐧 𝐮𝐧 𝐀𝐊-47 🔫`, m, { mentions: [who, m.sender] });
 
     // Aggiungi la reazione all'abbraccio
     conn.sendMessage(m.chat, { react: { text: '🔫', key: abrazo.key } });

@@ -1,48 +1,40 @@
 let user = a => '@' + a.split('@')[0]; // Per taggare l'utente
 
 let handler = async (m, { conn, command, groupMetadata }) => {
-  // Ottieni i membri del gruppo
   const members = groupMetadata.participants.map(u => u.id);
 
-  // Funzione per scegliere un elemento casuale da una lista
   function pickRandom(list) {
     return list[Math.floor(Math.random() * list.length)];
   }
 
-  // Lista degli obblighi
   const obblighi = [
-    'Manda un nudino a una persona a tua scelta e indica a chi lo mandi.',
-    'Fatti fare un obbligo da una persona a tua scelta.',
-    'Manda una foto del tuo intimo preferito al gruppo.',
-    'Decidi con chi fare sexcam del gruppo.',
-    'Decidi con chi fare sexchat del gruppo.',
-    'Fatti un selfie con le labbra a bacio e mandalo.',
-    'Invia un vocale in cui ripeti il nome di chi ti faresti di questo gruppo in modo seducente.',
-    'Manda un video dove twerki.',
-    'Ricrea il pompino perfetto con una banana o un cetriolo.',
-    'Manda un video mentre fai la tua faccia sensuale per rimorchiare.',
-    'Dici 3 nomi di persone di questo gruppo che ti faresti.'
+    'Fai una dichiarazione d\'amore esagerata a un membro a tua scelta.',
+    'Manda un vocale in cui canti una canzone stonando apposta.',
+    'Scrivi una poesia improvvisata per la persona che ti taggheremo.',
+    'Manda una foto buffa presa dalla tua galleria.',
+    'Fingi di essere un influencer e promuovi una banana come se fosse il prodotto dell\'anno.',
+    'Fai una finta proposta di matrimonio a qualcuno del gruppo.',
+    'Mima un animale a scelta in vocale per 30 secondi.',
+    'Racconta una barzelletta terribile e ridici da solo/a.',
+    'Scrivi un messaggio romantico... ma solo usando emoji.',
+    'Simula un pianto disperato in vocale come se avessi perso il tuo peluche preferito.'
   ];
 
-  // Lista delle verità
   const verità = [
-    'Quante volte ti masturbi al giorno?',
-    'Dimmi il massimo numero di persone che ti sei scopat* in tutta la tua vita.',
-    'Dimmi il massimo numero di volte che ti sei masturbat* in un giorno.',
-    'Ti sei mai scopato o solo fatto pensieri perversi su un ex o il tipo/tipe del tuo amico/amica?',
-    'Hai mai rubato i soldi di tua madre o di tuo padre? La ragione?',
-    'Sei vergine? Se no, racconta la tua prima volta e dagli un voto da 1 a 10.',
-    'Chi è la persona più influente nella tua vita?',
-    'Racconta la scopata più imbarazzante che hai fatto.',
-    'Chi è la persona che ti fa arrapare più di tutti?',
-    'Qual è la tua posizione sessuale preferita?',
-    'Dici 3 nomi di persone di questo gruppo che ti faresti.'
+    'Chi è il tuo segreto crush del gruppo (se ce l\'hai)?',
+    'Qual è stata la figuraccia più grande che hai fatto?',
+    'Hai mai mandato un messaggio imbarazzante alla persona sbagliata? Racconta.',
+    'Se potessi scambiare la vita con qualcuno del gruppo per un giorno, chi sarebbe?',
+    'Qual è la cosa più strana che hai cercato su Google?',
+    'Hai mai inventato una scusa assurda per non uscire? Racconta.',
+    'Qual è il soprannome più assurdo che ti hanno dato?',
+    'Se dovessi partire per un\'isola deserta con uno del gruppo, chi sceglieresti?',
+    'Qual è il talento inutile di cui vai più fiero?',
+    'Se potessi essere invisibile per un giorno, cosa faresti per primo?'
   ];
 
-  // Seleziona un membro casuale
   const scelto = pickRandom(members);
   
-  // Messaggio del gioco
   if (command === 'bottiglia') {
     const scelta = pickRandom(['obbligo', 'verità']);
     const contenuto = scelta === 'obbligo' ? pickRandom(obblighi) : pickRandom(verità);
@@ -56,6 +48,6 @@ let handler = async (m, { conn, command, groupMetadata }) => {
   }
 };
 
-handler.command = ['bottiglia']; // Comando per avviare il gioco
-handler.group = true; // Solo nei gruppi
+handler.command = ['bottiglia'];
+handler.group = true;
 export default handler;

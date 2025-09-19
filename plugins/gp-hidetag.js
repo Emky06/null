@@ -1,44 +1,59 @@
-//Plugin fatto da Gabs & 333 Staff
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys' 
- import * as fs from 'fs' 
- let handler = async (m, { conn, text, participants, isOwner, isAdmin }) => { 
- try {   
- let users = participants.map(u => conn.decodeJid(u.id)) 
- let q = m.quoted ? m.quoted : m || m.text || m.sender 
- let c = m.quoted ? await m.getQuotedObj() : m.msg || m.text || m.sender 
- let msg = conn.cMod(m.chat, generateWAMessageFromContent(m.chat, { [m.quoted ? q.mtype : 'extendedTextMessage']: m.quoted ? c.message[q.mtype] : { text: '' || c }}, {}), text || q.text, conn.user.jid, { mentions: users }) 
- await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id }) 
-  
- } catch {   
-  
- /** 
- [ By @NeKosmic || https://github.com/NeKosmic/ ] 
- **/   
-  
- let users = participants.map(u => conn.decodeJid(u.id)) 
- let quoted = m.quoted ? m.quoted : m 
- let mime = (quoted.msg || quoted).mimetype || '' 
- let isMedia = /image|video|sticker|audio/.test(mime) 
- let more = String.fromCharCode(8206) 
- let masss = more.repeat(850) 
- let htextos = `${text ? text : ".hidetag"}` 
- if ((isMedia && quoted.mtype === 'imageMessage') && htextos) { 
- var mediax = await quoted.download?.() 
- conn.sendMessage(m.chat, { image: mediax, mentions: users, caption: htextos, mentions: users }, { quoted: m }) 
- } else if ((isMedia && quoted.mtype === 'videoMessage') && htextos) { 
- var mediax = await quoted.download?.() 
- conn.sendMessage(m.chat, { video: mediax, mentions: users, mimetype: 'video/mp4', caption: htextos }, { quoted: m }) 
- } else if ((isMedia && quoted.mtype === 'audioMessage') && htextos) { 
- var mediax = await quoted.download?.() 
- conn.sendMessage(m.chat, { audio: mediax, mentions: users, mimetype: 'audio/mp4', fileName: `Hidetag.mp3` }, { quoted: m }) 
- } else if ((isMedia && quoted.mtype === 'stickerMessage') && htextos) { 
- var mediax = await quoted.download?.() 
- conn.sendMessage(m.chat, {sticker: mediax, mentions: users}, { quoted: m }) 
- } else { 
- await conn.relayMessage(m.chat, {extendedTextMessage:{text: `${masss}\n${htextos}\n`, ...{ contextInfo: { mentionedJid: users, externalAdReply: { thumbnail: imagen1, sourceUrl: 'stocazzo' }}}}}, {}) 
- }}} 
- handler.command = /^(hidetag|tag)$/i 
- handler.group = true 
- handler.admin = true 
- handler.botAdmin = true 
- export default handler
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
+import * as fs from 'fs'
+
+let handler = async (m, { conn, text, participants }) => {
+  let users = participants.map(u => conn.decodeJid(u.id))
+  let q = m.quoted ? m.quoted : m
+  let tagger = m.sender ? '@' + (m.sender.split('@')[0]) : ''
+
+  let captionText
+  if (m.quoted && m.quoted.text) {
+    captionText = `➠ ${m.quoted.text}`
+  } else if (text?.trim()) {
+    captionText = `➠ ${text.trim()}`
+  } else {
+    captionText = `➠`
+  }
+
+  try {
+    let quoted = m.quoted ? m.quoted : m
+    let mime = (quoted.msg || quoted)?.mimetype || ''
+    let isMedia = /image|video|sticker|audio/.test(mime)
+
+    if (isMedia) {
+      let media = await quoted.download?.()
+      if (!media) throw 'Errore nel download del media'
+
+      if (quoted.mtype === 'imageMessage') {
+        await conn.sendMessage(m.chat, { image: media, mentions: users, caption: captionText }, { quoted: m })
+      } else if (quoted.mtype === 'videoMessage') {
+        await conn.sendMessage(m.chat, { video: media, mentions: users, caption: captionText, mimetype: 'video/mp4' }, { quoted: m })
+      } else if (quoted.mtype === 'audioMessage') {
+        await conn.sendMessage(m.chat, { audio: media, mentions: users, mimetype: 'audio/mp4', fileName: `Hidetag.mp3` }, { quoted: m })
+      } else if (quoted.mtype === 'stickerMessage') {
+        await conn.sendMessage(m.chat, { sticker: media, mentions: users }, { quoted: m })
+      }
+    } else {
+      // testo semplice
+      await conn.sendMessage(
+        m.chat,
+        { text: captionText, mentions: users },
+        { quoted: m }
+      )
+    }
+  } catch (e) {
+    console.error(e)
+    await conn.sendMessage(
+      m.chat,
+      { text: '❌ Errore nel tagging. Forse il messaggio non è valido o il media non può essere scaricato.' },
+      { quoted: m }
+    )
+  }
+}
+
+handler.command = /^(hidetag|tag)$/i
+handler.group = true
+handler.admin = true
+handler.botAdmin = true
+
+export default handler

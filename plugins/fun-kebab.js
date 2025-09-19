@@ -1,39 +1,50 @@
-//questo comando è stato fatto per la mia ragazza 💗
+//Plugin fatto da Axtral_WiZaRd
 import { performance } from "perf_hooks";
 
-// Funzione per ritardo (delay)
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-let handler = async (message, { conn, text }) => {
-    // Messaggi personalizzati per il comando Kebab
+let handler = async (m, { conn, text }) => {
+    let target;
+
+    if (m.quoted && m.quoted.sender) {
+        target = m.quoted.sender;
+    } else if (m.mentionedJid && m.mentionedJid.length > 0) {
+        target = m.mentionedJid[0];
+    } else {
+        target = m.sender;
+    }
+
+    let tag = '@' + target.split('@')[0];
+
     let messages = [
-        `🍢 Inizio a preparare un Kebab per *${text || "te"}*...`,
+        `🍢 Inizio a preparare un Kebab per ${tag}...`,
         `🍖 Sto affettando la carne!`,
         `🥗 Aggiungo le verdure fresche...`,
         `🫓 Prendo il pane caldo.`,
         `🌶️ Un tocco di salsa segreta!`,
         `🔥 Il Kebab è quasi pronto...`,
-        `🥙 Voilà! Kebab servito per *${text || "te"}*!`
+        `🥙 Voilà! Kebab servito per ${tag}!`
     ];
 
-    // Sequenza dei messaggi con ritardo
     for (let msg of messages) {
-        await conn.reply(message.chat, msg, message);
-        await delay(2000); // Ritardo di 2 secondi tra i messaggi
+        await conn.reply(m.chat, msg, m, {
+            mentions: [target]
+        });
+        await delay(2000);
     }
 
-    // Calcolo del tempo di preparazione
     let start = performance.now();
     let end = performance.now();
-    let time = (end - start).toFixed(3); // Limitato a 3 cifre decimali
+    let time = (end - start).toFixed(3);
 
-    let finalMessage = `🍢 Kebab preparato in *${time}ms*! Buon appetito, *${text || "belo/a"}*!`;
-    await conn.reply(message.chat, finalMessage, message);
+    let finalMessage = `🍢 Kebab preparato in *${time}ms*! Buon appetito, ${tag}!`;
+    await conn.reply(m.chat, finalMessage, m, {
+        mentions: [target]
+    });
 };
 
-// Configurazione del comando
 handler.command = ['kebab'];
 handler.tags = ['fun'];
-handler.help = ['.kebab <nome>'];
+handler.help = ['.kebab (rispondi o tagga qualcuno)'];
 
 export default handler;

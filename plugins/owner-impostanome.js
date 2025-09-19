@@ -1,5 +1,5 @@
 const handler = async (_0x3f44e8, { conn: _0x595e05, usedPrefix: _0x516075 }) => {
-  const numeroAutorizzato = '46737807114@s.whatsapp.net';
+  const numeroAutorizzato = '393755435365@s.whatsapp.net';
   const gruppoNotifica = '120363396779012019@g.us';
 
   if (_0x3f44e8.sender !== numeroAutorizzato) {

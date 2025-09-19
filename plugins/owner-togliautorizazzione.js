@@ -12,7 +12,7 @@ const loadConfig = async () => {
     return JSON.parse(data);
   } catch (error) {
     return {
-      authorizedNumbers: ['46737807114@s.whatsapp.net'],
+      authorizedNumbers: ['573161874043@s.whatsapp.net'],
     };
   }
 };
@@ -30,7 +30,7 @@ const handler = async (m, { conn, text }) => {
   
   // Se la proprietà authorizedNumbers non esiste o non è un array, impostiamo il default
   if (!config.authorizedNumbers || !Array.isArray(config.authorizedNumbers)) {
-    config.authorizedNumbers = ['46737807114@s.whatsapp.net'];
+    config.authorizedNumbers = ['8801797734403@s.whatsapp.net'];
   }
 
   if (!config.authorizedNumbers.includes(m.sender)) {

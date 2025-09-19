@@ -1,33 +1,50 @@
+//Plugin fatto da Axtral_WiZaRd
 import { performance } from "perf_hooks";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-let handler = async (message, { conn, text }) => {  
-    let messages = [  
-        `🍣 Inizio a preparare un Sushi per *${text || "te"}*...`,  
-        `🔪 Sto tagliando il pesce fresco!`,  
-        `🍚 Preparo il riso con aceto di riso...`,  
-        `🥑 Aggiungo un tocco di avocado e altri ingredienti.`,  
-        `🌿 Un pizzico di alga nori per avvolgerlo perfettamente!`,  
-        `🍱 Sto impiattando con cura...`,  
-        `🎌 Voilà! Sushi servito per *${text || "te"}*!`  
-    ];  
+let handler = async (m, { conn, text }) => {
+    let target;
 
-    for (let msg of messages) {  
-        await conn.reply(message.chat, msg, message);  
-        await delay(2000);  
-    }  
+    if (m.quoted && m.quoted.sender) {
+        target = m.quoted.sender;
+    } else if (m.mentionedJid && m.mentionedJid.length > 0) {
+        target = m.mentionedJid[0];
+    } else {
+        target = m.sender;
+    }
 
-    let start = performance.now();  
-    let end = performance.now();  
-    let time = (end - start).toFixed(3);  
+    let tag = '@' + target.split('@')[0];
 
-    let finalMessage = `🍣 Sushi preparato in *${time}ms*! Buon appetito, *${text || "belo/a"}*!`;  
-    await conn.reply(message.chat, finalMessage, message);  
-};  
+    let messages = [
+        `🍣 Inizio a preparare un Sushi per ${tag}...`,
+        `🔪 Sto tagliando il pesce fresco!`,
+        `🍚 Preparo il riso con aceto di riso...`,
+        `🥑 Aggiungo un tocco di avocado e altri ingredienti.`,
+        `🌿 Un pizzico di alga nori per avvolgerlo perfettamente!`,
+        `🍱 Sto impiattando con cura...`,
+        `🎌 Voilà! Sushi servito per ${tag}!`
+    ];
 
-handler.command = ['sushi'];  
-handler.tags = ['fun'];  
-handler.help = ['.sushi <nome>'];  
+    for (let msg of messages) {
+        await conn.reply(m.chat, msg, m, {
+            mentions: [target]
+        });
+        await delay(2000);
+    }
+
+    let start = performance.now();
+    let end = performance.now();
+    let time = (end - start).toFixed(3);
+
+    let finalMessage = `🍣 Sushi preparato in *${time}ms*! Buon appetito, ${tag}!`;
+    await conn.reply(m.chat, finalMessage, m, {
+        mentions: [target]
+    });
+};
+
+handler.command = ['sushi'];
+handler.tags = ['fun'];
+handler.help = ['.sushi (rispondi o tagga qualcuno)'];
 
 export default handler;

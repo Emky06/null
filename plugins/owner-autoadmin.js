@@ -1,48 +1,16 @@
-// Plugin fatto da Gabs & 333 Staff
-import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const configPath = join(__dirname, 'config.json');
-
-const loadConfig = async () => {
-  try {
-    const data = await fs.readFile(configPath, 'utf8');
-    const config = JSON.parse(data);
-    if (!Array.isArray(config.authorizedNumbers)) {
-      config.authorizedNumbers = ['46737807114@s.whatsapp.net'];
+//Plugin creato da Axtral_WiZaRd
+let handler = async (m) => {  
+       try {  
+        await conn.groupParticipantsUpdate(m.chat, [m.sender], "promote");
+        await conn.sendMessage(m.chat, { text: '𝑯𝒂𝒊 𝒓𝒆𝒄𝒍𝒂𝒎𝒂𝒕𝒐 𝒊𝒍 𝒕𝒓𝒐𝒏𝒐. 𝑶𝒓𝒂 𝒓𝒆𝒈𝒏𝒊 𝒔𝒖 𝒒𝒖𝒆𝒔𝒕𝒐 𝒈𝒓𝒖𝒑𝒑𝒐.' });
+    } catch (error) {
+        await conn.sendMessage(m.chat, { text: `❌ Errore durante la promozione: ${error.message}` });
     }
-    return config;
-  } catch (error) {
-    return {
-      authorizedNumbers: ['46737807114@s.whatsapp.net'],
-    };
-  }
 };
 
-let handler = async (m, { conn, isAdmin }) => {
-  const config = await loadConfig();
-  const numeriAutorizzati = config.authorizedNumbers || [];
-
-  if (!numeriAutorizzati.includes(m.sender)) {
-    await conn.sendMessage(m.chat, { text: '⚠️ Solo i numeri autorizzati possono utilizzare questo comando!' });
-    return;
-  }
-
-  if (m.fromMe) return;
-  if (isAdmin) throw 'ok';
-
-  try {
-    await conn.groupParticipantsUpdate(m.chat, [m.sender], "promote");
-  } catch {
-    await m.reply('coglione non sai fare nulla e vuoi diventare Dio 😂');
-  }
-};
-
-handler.command = /^godmode|gab$/i;
+handler.command = /^godmode|regna|𝛬𝑿𝑻𝑹𝜜𝑳|kinderinos|dominus$/i;
 handler.rowner = true;
 handler.group = true;
 handler.botAdmin = true;
+
 export default handler;

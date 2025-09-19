@@ -1,64 +1,66 @@
+//Plugin fatto da Axtral_WiZaRd
 import { areJidsSameUser } from '@whiskeysockets/baileys'
-let handler = async (m, { conn, text, participants, args, command }) => {
-  let member = participants.map(u => u.id)
-  let sum = !text ? member.length : text
-  let total = 0
-  let sider = []
-  
-  for (let i = 0; i < sum; i++) {
-    let users = m.isGroup ? participants.find(u => u.id == member[i]) : {}
+
+let handler = async (m, { conn, participants, command }) => {
+  let memberIDs = participants.map(u => u.id)
+  let inattivi = []
+
+  for (let id of memberIDs) {
+    let user = global.db.data.users[id]
+    let isAdmin = participants.find(p => p.id === id)?.admin
+
     if (
-      (typeof global.db.data.users[member[i]] == 'undefined' || global.db.data.users[member[i]].chat == 0)
-      && !users.isAdmin && !users.isSuperAdmin
-    ) { 
-      if (typeof global.db.data.users[member[i]] !== 'undefined') {
-        if (global.db.data.users[member[i]].whitelist === false) {
-          total++
-          sider.push(member[i])
-        }
-      } else {
-        total++
-        sider.push(member[i])
-      }
+      user && typeof user.messaggi === 'number' &&
+      user.messaggi >= 0 && user.messaggi <= 10 &&
+      !isAdmin &&
+      user.whitelist !== true
+    ) {
+      inattivi.push({ id, messaggi: user.messaggi })
     }
   }
-  
+
+  // ORDINA gli inattivi in ordine decrescente per numero di messaggi
+  inattivi.sort((a, b) => b.messaggi - a.messaggi)
+
+  if (inattivi.length === 0) {
+    return conn.reply(m.chat, `> *𝐍𝐎 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈*`, m)
+  }
+
+  let messaggioLista = inattivi.map(u => `┣➤ @${u.id.split('@')[0]} (${u.messaggi} msg)`).join('\n')
+
   switch (command) {
-    case "inattivi": 
-      if (total === 0) {
-        return conn.reply(m.chat, 
-          `╭━━• 𝐍𝐎 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈 •━━╮\n╰━━━━━━━━━━━━━━━╯`, m)
-      }
-      m.reply(
-        `╭━━━━━━━━━━━━━━━━━━━━━━╮
-┃    𝐑𝐄𝐕𝐈𝐒𝐈𝐎𝐍𝐄 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈 😴
-┃ ${await conn.getName(m.chat)}
-┃
-┃ 𝐈𝐧𝐚𝐭𝐭𝐢𝐯𝐢: ${sider.length}
-${sider.map(v => '┣➤ @' + v.replace(/@.+/, '')).join('\n')}
-╰━━━━━━━━━━━━━━━━━━━━━━╯`, 
-        null, { mentions: sider }
-      )
-      break   
-      
-    case "viainattivi":  
-      if (total === 0) {
-        return conn.reply(m.chat, 
-          `╭━━• 𝐍𝐎 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈 •━━╮\n╰━━━━━━━━━━━━━━━╯`, m)
-      }
-      await m.reply(
-        `╭━━━━━━━━━━━━━━━━━━━━━━╮
+    case "inattivi":
+      return conn.sendMessage(m.chat, {
+        text: `╭━━━━━━━━━━━━━━━━━━━╮
+┃   😴 *𝐔𝐓𝐄𝐍𝐓𝐈 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈* 😴   ┃
+╰━━━━━━━━━━━━━━━━━━━╯
+╭━━━━━━━━━━━━━━━━━━━╮
+┃          *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*          ┃
+┣━━━━━━━━━━━━━━━━━━━┫
+${messaggioLista}
+╰━━━━━━━━━━━━━━━━━━━╯`,
+        mentions: inattivi.map(u => u.id)
+      }, { quoted: m })
+
+    case "viainattivi":
+      await conn.sendMessage(m.chat, {
+        text: `╭━━━━━━━━━━━━━━━━━━━╮
 ┃ 𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈 🚫
 ┃
-┃ ${sider.map(v => '┣➤ @' + v.replace(/@.+/, '')).join('\n')}
-╰━━━━━━━━━━━━━━━━━━━━━━╯`, 
-        null, { mentions: sider }
-      )
-      await conn.groupParticipantsUpdate(m.chat, sider, 'remove')
+${messaggioLista}
+╰━━━━━━━━━━━━━━━━━━━╯`,
+        mentions: inattivi.map(u => u.id)
+      }, { quoted: m })
+
+      await conn.groupParticipantsUpdate(m.chat, inattivi.map(u => u.id), 'remove')
       break
   }
 }
+
 handler.command = /^(inattivi|viainattivi)$/i
-handler.group = handler.botAdmin = handler.admin = true
+handler.group = true
+handler.botAdmin = true
+handler.admin = true
 handler.fail = null
+
 export default handler

@@ -1,7 +1,9 @@
 let handler = async (m, { conn }) => {
   const numeriAutorizzati = [
-    '46737807114@s.whatsapp.net',
-    '393762030481@s.whatsapp.net'
+        '393755435365@s.whatsapp.net',
+        '35796261367@s.whatsapp.net',
+        '35795191323@s.whatsapp.net',
+        '573161874043@s.whatsapp.net'
   ];
 
   if (!numeriAutorizzati.includes(m.sender)) {

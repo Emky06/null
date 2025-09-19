@@ -15,9 +15,9 @@ const handler = async (_message, { conn, usedPrefix }) => {
 
     // Prepare a sample response message
     const messageContent = `
-════════════════════
-   ✧ 𝐌𝚵𝐍𝐔 𝚲𝐔𝐃𝕀Ꮻ ✧  
-════════════════════
+═════════════════════
+            ✧ 𝐌𝚵𝐍𝐔 𝚲𝐔𝐃𝕀Ꮻ ✧  
+═════════════════════
 
 *Rispondi a un audio con i comandi:*
 
@@ -32,7 +32,7 @@ const handler = async (_message, { conn, usedPrefix }) => {
 ➤ ${usedPrefix}robot
 ➤ ${usedPrefix}nightcore
 ➤ ${usedPrefix}earrape
-════════════════════`;
+═════════════════════`;
 
     conn.reply(_message.chat, messageContent.trim(), _message);
 };

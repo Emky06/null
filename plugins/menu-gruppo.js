@@ -1,176 +1,186 @@
-import 'os';
-import 'util';
-import 'human-readable';
-import '@whiskeysockets/baileys';
-import 'fs';
-import 'perf_hooks';
+const handler = async (message, { conn, usedPrefix, command }) => {
+    const userCount = Object.keys(global.db.data.users).length;
+    const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
-let cooldown = new Map();
-
-let handler = async (_0x316f52, { conn: _0x4a2566, usedPrefix: _0x238280 }) => {
-  let sender = _0x316f52.sender;
-  let now = Date.now();
-  let cooldownTime = 5000; // Tempo di attesa di 5 secondi
-
-  if (cooldown.has(sender)) {
-    let lastUsed = cooldown.get(sender);
-    let timePassed = now - lastUsed;
-
-    if (timePassed < cooldownTime) {
-      let timeLeft = (cooldownTime - timePassed) / 1000;
-      return _0x4a2566.sendMessage(_0x316f52.chat, { text: `⏳ Attendi ${timeLeft.toFixed(1)} secondi prima di usare di nuovo il comando.` }, { quoted: _0x316f52 });
+    if (command === 'menu') {
+        return await (await import('./menu-principale.js')).default(message, { conn, usedPrefix });
     }
-  }
-
-  cooldown.set(sender, now);
-
-  let _0x12abbd = {
-    'key': {
-      'participants': "0@s.whatsapp.net",
-      'fromMe': false,
-      'id': 'Halo'
-    },
-    'message': {
-      'locationMessage': {
-        'name': "𝑴𝑬𝑵𝑼 𝑮𝑹𝑼𝑷𝑷𝑶",
-        'jpegThumbnail': await (await fetch("https://qu.ax/cSqEs.jpg")).buffer(),
-        'vcard': `
-          BEGIN:VCARD
-          VERSION:3.0
-          N:;Unlimited;;;
-          FN:Unlimited
-          ORG:Unlimited
-          TITLE:
-          item1.TEL;waid=19709001746:+1 (970) 900-1746
-          item1.X-ABLabel:Unlimited
-          X-WA-BIZ-DESCRIPTION:ofc
-          X-WA-BIZ-NAME:Unlimited
-          END:VCARD
-        `.trim()
-      }
-    },
-    'participant': "0@s.whatsapp.net"
-  };
-
-  let _0x52ca99 = `
-════════╗
-║ ✨ *𝐆𝐫𝐮𝐩𝐩𝐨 𝐌𝐞𝐧𝐮* ✨
-╚══════════════════════════════════════╝
-
-彡 . 𝐚𝐛𝐛𝐫𝐚𝐜𝐜𝐢𝐚 @  
-彡 . 𝐥𝐞𝐜𝐜𝐨/𝐚 @  
-彡 . 𝐦𝐨𝐫𝐝𝐢 @  
-彡 . 𝐚𝐥𝐜𝐨𝐥𝐢𝐳𝐳𝐚𝐭𝐨 @  
-彡 . 𝐫𝐢𝐬𝐜𝐫𝐢𝐯𝐢 (𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨)  
-彡 . 𝐦𝐞𝐭𝐞𝐨 ( 𝐜𝐢𝐭𝐭𝐚' )  
-彡 . 𝐡𝐝( 𝐟𝐨𝐭𝐨 )  
-彡 . 𝐥𝐞𝐠𝐠𝐢( 𝐟𝐨𝐭𝐨 )  
-彡 . 𝐫𝐢𝐦𝐮𝐨𝐯𝐢𝐬𝐟𝐨𝐧𝐝𝐨 ( 𝐟𝐨𝐭𝐨 )  
-彡 . 𝐬𝐞𝐠𝐚( 𝐧𝐨𝐦𝐞 )  
-彡 . 𝐝𝐢𝐭𝐚𝐥𝐢𝐧𝐨 ( 𝐧𝐨𝐦𝐞 )  
-彡 . 𝐢𝐧𝐬𝐮𝐥𝐭𝐚 ( 𝐧𝐨𝐦𝐞 )  
-彡 . 𝐪𝐫𝐜𝐨𝐝𝐞( 𝐭𝐞𝐬𝐭𝐨 )  
-彡 . 𝐫𝐢𝐯𝐞𝐥𝐚 ( 𝐟𝐨𝐭𝐨¹ )  
-彡 . 𝐬𝐭𝐲𝐥𝐞𝐭𝐞𝐱𝐭  
-彡 . 𝐜𝐚𝐥𝐜( 𝟏+𝟏 )  
-彡 . 𝐦𝐬𝐠' @  
-彡 . 𝐛𝐞𝐥𝐥𝐨/𝐚 @  
-彡 . 𝐠𝐚𝐲 @  
-彡 . 𝐩𝐮𝐭𝐭𝐚𝐧𝐚@  
-彡 . 𝐥𝐞𝐬𝐛𝐢𝐜𝐚@  
-彡 . 𝐢𝐧𝐬𝐮𝐥𝐭𝐚 @  
-彡 . 𝐬𝐭𝐮𝐩𝐫𝐚 @  
-彡 . 𝐟𝐫𝐨𝐜𝐢𝐨@  
-彡 . 𝐨𝐝𝐢𝐨@  
-彡 . 𝐚𝐦𝐨𝐫𝐞@  
-彡 . 𝐝𝐨𝐱 @  
-彡 . 𝐢𝐝(𝐠𝐫𝐮𝐩𝐩𝐨)  
-彡 . 𝐡𝐚𝐧𝐝𝐢𝐜𝐚𝐩𝐩𝐚𝐭𝐨 @  
-彡 . 𝐬𝐞𝐭𝐢𝐠  
-彡 . 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐢𝐠  
-彡 . 𝐭𝐫𝐢𝐬  
-彡 . 𝐜𝐫𝐮𝐬𝐡 @  
-彡 . 𝐭𝐨𝐩𝐠𝐚𝐲𝐬  
-彡 . 𝐭𝐨𝐩𝐧𝐚𝐳𝐢  
-彡 . 𝐭𝐭𝐩  
-彡 . 𝐝𝐚𝐝𝐨  
-彡 . 𝐬𝐭𝐢𝐜𝐤𝐞𝐫/ 𝐬  
-彡 . 𝐭𝐨𝐯𝐢𝐝𝐞𝐨  
-彡 . 𝐭𝐨𝐠𝐢𝐟  
-彡 . 𝐚𝐮𝐭𝐨𝐚𝐝𝐦𝐢𝐧  
-彡 . 𝐤𝐞𝐛𝐚𝐛 @  
-彡 . 𝐬𝐚𝐲𝐚𝐧 @  
-彡 . 𝐦𝐨𝐫𝐝𝐢 @  
-彡 . 𝐦𝐢𝐫𝐚 @  
-彡 . 𝐜𝐫𝐞𝐚𝐜𝐨𝐩𝐩𝐢𝐚  
-彡 . 𝐚𝐦𝐢𝐜𝐢𝐳𝐢𝐚 @  
-彡 . 𝐥𝐢𝐬𝐭𝐚𝐦𝐢𝐜𝐢  
-彡 . 𝐫𝐞𝐠𝐨𝐥𝐞  
-彡 . 𝐧𝐞𝐫𝐚 @  
-彡 . 𝐜𝐥𝐨𝐰𝐧 @  
-彡 . 𝐫𝐚𝐧𝐝𝐨𝐦 @  
-彡 . 𝐜𝐫𝐢𝐦𝐢𝐧𝐚𝐥𝐞 @  
-彡 . 𝐝𝐫𝐨𝐠𝐚𝐭𝐨 @  
-彡 . 𝐜𝐨𝐦𝐮𝐧𝐢𝐬𝐭𝐚 @  
-彡 . 𝐩𝐫𝐨𝐬𝐭𝐢𝐭𝐮𝐭𝐚 @  
-彡 . 𝐩𝐮𝐭𝐭𝐚𝐧𝐢𝐞𝐫𝐞 @  
-彡 . 𝐩𝐨𝐫𝐭𝐚𝐟𝐨𝐠𝐥𝐢𝐨  
-彡 . 𝐩𝐚𝐠𝐡𝐞𝐭𝐭𝐚  
-彡 . 𝐝𝐞𝐩𝐨𝐬𝐢𝐭𝐚  
-彡 . 𝐥𝐚𝐝𝐫𝐨  
-彡 . 𝐟𝐚𝐦𝐢𝐠𝐥𝐢𝐚  
-彡 . 𝐬𝐨𝐫𝐭𝐞  
-彡 . 𝐛𝐨𝐭𝐭𝐢𝐠𝐥𝐢𝐚  
-彡 . 𝐯𝐞𝐫𝐢𝐭𝐚  
-彡 . 𝐨𝐛𝐛𝐥𝐢𝐠𝐨  
-彡 . 𝐚𝐝𝐨𝐭𝐭𝐚 @  
-彡 . 𝐬𝐮𝐬𝐡𝐢 @  
-彡 . 𝐩𝐨𝐤𝐞𝐦𝐨𝐧𝐢𝐧𝐟𝐨  
-彡 . 𝐞𝐦𝐨𝐣𝐢𝐦𝐢𝐱  
-彡 . 𝐚𝐢  
-彡 . 𝐫𝐢𝐜𝐞𝐭𝐭𝐚  
-彡 . 𝐰𝐢𝐤𝐢𝐩𝐞𝐝𝐢𝐚  
-彡 . 𝐜𝐚𝐥𝐜𝐢𝐨
-彡 .𝐬𝐲𝐬𝐭𝐞𝐦
-彡 .𝐢𝐧𝐯𝐢𝐭𝐚 
-════════════════════
-꙰ 𝟥𝟥𝟥 ꙰ 𝔹𝕆𝕋 ꙰`.trim();
-
-  let _0x18f634 = global.db.data.nomedelbot || " ꙰ 𝟥𝟥𝟥 ꙰ 𝔹𝕆𝕋 ꙰ ";
-
-  _0x4a2566.sendMessage(_0x316f52.chat, {
-    'text': _0x52ca99,
-    'contextInfo': {
-      'mentionedJid': _0x4a2566.parseMention(wm),
-      'forwardingScore': 1,
-      'isForwarded': true,
-      'forwardedNewsletterMessageInfo': {
-        'newsletterJid': "120363341274693350@newsletter",
-        'serverMessageId': '',
-        'newsletterName': '' + _0x18f634
-      }
+    if (command === 'giochi') {
+        return await (await import('./menu-giochi.js')).default(message, { conn, usedPrefix });
     }
-  }, { 'quoted': _0x12abbd });
+    if (command === 'admin') {
+        return await (await import('./menu-admin.js')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'mod') {
+        return await (await import('./menu-mod')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'owner') {
+        return await (await import('./menu-owner.js')).default(message, { conn, usedPrefix });
+    }
+    if (command === 'funzioni') {
+        return await (await import('./menu-funzioni.js')).default(message, { conn, usedPrefix });
+    }
+
+    const menuText = generateMenuText(usedPrefix, botName, userCount);
+
+    await conn.sendMessage(
+        message.chat,
+        {
+            text: menuText,
+            footer: 'Scegli un menu:',
+            buttons: [
+                { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 Menu Principale" }, type: 1 },
+                { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
+                { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ Menu Admin" }, type: 1 },
+                { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
+                { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 Menu Owner" }, type: 1 },
+                { buttonId: `${usedPrefix}funzioni`, buttonText: { displayText: "🔧 Menu Funzioni" }, type: 1 }
+            ],
+            viewOnce: true,
+        }
+    );
 };
 
-handler.help = ["menu"];
-handler.tags = ['menu'];
-handler.command = /^(menugruppo|gruppo)$/i;
+async function fetchProfilePictureUrl(conn, sender) {
+    try {
+        return await conn.profilePictureUrl(sender);
+    } catch (error) {
+        return 'default-profile-picture-url'; // Fallback URL in caso di errore
+    }
+}
+
+handler.help = ['gruppo', 'menu', 'admin', 'owner', 'funzioni'];
+handler.tags = ['gruppo'];
+handler.command = /^(gruppo|menu|admin|owner|funzioni)$/i;
+
 export default handler;
 
-function clockString(_0x5376bb) {
-  let _0x14ce08 = Math.floor(_0x5376bb / 3600000);
-  let _0x11e6bc = Math.floor(_0x5376bb / 60000) % 60;
-  let _0xaff805 = Math.floor(_0x5376bb / 1000) % 60;
-
-  console.log({
-    'ms': _0x5376bb,
-    'h': _0x14ce08,
-    'm': _0x11e6bc,
-    's': _0xaff805
-  });
-
-  return [_0x14ce08, _0x11e6bc, _0xaff805]
-    .map(_0x421c43 => _0x421c43.toString().padStart(2, 0))
-    .join(':');
+function generateMenuText(prefix, botName, userCount) {
+    return `
+╔═══════════════════╗
+║         👥 *𝐆𝐫𝐮𝐩𝐩𝐨 𝐌𝐞𝐧𝐮* 👥      ║
+╚═══════════════════╝
+╭━━━━━━━━━━━━━━━━━━━╮
+┃🎮 *𝐆𝐈𝐎𝐂𝐇𝐈*  
+┃
+┃🎲 ${prefix}𝐢𝐦𝐩𝐢𝐜𝐜𝐚𝐭𝐨  
+┃⚽ ${prefix}𝐜𝐚𝐥𝐜𝐢𝐨  
+┃🎰 ${prefix}𝐬𝐥𝐨𝐭  
+┃🎡 ${prefix}𝐫𝐨𝐮𝐥𝐞𝐭𝐭𝐞  
+┃🔫 ${prefix}𝐫𝐫 (𝐫𝐨𝐮𝐥𝐞𝐭𝐭𝐞 𝐫𝐮𝐬𝐬𝐚)  
+┃🪙 ${prefix}𝐦𝐨𝐧𝐞𝐭𝐚 (𝐭𝐞𝐬𝐭𝐚 𝐨 𝐜𝐫𝐨𝐜𝐞)     
+┃🪙 ${prefix}𝐜𝐨𝐢𝐧𝐟𝐥𝐢𝐩 (𝐜𝐨𝐧 𝐛𝐨𝐭)
+┃✌️ ${prefix}𝐠𝐚𝐦𝐞 𝐬𝐚𝐬𝐬𝐨/𝐜𝐚𝐫𝐭𝐚/𝐟𝐨𝐫𝐛𝐢𝐜𝐞  
+┃🇮🇹 ${prefix}𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐚
+┃🎵 ${prefix}𝐢𝐜
+┃⭕ ${prefix}𝐭𝐫𝐢𝐬
+┃🎲 ${prefix}𝐝𝐚𝐝𝐨  
+┃😜 ${prefix}𝐞𝐦𝐨𝐣𝐢𝐦𝐢𝐱  
+┃❓ ${prefix}𝐨𝐛𝐛𝐥𝐢𝐠𝐨/𝐯𝐞𝐫𝐢𝐭𝐚  
+┃🍾 ${prefix}𝐛𝐨𝐭𝐭𝐢𝐠𝐥𝐢𝐚    
+┣━━━━━━━━━━━━━━━━━━━━
+┃🤝 *𝐈𝐍𝐓𝐄𝐑𝐀𝐙𝐈𝐎𝐍𝐈*  
+┃
+┃🤗 ${prefix}𝐚𝐛𝐛𝐫𝐚𝐜𝐜𝐢𝐚 @  
+┃😛 ${prefix}𝐥𝐞𝐜𝐜𝐨/𝐚 @  
+┃🦷 ${prefix}𝐦𝐨𝐫𝐝𝐢 @  
+┃🔨 ${prefix}𝐛𝐨𝐧𝐤 @  
+┃💞 ${prefix}𝐜𝐫𝐞𝐚𝐜𝐨𝐩𝐩𝐢𝐚  
+┃❤️ ${prefix}𝐚𝐦𝐨𝐫𝐞 @  
+┃💔 ${prefix}𝐨𝐝𝐢𝐨 @  
+┃😍 ${prefix}𝐜𝐫𝐮𝐬𝐡 @  
+┃💍 ${prefix}𝐬𝐩𝐨𝐬𝐚 @  
+┃💔 ${prefix}𝐝𝐢𝐯𝐨𝐫𝐳𝐢𝐚
+┃👫 ${prefix}𝐚𝐦𝐢𝐜𝐢𝐳𝐢𝐚 @  
+┃📜 ${prefix}𝐥𝐢𝐬𝐭𝐚𝐦𝐢𝐜𝐢  
+┃🦊 ${prefix}𝐫𝐮𝐛𝐚  
+┣━━━━━━━━━━━━━━━━━━━━
+┃🎵 *𝐅𝐔𝐍𝐙𝐈𝐎𝐍𝐈 𝐕𝐀𝐑𝐈𝐄*  
+┃
+┃🎧 ${prefix}𝐚𝐮𝐝𝐢𝐨  
+┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞  
+┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
+┃⏩ ${prefix}𝐬𝐩𝐞𝐞𝐝𝐯𝐢𝐝𝐞𝐨
+┃🎶 ${prefix}𝐩𝐥𝐚𝐲  
+┃ⓘ  ${prefix}𝐢𝐧𝐟𝐨  
+┃🌦️ ${prefix}𝐦𝐞𝐭𝐞𝐨 (𝐜𝐢𝐭𝐭𝐚̀)  
+┃🎥 ${prefix}𝐭𝐨𝐯𝐢𝐝𝐞𝐨  
+┃🖼️ ${prefix}𝐭𝐨𝐠𝐢𝐟  
+┃📷 ${prefix}𝐭𝐨𝐢𝐦𝐠
+┃💻 ${prefix}𝐬𝐲𝐬𝐭𝐞𝐦  
+┃⚙️ ${prefix}𝐬𝐞𝐭𝐢𝐠  
+┃📝 ${prefix}𝐫𝐞𝐠  
+┣━━━━━━━━━━━━━━━━━━━━
+┃💼 *𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀*  
+┃
+┃👛 ${prefix}𝐩𝐨𝐫𝐭𝐚𝐟𝐨𝐠𝐥𝐢𝐨  
+┃🏦 ${prefix}𝐝𝐞𝐩𝐨𝐬𝐢𝐭𝐚  
+┃🏧 ${prefix}𝐩𝐫𝐞𝐥𝐞𝐯𝐚
+┃👷 ${prefix}𝐥𝐚𝐯𝐨𝐫𝐨  
+┃💸 ${prefix}𝐩𝐚𝐠𝐡𝐞𝐭𝐭𝐚  
+┣━━━━━━━━━━━━━━━━━━━━
+┃🧸 *𝐑𝐏𝐆*  
+┃
+┃🏪 ${prefix}𝐬𝐡𝐨𝐩𝐚𝐧𝐢𝐦𝐚𝐥𝐢  
+┃🐾 ${prefix}𝐚𝐧𝐢𝐦𝐚𝐥𝐢  
+┃💰 ${prefix}𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚 (𝐦𝐬𝐠)  
+┃👨‍👩‍👧‍👦 ${prefix}𝐟𝐚𝐦𝐢𝐠𝐥𝐢𝐚  
+┃👶🏾 ${prefix}𝐚𝐝𝐨𝐭𝐭𝐚  
+┣━━━━━━━━━━━━━━━━━━━━
+┃🔞 *+18*  
+┃
+┃✊ ${prefix}𝐬𝐞𝐠𝐚 @  
+┃👉 ${prefix}𝐝𝐢𝐭𝐚𝐥𝐢𝐧𝐨 @  
+┃👄 ${prefix}𝐩𝐨𝐦𝐩𝐢𝐧𝐚𝐫𝐚 @  
+┃💦 ${prefix}𝐬𝐛𝐨𝐫𝐫𝐚 @  
+┃🍒 ${prefix}𝐭𝐞𝐭𝐭𝐞 @  
+┃🍑 ${prefix}𝐜𝐮𝐥𝐨 @  
+┃🌸 ${prefix}𝐟𝐢𝐠𝐚 @  
+┃🍆 ${prefix}𝐩𝐞𝐧𝐞 @  
+┃🚫 ${prefix}𝐬𝐭𝐮𝐩𝐫𝐚 @  
+┃🔥 ${prefix}𝐬𝐜𝐨𝐩𝐚 @
+┃⚧️ ${prefix}𝐭𝐫𝐚𝐧𝐬 @  
+┃🔥 ${prefix}𝐨𝐫𝐠𝐢𝐚  
+┣━━━━━━━━━━━━━━━━━━━━
+┃😂 *𝐈𝐍𝐒𝐔𝐋𝐓𝐈 / 𝐌𝐄𝐌𝐄*  
+┃
+┃😡 ${prefix}𝐢𝐧𝐬𝐮𝐥𝐭𝐚 @  
+┃🕵️ ${prefix}𝐝𝐨𝐱 @  
+┃♿ ${prefix}𝟏𝟎𝟒 @  
+┃🤪 ${prefix}𝐫𝐢𝐧𝐜𝐨𝐠𝐥𝐢𝐨𝐧𝐢𝐭𝐨 @  
+┃🏳️‍🌈 ${prefix}𝐠𝐚𝐲/𝐟𝐫𝐨𝐜𝐢𝐨 @  
+┃🏳️‍🌈 ${prefix}𝐥𝐞𝐬𝐛𝐢𝐜𝐚 @  
+┃🛵 ${prefix}𝐭𝐞𝐫𝐫𝐨𝐧𝐞/𝐚 @  
+┃🥟 ${prefix}𝐩𝐨𝐥𝐞𝐧𝐭𝐨𝐧𝐞/𝐚 @  
+┃🤡 ${prefix}𝐜𝐥𝐨𝐰𝐧 @  
+┃🔪 ${prefix}𝐜𝐫𝐢𝐦𝐢𝐧𝐚𝐥𝐞 @  
+┃🍷 ${prefix}𝐚𝐥𝐜𝐨𝐥𝐢𝐳𝐳𝐚𝐭𝐨 @  
+┃💉 ${prefix}𝐝𝐫𝐨𝐠𝐚𝐭𝐨 @  
+┃࿖  ${prefix}𝐧𝐚𝐳𝐢𝐬𝐭𝐚 @  
+┃🚩 ${prefix}𝐜𝐨𝐦𝐮𝐧𝐢𝐬𝐭𝐚 @  
+┃🔫 ${prefix}𝐦𝐢𝐫𝐚 @  
+┃🧚 ${prefix}𝐰𝐢𝐧𝐱 @
+┃✨ ${prefix}𝐛𝐞𝐥𝐥𝐨/𝐚 @  
+┃⚫ ${prefix}𝐧𝐞𝐫𝐨/𝐚 @  
+┣━━━━━━━━━━━━━━━━━━━━
+┃🍔 *𝐂𝐈𝐁𝐎*  
+┃
+┃🥙 ${prefix}𝐤𝐞𝐛𝐚𝐛 @  
+┃🍔 ${prefix}𝐡𝐚𝐦𝐛𝐮𝐫𝐠𝐞𝐫 @  
+┃🍕 ${prefix}𝐩𝐢𝐳𝐳𝐚 @  
+┃🍣 ${prefix}𝐬𝐮𝐬𝐡𝐢 @  
+┣━━━━━━━━━━━━━━━━━━━━
+┃✨ *𝐀𝐋𝐓𝐑𝐎*  
+┃
+┃🤖 ${prefix}𝐢𝐚  
+┃💬 ${prefix}𝐛𝐨𝐭  
+┃🏴‍☠️ ${prefix}𝐥𝐮𝐟𝐟𝐲  
+┃🔥 ${prefix}𝐬𝐚𝐲𝐚𝐧  
+┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞  
+┃📨 ${prefix}𝐢𝐧𝐯𝐢𝐭𝐚
+╰━━━━━━━━━━━━━━━━━━━╯
+            ╔═══════════════════╗
+║       ☄️𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕☄️      ║
+╚═══════════════════╝
+  `
 }

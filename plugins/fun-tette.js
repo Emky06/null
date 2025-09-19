@@ -1,27 +1,36 @@
 let handler = async (m, { conn, command, text }) => {
-    // Lista di dimensioni casuali
-    let boobsSizes = ['prima', 'seconda', 'terza', 'quarta', 'quinta', 'sesta', 'settima', 'ottava', 'nona', 'decima'];
+    if (!text && !m.quoted && !m.mentionedJid?.length) throw 'Tagga o rispondi a qualcuno!';
 
-    // Scegli una dimensione casuale dalla lista
+    // Prendi la persona menzionata o quella a cui rispondi
+    let user = m.mentionedJid?.[0] || m.quoted?.sender;
+    if (!user) throw 'Tagga o rispondi a qualcuno!';
+
+    // Lista di taglie
+    let boobsSizes = ['prima', 'seconda', 'terza', 'quarta', 'quinta', 'sesta', 'settima'];
+
+    // Scelta casuale
     let size = pickRandom(boobsSizes);
 
-    // Crea il messaggio con la dimensione scelta
-    let boobs = `*🍑 CALCOLATORE DI TETTE 🍑*\n
+    // Estrai numero senza dominio per il tag testuale
+    let number = user.split('@')[0];
+
+    // Messaggio finale con tag
+    let message = `*🍒 CALCOLATORE DI TAGLIA 🍒*
 ━━━━━━━━━━━━━━━━━━━━━
-${text} tiene una   ${size}
-━━━━━━━━━━━━━━━━━━━━━`.trim()
+🔍 @${number} tiene una: 👉 *${size}* 🍒
+━━━━━━━━━━━━━━━━━━━━━`.trim();
 
-    // Rispondi con il messaggio e la menzione
-    m.reply(boobs, null, { mentions: conn.parseMention(boobs) })
-}
+    // Risposta con menzione corretta
+    conn.reply(m.chat, message, m, { mentions: [user] });
+};
 
-// Funzione per scegliere un elemento casuale dalla lista
+// Funzione per scelta casuale
 function pickRandom(list) {
     return list[Math.floor(Math.random() * list.length)];
 }
 
-handler.help = ['tette']
-handler.tags = ['fun']
-handler.command = /^(tette)$/i
+handler.help = ['tette'];
+handler.tags = ['fun'];
+handler.command = /^(tette)$/i;
 
 export default handler;

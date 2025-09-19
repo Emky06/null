@@ -1,128 +1,94 @@
-// Plugin fatto da Gabs & 333 Staff
 import 'os';
 import 'util';
 import 'human-readable';
 import '@whiskeysockets/baileys';
 import 'fs';
 import 'perf_hooks';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-let handler = async (message, { conn, usedPrefix }) => {
-  const chatData = global.db.data.chats[message.chat];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  const {
-    antiToxic,
-    antilinkhard,
-    antiPrivate,
-    antispam,
-    antiCall,
-    modohorny,
-    gpt,
-    antiinsta,
-    antielimina,
-    antitelegram,
-    antiPorno,
-    jadibot,
-    autosticker,
-    modoadmin,
-    audios,
-    isBanned,
-    welcome,
-    detect,
-    sWelcome,
-    sBye,
-    sPromote,
-    sDemote,
-    antiLink,
-    antilinkbase,
-    antitiktok,
-    sologruppo,
-    soloprivato,
-    antitraba,
-    antiArab,
-    antiviewonce
-  } = chatData;
+let handler = async (m, { conn, usedPrefix, command }) => {
+  const chatData = global.db.data.chats[m.chat];
+  const isOwner = global.owner.map(([number]) => number + '@s.whatsapp.net').includes(m.sender);
 
-  let targetUser = message.quoted ? message.quoted.sender :
-                   message.mentionedJid?.[0] ? message.mentionedJid[0] :
-                   message.fromMe ? conn.user.jid : message.sender;
-
-  const profilePic = (await conn.profilePictureUrl(targetUser, "image").catch(() => null)) || "./src/avatar_contact.png";
-  let thumbnail;
-
-  if (profilePic !== "./src/avatar_contact.png") {
-    thumbnail = await (await fetch(profilePic)).buffer();
-  } else {
-    thumbnail = await (await fetch("https://qu.ax/cSqEs.jpg")).buffer();
+  if (command === 'menu') {
+    return await (await import('./menu-principale.js')).default(m, { conn, usedPrefix });
+  }
+  if (command === 'admin') {
+    return await (await import('./menu-admin.js')).default(m, { conn, usedPrefix });
+  }
+  if (command === 'mod') {
+        return await (await import('./menu-mod')).default(message, { conn, usedPrefix });
+    }
+  if (command === 'owner') {
+    return await (await import('./menu-owner.js')).default(m, { conn, usedPrefix });
+  }
+  if (command === 'gruppo') {
+    return await (await import('./menu-gruppo.js')).default(m, { conn, usedPrefix });
+  }
+  if (command === 'giochi') {
+        return await (await import('./menu-giochi.js')).default(message, { conn, usedPrefix });
   }
 
-  let quotedMessage = {
-    key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
-    message: {
-      locationMessage: {
-        name: "𝐌𝐞𝐧𝐮 𝐝𝐞𝐥𝐥𝐞 𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐚𝐥𝐢𝐭𝐚'",
-        jpegThumbnail: await (await fetch("https://qu.ax/cSqEs.jpg")).buffer()
-      }
-    },
-    participant: "0@s.whatsapp.net"
+  const funzioni = {
+    detect: '𝐝𝐞𝐭𝐞𝐜𝐭',
+    benvenuto: '𝐛𝐞𝐧𝐯𝐞𝐧𝐮𝐭𝐨',
+    bestemmiometro: '𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐨𝐦𝐞𝐭𝐫𝐨',
+    soloadmin: '𝐬𝐨𝐥𝐨𝐚𝐝𝐦𝐢𝐧',
+    soloviewonce: '𝐬𝐨𝐥𝐨𝐯𝐢𝐞𝐰𝐨𝐧𝐜𝐞',
+    antispam: '𝐚𝐧𝐭𝐢𝐬𝐩𝐚𝐦',
+    antisondaggi: '𝐚𝐧𝐭𝐢𝐬𝐨𝐧𝐝𝐚𝐠𝐠𝐢',
+    antigiochi: '𝐚𝐧𝐭𝐢𝐠𝐢𝐨𝐜𝐡𝐢',
+    antitrava: '𝐚𝐧𝐭𝐢𝐭𝐫𝐚𝐯𝐚',
+    antinuke: '𝐚𝐧𝐭𝐢𝐧𝐮𝐤𝐞',
+    antivoip: '𝐚𝐧𝐭𝐢𝐯𝐨𝐢𝐩',
+    antilink: '𝐚𝐧𝐭𝐢𝐥𝐢𝐧𝐤',
+    antilinktotale: '𝐚𝐧𝐭𝐢𝐥𝐢𝐧𝐤𝐭𝐨𝐭𝐚𝐥𝐞',
+    antiinsta: '𝐚𝐧𝐭𝐢𝐢𝐧𝐬𝐭𝐚',
+    antitiktok: '𝐚𝐧𝐭𝐢𝐭𝐢𝐤𝐭𝐨𝐤',
+    antitelegram: '𝐚𝐧𝐭𝐢𝐭𝐞𝐥𝐞𝐠𝐫𝐚𝐦'
   };
 
+  let lines = Object.entries(funzioni).map(([key, name]) => {
+    let stato = chatData[key];
+    return `┃ ${stato ? '🟢' : '🔴'} » ${name}`;
+  });
+
   let menuText = `
-──────────────
- ${detect ? '🟢' : '🔴'} » ${usedPrefix}detect
- ${gpt ? '🟢' : '🔴'} » ${usedPrefix}gpt
- ${jadibot ? '🟢' : '🔴'} » ${usedPrefix}jadibot
- ${welcome ? '🟢' : '🔴'} » ${usedPrefix}benvenuto
- ${sologruppo ? '🟢' : '🔴'} » ${usedPrefix}sologruppo
- ${soloprivato ? '🟢' : '🔴'} » ${usedPrefix}soloprivato
- ${modoadmin ? '🟢' : '🔴'} » ${usedPrefix}modoadmin
- ${isBanned ? '🟢' : '🔴'} » ${usedPrefix}bangp
- ${antiPorno ? '🟢' : '🔴'} » ${usedPrefix}antiporno
- ${antiCall ? '🟢' : '🔴'} » ${usedPrefix}anticall
- ${antitraba ? '🟢' : '🔴'} » ${usedPrefix}antitrava
- ${antiArab ? '🟢' : '🔴'} » ${usedPrefix}antipaki
- ${antiLink ? '🟢' : '🔴'} » ${usedPrefix}antilink
- ${antiinsta ? '🟢' : '🔴'} » ${usedPrefix}antiinsta
- ${antitiktok ? '🟢' : '🔴'} » ${usedPrefix}antitiktok
- ${antielimina ? '🟢' : '🔴'} » ${usedPrefix}antielimina
-────────────
-ⓘ Info sulle funzioni
-🟢 » Funzione attivata 
-🔴 » Funzione disabilitata 
-────────────
-ⓘ Uso del comando
-${usedPrefix}attiva antilink
-${usedPrefix}disabilita antilink
-ⓘ Info sullo stato
-${usedPrefix}infostato
-──────────────`.trim();
+╭━━〔 *𝐌𝐄𝐍𝐔 𝐅𝐔𝐍𝐙𝐈𝐎𝐍𝐈* 〕━━╮
+${lines.join('\n')}
+╰━━━━━━━━━━━━━━━━━━━╯
+╭━━━━━━━━━━━━━━━━━━━╮
+┃ⓘ 𝐈𝐧𝐟𝐨 𝐬𝐮𝐥𝐥𝐞 𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐢:
+┃🟢 » 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐞 𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚
+┃🔴 » 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐞 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚
+┣━━━━━━━━━━━━━━━━━━━┫
+┃ⓘ 𝐔𝐬𝐨 𝐝𝐞𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨:
+┃${usedPrefix}𝐚𝐭𝐭𝐢𝐯𝐚/𝟏 <𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐞>
+┃${usedPrefix}𝐝𝐢𝐬𝐚𝐛𝐢𝐥𝐢𝐭𝐚/𝟎 <𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐞>
+╰━━━━━━━━━━━━━━━━━━━╯`.trim();
 
-  let botName = global.db.data.nomedelbot || "꙰ 𝟥𝟥𝟥 ꙰ 𝔹𝕆𝕋 ꙰";
-
-  conn.sendMessage(message.chat, {
+  // Invia il menu con i bottoni
+  await conn.sendMessage(m.chat, {
     text: menuText,
-    contextInfo: {
-      mentionedJid: conn.parseMention(botName),
-      forwardingScore: 1,
-      isForwarded: true,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: "120363341274693350@newsletter",
-        serverMessageId: '',
-        newsletterName: botName
-      }
-    }
-  }, { quoted: quotedMessage });
+    footer: 'Scegli un menu:',
+    buttons: [
+      { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 Menu Principale" }, type: 1 },
+      { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ Menu Admin" }, type: 1 },
+      { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
+      { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 Menu Owner" }, type: 1 },
+      { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 Menu Gruppo" }, type: 1 },
+      { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
+    ],
+    viewOnce: true
+  });
 };
 
-handler.help = ["menu"];
+handler.help = ["funzioni", "menu", "admin", "owner", "gruppo"];
 handler.tags = ["menu"];
-handler.command = /^(funzioni)$/i;
+handler.command = /^(funzioni|menu|admin|owner|gruppo)$/i;
 
 export default handler;
-
-function clockString(ms) {
-  let h = Math.floor(ms / 3600000);
-  let m = Math.floor(ms / 60000) % 60;
-  let s = Math.floor(ms / 1000) % 60;
-  console.log({ ms, h, m, s });
-  return [h, m, s].map(unit => unit.toString().padStart(2, '0')).join(':');
-}

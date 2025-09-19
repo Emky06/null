@@ -1,16 +1,47 @@
+import * as baileys from '@whiskeysockets/baileys';
 
-let handler = async (m, { conn, command, text }) => {
-if (!text) throw `Tagga chi desideri stuprare 🥵🤤`
-let user = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted.sender
-conn.reply(m.chat, `
-*𝐒𝐓𝐀𝐈 𝐒𝐓𝐔𝐏𝐑𝐀𝐍𝐃𝐎 ${text} !*
-
-𝙨𝙚𝙞 𝙨𝙩𝙖𝙩𝙖 𝙨𝙩𝙪𝙥𝙧𝙖𝙩𝙖 𝙖 𝟵𝟬 𝙚 𝙩𝙞 𝙝𝙖 𝙩𝙧𝙖𝙩𝙩𝙖𝙩𝙤 𝙘𝙤𝙢𝙚 𝙪𝙣𝙖 𝙥𝙪𝙩𝙩𝙖𝙣𝙖 𝙙𝙞 𝙢𝙚𝙧𝙙𝙖 " 𝐀𝐡𝐡𝐡.., 𝐀𝐚𝐚𝐚𝐡𝐡, 𝐬𝐢 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐚, 𝐧𝐨𝐧 𝐟𝐞𝐫𝐦𝐚𝐫𝐭𝐢, 𝐧𝐨𝐧 𝐟𝐞𝐫𝐦𝐚𝐫𝐭𝐢 " 𝙚 𝙩𝙞 𝙝𝙖 𝙡𝙖𝙨𝙘𝙞𝙖𝙩𝙤 𝙘𝙤𝙨𝙞̀ 𝙜𝙤𝙣𝙛𝙞𝙖 𝙘𝙝𝙚 𝙣𝙤𝙣 𝙧𝙞𝙚𝙨𝙘𝙞 𝙣𝙚𝙢𝙢𝙚𝙣𝙤 𝙖 𝙧𝙚𝙜𝙜𝙚𝙧𝙩𝙞 𝙞𝙣 𝙥𝙞𝙚𝙙𝙞 𝙨𝙩𝙪𝙥𝙞𝙙𝙖 𝙩𝙧𝙤𝙞𝙖 𝙙𝙞 𝙢𝙚𝙧𝙙𝙖
-
-*${text}* 
-🤤🥵 *¡𝐓𝐈 𝐇𝐀𝐍𝐍𝐎 𝐅𝐎𝐓𝐓𝐔𝐓𝐎 𝐏𝐄𝐑 𝐁𝐄𝐍𝐄!* 🥵🤤`, null, { mentions: [user] })
+function delay(ms) {
+  return new Promise(res => setTimeout(res, ms));
 }
 
-handler.admin = true
-handler.command =  ['stupra'];
+let handler = async (m, { conn, text }) => {
+  if (!text && !m.quoted && !m.mentionedJid?.length) throw '🥵𝐓𝐚𝐠𝐠𝐚 𝐜𝐡𝐢 𝐝𝐞𝐬𝐢𝐝𝐞𝐫𝐢 𝐬𝐭𝐮𝐩𝐫𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨🥵'
+
+  let user = m.mentionedJid?.[0] || m.quoted?.sender
+  if (!user) throw '🥵𝐓𝐚𝐠𝐠𝐚 𝐜𝐡𝐢 𝐝𝐞𝐬𝐢𝐝𝐞𝐫𝐢 𝐬𝐭𝐮𝐩𝐫𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨🥵'
+
+  const frames = [
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄🩸Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+  ]
+
+  let msg = await conn.reply(m.chat, frames[0], m)
+
+  for (let i = 1; i < frames.length; i++) {
+    await delay(300)
+    await conn.sendMessage(m.chat, {
+      text: frames[i],
+      edit: msg.key
+    })
+  }
+
+  // Aspetta 1 secondo e poi aggiungi la frase sotto
+  await delay(800)
+  await conn.sendMessage(m.chat, {
+    text: `${frames[frames.length - 1]}\n\n@${user.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨/𝐚 𝐬𝐭𝐮𝐩𝐫𝐚𝐭𝐨/𝐚 𝐩𝐞𝐫 𝐛𝐞𝐧𝐞 𝐜𝐨𝐦𝐞 𝐮𝐧𝐚 𝐩𝐮𝐭𝐭𝐚𝐧𝐚, 𝐨𝐫𝐚 𝐧𝐨𝐧 𝐫𝐢𝐞𝐬𝐜𝐞 𝐧𝐞𝐦𝐦𝐞𝐧𝐨 𝐚 𝐫𝐞𝐠𝐠𝐞𝐫𝐬𝐢 𝐢𝐧 𝐩𝐢𝐞𝐝𝐢🥵`,
+    edit: msg.key,
+    mentions: [user]
+  })
+}
+
+handler.command = ['stupra']
 export default handler
