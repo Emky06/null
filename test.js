@@ -1,3 +1,4 @@
+//Axtral_WiZaRd
 import fs from 'fs'
 import path, { dirname } from 'path'
 import assert from 'assert'
@@ -25,3 +26,4 @@ if (error) assert.ok(error.length < 1, file + '\n\n' + error)
 assert.ok(file)
 console.log('Done', file)
 }
+
