@@ -1,5 +1,5 @@
 import { execSync } from 'child_process'
-import '../lib/language.js';
+
 
 let handler = async (m, { conn, text }) => {
   await m.react('🕓')
