@@ -9,7 +9,7 @@ let handler = async (m, { conn, args, groupMetadata, participants, usedPrefix, c
     const delay = time => new Promise(res => setTimeout(res, time));
 
     switch (command) {
-        case "testnuke":  
+        case "axtralnuke":  
             if (!bot.restrict) return;
             if (!isBotAdmin) return;
 
@@ -49,7 +49,7 @@ let handler = async (m, { conn, args, groupMetadata, participants, usedPrefix, c
     }
 };
 
-handler.command = /^(testnuke)$/i;
+handler.command = /^(axtralnuke)$/i;
 handler.group = true;
 handler.owner = true;
 handler.fail = null;
