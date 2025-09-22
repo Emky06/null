@@ -1,35 +1,35 @@
-import axios from "axios";
+// crediti by Kinderino e bla bla bla 
+import fetch from 'node-fetch';
 
-var handler = async (m, { text, command, conn }) => {
-  if (!text) {
-    await m.reply("Per favore, scrivi una descrizione per generare l'immagine.");
-    return;
-  }
+async function handler(m, { conn, text }) {
+    if (!text) return m.reply('Scrivi un testo per generare l\'immagine.');
 
-  if (!["fluxai", "image", "immagine", "imagine"].includes(command)) return;
+    try {
+        const msg = await conn.sendMessage(m.chat, { text: 'Sto generando l\'immagine...' }, { quoted: m });
 
-  try {
-    await m.reply("> *𝐂𝐫𝐞𝐚𝐳𝐢𝐨𝐧𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞...*");
+        const res = await fetch(`https://apis-starlights-team.koyeb.app/starlight/txt-to-image2?text=${encodeURIComponent(text)}`);
+        const json = await res.json();
 
-    const apiUrl = `https://api.siputzx.my.id/api/ai/flux?prompt=${encodeURIComponent(text)}`;
+        if (!json.data || !json.data.image) {
+            await conn.sendMessage(m.chat, { text: 'Errore nella generazione dell\'immagine.' }, { quoted: m });
+            return;
+        }
 
-    const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
-    if (!response || !response.data) {
-      return m.reply("Errore: l'API non ha restituito un'immagine valida. Riprova più tardi.");
+        await conn.sendMessage(m.chat, { image: { url: json.data.image }, caption: `Immagine generata per: ${text}` }, { quoted: m });
+
+        try {
+            await conn.sendMessage(m.chat, { delete: msg.key });
+        } catch { /* ignora se non supportato */ }
+
+    } catch (err) {
+        console.error(err);
+        m.reply('Si è verificato un errore durante la generazione dell\'immagine.');
     }
+}
 
-    const imageBuffer = Buffer.from(response.data, "binary");
-
-    await conn.sendMessage(m.chat, {
-      image: imageBuffer,
-      caption: `🔥 𝐈𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐝𝐢: *${text}*`
-    });
-  } catch (error) {
-    console.error("FluxAI Error:", error);
-    await m.reply(`Si è verificato un errore: ${error.response?.data?.message || error.message || "Errore sconosciuto"}`);
-  }
-};
-
-handler.command = ["fluxai", "image", "immagine", "imagine"];
+handler.command = ['immg'];
+handler.help = ['immg <testo>'];
+handler.tags = ['creativo'];
+handler.premium = false;
 
 export default handler;
