@@ -190,7 +190,7 @@ END:VCARD`
     if (warnCount < warnLimit) {
         let remaining = warnLimit - warnCount
         await conn.sendMessage(msg.chat, {
-            text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐋𝐈𝐍𝐊 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠️\n${violation}\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝐨𝐫𝐢 𝒅𝒂𝒍 𝒈𝐫𝐮𝐩𝐩𝐨.*`
+            text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐋𝐈𝐍𝐊 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠️\n${violation}\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
         }, { quoted: vcardMessage })
     } else {
         user.warn = 0
