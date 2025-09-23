@@ -17,25 +17,35 @@ function normalizeText(text) {
         .replace(/\s+/g, '')
 }
 
-// antilink eventi/sondaggi ecc
+// antilink eventi/sondaggi ecc (estrazione testo sicura)
 function extractText(msg) {
     if (!msg.message) return ''
-    let result = ''
-    function recurse(obj) {
-        if (!obj) return
-        if (typeof obj === 'string') {
-            result += obj + ' '
-        } else if (typeof obj === 'object') {
-            for (let key in obj) {
-                if (key === 'quotedMessage') continue
-                recurse(obj[key])
+
+    let text = ''
+
+    if (msg.message.conversation) text += msg.message.conversation + ' '
+    if (msg.message.extendedTextMessage?.text) text += msg.message.extendedTextMessage.text + ' '
+    if (msg.message.imageMessage?.caption) text += msg.message.imageMessage.caption + ' '
+    if (msg.message.videoMessage?.caption) text += msg.message.videoMessage.caption + ' '
+
+    // testo nei sondaggi
+    if (msg.message.pollCreationMessage) {
+        text += msg.message.pollCreationMessage.name + ' '
+        if (msg.message.pollCreationMessage.options) {
+            for (let opt of msg.message.pollCreationMessage.options) {
+                if (opt.optionName) text += opt.optionName + ' '
             }
         }
     }
-    recurse(msg.message)
-    return result
-}
 
+    // testo negli eventi
+    if (msg.message.eventMessage) {
+        if (msg.message.eventMessage.name) text += msg.message.eventMessage.name + ' '
+        if (msg.message.eventMessage.description) text += msg.message.eventMessage.description + ' '
+    }
+
+    return text.trim()
+}
 
 async function getMediaBuffer(message) {
     try {
@@ -91,7 +101,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
     let rawText = extractText(m)
     let cleanedText = normalizeText(rawText)
 
-    if (linkRegex.test(cleanedText)) {
+    if (cleanedText && linkRegex.test(cleanedText)) {
         let matched = cleanedText.match(linkRegex)
         let link = matched ? matched[0] : ''
 
@@ -145,4 +155,4 @@ async function handleViolation({ conn, m, reason }) {
         })
         await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
     }
-}
+    }
