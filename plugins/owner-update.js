@@ -1,12 +1,14 @@
 import { execSync } from 'child_process'
 
-
 let handler = async (m, { conn, text }) => {
   await m.react('🕓')
   if (conn.user.jid == conn.user.jid) {
     try {
-      // Forza il reset per evitare conflitti e fa pull
-      let stdout = execSync('git reset --hard && git pull' + (m.fromMe && text ? ' ' + text : ''), { encoding: 'utf-8' })
+      // Forza aggiornamento dalla repo remota
+      let stdout = execSync(
+        'git fetch --all && git reset --hard origin/main',
+        { encoding: 'utf-8' }
+      )
       await conn.reply(m.chat, stdout, m)
       await m.react('✅')
     } catch (err) {
