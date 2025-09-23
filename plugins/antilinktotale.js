@@ -9,7 +9,6 @@ const safeDomains = ['whatsapp.com', 'instagram.com', 'instagr.am', 'tiktok.com'
 const ignoredCommands = ['.play', '.play1', '.play2']
 const maxWarn = 3
 
-// antilink caratteri invisibili
 function normalizeText(text) {
     return (text || '')
         .normalize('NFKC')
@@ -17,34 +16,49 @@ function normalizeText(text) {
         .replace(/\s+/g, '')
 }
 
-// antilink eventi/sondaggi ecc (estrazione testo sicura)
 function extractText(msg) {
-    if (!msg.message) return ''
-
-    let text = ''
-
-    if (msg.message.conversation) text += msg.message.conversation + ' '
-    if (msg.message.extendedTextMessage?.text) text += msg.message.extendedTextMessage.text + ' '
-    if (msg.message.imageMessage?.caption) text += msg.message.imageMessage.caption + ' '
-    if (msg.message.videoMessage?.caption) text += msg.message.videoMessage.caption + ' '
-
-    // testo nei sondaggi
-    if (msg.message.pollCreationMessage) {
-        text += msg.message.pollCreationMessage.name + ' '
-        if (msg.message.pollCreationMessage.options) {
-            for (let opt of msg.message.pollCreationMessage.options) {
-                if (opt.optionName) text += opt.optionName + ' '
+    if (!msg?.message) return ''
+    let result = ''
+    const allowedKeyNames = new Set([
+        'conversation', 'text', 'displaytext', 'caption',
+        'name', 'description', 'optionname', 'title', 'body',
+        'label', 'selectedoptionid', 'singleSelectReply', 'selected'
+    ])
+    const parentTextContainers = new Set([
+        'pollCreationMessage', 'pollcreationmessage', 'poll', 'options',
+        'eventMessage', 'eventmessage'
+    ])
+    function looksLikeMime(s) {
+        return /^[a-z]+\/[a-z0-9\-\+\.]+$/i.test(s)
+    }
+    function looksLikeShortId(s) {
+        if (!s) return true
+        if (s.length <= 2) return true
+        if (/^[A-Za-z0-9_-]{16,}$/.test(s)) return true
+        return false
+    }
+    function recurse(obj, path = []) {
+        if (!obj) return
+        if (typeof obj === 'string') {
+            const key = (path[path.length - 1] || '').toLowerCase()
+            const pathLower = path.map(p => String(p).toLowerCase())
+            const isAllowedKey = allowedKeyNames.has(key)
+            const insideParent = pathLower.some(p => parentTextContainers.has(p))
+            if (isAllowedKey || insideParent) {
+                const value = obj.trim()
+                if (!looksLikeMime(value) && !looksLikeShortId(value)) {
+                    result += value + ' '
+                }
+            }
+        } else if (typeof obj === 'object') {
+            for (let k in obj) {
+                if (k === 'quotedMessage') continue
+                recurse(obj[k], path.concat(k))
             }
         }
     }
-
-    // testo negli eventi
-    if (msg.message.eventMessage) {
-        if (msg.message.eventMessage.name) text += msg.message.eventMessage.name + ' '
-        if (msg.message.eventMessage.description) text += msg.message.eventMessage.description + ' '
-    }
-
-    return text.trim()
+    recurse(msg.message, [])
+    return result.trim()
 }
 
 async function getMediaBuffer(message) {
@@ -53,7 +67,6 @@ async function getMediaBuffer(message) {
         if (!msg) return null
         const type = msg.mimetype?.startsWith('video') ? 'video' : 'image'
         const stream = await downloadContentFromMessage(msg, type)
-
         let buffer = Buffer.from([])
         for await (const chunk of stream) {
             buffer = Buffer.concat([buffer, chunk])
@@ -65,21 +78,17 @@ async function getMediaBuffer(message) {
     }
 }
 
-// antiqr (api)
 async function readQRCode(imageBuffer) {
     try {
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), 5000)
-
         const formData = new FormData()
         formData.append('file', imageBuffer, 'image.jpg')
-
         const response = await fetch('https://api.qrserver.com/v1/read-qr-code/', {
             method: 'POST',
             body: formData,
             signal: controller.signal
         })
-
         clearTimeout(timeout)
         const data = await response.json()
         return data?.[0]?.symbol?.[0]?.data || null
@@ -91,27 +100,19 @@ async function readQRCode(imageBuffer) {
 
 export async function before(m, { isAdmin, isBotAdmin, conn }) {
     if (!m.isGroup || m.isBaileys) return true
-
     let chat = global.db.data.chats[m.chat]
     if (!chat.antilinktotale) return true
-
     const lowerText = (m.text || '').toLowerCase()
     if (ignoredCommands.some(cmd => lowerText.startsWith(cmd))) return true
-
     let rawText = extractText(m)
     let cleanedText = normalizeText(rawText)
-
     if (cleanedText && linkRegex.test(cleanedText)) {
         let matched = cleanedText.match(linkRegex)
         let link = matched ? matched[0] : ''
-
         if (safeDomains.some(domain => link.includes(domain))) return true
         if (isAdmin) return true
-
         await handleViolation({ conn, m, reason: '𝐋𝐈𝐍𝐊 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎' })
     }
-
-    // antiqr
     const media = await getMediaBuffer(m)
     if (media) {
         const qrData = await readQRCode(media)
@@ -121,17 +122,13 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
             await handleViolation({ conn, m, reason: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎' })
         }
     }
-
     return true
 }
 
-// warn e rimozione
 async function handleViolation({ conn, m, reason }) {
     const user = global.db.data.users[m.sender]
     user.warn = user.warn || 0
     user.warn += 1
-
-    // elimina messaggio
     await conn.sendMessage(m.chat, {
         delete: {
             remoteJid: m.chat,
@@ -140,13 +137,10 @@ async function handleViolation({ conn, m, reason }) {
             participant: m.key.participant || m.sender
         }
     })
-
-    // avviso warn
     await conn.sendMessage(m.chat, {
         text: `⚠️ ${reason}\n@${m.sender.split('@')[0]} 𝐡𝐚 𝐫𝐢𝐜𝐞𝐯𝐮𝐭𝐨 𝐮𝐧 𝐰𝐚𝐫𝐧.\n> 𝐖𝐚𝐫𝐧 *${user.warn} 𝐬𝐮 ${maxWarn}*`,
         mentions: [m.sender]
     })
-
     if (user.warn >= maxWarn) {
         user.warn = 0
         await conn.sendMessage(m.chat, {
@@ -155,4 +149,4 @@ async function handleViolation({ conn, m, reason }) {
         })
         await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
     }
-    }
+            }
