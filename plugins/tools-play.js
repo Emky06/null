@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 import fetch from "node-fetch";
 import yts from 'yt-search';
 import axios from "axios";
@@ -9,7 +9,7 @@ const formatVideo = ['360', '480', '720', '1080', '1440', '4k'];
 const ddownr = {
   download: async (url, format) => {
     if (!formatAudio.includes(format) && !formatVideo.includes(format)) {
-      throw new Error('Formato non supportato.');
+      throw new Error('𝐅𝐨𝐫𝐦𝐚𝐭𝐨 𝐧𝐨𝐧 𝐬𝐮𝐩𝐩𝐨𝐫𝐭𝐚𝐭𝐨.');
     }
 
     try {
@@ -25,10 +25,10 @@ const ddownr = {
           downloadUrl: await ddownr.cekProgress(data.id)
         };
       } else {
-        throw new Error('Errore nel recupero dei dettagli del video.');
+        throw new Error('𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐞𝐜𝐮𝐩𝐞𝐫𝐨 𝐝𝐞𝐢 𝐝𝐞𝐭𝐭𝐚𝐠𝐥𝐢 𝐝𝐞𝐥 𝐯𝐢𝐝𝐞𝐨.');
       }
     } catch (error) {
-      console.error('Errore:', error.message);
+      console.error('𝐄𝐫𝐫𝐨𝐫𝐞:', error.message);
       throw error;
     }
   },
@@ -46,7 +46,7 @@ const ddownr = {
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
     } catch (error) {
-      console.error('Errore:', error.message);
+      console.error('𝐄𝐫𝐫𝐨𝐫𝐞:', error.message);
       throw error;
     }
   }
@@ -54,13 +54,13 @@ const ddownr = {
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
-    if (!text.trim()) return conn.reply(m.chat, `💣 Inserisci il nome della musica.`, m);
+    if (!text?.trim()) return conn.reply(m.chat, `💣 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐨𝐦𝐞 𝐝𝐞𝐥𝐥𝐚 𝐦𝐮𝐬𝐢𝐜𝐚.`, m);
 
     const search = await yts(text);
-    if (!search.all.length) return conn.reply(m.chat, '❗ Nessun risultato trovato.', m);
+    if (!search.all.length) return conn.reply(m.chat, '❗ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐫𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐨 𝐭𝐫𝐨𝐯𝐚𝐭𝐨.', m);
 
     const videoInfo = search.all[0];
-    const { title, thumbnail, url } = videoInfo;
+    const { title, url } = videoInfo;
 
     if (command === 'play1') {
       await conn.reply(m.chat, `🎵 𝐒𝐭𝐨 𝐬𝐜𝐚𝐫𝐢𝐜𝐚𝐧𝐝𝐨 𝐥'𝐚𝐮𝐝𝐢𝐨...`, m);
@@ -81,28 +81,41 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       ];
 
       const results = await Promise.allSettled(sources.map(src => fetch(src).then(res => res.json())));
-      
+
       for (const result of results) {
         if (result.status === "fulfilled") {
           const { data, result: resResult, downloads } = result.value;
           const downloadUrl = data?.dl || resResult?.download?.url || downloads?.url || data?.download?.url;
           if (downloadUrl) {
-            return conn.sendMessage(m.chat, {
-              video: { url: downloadUrl },
-              fileName: `${title}.mp4`,
-              mimetype: 'video/mp4',
-              caption: '𝐒𝐜𝐚𝐫𝐢𝐜𝐚𝐭𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨✅'
-            }, { quoted: m });
+            const buttons = [
+              { buttonId: `.tomp3`, buttonText: { displayText: '🎧 𝐂𝐨𝐧𝐯𝐞𝐫𝐭𝐢 𝐢𝐧 𝐚𝐮𝐝𝐢𝐨' }, type: 1 }
+            ];
+
+            await conn.sendMessage(
+              m.chat,
+              {
+                video: { url: downloadUrl },
+                fileName: `${title}.mp4`,
+                mimetype: 'video/mp4',
+                caption: '𝐒𝐜𝐚𝐫𝐢𝐜𝐚𝐭𝐨 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨 ✅',
+                buttons: buttons,
+                headerType: 4
+              },
+              { quoted: m }
+            );
+
+            return;
           }
         }
       }
 
       return conn.reply(m.chat, `❗ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐥𝐢𝐧𝐤 𝐯𝐚𝐥𝐢𝐝𝐨 𝐭𝐫𝐨𝐯𝐚𝐭𝐨.`, m);
     } else {
-      throw "Comando non riconosciuto.";
+      throw "𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐧𝐨𝐧 𝐫𝐢𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨.";
     }
+
   } catch (error) {
-    return conn.reply(m.chat, `❗ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐥𝐢𝐧𝐤 𝐯𝐚𝐥𝐢𝐝𝐨 𝐭𝐫𝐨𝐯𝐚𝐭𝐨.`, m);
+    return conn.reply(m.chat, `❗ 𝐄𝐫𝐫𝐨𝐫𝐞: ${error.message}`, m);
   }
 };
 
