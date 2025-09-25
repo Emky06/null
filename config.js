@@ -10,11 +10,12 @@ global.owner = [
     ['573161874043', 'Owner', true],
     ['393335608801', 'Kinderino', true],
     ['639107484127', 'Riad', true],
+    ['393926119886', 'Vero', true],
     ['35795191323', 'Owner', true],
     ['35796261367', 'Owner', true],
-    ['393926119886', 'Owner', true],
+    ['393510240643', 'Owner', true],
+    ['393512884684', 'Owner', true],
     ['393715983481', 'Kinderino', true],
- 
 ] //Numero degli owner
 
 //────────────────────────────
