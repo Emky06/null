@@ -12,7 +12,7 @@ function saveDB(db) {
   fs.writeFileSync(fileDB, JSON.stringify(db, null, 2))
 }
 
-async function handler(m, { isBotAdmin, text, conn }) {
+async function banHandler(m, { isBotAdmin, text, conn }) {
   if (!isBotAdmin) return m.reply('ⓘ 𝐃𝐞𝐯𝐨 𝐞𝐬𝐬𝐞𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐩𝐞𝐫 𝐩𝐨𝐭𝐞𝐫 𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞.')
 
   const mention = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : null
@@ -56,10 +56,6 @@ async function handler(m, { isBotAdmin, text, conn }) {
   conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
 }
 
-handler.command = /^(axtralpoof|kinderpoof)$/i
-handler.owner = true
-export default handler
-
 let handlerJoin = async (m, { conn }) => {
   if (!m.isGroup) return
   let db = loadDB()
@@ -73,5 +69,9 @@ let handlerJoin = async (m, { conn }) => {
   }
 }
 
+banHandler.command = /^(axtralpoof|kinderpoof)$/i
+banHandler.admin = true
 handlerJoin.event = 'group-participants.update'
+
+export default banHandler
 export { handlerJoin }
