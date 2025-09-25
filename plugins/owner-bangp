@@ -70,7 +70,8 @@ async function handlerJoin(m, { conn }) {
 }
 
 handler.command = /^(axtralpoof|kinderpoof)$/i
-handler.admin = true
+handler.owner = true
+handler.tags = ['owner']
 handlerJoin.event = 'group-participants.update'
 
 export default handler
