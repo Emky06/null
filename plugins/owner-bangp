@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+ //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
 const fileDB = './banned.json'
