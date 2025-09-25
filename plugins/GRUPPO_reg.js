@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+ //Plugin fatto da Axtral_WiZaRd
 let Reg = /^\s*(Maschio|Femmina|Altro)\s+(\d{1,2})$/i
 
 let handler = async function (m, { conn, text, args, usedPrefix, command }) {
