@@ -12,7 +12,7 @@ import NodeCache from 'node-cache'
 global.ignoredUsersGlobal = global.ignoredUsersGlobal || new Set()
 global.ignoredUsersGroup = global.ignoredUsersGroup || {}
 global.groupSpam = global.groupSpam || {}
-global.lastRemovals = global.lastRemovals || {}
+
 
 // Inizializzazione cache per gruppi e admin
 if (!global.groupCache) {
@@ -50,38 +50,7 @@ export async function handler(chatUpdate) {
         return
     this.pushMessage(chatUpdate.messages).catch(console.error)
     let m = chatUpdate.messages[chatUpdate.messages.length - 1]
-    // Traccia i comandi di kick
-    if (m.message && (m.message.conversation || m.message.extendedTextMessage)) {
-        const text = (m.message.conversation || m.message.extendedTextMessage?.text || '').toLowerCase();
-        
-        // Lista comandi di kick
-        const removeCommands = [
-            '.kick', '.kamehameha', '.getout', '.avadakedavra', '.sparisci', '.caccola', '.vongole', '.puffo', '.allahuakbar',
-            'kick', 'kamehameha', 'getout', 'avadakedavra', 'sparisci', 'caccola', 'vongole', 'puffo', 'allahuakbar',
-        ];
-        
-        const isRemoveCommand = removeCommands.some(cmd => text.startsWith(cmd + ' ') || text === cmd);
-        
-        if (isRemoveCommand && m.key.remoteJid && m.key.remoteJid.includes('@g.us')) {
-            const mentionedJids = m.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
-            
-            for (const userJid of mentionedJids) {
-                const removalKey = `${m.key.remoteJid}_${userJid}`;
-                global.lastRemovals[removalKey] = {
-                    timestamp: Date.now(),
-                    admin: m.sender,
-                    group: m.key.remoteJid
-                };
-                
-                setTimeout(() => {
-                    if (global.lastRemovals[removalKey]) {
-                        delete global.lastRemovals[removalKey];
-                    }
-                }, 5000);
-            }
-        }
-    }
-    // Fine tracciamento
+
     if (!m)
         return
     
@@ -706,118 +675,107 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
 
 
 export async function participantsUpdate({ id, participants, action }) {
-    if (opts['self'])
-        return
-    if (this.isInit) 
-        return
-    if (global.db.data == null)
-        await loadDatabase()
+if (opts['self'])
+return
+if (this.isInit)
+return
+if (global.db.data == null)
+await loadDatabase()
 
+// Aggiorna la cache quando cambiano i partecipanti  
+if (action === 'add' || action === 'remove' || action === 'promote' || action === 'demote') {  
+    try {  
+        let metadata = global.groupCache.get(id);  
+        if (!metadata) {  
+            metadata = await fetchGroupMetadataWithRetry(this, id);  
+            if (metadata) global.groupCache.set(id, metadata);  
+        }  
 
-    if (action === 'add' || action === 'remove' || action === 'promote' || action === 'demote') {
-        try {
-            let metadata = global.groupCache.get(id);
-            if (!metadata) {
-                metadata = await fetchGroupMetadataWithRetry(this, id);
-                if (metadata) global.groupCache.set(id, metadata);
-            }
+        if (!global.adminCache.has(id)) {  
+            global.adminCache.set(id, new Set());  
+        }  
+        const adminSet = global.adminCache.get(id);  
 
-            if (!global.adminCache.has(id)) {
-                global.adminCache.set(id, new Set());
-            }
-            const adminSet = global.adminCache.get(id);
+        for (const user of participants) {  
+            const normalizedUser = this.decodeJid(user);  
+            switch (action) {  
+                case 'remove':  
+                    adminSet.delete(normalizedUser);  
+                    break;  
+                case 'promote':  
+                    adminSet.add(normalizedUser);  
+                    break;  
+                case 'demote':  
+                    adminSet.delete(normalizedUser);  
+                    break;  
+            }  
+        }  
 
-            for (const user of participants) {
-                const normalizedUser = this.decodeJid(user);
-                switch (action) {
-                    case 'remove':
-                        adminSet.delete(normalizedUser);
-                        break;
-                    case 'promote':
-                        adminSet.add(normalizedUser);
-                        break;
-                    case 'demote':
-                        adminSet.delete(normalizedUser);
-                        break;
-                }
-            }
+        if (metadata) {  
+            metadata.admins = Array.from(adminSet);  
+            global.groupCache.set(id, metadata);  
+        }  
+    } catch (e) {  
+        console.error(`[ERRORE] Errore in participantsUpdate per ${id}:`, e);  
+    }  
+}  
 
-            if (metadata) {
-                metadata.admins = Array.from(adminSet);
-                global.groupCache.set(id, metadata);
-            }
-        } catch (e) {
-            console.error(`[ERRORE] Errore in participantsUpdate per ${id}:`, e);
-        }
-    }
+let chat = global.db.data.chats[id] || {}  
+let text = ''  
 
-    let chat = global.db.data.chats[id] || {}
-    let text = ''
+switch (action) {  
+    case 'add':  
+    case 'remove':  
+    case 'leave':  
+        if (chat.benvenuto) {  
+            let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata  
+            for (let user of participants) {  
+                let pp = './icone/benvenuto.png'  
+                try {  
+                    pp = await this.profilePictureUrl(user, 'image')  
+                } catch (e) {  
+                } finally {  
+                    let apii = await this.getFile(pp)  
 
-    switch (action) {
-        case 'add':
-        case 'remove':
-        case 'leave':
-            if (chat.benvenuto) {
-                let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
-                for (let user of participants) {
-                    let pp = './icone/benvenuto.png'
-                    try {
-                        pp = await this.profilePictureUrl(user, 'image')
-                    } catch (e) {
-                    } finally {
-                        let apii = await this.getFile(pp)
+                    if (action === 'add') {  
+                        text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'benvenuto, @user!')  
+                            .replace('@subject', await this.getName(id))  
+                            .replace('@desc', groupMetadata.desc?.toString() || 'bot')  
+                            .replace('@user', '@' + user.split('@')[0])  
+                    } else if (action === 'leave') {  
+                        text = (chat.sBye || this.bye || conn.bye || 'bye bye, @user!')  
+                            .replace('@user', '@' + user.split('@')[0])  
+                    } else if (action === 'remove') {  
+                        text = (chat.sRemoveCustom || this.remove || conn.remove || '@user è stato rimosso!')  
+                            .replace('@user', '@' + user.split('@')[0])  
+                    }  
 
+                    this.sendMessage(id, {   
+                        text: text,   
+                        contextInfo:{   
+                            mentionedJid:[user],  
+                            "externalAdReply": {  
+                                "title": (  
+                                    action === 'add'   
+                                        ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'   
+                                        : action === 'leave'   
+                                            ? '𝐀𝐃𝐃𝐈𝐎 👋🏻'   
+                                            : '𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 ❌'  
+                                ),   
+                                "body": ``,   
+                                "previewType": "PHOTO",   
+                                "thumbnailUrl": ``,   
+                                "thumbnail": apii.data,  
+                                "mediaType": 1  
+                            }  
+                        }  
+                    })   
+                }   
+            }   
+        }  
+        break  
+}
 
-                        let actualAction = action;
-                        if (action === 'remove') {
-                            const removalKey = `${id}_${user}`;
-                            if (global.lastRemovals[removalKey] && Date.now() - global.lastRemovals[removalKey].timestamp < 5000) {
-                                actualAction = 'remove'; 
-                                delete global.lastRemovals[removalKey];
-                            } else {
-                                actualAction = 'leave';
-                            }
-                        }
-
-                        if (action === 'add' || actualAction === 'add') {
-                            text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'benvenuto, @user!')
-                                .replace('@subject', await this.getName(id))
-                                .replace('@desc', groupMetadata.desc?.toString() || 'bot')
-                                .replace('@user', '@' + user.split('@')[0])
-                        } else if (action === 'leave' || actualAction === 'leave') {
-                            text = (chat.sBye || this.bye || conn.bye || 'bye bye, @user!')
-                                .replace('@user', '@' + user.split('@')[0])
-                        } else if (actualAction === 'remove') {
-                            text = (chat.sRemoveCustom || this.remove || conn.remove || '@user è stato rimosso!')
-                                .replace('@user', '@' + user.split('@')[0])
-                        }
-
-                        this.sendMessage(id, { 
-                            text: text, 
-                            contextInfo:{ 
-                                mentionedJid:[user],
-                                "externalAdReply": {
-                                    "title": (
-                                        action === 'add' || actualAction === 'add'
-                                            ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻' 
-                                            : action === 'leave' || actualAction === 'leave'
-                                                ? '𝐀𝐃𝐃𝐈𝐎 👋🏻' 
-                                                : '𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 ❌'
-                                    ), 
-                                    "body": ``, 
-                                    "previewType": "PHOTO", 
-                                    "thumbnailUrl": ``, 
-                                    "thumbnail": apii.data,
-                                    "mediaType": 1
-                                }
-                            }
-                        }) 
-                    } 
-                } 
-            }
-            break
-    }
 }
 
 
