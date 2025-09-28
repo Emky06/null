@@ -10,7 +10,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393517216921',//mio bot presta
         '393792829288',//reo
         '393519497833',//sedux
-        '639107484127',//riad
+        '393508571301',//riad
         '393513348007',//sara
         '212617488471',//sara voip
         '639634295192',//sophi
@@ -18,7 +18,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '421233456345',//kinderboy
         '393715983481',//kinderboy
         '393335608801',//kinderboy
-        '6285709246760',//bry
+        '6285179461237',//fuma
         '393892016995',//dieh
         '212675592685',//dieh voip
         '85244141435',//nyx
