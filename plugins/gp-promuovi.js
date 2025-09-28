@@ -12,7 +12,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393517216921',//mio bot presta
         '393792829288',//reo
         '393519497833',//sedux
-        '639107484127',//riad
+        '393508571301',//riad
         '393513348007',//sara
         '212617488471',//sara voip
         '639634295192',//sophi
