@@ -34,6 +34,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '17085153934',//etto astrum
         '989197748382',//emma astrum
         '393343343246',//kiko
+        '212775421202',//naomi
     ];
 
     const senderNumber = m.sender.split('@')[0];
