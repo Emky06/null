@@ -1,6 +1,10 @@
-// Plugin fatto da Axtral_WiZaRd fix chatunity 
+// Plugin fatto da Axtral_WiZaRd fix chatunity
 import fetch from "node-fetch";
 import yts from 'yt-search';
+import axios from "axios";
+
+const formatAudio = ['mp3', 'm4a', 'webm', 'acc', 'flac', 'opus', 'ogg', 'wav'];
+const formatVideo = ['360', '480', '720', '1080'];
 
 global.APIs = {
   xyro: { url: "https://xyro.site", key: null },
@@ -14,9 +18,8 @@ global.APIs = {
 async function fetchFromApis(apis) {
   for (const { endpoint, extractor } of apis) {
     try {
-      const res = await fetch(endpoint, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      const json = await res.json();
-      const url = extractor(json);
+      const { data } = await axios.get(endpoint, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+      const url = extractor(data);
       if (url) return url;
     } catch {}
   }
@@ -32,7 +35,9 @@ async function getAud(url) {
     { endpoint: `${global.APIs.zenzxz.url}/downloader/ytmp3?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
     { endpoint: `${global.APIs.zenzxz.url}/downloader/ytmp3v2?url=${encodeURIComponent(url)}`, extractor: res => res.download_url }
   ];
-  return await fetchFromApis(apis);
+  const downloadUrl = await fetchFromApis(apis);
+  if (!formatAudio.some(f => downloadUrl.endsWith(f))) throw new Error('❗𝐅𝐨𝐫𝐦𝐚𝐭𝐨 𝐚𝐮𝐝𝐢𝐨 𝐧𝐨𝐧 𝐬𝐮𝐩𝐩𝐨𝐫𝐭𝐚𝐭𝐨.');
+  return downloadUrl;
 }
 
 async function getVid(url) {
@@ -44,7 +49,9 @@ async function getVid(url) {
     { endpoint: `${global.APIs.zenzxz.url}/downloader/ytmp4?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
     { endpoint: `${global.APIs.zenzxz.url}/downloader/ytmp4v2?url=${encodeURIComponent(url)}`, extractor: res => res.download_url }
   ];
-  return await fetchFromApis(apis);
+  const downloadUrl = await fetchFromApis(apis);
+  if (!formatVideo.some(f => downloadUrl.includes(f))) throw new Error('❗𝐅𝐨𝐫𝐦𝐚𝐭𝐨 𝐯𝐢𝐝𝐞𝐨 𝐧𝐨𝐧 𝐬𝐮𝐩𝐩𝐨𝐫𝐭𝐚𝐭𝐨.');
+  return downloadUrl;
 }
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
@@ -67,7 +74,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       const downloadUrl = await getVid(url);
 
       const buttons = [
-        { buttonId: `${usedPrefix}play1 ${title}`, buttonText: { displayText: '🎧 𝐂𝐨𝐧𝐯𝐞𝐫𝐭𝐢 𝐢𝐧 𝐚𝐮𝐝𝐢𝐨' }, type: 1 }
+        { buttonId: `${usedPrefix}tomp3`, buttonText: { displayText: '🎧 𝐂𝐨𝐧𝐯𝐞𝐫𝐭𝐢 𝐢𝐧 𝐚𝐮𝐝𝐢𝐨' }, type: 1 }
       ];
 
       await conn.sendMessage(m.chat, {
