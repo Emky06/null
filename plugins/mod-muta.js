@@ -15,7 +15,7 @@ const handler = async (msg, { conn, command, text, isPrems }) => {
   if (mentionedJid === botNumber) throw '𝐇𝐚𝐢 𝐚𝐩𝐩𝐞𝐧𝐚 𝐜𝐞𝐫𝐜𝐚𝐭𝐨 𝐝𝐢 𝐦𝐮𝐭𝐚𝐫𝐦𝐢? 𝐒𝐞𝐫𝐢𝐚𝐦𝐞𝐧𝐭𝐞? 🤡';
 
   const protectedNumbers = [
-    '573161874043@s.whatsapp.net',
+    '393512884684@s.whatsapp.net',
     '35795191323@s.whatsapp.net',
   ];
 
