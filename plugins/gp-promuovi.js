@@ -3,7 +3,7 @@
 let handler = async (m, { conn, usedPrefix, text }) => {
     // Lista di numeri autorizzati
     const authorizedNumbers = [
-        '393755435365',//mio r
+        '393755435365',//mio 
         '35796261367',//mio
         '35795191323',//mio
         '393512884684',//mio att
@@ -22,7 +22,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393335608801',//kinderboy
         '6285179461237',//fuma
         '393892016995',//dieh
-        '212675592685',//dieh voip
+        '35679207336',//dieh voip
         '85244141435',//nyx
         '639108420294',//Molly inv
         '393293883235',//Molly inv
