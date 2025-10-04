@@ -1,26 +1,12 @@
 import Jimp from 'jimp';
 
-let handler = async (m, { args, conn, command }) => {
-  const numeroAutorizzato = '393512884684@s.whatsapp.net';
-  const gruppoNotifica = '120363396779012019@g.us';
-
-  if (m.sender !== numeroAutorizzato) {
-    let alertMessage = `⚠️ Numero *${m.sender.split('@')[0]}* ha provato a usare il comando *setppbot*!`;
-    
-    await conn.sendMessage(gruppoNotifica, {
-      text: alertMessage,
-      mentions: [m.sender]
-    });
-
-    await m.reply('⚠️ Non hai il permesso di usare questo comando!');
-    return;
-  }
+let handler = async (m, { args, conn }) => {
 
   let q = m.quoted ? m.quoted : m;
   let mime = (q.msg || q).mimetype || q.mediaType || '';
   
   if (!/image/g.test(mime)) {
-    return m.reply('Rispondi a un\'immagine.');
+    return m.reply('𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧\'𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞.');
   }
 
   let media = await q.download();
@@ -40,11 +26,11 @@ let handler = async (m, { args, conn, command }) => {
         content: img
       }]
     });
-    return m.reply('La foto profilo del bot è stata cambiata con successo.');
+    return m.reply('𝐋𝐚 𝐟𝐨𝐭𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐝𝐞𝐥 𝐛𝐨𝐭 𝐞̀ 𝐬𝐭𝐚𝐭𝐚 𝐜𝐚𝐦𝐛𝐢𝐚𝐭𝐚 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.');
   }
 
   await conn.updateProfilePicture(conn.user.jid, media);
-  await m.reply('La foto profilo del bot è stata cambiata con successo.');
+  await m.reply('𝐋𝐚 𝐟𝐨𝐭𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐝𝐞𝐥 𝐛𝐨𝐭 𝐞̀ 𝐬𝐭𝐚𝐭𝐚 𝐜𝐚𝐦𝐛𝐢𝐚𝐭𝐚 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.');
 };
 
 handler.help = ['setppbot'];
