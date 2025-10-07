@@ -17,13 +17,9 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '212617488471',//sara voip
         '639634295192',//sophi
         '212772894889',//bibi
-        '421233456345',//kinderboy
-        '393715983481',//kinderboy
         '393335608801',//kinderboy
         '6285179461237',//fuma
-        '393892016995',//dieh
-        '35679207336',//dieh voip
-        '85244141435',//nyx
+        '212783386055',//dieh voip
         '639108420294',//Molly inv
         '393293883235',//Molly inv
         '421233456347',//nasty
@@ -32,9 +28,8 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '6283166405361',//sara synerax
         '221706918926',//kekka polaris
         '17085153934',//etto astrum
-        '989197748382',//emma astrum
         '393343343246',//kiko
-        '212775421202',//naomi
+        '212688796140',//naomi
     ];
 
     const senderNumber = m.sender.split('@')[0];
