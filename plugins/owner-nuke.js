@@ -16,7 +16,7 @@ let handler = async (m, { conn, args, groupMetadata, participants, usedPrefix, c
             });
             let utenti = participants.map(u => u.id);
             await conn.sendMessage(m.chat, {
-                text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/EUm01LBti4FGqvsudo1h3J',
+                text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme',
                 mentions: utenti
             });
             
