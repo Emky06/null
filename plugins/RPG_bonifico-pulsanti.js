@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 let confirmation = {};
 
 async function formatNumber(n) {
@@ -7,17 +7,16 @@ async function formatNumber(n) {
 
 let handler = async (m, { conn, args }) => {
   const user = global.db.data.users[m.sender];
-  const lol = `❌ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐫𝐫𝐚𝐭𝐨. 𝐄𝐬𝐞𝐦𝐩𝐢𝐨:  .bonifico 50 @user  — oppure — .bonifico tutto @user`;
+  const errore = `❌ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐫𝐫𝐚𝐭𝐨.\n📘 𝐄𝐬𝐞𝐦𝐩𝐢𝐨:\n.bonifico 50 @user\n— oppure —\n.bonifico tutto @user\n— oppure —\n.bonifico 50 (rispondendo a un messaggio)`;
 
-  if (!args[0]) return m.reply(lol);
-  if (!args[1]) return m.reply(lol);
+  if (!args[0]) return m.reply(errore);
 
-  let mentionedJid = m.mentionedJid && m.mentionedJid[0];
-  if (!mentionedJid) return m.reply('❌ 𝐃𝐞𝐯𝐞 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞 𝐥𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚 𝐚𝐥𝐥𝐚 𝐪𝐮𝐚𝐥𝐞 𝐯𝐮𝐨𝐥𝐞 𝐢𝐧𝐯𝐢𝐚𝐫𝐞 𝐢𝐥 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨.');
+
+  let mentionedJid = m.mentionedJid?.[0] || m.quoted?.sender;
+  if (!mentionedJid) return m.reply('❌ 𝐃𝐞𝐯𝐞 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞 𝐚 𝐥𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚 𝐚 𝐜𝐮𝐢 𝐯𝐮𝐨𝐥𝐞 𝐢𝐧𝐯𝐢𝐚𝐫𝐞 𝐢𝐥 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨.');
   if (mentionedJid === m.sender) return m.reply('❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐟𝐚𝐫𝐞 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.');
 
   let count;
-
   if (args[0].toLowerCase() === 'tutto') {
     if (user.money <= 0) return m.reply('❌ 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐬𝐨𝐥𝐝𝐢 𝐝𝐚 𝐢𝐧𝐯𝐢𝐚𝐫𝐞.');
     count = user.money;
@@ -27,15 +26,15 @@ let handler = async (m, { conn, args }) => {
     if (user.money < count) return m.reply('❌ 𝐍𝐨𝐧 𝐩𝐨𝐬𝐬𝐢𝐞𝐝𝐢 𝐚𝐛𝐛𝐚𝐬𝐭𝐚𝐧𝐳𝐚 𝐬𝐨𝐥𝐝𝐢 𝐩𝐞𝐫 𝐞𝐟𝐟𝐞𝐭𝐭𝐮𝐚𝐫𝐞 𝐢𝐥 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨.');
   }
 
-  let confirmText = `🏦 𝐁𝐚𝐧𝐜𝐚: 𝐜𝐨𝐧𝐟𝐞𝐫𝐦𝐚 𝐢𝐥 𝐭𝐫𝐚𝐬𝐟𝐞𝐫𝐢𝐦𝐞𝐧𝐭𝐨 𝐝𝐢 ${await formatNumber(count)} € 𝐚 @${mentionedJid.split('@')[0]}`;
+  let confirmText = `🏦 𝐁𝐚𝐧𝐜𝐚: 𝐜𝐨𝐧𝐟𝐞𝐫𝐦𝐚 𝐢𝐥 𝐭𝐫𝐚𝐬𝐟𝐞𝐫𝐢𝐦𝐞𝐧𝐭𝐨 𝐝𝐢 ${await formatNumber(count)} € 𝐚 @${mentionedJid.split('@')[0]} ?`;
 
   await conn.sendMessage(m.chat, {
     text: confirmText,
     mentions: [mentionedJid, m.sender],
-    footer: 'Conferma il bonifico usando i pulsanti',
+    footer: '💳 𝐂𝐨𝐧𝐟𝐞𝐫𝐦𝐚 𝐢𝐥 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨 𝐮𝐬𝐚𝐧𝐝𝐨 𝐢 𝐩𝐮𝐥𝐬𝐚𝐧𝐭𝐢:',
     buttons: [
-      { buttonId: 'bonifico_si', buttonText: { displayText: '✅ Si' }, type: 1 },
-      { buttonId: 'bonifico_no', buttonText: { displayText: '❌ No' }, type: 1 }
+      { buttonId: 'bonifico_si', buttonText: { displayText: '✅ 𝐒𝐢' }, type: 1 },
+      { buttonId: 'bonifico_no', buttonText: { displayText: '❌ 𝐍𝐨' }, type: 1 }
     ],
     headerType: 1
   }, { quoted: m });
@@ -54,6 +53,7 @@ let handler = async (m, { conn, args }) => {
 handler.command = ['bonifico'];
 handler.rowner = false;
 handler.limit = true;
+
 
 handler.before = async (m, { conn }) => {
   if (m.isBaileys) return;
@@ -91,7 +91,7 @@ handler.before = async (m, { conn }) => {
 
     await conn.sendMessage(m.chat, {
       text: `✔️ 𝐇𝐚𝐢 𝐞𝐟𝐟𝐞𝐭𝐭𝐮𝐚𝐭𝐨 𝐮𝐧 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨 𝐝𝐢 ${await formatNumber(count)} € 𝐚 @${to.split('@')[0]} 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.`,
-      mentions: [to]
+      mentions: [to, m.sender]
     }, { quoted: m });
 
     return true;
