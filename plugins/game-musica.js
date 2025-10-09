@@ -108,10 +108,9 @@ async function startGame(m, conn, chat, artist = null) {
         const audioPath = path.join(tmpDir, `song_${Date.now()}.mp3`)
         fs.writeFileSync(audioPath, Buffer.from(audioResponse.data))
         await conn.sendMessage(m.chat, { 
-            audio: fs.readFileSync(audioPath),
-            mimetype: 'audio/mp4',
-            ptt: true
-        }, { quoted: m })
+    audio: fs.readFileSync(audioPath),
+    mimetype: 'audio/mpeg'
+}, { quoted: m })
         fs.unlinkSync(audioPath)
         const formatGameMessage = (timeLeft) => `
 ╭〔 *𝐈𝐍𝐃𝐎𝐕𝐈𝐍𝐀 𝐂𝐀𝐍𝐙𝐎𝐍𝐄* 〕╮
