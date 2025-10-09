@@ -5,7 +5,10 @@ let handler = async (m, { conn }) => {
     let audioPath = './storage/mp3/freestyle.mp3';
 
     // Invia il file audio come messaggio nel gruppo
-    await conn.sendMessage(m.chat, { audio: { url: audioPath }, mimetype: 'audio/mp4', ptt: true });
+    await conn.sendMessage(m.chat, { 
+  audio: { url: audioPath }, 
+  mimetype: 'audio/mpeg' 
+});
   } catch (err) {
     console.error('𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨❗', err);
     await m.reply('⚠️ 𝐄𝐫𝐫𝐨𝐫𝐞');
