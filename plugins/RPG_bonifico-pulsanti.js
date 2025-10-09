@@ -33,8 +33,8 @@ let handler = async (m, { conn, args }) => {
     mentions: [mentionedJid, m.sender],
     footer: '💳 𝐂𝐨𝐧𝐟𝐞𝐫𝐦𝐚 𝐢𝐥 𝐛𝐨𝐧𝐢𝐟𝐢𝐜𝐨 𝐮𝐬𝐚𝐧𝐝𝐨 𝐢 𝐩𝐮𝐥𝐬𝐚𝐧𝐭𝐢:',
     buttons: [
-      { buttonId: 'bonifico_si', buttonText: { displayText: '✅ 𝐒𝐢' }, type: 1 },
-      { buttonId: 'bonifico_no', buttonText: { displayText: '❌ 𝐍𝐨' }, type: 1 }
+      { buttonId: 'bonifico_si', buttonText: { displayText: '✅ Si' }, type: 1 },
+      { buttonId: 'bonifico_no', buttonText: { displayText: '❌ No' }, type: 1 }
     ],
     headerType: 1
   }, { quoted: m });
