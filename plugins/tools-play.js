@@ -37,7 +37,7 @@ try {
 cekProgress: async (id) => {
 try {
 while (true) {
-const { data } = await axios.get('https://p.oceansaver.in/ajax/progress.php?id=${id}', {
+const { data } = await axios.get(https://p.oceansaver.in/ajax/progress.php?id=${id}, {
 headers: { 'User-Agent': 'Mozilla/5.0' }
 });
 
