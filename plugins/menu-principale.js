@@ -1,58 +1,53 @@
+//Plugin fatto da Axtral_WiZaRd
 import { performance } from 'perf_hooks';
-import fetch from 'node-fetch'; // Assicurati di avere node-fetch installato
+import fetch from 'node-fetch';
 
 const handler = async (message, { conn, usedPrefix }) => {
-  const userCount = Object.keys(global.db.data.users).length;
   const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
-  const menuText = generateMenuText(usedPrefix, botName, userCount);
+  const menuText = generateMenuText(usedPrefix, botName);
 
-  const messageOptions = {
-    contextInfo: {
-      
-    }
-  };
-
-  // Invia il menu e i bottoni  
-  await conn.sendMessage(message.chat, {
-    text: menuText,
-    footer: 'Scegli un menu:',
-    buttons: [
-      { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 Menu Owner" }, type: 1 },
-      { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ Menu Admin" }, type: 1 },
-      { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
-      { buttonId: `${usedPrefix}funzioni`, buttonText: { displayText: "🔧 Menu Funzioni" }, type: 1 },
-      { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 Menu Gruppo" }, type: 1 },
-      { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
-    ],
-    viewOnce: true,
-    ...messageOptions
-  }, { quoted: message });
-};
-
-async function fetchThumbnail(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    return new Uint8Array(arrayBuffer);
-  } catch (error) {
-    console.error('Errore durante il fetch della thumbnail:', error);
-    return 'default-thumbnail'; // Fallback thumbnail in caso di errore
-  }
-}
+  await conn.sendMessage(
+    message.chat,
+    {
+      text: menuText,
+      interactiveButtons: [
+        {
+          name: 'single_select',
+          buttonParamsJson: JSON.stringify({
+            title: '📝 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧 𝐦𝐞𝐧𝐮̀',
+            sections: [
+              {
+                title: '𝐌𝐞𝐧𝐮̀',
+                rows: [
+                  { title: '👑 𝐏𝐫𝐨𝐩𝐫𝐢𝐞𝐭𝐚𝐫𝐢𝐨', description: 'Comandi del proprietario', id: `${usedPrefix}proprietario` },
+                  { title: '🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫', description: 'Comandi proprietario', id: `${usedPrefix}owner` },
+                  { title: '🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧', description: 'Comandi amministratore', id: `${usedPrefix}admin` },
+                  { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatore', id: `${usedPrefix}mod` },
+                  { title: '🔧 𝐌𝐞𝐧𝐮̀ 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐢', description: 'Comandi generali e utilità', id: `${usedPrefix}funzioni` },
+                  { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi per la gestione dei gruppi', id: `${usedPrefix}gruppo` },
+                  { title: '🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢', description: 'Comandi per giochi e intrattenimento', id: `${usedPrefix}giochi` },
+                  { title: '📞 𝐒𝐮𝐩𝐩𝐨𝐫𝐭𝐨', description: 'Richiedi supporto', id: `${usedPrefix}supporto` },
+                  { title: '🤖 𝐈𝐧𝐟𝐨𝐛𝐨𝐭', description: 'Info sul bot', id: `${usedPrefix}infobot` }
+                ]
+              }
+            ]
+          })
+        }
+      ]
+    },
+    { quoted: message }
+  );
+};!
 
 handler.help = ['menu'];
 handler.tags = ['menu'];
-handler.command = /^(menu|comandi)$/i;
+handler.command = /^(menu)$/i;
 
 export default handler;
 
 function generateMenuText(prefix, botName, userCount) {
-  // Definisci la variabile vs oppure rimuovila se non serve
-  const vs = '1.0.0'; // esempio versione
+  const vs = '2.0';
 
   return `
 ╭〔🤖𝑴𝑬𝑵𝑼 𝑫𝑬𝑳 𝑩𝑶𝑻🤖〕╮
@@ -62,14 +57,14 @@ function generateMenuText(prefix, botName, userCount) {
 ┃ 👑 .𝑷𝑹𝑶𝑷𝑹𝑰𝑬𝑻𝑨𝑹𝑰𝑶
 ┃ 🔱 .𝑶𝑾𝑵𝑬𝑹
 ┃ 🛡️ .𝑨𝑫𝑴𝑰𝑵
-┃ 👮🏻‍♂️.𝑴𝑶𝑫
+┃ 👮🏻‍♂️ .𝑴𝑶𝑫
 ┃ 🔧 .𝑭𝑼𝑵𝒁𝑰𝑶𝑵𝑰
 ┃ 👥 .𝑮𝑹𝑼𝑷𝑷𝑶
 ┃ 🎮 .𝑮𝑰𝑶𝑪𝑯𝑰
 ┃ 📞 .𝑺𝑼𝑷𝑷𝑶𝑹𝑻𝑶
 ┃ 🤖 .𝑰𝑵𝑭𝑶𝑩𝑶𝑻
 ╰━━━━━━━━━━━━━━━━━╯
-🤖 *𝑩𝒐𝒕*: 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
-🌟 *𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆:* Unica
+🤖 *𝑩𝒐𝒕*: ${botName}
+🌟 *𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆:* ${vs}
 `.trim();
 }
