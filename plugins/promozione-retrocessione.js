@@ -17,7 +17,7 @@ handler.before = async function (message, { conn }) {
     const chat = global.db.data.chats[message.chat] || {};
     const detectEnabled = chat.detect;
 
-    // Promozione a admin
+  
     if (message.messageStubType === 29 && detectEnabled) {
         let profilePicture;
         try {
@@ -43,7 +43,7 @@ handler.before = async function (message, { conn }) {
         }, { quoted: null });
     }
 
-    // Retrocessione da admin
+  
     if (message.messageStubType === 30 && detectEnabled) {
         let profilePicture;
         try {
