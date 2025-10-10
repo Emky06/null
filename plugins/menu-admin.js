@@ -1,55 +1,49 @@
+//Plugin fatto da Axtral_WiZaRd
 import { performance } from 'perf_hooks';
-import fetch from 'node-fetch'; // Assicurati di avere node-fetch installato
+import fetch from 'node-fetch';
 
 const handler = async (message, { conn, usedPrefix, command }) => {
-    const userCount = Object.keys(global.db.data.users).length;
     const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
-    if (command === 'menu') {
-        return await (await import('./menu-principale.js')).default(message, { conn, usedPrefix });
-    }
-    if (command === 'owner') {
-        return await (await import('./menu-owner.js')).default(message, { conn, usedPrefix });
-    }
-    if (command === 'mod') {
-        return await (await import('./menu-mod')).default(message, { conn, usedPrefix });
-    }
-    if (command === 'funzioni') {
-        return await (await import('./menu-funzioni.js')).default(message, { conn, usedPrefix });
-    }
-    if (command === 'gruppo') {
-        return await (await import('./menu-gruppo.js')).default(message, { conn, usedPrefix });
-    }
-    if (command === 'giochi') {
-        return await (await import('./menu-giochi.js')).default(message, { conn, usedPrefix });
-    }
-    const menuText = generateMenuText(usedPrefix, botName, userCount);
+    const menuText = generateMenuText(usedPrefix, botName);
 
     await conn.sendMessage(
         message.chat,
         {
             text: menuText,
-            footer: 'Scegli un menu:',
-            buttons: [
-                { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 Menu Principale" }, type: 1 },
-                { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 Menu Owner" }, type: 1 },
-                { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
-                { buttonId: `${usedPrefix}funzioni`, buttonText: { displayText: "🔧 Menu Funzioni" }, type: 1 },
-                { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 Menu Gruppo" }, type: 1 },
-                { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
-            ],
-            viewOnce: true,
-        }
+            interactiveButtons: [
+                {
+                    name: 'single_select',
+                    buttonParamsJson: JSON.stringify({
+                        title: '📝 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧 𝐦𝐞𝐧𝐮̀',
+                        sections: [
+                            {
+                                title: '𝐌𝐞𝐧𝐮̀',
+                                rows: [
+                                    { title: '🏠 𝐌𝐞𝐧𝐮̀ 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐚𝐥𝐞', description: 'Torna al menu principale', id: `${usedPrefix}menu` },
+                                    { title: '👑 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫', description: 'Comandi del proprietario', id: `${usedPrefix}owner` },
+                                    { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatore', id: `${usedPrefix}mod` },
+                                    { title: '🔧 𝐌𝐞𝐧𝐮̀ 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐢', description: 'Comandi generali e utilità', id: `${usedPrefix}funzioni` },
+                                    { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi per la gestione dei gruppi', id: `${usedPrefix}gruppo` },
+                                    { title: '🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢', description: 'Comandi per giochi e intrattenimento', id: `${usedPrefix}giochi` }
+                                ]
+                            }
+                        ]
+                    })
+                }
+            ]
+        },
+        { quoted: message }
     );
 };
 
-handler.help = ['admin', 'menu', 'owner', 'funzioni', 'gruppo'];
+handler.help = ['admin'];
 handler.tags = ['menuadmin'];
-handler.command = /^(admin|menu|owner|funzioni|gruppo)$/i;
+handler.command = /^(admin)$/i;
 
 export default handler;
 
-function generateMenuText(prefix, botName, userCount) {
+function generateMenuText(prefix, botName) {
     return `
 ┏━━━━━━━━━━━━━━━━━━━┓
 ┃   🛡️𝐌 𝐄 𝐍 𝐔   𝐀 𝐃 𝐌 𝐈 𝐍🛡️   ┃
