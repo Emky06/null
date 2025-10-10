@@ -3,9 +3,8 @@ import { performance } from 'perf_hooks';
 import fetch from 'node-fetch';
 
 const handler = async (message, { conn, usedPrefix, command }) => {
-    const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
-
-    const menuText = generateMenuText(usedPrefix, botName);
+    
+    const menuText = generateMenuText(usedPrefix);
 
     await conn.sendMessage(
         message.chat,
@@ -43,7 +42,7 @@ handler.command = /^(admin)$/i;
 
 export default handler;
 
-function generateMenuText(prefix, botName) {
+function generateMenuText(prefix) {
     return `
 ┏━━━━━━━━━━━━━━━━━━━┓
 ┃   🛡️𝐌 𝐄 𝐍 𝐔   𝐀 𝐃 𝐌 𝐈 𝐍🛡️   ┃
