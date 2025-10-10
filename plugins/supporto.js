@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
-  let ownerNumber = "+63 935 071 4010";
+  let ownerNumber = "+39 351 288 4684";
   let Bot = "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
 
   let _0x414c2d = {
@@ -49,8 +49,8 @@ ${Bot}
   });
 };
 
-handler.help = ["menu"];
-handler.tags = ["menu"];
+handler.help = ["supporto"];
+handler.tags = ["supporto"];
 handler.command = /^(supporto)$/i;
 export default handler;
 
