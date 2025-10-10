@@ -1,37 +1,6 @@
-import 'os';
-import 'util';
-import 'human-readable';
-import '@whiskeysockets/baileys';
-import 'fs';
-import 'perf_hooks';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-let handler = async (m, { conn, usedPrefix, command }) => {
+//Plugin fatto da Axtral_WiZaRd
+const handler = async (m, { conn, usedPrefix, command }) => {
   const chatData = global.db.data.chats[m.chat];
-  const isOwner = global.owner.map(([number]) => number + '@s.whatsapp.net').includes(m.sender);
-
-  if (command === 'menu') {
-    return await (await import('./menu-principale.js')).default(m, { conn, usedPrefix });
-  }
-  if (command === 'admin') {
-    return await (await import('./menu-admin.js')).default(m, { conn, usedPrefix });
-  }
-  if (command === 'mod') {
-        return await (await import('./menu-mod')).default(message, { conn, usedPrefix });
-    }
-  if (command === 'owner') {
-    return await (await import('./menu-owner.js')).default(m, { conn, usedPrefix });
-  }
-  if (command === 'gruppo') {
-    return await (await import('./menu-gruppo.js')).default(m, { conn, usedPrefix });
-  }
-  if (command === 'giochi') {
-        return await (await import('./menu-giochi.js')).default(message, { conn, usedPrefix });
-  }
 
   const funzioni = {
     detect: '𝐝𝐞𝐭𝐞𝐜𝐭',
@@ -71,24 +40,34 @@ ${lines.join('\n')}
 ┃${usedPrefix}𝐝𝐢𝐬𝐚𝐛𝐢𝐥𝐢𝐭𝐚/𝟎 <𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐞>
 ╰━━━━━━━━━━━━━━━━━━━╯`.trim();
 
-  // Invia il menu con i bottoni
   await conn.sendMessage(m.chat, {
     text: menuText,
-    footer: 'Scegli un menu:',
-    buttons: [
-      { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 Menu Principale" }, type: 1 },
-      { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ Menu Admin" }, type: 1 },
-      { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ Menu Mod" }, type: 1 },
-      { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 Menu Owner" }, type: 1 },
-      { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 Menu Gruppo" }, type: 1 },
-      { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 Menu Giochi" }, type: 1 },
-    ],
-    viewOnce: true
+    interactiveButtons: [
+      {
+        name: 'single_select',
+        buttonParamsJson: JSON.stringify({
+          title: '📝 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧 𝐦𝐞𝐧𝐮̀',
+          sections: [
+            {
+              title: '𝐌𝐞𝐧𝐮̀',
+              rows: [
+                { title: '🏠 𝐌𝐞𝐧𝐮̀ 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐚𝐥𝐞', description: 'Torna al menu principale', id: `${usedPrefix}menu` },
+                { title: '🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧', description: 'Comandi admin', id: `${usedPrefix}admin` },
+                { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatori', id: `${usedPrefix}mod` },
+                { title: '🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫', description: 'Comandi proprietario', id: `${usedPrefix}owner` },
+                { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi membri', id: `${usedPrefix}gruppo` },
+                { title: '🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢', description: 'Comandi per giochi e intrattenimento', id: `${usedPrefix}giochi` }
+              ]
+            }
+          ]
+        })
+      }
+    ]
   });
 };
 
-handler.help = ["funzioni", "menu", "admin", "owner", "gruppo"];
+handler.help = ["funzioni"];
 handler.tags = ["menu"];
-handler.command = /^(funzioni|menu|admin|owner|gruppo)$/i;
+handler.command = /^(funzioni)$/i;
 
 export default handler;
