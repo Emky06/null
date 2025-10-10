@@ -22,10 +22,10 @@ const handler = async (message, { conn, usedPrefix }) => {
                 rows: [
                   { title: '👑 𝐏𝐫𝐨𝐩𝐫𝐢𝐞𝐭𝐚𝐫𝐢𝐨', description: 'Comandi del proprietario', id: `${usedPrefix}proprietario` },
                   { title: '🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫', description: 'Comandi proprietario', id: `${usedPrefix}owner` },
-                  { title: '🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧', description: 'Comandi amministratore', id: `${usedPrefix}admin` },
-                  { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatore', id: `${usedPrefix}mod` },
-                  { title: '🔧 𝐌𝐞𝐧𝐮̀ 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐢', description: 'Comandi generali e utilità', id: `${usedPrefix}funzioni` },
-                  { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi per la gestione dei gruppi', id: `${usedPrefix}gruppo` },
+                  { title: '🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧', description: 'Comandi admin', id: `${usedPrefix}admin` },
+                  { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatori', id: `${usedPrefix}mod` },
+                  { title: '🔧 𝐌𝐞𝐧𝐮̀ 𝐅𝐮𝐧𝐳𝐢𝐨𝐧𝐢', description: 'Comandi gestione gruppo', id: `${usedPrefix}funzioni` },
+                  { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi membri', id: `${usedPrefix}gruppo` },
                   { title: '🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢', description: 'Comandi per giochi e intrattenimento', id: `${usedPrefix}giochi` },
                   { title: '📞 𝐒𝐮𝐩𝐩𝐨𝐫𝐭𝐨', description: 'Richiedi supporto', id: `${usedPrefix}supporto` },
                   { title: '🤖 𝐈𝐧𝐟𝐨𝐛𝐨𝐭', description: 'Info sul bot', id: `${usedPrefix}infobot` }
