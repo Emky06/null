@@ -38,7 +38,7 @@ const handler = async (message, { conn, usedPrefix }) => {
     },
     { quoted: message }
   );
-};!
+};
 
 handler.help = ['menu'];
 handler.tags = ['menu'];
