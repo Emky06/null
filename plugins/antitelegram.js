@@ -47,7 +47,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
       },
       message: {
         locationMessage: {
-          name: '⚠️𝐀𝐧𝐭𝐢 - 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 𝐚𝐭𝐭𝐢𝐯𝐨⚠️',
+          name: '⚠️ 𝐀𝐧𝐭𝐢 - 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
           jpegThumbnail: thumbnail,
           vcard: `BEGIN:VCARD
 VERSION:3.0
@@ -70,7 +70,7 @@ END:VCARD`
 
     if (warnCount < warnLimit) {
       await conn.sendMessage(m.chat, {
-        text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐓𝐆 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠️\n𝐋𝐈𝐍𝐊 𝐓𝐄𝐋𝐄𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+        text: `𝐋𝐈𝐍𝐊 𝐓𝐄𝐋𝐄𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
       }, { quoted: vcardMessage });
     } else {
       userData.warn = 0;
