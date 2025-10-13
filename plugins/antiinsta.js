@@ -12,7 +12,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
   let messageId = m.key.id;
 
   const isInstagramLink = linkRegex.exec(m.text);
-  const avvisoTesto = '° AVVERTIMENTO';
+  const avvisoTesto = '° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎';
 
   if (isAdmin && chat.antiinsta && m.text.includes(avvisoTesto)) return;
 
@@ -42,7 +42,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
       thumbnailBuffer = null;
     }
 
-    const botName = '𝐀𝐧𝐭𝐢 - 𝐈𝐧𝐬𝐭𝐚';
+    const botName = '⚠️ 𝐀𝐧𝐭𝐢-𝐈𝐧𝐬𝐭𝐚 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️';
     let vcardMessage = {
       key: {
         participants: '0@s.whatsapp.net',
@@ -71,7 +71,7 @@ END:VCARD`
 
     if (warnCount < warnLimit) {
       await conn.sendMessage(m.chat, {
-        text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐈𝐍𝐒𝐓𝐀 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠ \n𝐋𝐈𝐍𝐊 𝐈𝐍𝐒𝐓𝐀𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+        text: `𝐋𝐈𝐍𝐊 𝐈𝐍𝐒𝐓𝐀𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
       }, { quoted: vcardMessage });
     } else {
       global.db.data.users[m.sender].warn = 0;
