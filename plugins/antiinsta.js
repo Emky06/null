@@ -70,15 +70,17 @@ END:VCARD`
     };
 
     if (warnCount < warnLimit) {
-      await conn.sendMessage(m.chat, {
-        text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐈𝐍𝐒𝐓𝐀 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠ \n𝐋𝐈𝐍𝐊 𝐈𝐍𝐒𝐓𝐀𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
-      }, { quoted: vcardMessage });
-    } else {
-      global.db.data.users[m.sender].warn = 0;
-      global.db.data.users[m.sender].warnReasons = [];
-      m.reply('⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈');
-      await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove');
-    }
+  await conn.sendMessage(m.chat, {
+    text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐈𝐍𝐒𝐓𝐀 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠ \n𝐋𝐈𝐍𝐊 𝐈𝐍𝐒𝐓𝐀𝐆𝐑𝐀𝐌 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+  }); // <-- niente più quoted
+} else {
+  global.db.data.users[m.sender].warn = 0;
+  global.db.data.users[m.sender].warnReasons = [];
+  await conn.sendMessage(m.chat, { 
+    text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈'
+  });
+  await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove');
+}
   }
 
   return true;
