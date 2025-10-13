@@ -47,7 +47,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
       },
       message: {
         locationMessage: {
-          name: '𝐀𝐧𝐭𝐢 - 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦',
+          name: '⚠️𝐀𝐧𝐭𝐢 - 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 𝐚𝐭𝐭𝐢𝐯𝐨⚠️',
           jpegThumbnail: thumbnail,
           vcard: `BEGIN:VCARD
 VERSION:3.0
@@ -75,7 +75,9 @@ END:VCARD`
     } else {
       userData.warn = 0;
       userData.warnReasons = [];
-      await m.reply('⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈');
+      await conn.sendMessage(m.chat, { 
+  text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈'
+});
       await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove');
     }
   }
