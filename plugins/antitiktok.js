@@ -12,7 +12,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
 
   let tiktokRegex = /(?:https?:\/\/)?(?:www\.)?(vm\.tiktok\.com|tiktok\.com)\/[^\s]*/i;
   const isTiktokLink = tiktokRegex.exec(m.text);
-  const avvisoTesto = '° AVVERTIMENTO';
+  const avvisoTesto = '° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎';
 
   if (isAdmin && chat.antitiktok && m.text.includes(avvisoTesto)) return;
 
@@ -48,7 +48,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
       },
       message: {
         locationMessage: {
-          name: '𝐀𝐧𝐭𝐢 - 𝐓𝐢𝐤𝐭𝐨𝐤',
+          name: '⚠️ 𝐀𝐧𝐭𝐢-𝐓𝐢𝐤𝐭𝐨𝐤 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
           jpegThumbnail: thumbnailBuffer,
           vcard: `BEGIN:VCARD
 VERSION:3.0
@@ -69,7 +69,7 @@ END:VCARD`
     if (warnCount < warnLimit) {
       let remaining = warnLimit - warnCount;
       await conn.sendMessage(m.chat, {
-        text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐓𝐈𝐊𝐓𝐎𝐊 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠️ \n𝐋𝐈𝐍𝐊 𝐓𝐈𝐊𝐓𝐎𝐊 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+        text: `𝐋𝐈𝐍𝐊 𝐓𝐈𝐊𝐓𝐎𝐊 𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐈\n*${warnCount}${avvisoTesto}*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
       }, { quoted: vcardMessage });
     } else {
       global.db.data.users[m.sender].warn = 0;
