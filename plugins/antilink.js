@@ -195,7 +195,9 @@ END:VCARD`
     } else {
         user.warn = 0
         user.warnReasons = []
-        await msg.reply('⛔ UTENTE RIMOSSO DOPO 3 AVVERTIMENTI')
+        await conn.sendMessage(m.chat, { 
+  text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈'
+});
         await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
     }
 }
