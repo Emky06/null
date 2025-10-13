@@ -92,7 +92,7 @@ export async function before(msg, { isAdmin, isBotAdmin, conn }) {
       key: { participants: '0@s.whatsapp.net', fromMe: false, id: 'vcardqr1' },
       message: {
         locationMessage: {
-          name: '𝐀𝐧𝐭𝐢 - 𝐐𝐑',
+          name: '⚠️ 𝐀𝐧𝐭𝐢-𝐐𝐑 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
           jpegThumbnail: thumbnail,
           vcard: `BEGIN:VCARD
 VERSION:3.0
@@ -123,7 +123,7 @@ END:VCARD`
     if (warnCount < warnLimit) {
       const remaining = warnLimit - warnCount;
       await conn.sendMessage(msg.chat, {
-        text: `> ⚠️ 𝐐𝐑 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎 ⚠️\n𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒆 𝒔𝒂𝒓𝒂𝒊 𝒓𝒊𝒎𝒐𝒔𝒔𝒐/𝒂 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`,
+        text: `𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒆 𝒔𝒂𝒓𝒂𝒊 𝒓𝒊𝒎𝒐𝒔𝒔𝒐/𝒂 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`,
         mentions: [msg.sender]
       }, { quoted: vcardMessage });
     } else {
