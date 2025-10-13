@@ -60,7 +60,7 @@ handler.before = async function (m, { conn, participants, groupMetadata, isAdmin
                 thumbnailBuffer = null;
             }
 
-            const botName = '𝐀𝐧𝐭𝐢 - 𝐓𝐚𝐠';
+            const botName = '⚠️ 𝐀𝐧𝐭𝐢-𝐓𝐚𝐠 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️';
 
             // Costruzione messaggio vCard da usare come quoted
             let vcardMessage = {
@@ -87,7 +87,7 @@ END:VCARD`
 
             if (warnCount < warnLimit) {
                 await conn.sendMessage(m.chat, { 
-                    text: `> ⚠️ 𝐀𝐍𝐓𝐈 𝐓𝐀𝐆 ⚠️\n𝐓𝐫𝐨𝐩𝐩𝐢 𝐭𝐚𝐠 𝐧𝐨𝐧 𝐬𝐨𝐧𝐨 𝐜𝐨𝐧𝐬𝐞𝐧𝐭𝐢𝐭𝐢\n*${warnCount}° AVVERTIMENTO*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+                    text: `𝐓𝐫𝐨𝐩𝐩𝐢 𝐭𝐚𝐠 𝐧𝐨𝐧 𝐬𝐨𝐧𝐨 𝐜𝐨𝐧𝐬𝐞𝐧𝐭𝐢𝐭𝐢\n*${warnCount}° AVVERTIMENTO*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
                 }, { quoted: vcardMessage });
             } else {
                 global.db.data.users[userJid].warn = 0;
