@@ -47,7 +47,7 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
       },
       message: {
         locationMessage: {
-          name: '⚠️ 𝐀𝐧𝐭𝐢 - 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
+          name: '⚠️ 𝐀𝐧𝐭𝐢𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
           jpegThumbnail: thumbnail,
           vcard: `BEGIN:VCARD
 VERSION:3.0
