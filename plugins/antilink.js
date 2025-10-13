@@ -153,7 +153,7 @@ async function handleWarn({ conn, msg, sender, messageId, violation }) {
         },
         message: {
             locationMessage: {
-                name: '𝐀𝐧𝐭𝐢 - 𝐋𝐢𝐧𝐤',
+                name: '⚠️ 𝐀𝐧𝐭𝐢-𝐋𝐢𝐧𝐤 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️',
                 jpegThumbnail: thumbnail,
                 vcard: `BEGIN:VCARD
 VERSION:3.0
@@ -190,7 +190,7 @@ END:VCARD`
     if (warnCount < warnLimit) {
         let remaining = warnLimit - warnCount
         await conn.sendMessage(msg.chat, {
-            text: `> ⚠️ 𝐀𝐍𝐓𝐈𝐋𝐈𝐍𝐊 𝐀𝐓𝐓𝐈𝐕𝐎 ⚠️\n${violation}\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
+            text: `${violation}\n*${warnCount}° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎*\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒍𝒊𝒏𝒌 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`
         }, { quoted: vcardMessage })
     } else {
         user.warn = 0
