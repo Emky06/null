@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, usedPrefix, text }) => {
     // Lista dei numeri autorizzati
     const authorizedNumbers = [
@@ -27,6 +28,8 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '221706918926',//kekka polaris
         '393343343246',//kiko
         '212688796140',//naomi
+        '212669861308',//fefe cocomera
+        '393701521934',//ily cocomera
     ];
 
     const senderNumber = m.sender.split('@')[0];
@@ -37,15 +40,15 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 
     let user;
 
-    // Caso: menzioni
+
     if (m.mentionedJid?.length) {
         user = m.mentionedJid[0];
     }
-    // Caso: reply a un messaggio
+
     else if (m.quoted?.sender) {
         user = m.quoted.sender;
     }
-    // Caso: numero scritto manualmente
+
     else if (text) {
         if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
             user = text.trim();
@@ -64,7 +67,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 
     try {
         await conn.groupParticipantsUpdate(m.chat, [user], 'demote');
-        // nessun messaggio di conferma, come nel tuo originale
+        
     } catch (e) {
         console.error('Errore durante demote:', e);
         m.reply('⚠️ Errore durante la rimozione dei privilegi.');
