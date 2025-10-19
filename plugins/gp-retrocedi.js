@@ -17,7 +17,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '212772894889',//bibi
         '393335608801',//kinderboy
         '6285179461237',//fuma
-        '212783386055',//dieh voip
+        '447449775153',//dieh voip
         '639108420294',//Molly inv
         '393293883235',//Molly inv
         '421233456347',//nasty
@@ -25,7 +25,6 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '639517330907',//alexa synerax
         '6283166405361',//sara synerax
         '221706918926',//kekka polaris
-        '17085153934',//etto astrum
         '393343343246',//kiko
         '212688796140',//naomi
     ];
