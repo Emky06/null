@@ -19,14 +19,18 @@ let handler = async (m, { conn, participants, command }) => {
     }
   }
 
-  // ORDINA gli inattivi in ordine decrescente per numero di messaggi
   inattivi.sort((a, b) => b.messaggi - a.messaggi)
 
   if (inattivi.length === 0) {
     return conn.reply(m.chat, `> *𝐍𝐎 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈*`, m)
   }
 
-  let messaggioLista = inattivi.map(u => `┣➤ @${u.id.split('@')[0]} (${u.messaggi} msg)`).join('\n')
+  let numeroInattivi = inattivi.length
+  let totaleMembri = participants.length
+
+  let messaggioLista = inattivi
+    .map(u => `┣➤ @${u.id.split('@')[0]} (${u.messaggi} msg)`)
+    .join('\n')
 
   switch (command) {
     case "inattivi":
@@ -34,8 +38,9 @@ let handler = async (m, { conn, participants, command }) => {
         text: `╭━━━━━━━━━━━━━━━━━━━╮
 ┃   😴 *𝐔𝐓𝐄𝐍𝐓𝐈 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈* 😴   ┃
 ╰━━━━━━━━━━━━━━━━━━━╯
+> 📋 *Totale inattivi:* ${numeroInattivi} su ${totaleMembri} membri
 ╭━━━━━━━━━━━━━━━━━━━╮
-┃          *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*          ┃
+┃      *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*      ┃
 ┣━━━━━━━━━━━━━━━━━━━┫
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
@@ -45,8 +50,10 @@ ${messaggioLista}
     case "viainattivi":
       await conn.sendMessage(m.chat, {
         text: `╭━━━━━━━━━━━━━━━━━━━╮
-┃ 𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈 🚫
-┃
+┃ 🚫 *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈* 🚫
+╰━━━━━━━━━━━━━━━━━━━╯
+> 📋 *Totale rimossi:* ${numeroInattivi} su ${totaleMembri} membri
+╭━━━━━━━━━━━━━━━━━━━╮
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
         mentions: inattivi.map(u => u.id)
