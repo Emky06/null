@@ -1,7 +1,18 @@
 import fs from 'fs';
 
 const handler = async (msg, { conn, command, text, isAdmin }) => {
-  const mentionedJid = msg.mentionedJid?.[0] || msg.quoted?.sender;
+  let mentionedJid = msg.mentionedJid?.[0] || msg.quoted?.sender;
+
+  if (!mentionedJid && text) {
+    if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
+      mentionedJid = text.trim();
+    } else {
+      let number = text.replace(/[^0-9]/g, '');
+      if (number.length >= 8 && number.length <= 15) {
+        mentionedJid = number + '@s.whatsapp.net';
+      }
+    }
+  }
   const sender = msg.sender;
   const chatId = msg.chat;
   const botNumber = conn.user.jid;
