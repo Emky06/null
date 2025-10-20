@@ -5,30 +5,21 @@ const handler = async (_0x498b4a, { conn, command, text, isAdmin }) => {
     if (!isAdmin) throw '𝑪𝒐𝒎𝒂𝒏𝒅𝒐 𝒅𝒊𝒔𝒑𝒐𝒏𝒊𝒃𝒊𝒍𝒆 𝒔𝒐𝒍𝒐 𝒑𝒆𝒓 𝒂𝒅𝒎𝒊𝒏🌟';
 
     if (command === 'freeze') {
-        const muteDuration = parseInt(text) || 5; // Durata in minuti, default 5 minuti
-        let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
-let muteDuration = 5; // default 5 minuti
+        let muteDuration = 5;
+let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
 
 if (text) {
-    // Estrai tutti i numeri dal testo
-    let numbers = text.match(/\d+/g) || [];
+    const numbers = text.match(/\d+/g) || [];
 
-    // Se ci sono due numeri, decidiamo quale è durata e quale utente
-    if (numbers.length === 2) {
-        // Numero più corto (1-3 cifre) → durata
-        // Numero più lungo (>=8 cifre) → utente
-        numbers.forEach(num => {
-            if (num.length <= 3) muteDuration = parseInt(num);
-            else if (!mentionedJid) mentionedJid = num + '@s.whatsapp.net';
-        });
-    } else if (numbers.length === 1) {
-        if (!mentionedJid) {
-            if (numbers[0].length >= 8) mentionedJid = numbers[0] + '@s.whatsapp.net';
-            else muteDuration = parseInt(numbers[0]);
-        } else {
-            muteDuration = parseInt(numbers[0]);
-        }
+    // Trova numero utente (>=8 cifre)
+    const userNumber = numbers.find(n => n.length >= 8);
+    if (userNumber && !mentionedJid) {
+        mentionedJid = userNumber.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
     }
+
+    // Trova durata (numero breve)
+    const durationNumber = numbers.find(n => n.length <= 3);
+    if (durationNumber) muteDuration = parseInt(durationNumber);
 }
         if (!mentionedJid) throw '𝑴𝒂𝒏𝒄𝒂 𝒊𝒍 𝒕𝒂𝒈❗︎';
 
