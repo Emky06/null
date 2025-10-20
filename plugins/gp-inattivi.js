@@ -38,9 +38,9 @@ let handler = async (m, { conn, participants, command }) => {
         text: `╭━━━━━━━━━━━━━━━━━━━╮
 ┃   😴 *𝐔𝐓𝐄𝐍𝐓𝐈 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈* 😴   ┃
 ╰━━━━━━━━━━━━━━━━━━━╯
-> 📋 *Totale inattivi:* ${numeroInattivi} su ${totaleMembri} membri
+> 📋 𝐓𝐨𝐭𝐚𝐥𝐞 𝐢𝐧𝐚𝐭𝐭𝐢𝐯𝐢: ${numeroInattivi} su ${totaleMembri} 𝐦𝐞𝐦𝐛𝐫𝐢
 ╭━━━━━━━━━━━━━━━━━━━╮
-┃      *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*      ┃
+┃          *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*          ┃
 ┣━━━━━━━━━━━━━━━━━━━┫
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
@@ -52,7 +52,7 @@ ${messaggioLista}
         text: `╭━━━━━━━━━━━━━━━━━━━╮
 ┃ 🚫 *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐍𝐀𝐓𝐓𝐈𝐕𝐈* 🚫
 ╰━━━━━━━━━━━━━━━━━━━╯
-> 📋 *Totale rimossi:* ${numeroInattivi} su ${totaleMembri} membri
+> 📋 *𝐓𝐨𝐭𝐚𝐥𝐞 𝐫𝐢𝐦𝐨𝐬𝐬𝐢:* ${numeroInattivi} su ${totaleMembri} 𝐦𝐞𝐦𝐛𝐫𝐢
 ╭━━━━━━━━━━━━━━━━━━━╮
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
