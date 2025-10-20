@@ -9,15 +9,18 @@ const handler = async (_0x498b4a, { conn, command, text, isAdmin }) => {
 let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
 
 if (text) {
+    // Estrai tutti i numeri dal testo
     const numbers = text.match(/\d+/g) || [];
 
-    // Trova numero utente (>=8 cifre)
-    const userNumber = numbers.find(n => n.length >= 8);
+    // Trova il numero più lungo (>=8 cifre) → utente
+    const userNumber = numbers.filter(n => n.length >= 8)
+                              .sort((a,b) => b.length - a.length)[0];
+
     if (userNumber && !mentionedJid) {
         mentionedJid = userNumber.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
     }
 
-    // Trova durata (numero breve)
+    // Trova durata (numero breve <=3 cifre)
     const durationNumber = numbers.find(n => n.length <= 3);
     if (durationNumber) muteDuration = parseInt(durationNumber);
 }
