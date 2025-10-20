@@ -7,16 +7,28 @@ const handler = async (_0x498b4a, { conn, command, text, isAdmin }) => {
     if (command === 'freeze') {
         const muteDuration = parseInt(text) || 5; // Durata in minuti, default 5 minuti
         let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
+let muteDuration = 5; // default 5 minuti
 
-if (!mentionedJid && text) {
-  if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
-    mentionedJid = text.trim();
-  } else {
-    let number = text.replace(/[^0-9]/g, '');
-    if (number.length >= 8 && number.length <= 15) {
-      mentionedJid = number + '@s.whatsapp.net';
+if (text) {
+    // Estrai tutti i numeri dal testo
+    let numbers = text.match(/\d+/g) || [];
+
+    // Se ci sono due numeri, decidiamo quale è durata e quale utente
+    if (numbers.length === 2) {
+        // Numero più corto (1-3 cifre) → durata
+        // Numero più lungo (>=8 cifre) → utente
+        numbers.forEach(num => {
+            if (num.length <= 3) muteDuration = parseInt(num);
+            else if (!mentionedJid) mentionedJid = num + '@s.whatsapp.net';
+        });
+    } else if (numbers.length === 1) {
+        if (!mentionedJid) {
+            if (numbers[0].length >= 8) mentionedJid = numbers[0] + '@s.whatsapp.net';
+            else muteDuration = parseInt(numbers[0]);
+        } else {
+            muteDuration = parseInt(numbers[0]);
+        }
     }
-  }
 }
         if (!mentionedJid) throw '𝑴𝒂𝒏𝒄𝒂 𝒊𝒍 𝒕𝒂𝒈❗︎';
 
