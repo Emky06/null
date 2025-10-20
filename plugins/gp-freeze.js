@@ -6,7 +6,18 @@ const handler = async (_0x498b4a, { conn, command, text, isAdmin }) => {
 
     if (command === 'freeze') {
         const muteDuration = parseInt(text) || 5; // Durata in minuti, default 5 minuti
-        const mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
+        let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
+
+if (!mentionedJid && text) {
+  if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
+    mentionedJid = text.trim();
+  } else {
+    let number = text.replace(/[^0-9]/g, '');
+    if (number.length >= 8 && number.length <= 15) {
+      mentionedJid = number + '@s.whatsapp.net';
+    }
+  }
+}
         if (!mentionedJid) throw '𝑴𝒂𝒏𝒄𝒂 𝒊𝒍 𝒕𝒂𝒈❗︎';
 
         const user = global.db.data.users[mentionedJid] || {};
