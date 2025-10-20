@@ -5,25 +5,8 @@ const handler = async (_0x498b4a, { conn, command, text, isAdmin }) => {
     if (!isAdmin) throw '𝑪𝒐𝒎𝒂𝒏𝒅𝒐 𝒅𝒊𝒔𝒑𝒐𝒏𝒊𝒃𝒊𝒍𝒆 𝒔𝒐𝒍𝒐 𝒑𝒆𝒓 𝒂𝒅𝒎𝒊𝒏🌟';
 
     if (command === 'freeze') {
-        let muteDuration = 5;
-let mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
-
-if (text) {
-    // Estrai tutti i numeri dal testo
-    const numbers = text.match(/\d+/g) || [];
-
-    // Trova il numero più lungo (>=8 cifre) → utente
-    const userNumber = numbers.filter(n => n.length >= 8)
-                              .sort((a,b) => b.length - a.length)[0];
-
-    if (userNumber && !mentionedJid) {
-        mentionedJid = userNumber.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
-    }
-
-    // Trova durata (numero breve <=3 cifre)
-    const durationNumber = numbers.find(n => n.length <= 3);
-    if (durationNumber) muteDuration = parseInt(durationNumber);
-}
+        const muteDuration = parseInt(text) || 5; // Durata in minuti, default 5 minuti
+        const mentionedJid = _0x498b4a.mentionedJid?.[0] || _0x498b4a.quoted?.sender;
         if (!mentionedJid) throw '𝑴𝒂𝒏𝒄𝒂 𝒊𝒍 𝒕𝒂𝒈❗︎';
 
         const user = global.db.data.users[mentionedJid] || {};
