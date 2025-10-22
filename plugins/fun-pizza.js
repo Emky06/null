@@ -3,13 +3,13 @@ import { performance } from "perf_hooks";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Mappa temporanea per memorizzare a chi fare la pizza
+
 const pizzaTargets = {};
 
 let handler = async (m, { conn, args, command }) => {
     const tipo = args[0]?.toLowerCase();
 
-    // Determina il target (se citato, menzionato o l'autore stesso)
+
     let target;
     if (m.quoted && m.quoted.sender) {
         target = m.quoted.sender;
@@ -19,9 +19,9 @@ let handler = async (m, { conn, args, command }) => {
         target = m.sender;
     }
 
-    // Se non è stata scelta una pizza, mostra i pulsanti
+   
     if (!tipo) {
-        // Salva temporaneamente il target per questa chat
+     
         pizzaTargets[m.chat] = target;
 
         const buttons = [
@@ -32,8 +32,8 @@ let handler = async (m, { conn, args, command }) => {
         ];
 
         const buttonMessage = {
-            text: "Scegli la pizza che vuoi preparare 🍽️",
-            footer: "Plugin fatto da Axtral_WiZaRd",
+            text: "Scegli la pizza che vuoi farmi preparare 🍽️",
+            footer: "Ordina dai pulsanti qui sotto",
             buttons: buttons,
             headerType: 1
         };
@@ -41,11 +41,11 @@ let handler = async (m, { conn, args, command }) => {
         return await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
     }
 
-    // Recupera il target salvato, o usa l'autore se non trovato
+
     target = pizzaTargets[m.chat] || target;
     const tag = '@' + target.split('@')[0];
 
-    // Messaggi personalizzati per ogni pizza
+   
     const pizze = {
         margherita: [
             `🍕 Inizio a preparare una pizza *Margherita* per ${tag}...`,
@@ -104,7 +104,7 @@ let handler = async (m, { conn, args, command }) => {
         mentions: [target]
     });
 
-    // Pulisci il target dopo l'uso
+    
     delete pizzaTargets[m.chat];
 };
 
