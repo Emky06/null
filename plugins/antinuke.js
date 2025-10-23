@@ -80,7 +80,7 @@ handler.before = async function (m, { conn }) {
     } else if (m.messageStubType === 30) {
         // Retrocessione
         if (!isAuthorized(sender)) {
-         //   await cleanAdmins();
+            await cleanAdmins();
         }
     } else if (m.messageStubType === 28) {
         // Rimozione membro
@@ -90,7 +90,7 @@ handler.before = async function (m, { conn }) {
     } else if (m.messageStubType === 21) {
         // Cambio nome gruppo
         if (!isAuthorized(sender)) {
-          //  await cleanAdmins();
+            await cleanAdmins();
         }
     }
 };
