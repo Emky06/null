@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
   if (!m.quoted) return m.reply('❗Rispondi a un messaggio per analizzare il dispositivo usato');
 
