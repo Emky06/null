@@ -30,7 +30,6 @@ let handler = async (msg, { conn, usedPrefix, command, args }) => {
     const toggleGlobalOptions = {
         antiprivato: { configKey: "antiprivato", label: " *𝒂𝒏𝒕𝒊𝒑𝒓𝒊𝒗𝒂𝒕𝒐* " },
         anticall: { configKey: "anticall", label: " *𝒂𝒏𝒕𝒊𝒄𝒂𝒍𝒍* " },
-        autoread: { configKey: "autoread", label: " *𝒂𝒖𝒕𝒐𝒓𝒆𝒂𝒅* " },
         
     };
 
