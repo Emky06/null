@@ -27,7 +27,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '6283166405361',//sara synerax
         '221706918926',//kekka polaris
         '393343343246',//kiko
-        '212688796140',//naomi
+        '380991627573',//void
         '212669861308',//fefe cocomera
         '393701521934',//ily cocomera
     ];
