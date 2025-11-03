@@ -29,5 +29,6 @@ await conn.sendMessage(m.chat, {
 
 handler.command = /^(nuke)$/i; 
 handler.group = true; 
+handler.admin = true;
 
 export default handler;
