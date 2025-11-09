@@ -5,9 +5,7 @@ let handler = async (m, { conn }) => {
 
     // qui ci metti le frasi personalizzate, nello stesso ordine degli owner
     let frasi = [
-      "𝛬𝑿𝑻𝑹𝜜𝑳 (𝑜𝑤𝑛𝑒𝑟)︎ ",
-      "ꪶ𝑲̸͢𝑰𝑵𝑫𝑬𝑹𝑰𝑵𝜣 (𝑐𝑜-𝑜𝑤𝑛𝑒𝑟) ",
-      "ℝ𝕀𝔸𝔻 ☪ (𝑐𝑜-𝑜𝑤𝑛𝑒𝑟)",
+      "𝛬𝑿𝑻𝑹𝜜𝑳",
     ]
 
     let buttons = owners.map((id, index) => {
