@@ -14,7 +14,7 @@ let handler = async (m, { conn, isOwner }) => {
 
     let meta = g.metadata;
     if (!meta) {
-      await delay(300); 
+      await delay(1000); 
       try { meta = await conn.groupMetadata(id); } catch { continue; }
     }
 
