@@ -2,34 +2,26 @@
 let handler = async (m, { conn, usedPrefix, text }) => {
     // Lista di numeri autorizzati
     const authorizedNumbers = [
-        '393755435365',//mio 
-        '35796261367',//mio
-        '35795191323',//mio
-        '393512884684',//mio att
         '393780386731',//mio 39
+        '35796261367',//mio cipro 1
+        '35795191323',//mio cipro 2
+        '393512884684',//mio att p 2
         '393511198848',//mio bot 39
-        '393510240643',//mio
-        '393792829288',//reo
-        '393519497833',//sedux
-        '393508571301',//riad
-        '393513348007',//sara
-        '212617488471',//sara voip
+        '393510240643',//mio p 1
+        '393793178438',//riad
         '639634295192',//sophi
         '212772894889',//bibi
-        '393335608801',//kinderboy
-        '6285179461237',//fuma
-        '447449775153',//dieh voip
-        '639108420294',//Molly inv
-        '393293883235',//Molly inv
-        '421233456347',//nasty
-        '447400774419',//maeda synerax
-        '639517330907',//alexa synerax
+        '393279399297',//kinderboy
+        '393472425001',//dieh
+        '393891353450',//nasty
+        '447596028119',//maeda synerax
         '6283166405361',//sara synerax
-        '221706918926',//kekka polaris
+        '393509496378',//kekka polaris
         '393343343246',//kiko
         '380991627573',//void
         '212669861308',//fefe cocomera
         '393701521934',//ily cocomera
+        '393273097621',//linda
     ];
 
     const senderNumber = m.sender.split('@')[0];
