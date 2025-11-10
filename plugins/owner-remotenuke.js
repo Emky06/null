@@ -1,7 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, text, usedPrefix, command, isOwner }) => {
   if (!isOwner) return m.reply('⚠️ Solo gli owner possono usare questo comando!');
-  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   const input = (text || '').trim();
   if (!input) return m.reply('❌ Inserisci un chatId. Uso: .remotenuke <chatId>');
 
@@ -15,18 +14,6 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner }) => {
     return m.reply('❌ Non sono presente in questo gruppo o chatId non valido.');
   }
 
-
-  await conn.sendMessage(chatId, {
-    text: '*𝛬𝑿𝑻𝑹𝜜𝑳 𝐃Ꮻ𝐌𝐈𝐍𝐀 𝐀𝐍𝐂𝐇𝐄 𝐐𝐔𝐄𝐒𝐓Ꮻ 𝐆𝐑𝐔𝐏𝐏Ꮻ*'
-  });
-
-  await delay(1000);
-
-  await conn.sendMessage(chatId, {
-    text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme'
-  });
-
-
   const ownerIDs = (global.owner || [])
     .map(o => (typeof o === 'object' ? o[0] : o))
     .map(id => id && id.includes('@s.whatsapp.net') ? id : (id ? id + '@s.whatsapp.net' : id))
@@ -35,18 +22,25 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner }) => {
   const participantsIDs = (metadata.participants || []).map(p => p.id || p.jid).filter(Boolean);
   const usersToRemove = participantsIDs.filter(id => id !== conn.user.jid && !ownerIDs.includes(id));
 
+
+  await conn.sendMessage(chatId, { text: '*𝛬𝑿𝑻𝑹𝜜𝑳 𝐃Ꮻ𝐌𝐈𝐍𝐀 𝐀𝐍𝐂𝐇𝐄 𝐐𝐔𝐄𝐒𝐓Ꮻ 𝐆𝐑𝐔𝐏𝐏Ꮻ.*' });
+
+ 
+  await conn.sendMessage(chatId, { 
+    text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme',
+    mentions: participantsIDs
+  });
+
   if (!usersToRemove.length) return m.reply(`𝐍𝐞𝐬𝐬𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐫𝐢𝐦𝐨𝐯𝐢𝐛𝐢𝐥𝐞 𝐢𝐧 *${metadata.subject || chatId}*.`);
 
   await conn.sendMessage(m.chat, { text: `𝐄𝐬𝐞𝐠𝐮𝐨 𝐢𝐥 𝐧𝐮𝐤𝐞 𝐬𝐮 *${metadata.subject || chatId}* — 𝐫𝐢𝐦𝐮𝐨𝐯𝐨 ${usersToRemove.length} 𝐮𝐭𝐞𝐧𝐭𝐢.` });
 
   try {
     await conn.groupParticipantsUpdate(chatId, usersToRemove, 'remove');
-    await delay(500);
   } catch {
     for (let id of usersToRemove) {
       try {
         await conn.groupParticipantsUpdate(chatId, [id], 'remove');
-        await delay(400);
       } catch {}
     }
   }
