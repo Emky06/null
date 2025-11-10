@@ -15,6 +15,18 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner }) => {
     return m.reply('❌ Non sono presente in questo gruppo o chatId non valido.');
   }
 
+
+  await conn.sendMessage(chatId, {
+    text: '*𝛬𝑿𝑻𝑹𝜜𝑳 𝐃Ꮻ𝐌𝐈𝐍𝐀 𝐀𝐍𝐂𝐇𝐄 𝐐𝐔𝐄𝐒𝐓Ꮻ 𝐆𝐑𝐔𝐏𝐏Ꮻ*'
+  });
+
+  await delay(1000);
+
+  await conn.sendMessage(chatId, {
+    text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme'
+  });
+
+
   const ownerIDs = (global.owner || [])
     .map(o => (typeof o === 'object' ? o[0] : o))
     .map(id => id && id.includes('@s.whatsapp.net') ? id : (id ? id + '@s.whatsapp.net' : id))
@@ -41,6 +53,7 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner }) => {
 
   await conn.sendMessage(m.chat, { text: `𝐎𝐩𝐞𝐫𝐚𝐳𝐢𝐨𝐧𝐞 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐚 𝐬𝐮 *${metadata.subject || chatId}* ✅` });
 };
+
 handler.help = ['remotenuke <chatId>'];
 handler.tags = ['owner'];
 handler.command = ['remotenuke','rnuke'];
