@@ -19,7 +19,7 @@ let handler = async (m, { conn, isOwner }) => {
 
 handler.help = ['idgruppi'];
 handler.tags = ['owner'];
-handler.command = ['idgp'];
+handler.command = ['idgruppi'];
 handler.owner = true;
 export default handler;
           
