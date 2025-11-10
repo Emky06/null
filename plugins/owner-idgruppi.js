@@ -2,23 +2,14 @@
 let handler = async (m, { conn, isOwner }) => {
   if (!isOwner) return m.reply('⚠️ Solo gli owner possono usare questo comando!');
 
-  let groupsData = await conn.groupFetchAllParticipating().catch(() => ({}));
-  let groups = Object.values(groupsData || {});
-
+  const allChats = Object.values(conn.chats || {});
   const filteredGroups = [];
-  const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  for (const g of groups) {
-    const id = g.id || (g.metadata && g.metadata.id);
-    if (!id || !id.endsWith('@g.us')) continue; 
-
-    let meta = g.metadata;
-    if (!meta) {
-      await delay(600); 
-      try { meta = await conn.groupMetadata(id); } catch { continue; }
-    }
-
-    if (meta?.isCommunity || meta?.announce || meta?.read_only) continue;
+  for (const chat of allChats) {
+    const id = chat.id;
+    if (!id || !id.endsWith('@g.us')) continue; // solo gruppi
+    const meta = chat.metadata || {};
+    if (meta.isCommunity || meta.announce || meta.read_only) continue; // escludi community/broadcast
     filteredGroups.push({ id, meta });
   }
 
