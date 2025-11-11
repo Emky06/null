@@ -17,13 +17,16 @@ function getGrado(messaggi) {
   return livelli.findLast(l => messaggi >= l.soglia) || livelli[0];
 }
 
-export async function before(m) {
+export async function before(m, { conn }) {
   const user = global.db.data.users[m.sender];
+  const chat = global.db.data.chats[m.chat] || {};
+
   if (!user) return;
 
   if (user.messaggi == null) user.messaggi = 0;
   if (user.money == null) user.money = 0;
   if (user.grado == null) user.grado = "Pollo";
+  if (chat.level == null) chat.level = true; 
 
   user.messaggi += 1;
 
@@ -34,6 +37,9 @@ export async function before(m) {
     const reward = Math.floor(nuovoGrado.soglia / 2);
     user.money += reward;
     user.grado = nuovoGrado.nome;
+
+
+    if (!chat.level) return;
 
     let milestoneMessage = {
       key: {
