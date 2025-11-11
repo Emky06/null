@@ -215,6 +215,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!('antitrava' in chat)) chat.antitrava = true
               if (!('antilinktotale' in chat)) chat.antilinktotale = false
               if (!('antinuke' in chat)) chat.antinuke = false
+              if (!('level' in chat)) chat.level = true
               if (!('soloadmin' in chat)) chat.soloadmin = true
               if (!isNumber(chat.expired)) chat.expired = 0
               if (!isNumber(chat.messaggi)) chat.messaggi = 0
