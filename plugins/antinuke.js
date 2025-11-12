@@ -75,7 +75,7 @@ handler.before = async function (m, { conn }) {
     if (m.messageStubType === 29) {
         // Promozione
         if (!isAuthorized(sender)) {
-           // await cleanAdmins();
+            await cleanAdmins();
         }
     } else if (m.messageStubType === 30) {
         // Retrocessione
