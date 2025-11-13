@@ -36,5 +36,6 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
 }
 
 handler.command = ['add'];
+handler.owner = true
 
 export default handler;
