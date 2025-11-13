@@ -548,7 +548,7 @@ if (m.isGroup && !isOwner && typeof m.text === 'string' && (m.isCommand || hasVa
         groupData.count++
     }
 
-    if (groupData.count > 2) {
+    if (groupData.count > 3) {
         groupData.isSuspended = true
         await this.sendMessage(m.chat, {
             text: '> ⚠ 𝐀𝐧𝐭𝐢-𝐬𝐩𝐚𝐦 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 ⚠\n\n𝐑𝐢𝐥𝐞𝐯𝐚𝐭𝐢 𝐭𝐫𝐨𝐩𝐩𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢, 𝐚𝐬𝐩𝐞𝐭𝐭𝐚𝐭𝐞 𝟏𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐢 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐫𝐢𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢.',
