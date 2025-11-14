@@ -39,10 +39,10 @@ if (isNaN(scommessa) || scommessa <= 0) {
     return await conn.reply(m.chat, `🎰 *ROULETTE* 🎰\n\n❌ *Inserisci un importo valido da scommettere!*\n📌 *Esempio:* \`${usedPrefix}roulette rosso 150\``, m);  
 }  
 
-if (scommessa > 2000) {
+if (scommessa > 1000) {
     return await conn.reply(
         m.chat,
-        `🚫 *Importo troppo alto!*\n💸 Puoi scommettere al massimo *2.000 €* per partita.`,
+        `🚫 *Importo troppo alto!*\n💸 Puoi scommettere al massimo *1.000 €* per partita.`,
         m
     );
 }
