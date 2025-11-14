@@ -20,7 +20,7 @@ const handler = async (m, { conn, participants }) => {
   lista_utenti.forEach(user => {
     let numero = user.id.split("@")[0];
     let totale = user.money + user.bank;
-    testo += `👤 *@${numero}*\n💵 Contanti: ${user.money.toLocaleString('it-IT')} €\n🏦 Banca: ${user.bank.toLocaleString('it-IT')} €\n📊 Totale: ${totale.toLocaleString('it-IT')} €\n════════ ೋೋ════════\n`;
+    testo += `👤 @${numero}\n💵 Contanti: ${user.money.toLocaleString('it-IT')} €\n🏦 Banca: ${user.bank.toLocaleString('it-IT')} €\n📊 Totale: ${totale.toLocaleString('it-IT')} €\n════════ ೋೋ════════\n`;
     menzioni.push(user.id);
   });
 
