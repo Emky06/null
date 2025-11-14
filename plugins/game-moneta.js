@@ -9,7 +9,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   const sceltePossibili = ["testa", "croce"];
-  const maxBet = 2000;
+  const maxBet = 1000;
   const cooldownTime = 10 * 1000; // 10 
 
   if (!text) {
