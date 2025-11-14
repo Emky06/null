@@ -23,8 +23,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }, { quoted: m });
   }
 
-  if (bet <= 0 || bet > 2000) {
-    return m.reply(`❌ 𝐋𝐢𝐦𝐢𝐭𝐞 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐬𝐮𝐩𝐞𝐫𝐚𝐭𝐨!\n𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *2000€*`);
+  if (bet <= 0 || bet > 1000) {
+    return m.reply(`❌ 𝐋𝐢𝐦𝐢𝐭𝐞 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐬𝐮𝐩𝐞𝐫𝐚𝐭𝐨!\n𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *1.000€*`);
   }
 
   if (bet > users.money) {
