@@ -29,8 +29,8 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
         return conn.reply(m.chat, `🔫 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n❌ Inserisci un importo valido da scommettere.\n📌 Esempio: \`${usedPrefix}${command} 200\``, m);
     }
 
-    if (scommessa > 2000) {
-        return conn.reply(m.chat, `🚫 *Importo troppo alto!*\n💸 Puoi scommettere al massimo *2.000 €* alla roulette russa.`, m);
+    if (scommessa > 1000) {
+        return conn.reply(m.chat, `🚫 *Importo troppo alto!*\n💸 Puoi scommettere al massimo *1.000 €* alla roulette russa.`, m);
 }
 
     if (scommessa > users.money) {
