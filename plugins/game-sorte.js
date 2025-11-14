@@ -21,9 +21,9 @@ Scegli tra: *${cavalli.join(', ')}*
 Esempio: *${usedPrefix}sorte testa 150*`, m);
   }
   
-  if (scommessa > 2000) {
+  if (scommessa > 1000) {
   return await conn.reply(m.chat, `🚫 *Limite massimo superato!*
-Puoi scommettere al massimo *2.000 €* per giocata.`, m);
+Puoi scommettere al massimo *1.000 €* per giocata.`, m);
 }
 
   if (scommessa > users.money) {
