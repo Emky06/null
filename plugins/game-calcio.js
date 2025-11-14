@@ -46,11 +46,11 @@ let handler = async (m, { conn, text, command, usedPrefix, args }) => {
   let team1 = teams[0];
   let team2 = teams[1];
 
-  if (bet > 2000) {
+  if (bet > 1000) {
   return await conn.reply(
     m.chat,
     `🚫 *Importo troppo alto!*\n` +
-    `💸 Puoi scommettere al massimo *2.000 €* per partita.`,
+    `💸 Puoi scommettere al massimo *1.000 €* per partita.`,
     m
   );
 }
