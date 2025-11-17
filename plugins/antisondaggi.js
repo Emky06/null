@@ -1,5 +1,5 @@
 //antisondaggi made by Riad. Idea by Kinderino
-export async function before(m, { isAdmin, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, isPrems, isBotAdmin, conn }) {
     if (!m.isGroup || m.isBaileys) return true;
 
     let chat = global.db.data.chats[m.chat];
@@ -12,7 +12,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
         msgType === 'pollCreationMessageV2' ||
         msgType === 'pollCreationMessageV3';
 
-    if (isPoll && !isAdmin) {
+    if (isPoll && !isAdmin && !isPrems) {
         // elimina il sondaggio
         try {
             await conn.sendMessage(m.chat, {
