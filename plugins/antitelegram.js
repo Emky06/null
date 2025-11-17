@@ -3,7 +3,7 @@ import fs from 'fs';
 
 let telegramRegex = /(?:https?:\/\/)?(?:www\.)?(t\.me|telegram\.me)\/[^\s]*/i;
 
-export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, conn }) {
   if (m.isBaileys || m.fromMe) return true;
   if (!m.isGroup) return false;
 
@@ -14,9 +14,9 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
   let userData = global.db.data.users[m.sender] || {};
   const isTelegramLink = telegramRegex.exec(m.text);
 
-  if (isAdmin && chat.antitelegram && m.text.includes('AVVERTIMENTO')) return;
+  if ((isAdmin || isPrems) && chat.antitelegram && m.text.includes('AVVERTIMENTO')) return;
 
-  if (chat.antitelegram && isTelegramLink && !isAdmin && isBotAdmin) {
+  if (chat.antitelegram && isTelegramLink && !isAdmin && !isPrems && isBotAdmin) {
     if (!userData.warn) userData.warn = 0;
     if (!userData.warnReasons) userData.warnReasons = [];
 
