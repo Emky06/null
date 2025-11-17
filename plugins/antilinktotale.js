@@ -98,7 +98,7 @@ async function readQRCode(imageBuffer) {
     }
 }
 
-export async function before(m, { isAdmin, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, isPrems, isBotAdmin, conn }) {
     if (!m.isGroup || m.isBaileys) return true
     let chat = global.db.data.chats[m.chat]
     if (!chat.antilinktotale) return true
@@ -110,7 +110,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
         let matched = cleanedText.match(linkRegex)
         let link = matched ? matched[0] : ''
         if (safeDomains.some(domain => link.includes(domain))) return true
-        if (isAdmin) return true
+        if (isAdmin || isPrems) return true
         await handleViolation({ conn, m, reason: '𝐋𝐈𝐍𝐊 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎' })
     }
     const media = await getMediaBuffer(m)
@@ -118,7 +118,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
         const qrData = await readQRCode(media)
         const qrText = qrData?.replace(/[\s\u200b\u200c\u200d\uFEFF]+/g, '') ?? ''
         if (qrData && linkRegex.test(qrText)) {
-            if (isAdmin) return true
+            if (isAdmin || isPrems) return true
             await handleViolation({ conn, m, reason: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎' })
         }
     }
