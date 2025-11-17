@@ -1,7 +1,7 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
-export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, conn }) {
   if (m.isBaileys || m.fromMe) return true;
   if (!m.isGroup) return false;
 
@@ -14,9 +14,9 @@ export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
   const isTiktokLink = tiktokRegex.exec(m.text);
   const avvisoTesto = '° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎';
 
-  if (isAdmin && chat.antitiktok && m.text.includes(avvisoTesto)) return;
+  if ((isAdmin || isPrems) && chat.antitiktok && m.text.includes(avvisoTesto)) return;
 
-  if (chat.antitiktok && isTiktokLink && !isAdmin && isBotAdmin) {
+  if (chat.antitiktok && isTiktokLink && !isAdmin && !isPrems && isBotAdmin) {
     if (!global.db.data.users[m.sender].warn) global.db.data.users[m.sender].warn = 0;
     if (!global.db.data.users[m.sender].warnReasons) global.db.data.users[m.sender].warnReasons = [];
 
