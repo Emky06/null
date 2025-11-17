@@ -2,7 +2,7 @@ import fs from 'fs';
 
 let linkRegex = /(?:https?:\/\/)?(?:www\.)?instagram\.com\/[^\s]*/i;
 
-export async function before(m, { isAdmin, groupMetadata, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, groupMetadata, isBotAdmin, isPrems, conn }) {
   if (m.isBaileys || m.fromMe) return true;
   if (!m.isGroup) return false;
 
