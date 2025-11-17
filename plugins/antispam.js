@@ -4,7 +4,7 @@ const STICKER_LIMIT = 6;  // Start
 const PHOTO_VIDEO_LIMIT = 6;  // Start
 const RESET_TIMEOUT = 5000;  // Start
 
-export async function before(m, { isAdmin, isBotAdmin, conn }) {
+export async function before(m, { isAdmin, isPrems, isBotAdmin, conn }) {
     if (m.isBaileys && m.fromMe) return true;
     if (!m.isGroup) return false;
 
@@ -67,7 +67,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
                     console.log('Solo gli amministratori possono inviare messaggi.');
 
                     // Rimuove l’utente se non è admin
-                    if (!isAdmin) {
+                    if (!isAdmin && !isPrems) {
                         let responseb = await conn.groupParticipantsUpdate(m.chat, [sender], 'remove');
                         console.log(`Participant removal response: ${JSON.stringify(responseb)}`);
 
@@ -75,7 +75,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
                             console.log('Utente non trovato o già rimosso.');
                         }
                     } else {
-                        console.log('L\'utente è un amministratore e non verrà rimosso.');
+                        console.log('L\'utente è admin o mod e non verrà rimosso.');
                     }
 
                     // Elimina i messaggi spam
