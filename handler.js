@@ -678,51 +678,13 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
 export async function participantsUpdate({ id, participants, action }) {
     if (opts['self'])
         return
-    if (this.isInit)
+    if (this.isInit) 
         return
     if (global.db.data == null)
         await loadDatabase()
 
-    if (action === 'add' || action === 'remove' || action === 'promote' || action === 'demote') {
-        try {
-            let metadata = global.groupCache.get(id);
-            if (!metadata) {
-                metadata = await fetchGroupMetadataWithRetry(this, id);
-                if (metadata) global.groupCache.set(id, metadata);
-            }
-
-            if (!global.adminCache.has(id)) {
-                global.adminCache.set(id, new Set());
-            }
-            const adminSet = global.adminCache.get(id);
-
-            for (const user of participants) {
-                const normalizedUser = this.decodeJid(user);
-                switch (action) {
-                    case 'remove':
-                        adminSet.delete(normalizedUser);
-                        break;
-                    case 'promote':
-                        adminSet.add(normalizedUser);
-                        break;
-                    case 'demote':
-                        adminSet.delete(normalizedUser);
-                        break;
-                }
-            }
-
-            if (metadata) {
-                metadata.admins = Array.from(adminSet);
-                global.groupCache.set(id, metadata);
-            }
-        } catch (e) {
-            console.error(`[ERRORE] Errore in participantsUpdate per ${id}:`, e);
-        }
-    }
-
     let chat = global.db.data.chats[id] || {}
     let text = ''
-    const nomeDelBot = global.botName || this.user?.name || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
 
     switch (action) {
         case 'add':
@@ -735,63 +697,45 @@ export async function participantsUpdate({ id, participants, action }) {
                     try {
                         pp = await this.profilePictureUrl(user, 'image')
                     } catch (e) {
-
                     } finally {
                         let apii = await this.getFile(pp)
 
-                        let actualAction = action
-                        if (action === 'remove') {
-                            const removalKey = `${id}_${user}`
-                            if (global.lastRemovals[removalKey] && Date.now() - global.lastRemovals[removalKey].timestamp < 5000) {
-                                actualAction = 'remove'
-                                delete global.lastRemovals[removalKey]
-                            } else {
-                                actualAction = 'leave'
-                            }
-                        }
-
-                        if (action === 'add' || actualAction === 'add') {
+                        if (action === 'add') {
                             text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'benvenuto, @user!')
                                 .replace('@subject', await this.getName(id))
                                 .replace('@desc', groupMetadata.desc?.toString() || 'bot')
                                 .replace('@user', '@' + user.split('@')[0])
-                        } else if (action === 'leave' || actualAction === 'leave') {
+                        } else if (action === 'leave') {
                             text = (chat.sBye || this.bye || conn.bye || 'bye bye, @user!')
                                 .replace('@user', '@' + user.split('@')[0])
-                        } else if (actualAction === 'remove') {
+                        } else if (action === 'remove') {
                             text = (chat.sRemoveCustom || this.remove || conn.remove || '@user è stato rimosso!')
                                 .replace('@user', '@' + user.split('@')[0])
                         }
 
-                        await this.sendMessage(id, {
-                            text: text,
-                            contextInfo: {
-                                mentionedJid: [user],
-                                forwardingScore: 99,
-                                isForwarded: true,
-                                forwardedNewsletterMessageInfo: {
-                                    newsletterJid: '120363259442839354@newsletter',
-                                    serverMessageId: '',
-                                    newsletterName: `${nomeDelBot}`
-                                },
-                                externalAdReply: {
-                                    title:
-                                        (action === 'add' || actualAction === 'add')
-                                            ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
-                                            : (action === 'leave' || actualAction === 'leave')
-                                                ? '𝐀𝐃𝐃𝐈𝐎 👋🏻'
-                                                : '𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 ❌',
-                                    body: '',
-                                    previewType: 'PHOTO',
-                                    thumbnailUrl: '',
-                                    thumbnail: apii.data,
-                                    mediaType: 1,
-                                    renderLargerThumbnail: false
+                        this.sendMessage(id, { 
+                            text: text, 
+                            contextInfo:{ 
+                                mentionedJid:[user],
+                                "externalAdReply": {
+                                    "title": (
+                                        action === 'add' 
+                                            ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻' 
+                                            : action === 'leave' 
+                                                ? '𝐀𝐃𝐃𝐈𝐎 👋🏻' 
+                                                : '𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 ❌'
+                                    ), 
+                                    "body": ``, 
+                                    "previewType": "PHOTO", 
+                                    "thumbnailUrl": ``, 
+                                    "thumbnail": apii.data,
+                                    "mediaType": 1
+                                    "renderLargerThumbnail": false
                                 }
                             }
-                        })
-                    }
-                }
+                        }) 
+                    } 
+                } 
             }
             break
     }
