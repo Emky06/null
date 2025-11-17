@@ -50,38 +50,8 @@ export async function handler(chatUpdate) {
         return
     this.pushMessage(chatUpdate.messages).catch(console.error)
     let m = chatUpdate.messages[chatUpdate.messages.length - 1]
-    // Traccia i comandi di kick
-    if (m.message && (m.message.conversation || m.message.extendedTextMessage)) {
-        const text = (m.message.conversation || m.message.extendedTextMessage?.text || '').toLowerCase();
-        
-        // Lista comandi di kick
-        const removeCommands = [
-            '.kick', '.kamehameha', '.getout', '.avadakedavra', '.sparisci', '.caccola', '.vongole', '.puffo', '.allahuakbar',
-            'kick', 'kamehameha', 'getout', 'avadakedavra', 'sparisci', 'caccola', 'vongole', 'puffo', 'allahuakbar',
-        ];
-        
-        const isRemoveCommand = removeCommands.some(cmd => text.startsWith(cmd + ' ') || text === cmd);
-        
-        if (isRemoveCommand && m.key.remoteJid && m.key.remoteJid.includes('@g.us')) {
-            const mentionedJids = m.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
-            
-            for (const userJid of mentionedJids) {
-                const removalKey = `${m.key.remoteJid}_${userJid}`;
-                global.lastRemovals[removalKey] = {
-                    timestamp: Date.now(),
-                    admin: m.sender,
-                    group: m.key.remoteJid
-                };
-                
-                setTimeout(() => {
-                    if (global.lastRemovals[removalKey]) {
-                        delete global.lastRemovals[removalKey];
-                    }
-                }, 5000);
-            }
-        }
-    }
-    // Fine tracciamento
+
+
     if (!m)
         return
     
