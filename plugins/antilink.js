@@ -92,7 +92,7 @@ async function readQRCode(imageBuffer) {
     }
 }
 
-export async function before(msg, { isAdmin, isBotAdmin, conn }) {
+export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
     if (msg.isBaileys || msg.fromMe) return true
     if (!msg.isGroup) return false
 
@@ -109,7 +109,7 @@ export async function before(msg, { isAdmin, isBotAdmin, conn }) {
 
     for (let site of warnLinks) {
         if (site.regex.test(cleanedText)) {
-            if (isAdmin || !isBotAdmin || !botSettings.restrict) return true
+            if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
             if (site.name === '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏') {
                 const groupLink = 'https://chat.whatsapp.com/' + (await conn.groupInviteCode(msg.chat))
@@ -134,7 +134,7 @@ export async function before(msg, { isAdmin, isBotAdmin, conn }) {
         const qrText = qrData?.replace(/[\s\u200b\u200c\u200d\uFEFF]+/g, '') ?? ''
 
         if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
-            if (isAdmin || !isBotAdmin || !botSettings.restrict) return true
+            if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
             await handleWarn({ conn, msg, sender, messageId, violation: `𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎` })
             return false
