@@ -1,11 +1,11 @@
 import * as fs from 'fs'
 
-export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, usedPrefix }) {
+export async function before(m, { conn, isAdmin, isPrems, isBotAdmin, isOwner, usedPrefix }) {
   if (m.isBaileys && m.fromMe) return !0
   if (!m.isGroup) return !1
 
   // Ignora se il messaggio è di owner, admin o del bot stesso
-  if (isOwner || isAdmin || m.fromMe) return !0
+  if (isOwner || isAdmin || isPrems || m.fromMe) return !0
 
   let chat = global.db.data.chats[m.chat]
   let bot = global.db.data.settings[this.user.jid] || {}
