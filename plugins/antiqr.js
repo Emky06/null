@@ -62,7 +62,7 @@ async function readQRCode(imageBuffer) {
   }
 }
 
-export async function before(msg, { isAdmin, isBotAdmin, conn }) {
+export async function before(msg, { isAdmin, isPrems, isBotAdmin, conn }) {
   if (msg.isBaileys || msg.fromMe) return true;
   if (!msg.isGroup) return false;
 
@@ -83,7 +83,7 @@ export async function before(msg, { isAdmin, isBotAdmin, conn }) {
   if (!qrText) return true;
 
   if (linkRegex.test(qrText) || channelRegex.test(qrText)) {
-    if (isAdmin || !isBotAdmin || !botSettings.restrict) return true;
+    if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true;
 
     const groupLink = 'https://chat.whatsapp.com/' + (await conn.groupInviteCode(msg.chat));
     if (qrText.includes(groupLink.replace(/\s+/g, ''))) return true;
