@@ -3,13 +3,13 @@ import fs from 'fs';
 
 let handler = m => m;
 
-handler.before = async function (m, { conn, participants, groupMetadata, isAdmin, isBotAdmin, isOwner, isROwner }) {
+handler.before = async function (m, { conn, participants, groupMetadata, isAdmin, isPrems, isBotAdmin, isOwner, isROwner }) {
     if (!m.isGroup) return false;
     
     const botNumber = conn.decodeJid(conn.user?.jid || conn.user?.id || '');
     const isBot = m.sender === botNumber;
     
-    if (m.mentionedJid && m.mentionedJid.length > 0 && !isBot && !isOwner && !isROwner && !isAdmin) {
+    if (m.mentionedJid && m.mentionedJid.length > 0 && !isBot && !isOwner && !isROwner && !isAdmin && !isPrems) {
         const tagLimit = 40;
         let warnLimit = 3;
 
