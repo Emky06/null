@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 function ensureDB() {
   if (!global.db) global.db = { data: { users: {}, chats: {}, prems: {}, groups: {} } };
   if (!global.db.data) global.db.data = { users: {}, chats: {}, prems: {}, groups: {} };
@@ -17,23 +17,61 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner, isROwner, is
   }
 
   let who;
+
+  // 1. Prima prova: tag o quote
   if (m.isGroup) {
-    who = m.mentionedJid?.[0] || m.quoted?.sender || (text ? text + '@s.whatsapp.net' : '');
+    who = m.mentionedJid?.[0] || m.quoted?.sender || '';
   } else {
-    who = m.quoted?.sender || (text ? text + '@s.whatsapp.net' : m.chat);
+    who = m.quoted?.sender || '';
+  }
+
+  // 2. Se non c'è tag/quote, prova a leggere dal testo (numero o jid)
+  if (!who && text) {
+    let txt = text.trim();
+
+    // Se è già un JID completo
+    if (txt.endsWith('@s.whatsapp.net') || txt.endsWith('@c.us')) {
+      who = txt;
+    } else {
+      // Togli tutto tranne le cifre
+      let number = txt.replace(/[^0-9]/g, '');
+
+      // Controllo lunghezza numero 
+      if (number.length >= 8 && number.length <= 15) {
+        // Se inizia con 0 o non ha prefisso, puoi aggiungere il tuo default, es. +39
+
+        if (!number.startsWith('39')) {
+          number = '39' + number; 
+        }
+        who = number + '@s.whatsapp.net';
+      }
+    }
+  }
+
+  // 3. Se ancora niente e siamo in privato, usa la chat stessa
+  if (!who) {
+    if (!m.isGroup) {
+      who = m.chat;
+    }
   }
 
   if (!who) {
-    return m.reply(`❌ Devi specificare un utente. Esempio: ${usedPrefix + command} @utente`);
+    return m.reply(`❌ Devi specificare un utente. Esempio: ${usedPrefix + command} @utente o ${usedPrefix + command} +39 350 014 8400`);
   }
 
   // Normalizza il JID
-  const userId = conn.decodeJid(who).split('@')[0];
+  const decoded = conn.decodeJid ? conn.decodeJid(who) : who;
+  const userId = decoded.split('@')[0];
   const fullUserId = userId + '@s.whatsapp.net';
 
-  // Controlla se l'utente è già premium (nel gruppo o globalmente)
+  // Assicurati che esista la struttura per il gruppo
+  if (m.isGroup && !global.db.data.groups[m.chat]) {
+    global.db.data.groups[m.chat] = { prems: [] };
+  }
+
+  // Controlla se l'utente è già mod (nel gruppo o globalmente)
   let isPremium = m.isGroup
-    ? global.db.data.groups[m.chat]?.prems?.includes(userId)
+    ? (global.db.data.groups[m.chat]?.prems || []).includes(userId)
     : global.prems.includes(userId);
 
   if (isPremium) {
@@ -80,7 +118,7 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner, isROwner, is
   m.reply(textaddprem, null, { mentions: [fullUserId] });
 };
 
-handler.help = ['addmod <@user>'];
+handler.help = ['addmod <@user|numero>'];
 handler.tags = ['owner'];
 handler.command = /^(add|aggiungi)mod$/i;
 handler.group = true;
