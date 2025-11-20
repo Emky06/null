@@ -347,28 +347,8 @@ unlinkSync(`./sessioni/${files}`)
 })
 } 
 
-function purgeSessionSB() {
-try {
-let listaDirectorios = readdirSync('./jadibts/');
-let SBprekey = []
-listaDirectorios.forEach(directorio => {
-if (statSync(`./jadibts/${directorio}`).isDirectory()) {
-let DSBPreKeys = readdirSync(`./jadibts/${directorio}`).filter(fileInDir => {
-return fileInDir.startsWith('pre-key-')
-})
-SBprekey = [...SBprekey, ...DSBPreKeys]
-DSBPreKeys.forEach(fileInDir => {
-unlinkSync(`./jadibts/${directorio}/${fileInDir}`)
-})
-}
-})
-if (SBprekey.length === 0) return;
-} catch (err) {
-console.log(chalk.bold.red(`⚠️ 𝐐𝐮𝐚𝐥𝐜𝐨𝐬𝐚 𝐞' 𝐚𝐧𝐝𝐚𝐭𝐨 𝐬𝐭𝐨𝐫𝐭𝐨 𝐝𝐮𝐫𝐚𝐧𝐭𝐞 𝐥'𝐞𝐥𝐢𝐦𝐢𝐧𝐢𝐧𝐚𝐳𝐢𝐨𝐧𝐞, 𝐟𝐢𝐥𝐞 𝐧𝐨𝐧 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢`))
-}}
-
 function purgeOldFiles() {
-const directories = ['./sessioni/', './jadibts/']
+const directories = ['./sessioni/']
 const oneHourAgo = Date.now() - (60 * 60 * 1000)
 directories.forEach(dir => {
 readdirSync(dir, (err, files) => {
@@ -595,16 +575,11 @@ setInterval(async () => {
   if (stopped === 'close' || !conn || !conn.user) return;
   await purgeSession();
  console.log(chalk.blueBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐢𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
-}, 1000 * 60 * 2);
-setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn.user) return;
-  await purgeSessionSB();
- console.log(chalk.blueBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐢𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
-}, 1000 * 60 * 60);
+}, 1000 * 60 * 1);
 setInterval(async () => {
   if (stopped === 'close' || !conn || !conn.user) return;
   await purgeOldFiles();
  console.log(chalk.blueBright(`\n╭─────────────────\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐎𝐋𝐃𝐅𝐈𝐋𝐄𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
-}, 1000 * 60 * 2);
+}, 1000 * 60 * 1);
 
 _quickTest();
