@@ -3,31 +3,29 @@ let handler = async (m, { conn }) => {
   let groupsData = await conn.groupFetchAllParticipating().catch(() => ({}));
   let groups = Object.values(groupsData || {});
 
+  // Filtra solo i gruppi reali (@g.us), esclude community/broadcast
+  groups = groups.filter(g => g.id.endsWith('@g.us'));
+
   if (!groups.length) return m.reply('Non sono presente in nessun gruppo.');
 
   let output = [`𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`, '', `➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${groups.length}`, '\n══════ ೋೋ══════\n'];
 
+  // Funzione delay per evitare overlimit
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
-    let metadata = g.metadata;
+    const groupName = g.subject || 'Nome non disponibile';
+    const membersCount = g.metadata?.participants?.length || 0;
 
-    // Recupera metadata completi (per partecipanti)
-    try {
-      metadata = await conn.groupMetadata(jid);
-    } catch (e) {
-      metadata = { participants: [] };
-    }
-
-    const groupName = metadata.subject || 'Nome non disponibile';
-    const membersCount = metadata.participants?.length || 0;
-
-    // Genera il link solo se il bot è admin
+    // Genera il link solo se il bot è admin, con try/catch e delay
     let link = 'Non disponibile';
     try {
-      const botParticipant = metadata.participants.find(p => conn.decodeJid(p.id) === conn.user.jid);
+      const botParticipant = g.metadata?.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
       if (botParticipant?.admin) {
         const code = await conn.groupInviteCode(jid);
         link = `https://chat.whatsapp.com/${code}`;
+        await delay(300); // 300ms di pausa tra le chiamate
       }
     } catch (e) {}
 
