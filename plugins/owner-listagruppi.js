@@ -1,8 +1,13 @@
 //Plugin fatto da Axtral_WiZaRd
-let handler = async (m, { conn }) => {
-  const delay = ms => new Promise(res => setTimeout(res, ms));
+function ensureDB() {
+  if (!global.db) global.db = { data: { chats: {} } };
+  if (!global.db.data.chats) global.db.data.chats = {};
+}
 
-  // Prende solo i gruppi attivi in cui il bot è presente
+let handler = async (m, { conn }) => {
+  ensureDB();
+
+  // Prende tutti i gruppi in cui il bot è attualmente presente
   const allGroups = await conn.groupFetchAllParticipating().catch(() => ({}));
   const groups = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
 
@@ -17,26 +22,26 @@ let handler = async (m, { conn }) => {
 
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
-
-    // Usa metadata già presente se disponibile
     const metadata = conn.chats[jid]?.metadata || g.metadata || {};
     if (!metadata) continue;
 
-    // Esclude community e broadcast
+    // Esclude community/broadcast
     if (metadata.isCommunity || metadata.announce || metadata.read_only) continue;
 
     const groupName = metadata.subject || 'Nome non disponibile';
     const membersCount = metadata.participants?.length || 0;
 
-    // Genera il link solo se il bot è admin, usando metadata aggiornati
-    let link = 'Non disponibile';
+    // Controlla se il link è già salvato nel DB
+    if (!global.db.data.chats[jid]) global.db.data.chats[jid] = {};
+    let link = global.db.data.chats[jid].groupInviteLink || 'Non disponibile';
+
+    // Se non c’è link e bot è admin, lo generiamo e salviamo
     try {
-      const meta = await conn.groupMetadata(jid);
-      const botParticipant = meta.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
-      if (botParticipant?.admin) {
+      const botParticipant = metadata.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
+      if (link === 'Non disponibile' && botParticipant?.admin) {
         const code = await conn.groupInviteCode(jid);
         link = `https://chat.whatsapp.com/${code}`;
-        await delay(300); // pausa 300ms per evitare rate limit
+        global.db.data.chats[jid].groupInviteLink = link;
       }
     } catch (e) {
       link = 'Non disponibile';
