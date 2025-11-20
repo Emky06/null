@@ -18,7 +18,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     } else {
       let number = txt.replace(/[^0-9]/g, '');
       if (number.length >= 8 && number.length <= 15) {
-        // Mantieni solo il numero così com'è, aggiungendo + se manca
+        
 let number = txt.replace(/\D/g, '');
 if (!txt.startsWith('+')) number = '+' + number;
 who = number + '@s.whatsapp.net';
