@@ -1,54 +1,31 @@
-// Plugin fatto da Axtral_WiZaRd
-const handler = async (m, { conn }) => {
-  let output = [`𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`, ''];
+//Plugin fatto da Axtral_WiZaRd
+let handler = async (m, { conn }) => {
 
-  // Prendi solo le chat di tipo gruppo
-  const groups = Object.values(conn.chats)
-    .filter(chat => chat.id?.endsWith('@g.us') && chat.isChats);
+  // Prende solo i gruppi attivi in cui il bot è presente
+  let groupsData = await conn.groupFetchAllParticipating().catch(() => ({}));
+  let groups = Object.values(groupsData || {});
 
-  // Filtra solo i gruppi dove il bot è effettivamente membro
-  const activeGroups = [];
-  for (const chat of groups) {
-    let participants = chat.metadata?.participants || [];
-    // Se metadata non esiste ancora, prova a prenderla
-    if (!participants.length) {
-      try {
-        const metadata = await conn.groupMetadata(chat.id);
-        participants = metadata.participants || [];
-        chat.metadata = metadata; // salva per riutilizzo
-      } catch (e) {}
-    }
-    if (participants.some(p => conn.decodeJid(p.id) === conn.user.jid)) {
-      activeGroups.push(chat);
-    }
-  }
+  if (!groups.length) return m.reply('Non sono presente in nessun gruppo.');
 
-  // Ordina in base al numero di messaggi (se disponibile)
-  activeGroups.sort((a, b) => {
-    const msgA = a.messages?.length || 0;
-    const msgB = b.messages?.length || 0;
-    return msgB - msgA;
-  });
+  let output = [`𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`, '', `➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${groups.length}`, '\n══════ ೋೋ══════\n'];
 
-  output.push(`➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${activeGroups.length}`, '\n══════ ೋೋ══════\n');
+  for (const [index, g] of groups.entries()) {
+    const jid = g.id;
+    let groupMetadata = g.metadata || {};
+    try {
+      groupMetadata = await conn.groupMetadata(jid);
+      g.metadata = groupMetadata;
+    } catch (e) {}
 
-  for (const [index, chat] of activeGroups.entries()) {
-    const jid = chat.id;
-    const metadata = chat.metadata || {};
-    const participants = metadata.participants || [];
+    const participants = groupMetadata.participants || [];
     const totalParticipants = participants.length;
 
     const botParticipant = participants.find(p => conn.decodeJid(p.id) === conn.user.jid);
     const isBotAdmin = botParticipant?.admin ?? false;
 
-    let groupName = 'Nome non disponibile';
-    try {
-      groupName = await conn.getName(jid);
-    } catch (e) {}
+    const groupName = groupMetadata.subject || 'Nome non disponibile';
+    const groupMessages = g.messages?.length || 0;
 
-    const groupMessages = chat.messages?.length || 0;
-
-    // Link admin solo se il bot è admin
     let groupInviteLink = 'Non disponibile';
     if (isBotAdmin) {
       try {
