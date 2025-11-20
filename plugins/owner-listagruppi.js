@@ -1,19 +1,24 @@
 //Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  // Prende solo i gruppi attivi in cui il bot è presente
   const allGroups = await conn.groupFetchAllParticipating().catch(() => ({}));
   const groups = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
 
   if (!groups.length) return m.reply('Non sono presente in nessun gruppo.');
 
-  const output = [`𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`, '', `➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${groups.length}`, '\n══════ ೋೋ══════\n'];
-
-  // Delay per evitare rate limit sui link
-  const delay = ms => new Promise(res => setTimeout(res, ms));
+  const output = [
+    `𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`,
+    '',
+    `➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${groups.length}`,
+    '\n══════ ೋೋ══════\n'
+  ];
 
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
 
-    // Usa metadata da conn.chats se presente, altrimenti fallback a g.metadata
+    // Usa metadata già presente se disponibile
     const metadata = conn.chats[jid]?.metadata || g.metadata || {};
     if (!metadata) continue;
 
@@ -23,10 +28,11 @@ let handler = async (m, { conn }) => {
     const groupName = metadata.subject || 'Nome non disponibile';
     const membersCount = metadata.participants?.length || 0;
 
-    // Link solo se bot è admin
+    // Genera il link solo se il bot è admin, usando metadata aggiornati
     let link = 'Non disponibile';
     try {
-      const botParticipant = metadata.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
+      const meta = await conn.groupMetadata(jid);
+      const botParticipant = meta.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
       if (botParticipant?.admin) {
         const code = await conn.groupInviteCode(jid);
         link = `https://chat.whatsapp.com/${code}`;
