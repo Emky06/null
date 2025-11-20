@@ -32,7 +32,7 @@ Esempi:
     pathFile = fileArg
   }
 
-  const header = "//Plugin fatto da Axtral_WiZaRd\n"
+  const header = "//Fatto da Axtral_WiZaRd\n"
 
   try {
     const isJS = /\.js$/i.test(filename)
