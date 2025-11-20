@@ -1,8 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-import fs from 'fs';
-
 let handler = async (m, { conn }) => {
-  // Prende solo i gruppi attivi in cui il bot è presente
   let groupsData = await conn.groupFetchAllParticipating().catch(() => ({}));
   let groups = Object.values(groupsData || {});
 
@@ -12,14 +9,26 @@ let handler = async (m, { conn }) => {
 
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
-    const groupName = g.subject || 'Nome non disponibile';
-    const membersCount = g.metadata?.participants?.length || 'N/D';
+    let metadata = g.metadata;
 
-    // Genera il link usando lo stesso metodo di gp-link.js
+    // Recupera metadata completi (per partecipanti)
+    try {
+      metadata = await conn.groupMetadata(jid);
+    } catch (e) {
+      metadata = { participants: [] };
+    }
+
+    const groupName = metadata.subject || 'Nome non disponibile';
+    const membersCount = metadata.participants?.length || 0;
+
+    // Genera il link solo se il bot è admin
     let link = 'Non disponibile';
     try {
-      const code = await conn.groupInviteCode(jid);
-      link = `https://chat.whatsapp.com/${code}`;
+      const botParticipant = metadata.participants.find(p => conn.decodeJid(p.id) === conn.user.jid);
+      if (botParticipant?.admin) {
+        const code = await conn.groupInviteCode(jid);
+        link = `https://chat.whatsapp.com/${code}`;
+      }
     } catch (e) {}
 
     output.push(
