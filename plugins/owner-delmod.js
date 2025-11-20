@@ -18,10 +18,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     } else {
       let number = txt.replace(/[^0-9]/g, '');
       if (number.length >= 8 && number.length <= 15) {
-        if (!number.startsWith('39')) {
-          number = '39' + number;
-        }
-        who = number + '@s.whatsapp.net';
+        
+let number = txt.replace(/\D/g, '');
+if (!txt.startsWith('+')) number = '+' + number;
+who = number + '@s.whatsapp.net';
       }
     }
   }
