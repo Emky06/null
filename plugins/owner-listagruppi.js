@@ -10,14 +10,16 @@ let handler = async (m, { conn }) => {
 
   const output = [`𝐋𝐈𝐒𝐓𝐀 𝐃𝐄𝐈 𝐆𝐑𝐔𝐏𝐏𝐈 𝐃𝐈 ${await conn.getName(conn.user.jid)}`, '', `➣ 𝐓𝐨𝐭𝐚𝐥𝐞 𝐆𝐫𝐮𝐩𝐩𝐢: ${groups.length}`, '\n══════ ೋೋ══════\n'];
 
-  for (const [index, [jid]] of groups.entries()) {
-    const metadata = conn.chats[jid]?.metadata;
-    if (!metadata || metadata.isCommunity) continue; // esclude community
+  for (const [index, [jid, chat]] of groups.entries()) {
+    const metadata = chat.metadata;
+    if (!metadata) continue;
+    // Escludi community
+    if (metadata.isCommunity) continue;
 
     const groupName = await conn.getName(jid).catch(() => 'Nome non disponibile');
     const membersCount = metadata.participants?.length || 0;
 
-    // Link solo se il bot è admin
+    // Genera il link solo se il bot è admin
     let link = 'Non disponibile';
     try {
       const botParticipant = metadata.participants.find(p => conn.decodeJid(p.id) === conn.user.jid);
@@ -25,7 +27,9 @@ let handler = async (m, { conn }) => {
         const code = await conn.groupInviteCode(jid);
         link = `https://chat.whatsapp.com/${code}`;
       }
-    } catch (e) {}
+    } catch (e) {
+      // Se fallisce, link rimane 'Non disponibile'
+    }
 
     output.push(
       `➣ 𝐆𝐑𝐔𝐏𝐏Ꮻ 𝐍𝐔𝐌𝚵𝐑Ꮻ: ${index + 1}`,
