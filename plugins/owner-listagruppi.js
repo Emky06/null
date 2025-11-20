@@ -1,7 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
 
-  // Prende solo i gruppi attivi in cui il bot è presente
   let groupsData = await conn.groupFetchAllParticipating().catch(() => ({}));
   let groups = Object.values(groupsData || {});
 
@@ -11,35 +10,20 @@ let handler = async (m, { conn }) => {
 
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
-    let groupMetadata = g.metadata || {};
-    try {
-      groupMetadata = await conn.groupMetadata(jid);
-      g.metadata = groupMetadata;
-    } catch (e) {}
+    const groupName = g.subject || 'Nome non disponibile';
 
-    const participants = groupMetadata.participants || [];
-    const totalParticipants = participants.length;
-
-    const botParticipant = participants.find(p => conn.decodeJid(p.id) === conn.user.jid);
-    const isBotAdmin = botParticipant?.admin ?? false;
-
-    const groupName = groupMetadata.subject || 'Nome non disponibile';
-    const groupMessages = g.messages?.length || 0;
-
-    let groupInviteLink = 'Non disponibile';
-    if (isBotAdmin) {
-      try {
-        const code = await conn.groupInviteCode(jid);
-        groupInviteLink = `https://chat.whatsapp.com/${code}`;
-      } catch (e) {}
-    }
+    // Partecipanti e admin non disponibili senza chiamare groupMetadata
+    const totalParticipants = g.participants?.length || 'N/D';
+    const isBotAdmin = 'N/D';
+    const groupMessages = 'N/D';
+    const groupInviteLink = 'Non disponibile';
 
     output.push(
       `➣ 𝐆𝐑𝐔𝐏𝐏Ꮻ 𝐍𝐔𝐌𝚵𝐑Ꮻ: ${index + 1}`,
       `➣ 𝐆𝐑𝐔𝐏𝐏Ꮻ: ${groupName}`,
       `➣ 𝐏𝚲𝐑𝐓𝚵𝐂𝚲𝐏𝚲𝐍𝐓𝕀: ${totalParticipants}`,
       `➣ 𝐌𝚵𝐒𝐒𝚲𝐆𝐆𝕀: ${groupMessages}`,
-      `➣ 𝚲𝐃𝐌𝕀𝐍: ${isBotAdmin ? '✓' : '☓'}`,
+      `➣ 𝚲𝐃𝐌𝕀𝐍: ${isBotAdmin}`,
       `➣ 𝕀𝐃: ${jid}`,
       `➣ 𝐋𝕀𝐍𝐊: ${groupInviteLink}`,
       '\n══════ ೋೋ══════\n'
