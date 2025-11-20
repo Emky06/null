@@ -8,7 +8,7 @@ let handler = async (m, { conn }) => {
   ensureDB();
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  // Prende tutti i gruppi attivi
+  // Prende tutti i gruppi attivi in cui il bot è presente
   const allGroups = await conn.groupFetchAllParticipating().catch(() => ({}));
   const groups = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
 
@@ -24,8 +24,8 @@ let handler = async (m, { conn }) => {
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
 
-    // Usa metadata da conn.chats se presente
-    let metadata = conn.chats[jid]?.metadata || g.metadata || {};
+    // Usa metadata presenti, se esistono
+    const metadata = conn.chats[jid]?.metadata || g.metadata || {};
     if (!metadata) continue;
 
     // Esclude community/broadcast
@@ -34,21 +34,17 @@ let handler = async (m, { conn }) => {
     const groupName = metadata.subject || 'Nome non disponibile';
     const membersCount = metadata.participants?.length || 0;
 
-    // Controlla link nel DB
+    // Assicurati che ci sia un oggetto per il gruppo nel DB
     if (!global.db.data.chats[jid]) global.db.data.chats[jid] = {};
-    let link = global.db.data.chats[jid].groupInviteLink || 'Non disponibile';
 
-    // Se non c’è link, genera usando groupMetadata aggiornato
+    // Genera link direttamente usando try/catch, indipendentemente dai metadata
+    let link = global.db.data.chats[jid].groupInviteLink || 'Non disponibile';
     if (link === 'Non disponibile') {
       try {
-        const meta = await conn.groupMetadata(jid); // metadata aggiornati
-        const botParticipant = meta.participants?.find(p => conn.decodeJid(p.id) === conn.user.jid);
-        if (botParticipant?.admin) {
-          const code = await conn.groupInviteCode(jid);
-          link = `https://chat.whatsapp.com/${code}`;
-          global.db.data.chats[jid].groupInviteLink = link;
-          await delay(300); // pausa per evitare rate limit
-        }
+        const code = await conn.groupInviteCode(jid); // se bot non admin, fallisce
+        link = `https://chat.whatsapp.com/${code}`;
+        global.db.data.chats[jid].groupInviteLink = link; // salva nel DB
+        await delay(300); // pausa per evitare rate limit
       } catch (e) {
         link = 'Non disponibile';
       }
