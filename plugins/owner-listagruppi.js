@@ -8,9 +8,12 @@ let handler = async (m, { conn }) => {
   ensureDB();
   const delay = ms => new Promise(res => setTimeout(res, ms));
 
-  
   const allGroups = await conn.groupFetchAllParticipating().catch(() => ({}));
-  const groups = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
+  const groupsRaw = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
+  const groups = groupsRaw.filter(g => {
+    const meta = conn.chats[g.id]?.metadata || g.metadata || {};
+    return !(meta.isCommunity || meta.announce || meta.read_only);
+  });
 
   if (!groups.length) return m.reply('Non sono presente in nessun gruppo.');
 
@@ -23,28 +26,18 @@ let handler = async (m, { conn }) => {
 
   for (const [index, g] of groups.entries()) {
     const jid = g.id;
-
-    
     const metadata = conn.chats[jid]?.metadata || g.metadata || {};
-    if (!metadata) continue;
-
-    
-    if (metadata.isCommunity || metadata.announce || metadata.read_only) continue;
-
     const groupName = metadata.subject || 'Nome non disponibile';
     const membersCount = metadata.participants?.length || 0;
 
-    
     if (!global.db.data.chats[jid]) global.db.data.chats[jid] = {};
-
-    
     let link = global.db.data.chats[jid].groupInviteLink || 'Non disponibile';
     if (link === 'Non disponibile') {
       try {
-        const code = await conn.groupInviteCode(jid); 
+        const code = await conn.groupInviteCode(jid);
         link = `https://chat.whatsapp.com/${code}`;
-        global.db.data.chats[jid].groupInviteLink = link; // salva nel DB
-        await delay(300); 
+        global.db.data.chats[jid].groupInviteLink = link;
+        await delay(300);
       } catch (e) {
         link = 'Non disponibile';
       }
