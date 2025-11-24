@@ -1,62 +1,61 @@
 import fs from 'fs';
 
 let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
-  let ownerNumber = "+39 351 288 4684";
-  let Bot = "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
+  try {
+    // Prendi il primo owner dal config globale
+    let owners = global.owner.filter(([id]) => id).map(([id]) => id);
+    let ownerNumber = owners[0] || "+357 96 261367"; // fallback se non c'è owner
 
-  let _0x414c2d = {
-    key: {
-      participants: "0@s.whatsapp.net",
-      fromMe: false,
-      id: 'Halo'
-    },
-    message: {
-      locationMessage: {
-        name: "𝑺𝒖𝒑𝒑𝒐𝒓𝒕𝒐 𝑩𝒐𝒕",
-        jpegThumbnail: fs.readFileSync('icone/logobot.png'),
-        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;Unlimited;;;\nFN:Unlimited\nORG:Unlimited\nTITLE:\nitem1.TEL;waid=${ownerNumber}:+${ownerNumber}\nitem1.X-ABLabel:Unlimited\nX-WA-BIZ-DESCRIPTION:ofc\nX-WA-BIZ-NAME:Unlimited\nEND:VCARD`
-      }
-    },
-    participant: "0@s.whatsapp.net"
-  };
 
-  let _0x259d4e = `
+    let _0x414c2d = {
+      key: {
+        participants: "0@s.whatsapp.net",
+        fromMe: false,
+        id: 'Halo'
+      },
+      message: {
+        locationMessage: {
+          name: "𝑺𝒖𝒑𝒑𝒐𝒓𝒕𝒐 𝑩𝒐𝒕",
+          jpegThumbnail: fs.readFileSync('icone/logobot.png'),
+          vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;Unlimited;;;\nFN:Unlimited\nORG:Unlimited\nTITLE:\nitem1.TEL;waid=${ownerNumber}:+${ownerNumber}\nitem1.X-ABLabel:Unlimited\nX-WA-BIZ-DESCRIPTION:ofc\nX-WA-BIZ-NAME:Unlimited\nEND:VCARD`
+        }
+      },
+      participant: "0@s.whatsapp.net"
+    };
+
+    let _0x259d4e = `
 ═════════════════════
 👑 *𝑺𝒖𝒑𝒑𝒐𝒓𝒕𝒐 𝑩𝒐𝒕* 👑
 
  ➤ 𝐏𝐞𝐫 𝐪𝐮𝐚𝐥𝐬𝐢𝐚𝐬𝐢 𝐩𝐫𝐨𝐛𝐥𝐞𝐦𝐚 𝐫𝐢𝐬𝐜𝐨𝐧𝐭𝐫𝐚𝐭𝐨 𝐜𝐨𝐧 𝐢𝐥 𝐛𝐨𝐭, 𝐜𝐨𝐧𝐭𝐚𝐭𝐭𝐚 𝐢𝐥 𝐩𝐫𝐨𝐩𝐫𝐢𝐞𝐭𝐚𝐫𝐢𝐨 𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐧𝐮𝐦𝐞𝐫𝐨:
 📞 ${ownerNumber}
 
-${Bot}
+𝑩𝒀 ${nomebot}
 ═════════════════════
 `.trim();
 
-
-  _0x4b9a49.sendMessage(_0x4955de.chat, {
-    text: _0x259d4e,
-    contextInfo: {
-      mentionedJid: _0x4b9a49.parseMention(wm),
-      forwardingScore: 1,
-      isForwarded: true,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: "120363402109887104@newsletter",
-        serverMessageId: '',
-        newsletterName: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
+    _0x4b9a49.sendMessage(_0x4955de.chat, {
+      text: _0x259d4e,
+      contextInfo: {
+        mentionedJid: [_0x4b9a49.parseMention(ownerNumber)],
+        forwardingScore: 1,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: "120363402109887104@newsletter",
+          serverMessageId: '',
+          newsletterName: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
+        }
       }
-    }
-  }, {
-    quoted: _0x414c2d
-  });
+    }, {
+      quoted: _0x414c2d
+    });
+  } catch (e) {
+    console.error("Errore in supporto:", e);
+    _0x4b9a49.sendMessage(_0x4955de.chat, { text: "❌ Errore nel mostrare il supporto." });
+  }
 };
 
 handler.help = ["supporto"];
 handler.tags = ["supporto"];
 handler.command = /^(supporto)$/i;
 export default handler;
-
-function clockString(_0x5dad08) {
-  let _0x233c78 = Math.floor(_0x5dad08 / 3600000);
-  let _0x2b10bc = Math.floor(_0x5dad08 / 60000) % 60;
-  let _0x2c7d73 = Math.floor(_0x5dad08 / 1000) % 60;
-  return [_0x233c78, _0x2b10bc, _0x2c7d73].map(_0x4bd0ef => _0x4bd0ef.toString().padStart(2, 0)).join(':');
-}
