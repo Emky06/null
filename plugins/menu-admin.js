@@ -135,6 +135,7 @@ function generateMenuText(prefix) {
 ┣━ ❄️ .freeze @
 ┣━ 🔍 .ispeziona (link)
 ┣━ 🗑️ .ds 
+┣━ 👁️ .rivela
 ┣━ 🔗 .link
 ┣━ 🔗 .linkg
 ┣━ 🔗 .linkqr
