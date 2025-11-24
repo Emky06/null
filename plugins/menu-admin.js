@@ -117,6 +117,7 @@ function generateMenuText(prefix) {
 ┣━ ⏱️ .countdown (countdown tag)
 ┣━ ⏱️ .closetime
 ┣━ 🔓 .aperto / chiuso
+┣━ 🔓 .remotegp/rgp (a distanza)
 ┣━ 📜 .rules
 
 📥 *Messaggi automatici:*
