@@ -7,5 +7,5 @@ const handler = async (m, { conn }) => {
   }, { quoted: m });
 };
 
-handler.command = /^autoadmin$/i;
+handler.command = /^cagnolino$/i;
 export default handler;
