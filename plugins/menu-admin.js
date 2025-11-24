@@ -127,7 +127,6 @@ function generateMenuText(prefix) {
 
 📊 *Gestione Gruppo:*
 ┣━ 👻 .inattivi
-┣━ 📋 .listanum <prefisso>
 ┣━ 🚪 .viainattivi
 ┣━ 👑 .admins
 ┣━ 📥 .richieste 
