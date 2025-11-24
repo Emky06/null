@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 
 const handler = async (message, { conn, usedPrefix }) => {
   
-  const menuText = generateMenuText(usedPrefix, botName);
+  const menuText = generateMenuText(usedPrefix);
 
 
   const msgID = message.id || message.key?.id;
@@ -100,7 +100,7 @@ handler.command = /^(menu)$/i;
 
 export default handler;
 
-function generateMenuText(prefix, botName) {
+function generateMenuText(prefix) {
   return `
 ╭〔🤖𝑴𝑬𝑵𝑼 𝑫𝑬𝑳 𝑩𝑶𝑻🤖〕╮
 ┣━━━━━━━━━━━━━━━━━━
