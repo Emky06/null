@@ -27,7 +27,6 @@ const handler = async (message, { conn, usedPrefix }) => {
       ? await (await fetch(profilo)).buffer()
       : profilo;
 
-    const botName = global.db.data.nomedelbot || "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
 
     const commandList = `
 ✨ *𝐌𝐞𝐧𝐮 𝐕𝐨𝐜𝐚𝐥𝐢* ✨
@@ -43,8 +42,8 @@ const handler = async (message, { conn, usedPrefix }) => {
 ➤ ${usedPrefix}𝐩𝐨𝐥𝐢𝐳𝐢𝐚
 ➤ ${usedPrefix}𝐭𝐫𝐚𝐥𝐥𝐚𝐥𝐥𝐞𝐫𝐨
 ─────────────────────
-🤖 𝑩𝒐𝒕: ${botName}
 🌟 *𝑽𝑬𝑹𝑺𝑰𝑶𝑵𝑬*: ${vs}
+𝑩𝒀  ${nomebot}
 `.trim();
 
     await conn.sendMessage(message.chat, {
