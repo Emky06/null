@@ -101,7 +101,6 @@ handler.command = /^(menu)$/i;
 export default handler;
 
 function generateMenuText(prefix, botName) {
-  const vs = '2.0';
   return `
 ╭〔🤖𝑴𝑬𝑵𝑼 𝑫𝑬𝑳 𝑩𝑶𝑻🤖〕╮
 ┣━━━━━━━━━━━━━━━━━━
