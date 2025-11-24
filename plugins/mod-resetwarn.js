@@ -50,9 +50,9 @@ let handler = async (m, { conn }) => {
     }
 };
 
-handler.help = ['zerowarn @user'];
-handler.tags = ['premium'];
-handler.command = ['zerowarn'];
+handler.help = ['azzerawarn @user'];
+handler.tags = ['mod'];
+handler.command = ['azzerawarn'];
 handler.group = true;
 handler.premium = true; 
 handler.botAdmin = true;
