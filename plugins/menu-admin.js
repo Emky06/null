@@ -108,38 +108,50 @@ function generateMenuText(prefix) {
 ┣━ 🛡️ .resetwarn
 ┣━ 🛡️ .muta / smuta
 ┣━ 🛡️ .mutelist
+┣━ 🛡️ .listawarn
+┣━ 🛡️ .del
 
 👥 *Gestione Tag & Gruppi:*
-┣━ 📢 .hidetag / tag
+┣━ 📢 .tag
 ┣━ 📢 .tagall
+┣━ ⏱️ .countdown (countdown tag)
+┣━ ⏱️ .closetime
 ┣━ 🔓 .aperto / chiuso
+┣━ 📜 .rules
 
 📥 *Messaggi automatici:*
 ┣━ 🎉 .setwelcome
 ┣━ 🥀 .setbye
 ┣━ ❌ .setremove
+┣━ 🎲 .sim
 
 📊 *Gestione Gruppo:*
 ┣━ 👻 .inattivi
 ┣━ 📋 .listanum <prefisso>
 ┣━ 🚪 .viainattivi
-┣━ 🎲 .sim
 ┣━ 👑 .admins
 ┣━ 📥 .richieste 
 
 🧊 *Extra Admin Tools:*
 ┣━ ❄️ .freeze @
 ┣━ 🔍 .ispeziona (link)
-┣━ 🏆 .top (10,50,100)
-┣━ 💋 .topsexy
-┣━ 🍑 .toptroie
+┣━ 🗑️ .ds 
+┣━ 🔗 .link
+┣━ 🔗 .linkg
+┣━ 🔗 .linkqr
+┣━ 🔁 .reimposta (link)
 
 🖼️ *Foto & Info:*
 ┣━ 📷 .pic @
 ┣━ 🖼️ .picgruppo
-┣━ 📝 .nome <testo>
 ┣━ 🧬 .bio <testo>
-┣━ 🔗 .linkqr
+
+🎉 *Comandi Fun*
+┣━ 🏆 .top (10,50,100)
+┣━ 💋 .topsexy
+┣━ 🍑 .toptroie
+┣━ ࿖ .topnazi
+┣━ 🏳️‍🌈 .toplgbt
 
 ┏━━━━━━━━━━━━━━━━━━━┓
 ┃      ☄️ 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 ☄️     ┃
