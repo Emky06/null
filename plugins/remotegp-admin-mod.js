@@ -95,7 +95,7 @@ let handler = async (m, { conn, text, usedPrefix, command, isOwner, isAdmin }) =
 
 handler.help = ['remotegp <chatId> <open|close>'];
 handler.tags = ['group', 'owner'];
-handler.command = ['remotegp','rgroup','rgp'];
+handler.command = ['remotegp','rgp'];
 handler.owner = false;
 handler.admin = false;
 handler.group = true;
