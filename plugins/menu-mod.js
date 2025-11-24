@@ -1,7 +1,7 @@
 // Plugin fatto da Axtral_WiZaRd
 const handler = async (message, { conn, usedPrefix }) => {
     
-    const menuText = generateModMenuText(usedPrefix, botName);
+    const menuText = generateModMenuText(usedPrefix);
 
     const msgID = message.id || message.key?.id;
     let device = 'Dispositivo sconosciuto 🕵️‍♂️';
@@ -91,7 +91,7 @@ handler.command = /^mod$/i;
 
 export default handler;
 
-function generateModMenuText(prefix, botName) {
+function generateModMenuText(prefix) {
     return `
 ╭━〔 𝑴𝑬𝑵𝑼 𝑴𝑶𝑫𝑬𝑹𝑨𝑻𝑶𝑹𝐈 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
