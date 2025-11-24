@@ -39,7 +39,7 @@ const handler = async (message, { conn, usedPrefix }) => {
 ➤ ${usedPrefix}𝐩𝐨𝐥𝐢𝐳𝐢𝐚
 ➤ ${usedPrefix}𝐭𝐫𝐚𝐥𝐥𝐚𝐥𝐥𝐞𝐫𝐨
 ─────────────────────
-🌟 *𝑽𝑬𝑹𝑺𝑰𝑶𝑵𝑬*: ${vs}
+𝑽𝑬𝑹𝑺𝑰𝑶𝑵𝑬: ${vs}
 𝑩𝒀  ${nomebot}
 `.trim();
 
@@ -67,6 +67,6 @@ const handler = async (message, { conn, usedPrefix }) => {
 
 handler.help = ["menu"];
 handler.tags = ['menu'];
-handler.command = /^(menuvocali)$/i;
+handler.command = /^(vocali)$/i;
 
 export default handler;
