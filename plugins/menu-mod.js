@@ -1,6 +1,6 @@
 // Plugin fatto da Axtral_WiZaRd
 const handler = async (message, { conn, usedPrefix }) => {
-    const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
+    
     const menuText = generateModMenuText(usedPrefix, botName);
 
     const msgID = message.id || message.key?.id;
@@ -108,6 +108,6 @@ function generateModMenuText(prefix, botName) {
 ┃ 👁️ ${prefix}𝐫𝐢𝐯 — Rivela media
 ┃ 🔒 ${prefix}𝐜𝐡𝐢𝐮𝐬𝐨𝐭𝐞𝐦𝐩 — Chiudi chat per tot min
 ╰━━━━━━━━━━━━━━━━━━━╯
-🤖 𝐁𝐨𝐭: ${botName}
+𝑩𝒀 ${nomebot}
 `.trim();
 }
