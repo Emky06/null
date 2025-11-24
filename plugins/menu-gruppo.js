@@ -91,10 +91,8 @@ handler.command = /^(gruppo)$/i;
 export default handler;
 
 function generateMenuText(prefix) {
-    return `╔═══════════════════╗
-║         👥 *𝐆𝐫𝐮𝐩𝐩𝐨 𝐌𝐞𝐧𝐮* 👥      ║
-╚═══════════════════╝
-╭━━━━━━━━━━━━━━━━━━━╮
+    return `╭━〔 👥 𝑴𝑬𝑵𝑼 𝑮𝑹𝑼𝑷𝑷𝑶 👥 〕━╮
+┣━━━━━━━━━━━━━━━━━━━━
 ┃🎮 *𝐆𝐈𝐎𝐂𝐇𝐈*  
 ┃
 ┃🎲 ${prefix}𝐢𝐦𝐩𝐢𝐜𝐜𝐚𝐭𝐨  
@@ -116,7 +114,6 @@ function generateMenuText(prefix) {
 ┃🤝 *𝐈𝐍𝐓𝐄𝐑𝐀𝐙𝐈𝐎𝐍𝐈*  
 ┃
 ┃🤗 ${prefix}𝐚𝐛𝐛𝐫𝐚𝐜𝐜𝐢𝐚 @  
-┃😛 ${prefix}𝐥𝐞𝐜𝐜𝐨/𝐚 @  
 ┃🦷 ${prefix}𝐦𝐨𝐫𝐝𝐢 @  
 ┃🔨 ${prefix}𝐛𝐨𝐧𝐤 @  
 ┃💞 ${prefix}𝐜𝐫𝐞𝐚𝐜𝐨𝐩𝐩𝐢𝐚  
@@ -175,6 +172,7 @@ function generateMenuText(prefix) {
 ┃🔥 ${prefix}𝐬𝐜𝐨𝐩𝐚 @
 ┃⚧️ ${prefix}𝐭𝐫𝐚𝐧𝐬 @  
 ┃🔥 ${prefix}𝐨𝐫𝐠𝐢𝐚  
+┃😛 ${prefix}𝐥𝐞𝐜𝐜𝐨/𝐚 @
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃😂 *𝐈𝐍𝐒𝐔𝐋𝐓𝐈 / 𝐌𝐄𝐌𝐄*  
 ┃
@@ -193,9 +191,13 @@ function generateMenuText(prefix) {
 ┃࿖  ${prefix}𝐧𝐚𝐳𝐢𝐬𝐭𝐚 @  
 ┃🚩 ${prefix}𝐜𝐨𝐦𝐮𝐧𝐢𝐬𝐭𝐚 @  
 ┃🔫 ${prefix}𝐦𝐢𝐫𝐚 @  
+┃🔥 ${prefix}𝐬𝐚𝐲𝐚𝐧
 ┃🧚 ${prefix}𝐰𝐢𝐧𝐱 @
 ┃✨ ${prefix}𝐛𝐞𝐥𝐥𝐨/𝐚 @  
 ┃⚫ ${prefix}𝐧𝐞𝐫𝐨/𝐚 @  
+┃⛓️ ${prefix}𝐣𝐚𝐢𝐥
+┃⛓️ ${prefix}𝐣𝐚𝐢𝐥𝐩𝐢𝐜
+┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🍔 *𝐂𝐈𝐁𝐎*  
 ┃
@@ -208,13 +210,7 @@ function generateMenuText(prefix) {
 ┃
 ┃🤖 ${prefix}𝐢𝐚  
 ┃💬 ${prefix}𝐛𝐨𝐭  
-┃🏴‍☠️ ${prefix}𝐥𝐮𝐟𝐟𝐲  
-┃🔥 ${prefix}𝐬𝐚𝐲𝐚𝐧  
+┃🏴‍☠️ ${prefix}𝐥𝐮𝐟𝐟𝐲    
 ┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞  
-┃📨 ${prefix}𝐢𝐧𝐯𝐢𝐭𝐚
-╰━━━━━━━━━━━━━━━━━━━╯
-            ╔═══════════════════╗
-║       ☄️𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕☄️      ║
-╚═══════════════════╝
-    `;
+╰━━━━━━━━━━━━━━━━━━━╯`;
 }
