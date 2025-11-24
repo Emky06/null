@@ -36,10 +36,9 @@ let handler = async (m, { __dirname }) => {
     }
 };
 
-handler.help = ['listplugins'];
+handler.help = ['listaplugins'];
 handler.tags = ['owner'];
 handler.command = /^listpl$/i;
-
 handler.owner = true;
 
 export default handler;
