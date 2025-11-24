@@ -10,7 +10,6 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393512884684',//mio p 2
         '393401431923',//mio att p 3
         '393793178438',//riad
-        '639634295192',//sophi
         '212772894889',//bibi
         '393279399297',//kinderboy
         '393472425001',//dieh
