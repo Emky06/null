@@ -3,7 +3,7 @@ import { performance } from 'perf_hooks';
 import fetch from 'node-fetch';
 
 const handler = async (message, { conn, usedPrefix }) => {
-  const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
+  
   const menuText = generateMenuText(usedPrefix, botName);
 
 
@@ -115,7 +115,7 @@ function generateMenuText(prefix, botName) {
 ┃ 🎮 .𝑮𝑰𝑶𝑪𝑯𝑰
 ┃ 🤖 .𝑰𝑵𝑭𝑶𝑩𝑶𝑻
 ╰━━━━━━━━━━━━━━━━━╯
-🤖 *𝑩𝒐𝒕*: ${botName}
+🤖 *𝑩𝒐𝒕*: ${nomebot}
 🌟 *𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆:* ${vs}
 `.trim();
 }
