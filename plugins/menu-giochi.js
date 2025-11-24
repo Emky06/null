@@ -1,7 +1,7 @@
 // Plugin fatto da Axtral_WiZaRd
 const handler = async (message, { conn, usedPrefix }) => {
    
-    const menuText = generateGiochiMenuText(usedPrefix, botName, userCount);
+    const menuText = generateGiochiMenuText(usedPrefix);
 
     const msgID = message.id || message.key?.id;
     let device = 'Dispositivo sconosciuto 🕵️‍♂️';
@@ -91,7 +91,7 @@ handler.command = /^giochi$/i;
 
 export default handler;
 
-function generateGiochiMenuText(prefix, botName, userCount) {
+function generateGiochiMenuText(prefix) {
     return `
 ╭〔🎮 𝑴𝑬𝑵𝑼 𝑮𝑰𝑶𝑪𝐇𝐈 🎮〕╮
 ┣━━━━━━━━━━━━━━━━━━
