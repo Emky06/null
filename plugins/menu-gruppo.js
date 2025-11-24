@@ -141,6 +141,7 @@ function generateMenuText(prefix) {
 ┃💻 ${prefix}𝐬𝐲𝐬𝐭𝐞𝐦  
 ┃⚙️ ${prefix}𝐬𝐞𝐭𝐢𝐠  
 ┃📝 ${prefix}𝐫𝐞𝐠  
+┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃💼 *𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀*  
 ┃
@@ -204,13 +205,6 @@ function generateMenuText(prefix) {
 ┃🥙 ${prefix}𝐤𝐞𝐛𝐚𝐛 @  
 ┃🍔 ${prefix}𝐡𝐚𝐦𝐛𝐮𝐫𝐠𝐞𝐫 @  
 ┃🍕 ${prefix}𝐩𝐢𝐳𝐳𝐚 @  
-┃🍣 ${prefix}𝐬𝐮𝐬𝐡𝐢 @  
-┣━━━━━━━━━━━━━━━━━━━━
-┃✨ *𝐀𝐋𝐓𝐑𝐎*  
-┃
-┃🤖 ${prefix}𝐢𝐚  
-┃💬 ${prefix}𝐛𝐨𝐭  
-┃🏴‍☠️ ${prefix}𝐥𝐮𝐟𝐟𝐲    
-┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞  
+┃🍣 ${prefix}𝐬𝐮𝐬𝐡𝐢 @     
 ╰━━━━━━━━━━━━━━━━━━━╯`;
 }
