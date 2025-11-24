@@ -5,4 +5,6 @@ conn.reply(m.chat, `ⓘ 𝐋' 𝐢𝐝 𝐝𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠�
 }
 handler.command = /^(id|gpid|gcid)$/i
 handler.group = true
+handler.owner = true
+
 export default handler
