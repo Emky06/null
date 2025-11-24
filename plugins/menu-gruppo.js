@@ -91,7 +91,7 @@ handler.command = /^(gruppo)$/i;
 export default handler;
 
 function generateMenuText(prefix) {
-    return `╭━〔 𝑴𝑬𝑵𝑼 𝑮𝑹𝑼𝑷𝑷𝑶 〕━╮
+    return `╭━━〔 𝑴𝑬𝑵𝑼 𝑮𝑹𝑼𝑷𝑷𝑶 〕━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🎮 *𝐆𝐈𝐎𝐂𝐇𝐈*  
 ┃
