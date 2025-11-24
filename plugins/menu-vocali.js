@@ -1,8 +1,6 @@
-// Codice di menu-vocali.js
-
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs/promises';
 import fetch from 'node-fetch';
-import '@whiskeysockets/baileys';
 
 const handler = async (message, { conn, usedPrefix }) => {
   try {
@@ -15,7 +13,7 @@ const handler = async (message, { conn, usedPrefix }) => {
       ? conn.user.jid
       : message.sender;
 
-    // Caricamento immagine profilo identico a info-user.js
+    
     let profilo;
     try {
       profilo = await conn.profilePictureUrl(targetJid, 'image');
@@ -26,7 +24,6 @@ const handler = async (message, { conn, usedPrefix }) => {
     const profilePicBuffer = typeof profilo === 'string'
       ? await (await fetch(profilo)).buffer()
       : profilo;
-
 
     const commandList = `
 ✨ *𝐌𝐞𝐧𝐮 𝐕𝐨𝐜𝐚𝐥𝐢* ✨
@@ -73,12 +70,3 @@ handler.tags = ['menu'];
 handler.command = /^(menuvocali)$/i;
 
 export default handler;
-
-// Formattazione del tempo
-function clockString(milliseconds) {
-  let hours = Math.floor(milliseconds / 3600000);
-  let minutes = Math.floor(milliseconds / 60000) % 60;
-  let seconds = Math.floor(milliseconds / 1000) % 60;
-
-  return [hours, minutes, seconds].map(t => t.toString().padStart(2, '0')).join(':');
-}
