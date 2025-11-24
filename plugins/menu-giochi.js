@@ -93,7 +93,7 @@ export default handler;
 
 function generateGiochiMenuText(prefix) {
     return `
-╭〔🎮 𝑴𝑬𝑵𝑼 𝑮𝑰𝑶𝑪𝐇𝐈 🎮〕╮
+╭〔🎮 𝑴𝑬𝑵𝑼 𝑮𝑰𝑶𝑪𝑯𝑰 🎮〕╮
 ┣━━━━━━━━━━━━━━━━━━
 ┃ 🎲 ${prefix}𝐫𝐨𝐮𝐥𝐞𝐭𝐭𝐞 — Classica
 ┃ 🔫 ${prefix}𝐫𝐫 — Roulette Russa
