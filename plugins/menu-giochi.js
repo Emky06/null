@@ -1,8 +1,6 @@
 // Plugin fatto da Axtral_WiZaRd
 const handler = async (message, { conn, usedPrefix }) => {
-    const userCount = Object.keys(global.db.data.users).length;
-    const botName = global.db.data.nomedelbot || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
-
+   
     const menuText = generateGiochiMenuText(usedPrefix, botName, userCount);
 
     const msgID = message.id || message.key?.id;
@@ -113,6 +111,6 @@ function generateGiochiMenuText(prefix, botName, userCount) {
 ┃ 📈 ${prefix}𝐛𝐢𝐥𝐚𝐧𝐜𝐢𝐨 — Bilancio soldi del gruppo
 ╰━━━━━━━━━━━━━━━━━╯
 🎮 *Totale giochi:* 11
-🤖 𝐁𝐨𝐭: ${botName}
+𝑩𝒀 ${nomebot}
 `.trim();
 }
