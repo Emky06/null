@@ -100,7 +100,7 @@ function generateModMenuText(prefix, botName) {
 ┃ 🖼️ ${prefix}𝐟𝐨𝐭𝐨 — Prendi foto profilo
 ┃ 👥 ${prefix}𝐭𝐨𝐭𝐚𝐠 — Hidetag/tag
 ┃ ⚠️ ${prefix}𝐚𝐥𝐞𝐫𝐭/𝐫𝐞𝐯𝐨𝐤𝐞 — Dai/togli warn
-┃  ✓   ${prefix}𝐳𝐞𝐫𝐨𝐰𝐚𝐫𝐧 — Azzera warn
+┃  ✓   ${prefix}𝐚𝐳𝐳𝐞𝐫𝐚𝐰𝐚𝐫𝐧 — Azzera warn
 ┃ ⏱️ ${prefix}𝐬𝐢𝐥𝐞𝐧𝐜𝐞 — Muto temporaneo 
 ┃ 🗑️ ${prefix}𝐝𝐞𝐥𝐥 — Elimina messaggi
 ┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐠𝐩 — Link gruppo
