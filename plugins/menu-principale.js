@@ -115,7 +115,7 @@ function generateMenuText(prefix) {
 ┃ 🎮 .𝑮𝑰𝑶𝑪𝑯𝑰
 ┃ 🤖 .𝑰𝑵𝑭𝑶𝑩𝑶𝑻
 ╰━━━━━━━━━━━━━━━━━╯
-🤖 *𝑩𝒐𝒕: ${nomebot}*
+🤖 *𝑩𝒐𝒕:* ${nomebot}
 🌟 *𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆: ${vs}*
 `.trim();
 }
