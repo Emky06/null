@@ -34,7 +34,7 @@ let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
 📞 https://wa.me/${ownerNumber.replace(/\D/g, '')}
 
 *𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆: ${vs}*
-*𝐁𝐲 ${nomebot}*
+*𝐁𝐲* ${nomebot}
 ═════════════════════
 `.trim();
 
