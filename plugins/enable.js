@@ -25,6 +25,7 @@ let handler = async (msg, { conn, usedPrefix, command, args }) => {
         detect: { configKey: "detect", label: " *𝒅𝒆𝒕𝒆𝒄𝒕* " },
         antinuke: { configKey: "antinuke", label: " *𝒂𝒏𝒕𝒊𝒏𝒖𝒌𝒆* " },
         level: { configKey: "level", label: " *𝒍𝒆𝒗𝒆𝒍* " },
+        cinema: { configKey: "cinema", label: " *𝒂𝒃𝒔𝒐𝒍𝒖𝒕𝒆𝒄𝒊𝒏𝒆𝒎𝒂* " },
     };
 
     // Funzioni settings
