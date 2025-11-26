@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { existsSync, promises as fsPromises } from 'fs';
 import path from 'path';
 import fs from 'fs';
