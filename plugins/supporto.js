@@ -33,7 +33,8 @@ let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
  ➤ 𝐏𝐞𝐫 𝐪𝐮𝐚𝐥𝐬𝐢𝐚𝐬𝐢 𝐩𝐫𝐨𝐛𝐥𝐞𝐦𝐚 𝐫𝐢𝐬𝐜𝐨𝐧𝐭𝐫𝐚𝐭𝐨 𝐜𝐨𝐧 𝐢𝐥 𝐛𝐨𝐭, 𝐜𝐨𝐧𝐭𝐚𝐭𝐭𝐚 𝐢𝐥 𝐩𝐫𝐨𝐩𝐫𝐢𝐞𝐭𝐚𝐫𝐢𝐨 𝐜𝐥𝐢𝐜𝐜𝐚𝐧𝐝𝐨 𝐪𝐮𝐢:
 📞 https://wa.me/${ownerNumber.replace(/\D/g, '')}
 
-𝑩𝒀 ${nomebot}
+*𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆: ${vs}*
+*𝐁𝐲 ${nomebot}*
 ═════════════════════
 `.trim();
 
