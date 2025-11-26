@@ -83,8 +83,8 @@ const handler = async (m, { conn, usedPrefix }) => {
   }
 };
 
-handler.help = ['svuota sessioni'];
-handler.tags = ["admin"];
+handler.help = ['del_reg_in_session_owner'];
+handler.tags = ["owner"];
 handler.command = /^(dsbura|ds)$/i;
 handler.admin = true;
 
