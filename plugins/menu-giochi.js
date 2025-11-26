@@ -111,6 +111,6 @@ function generateGiochiMenuText(prefix) {
 ┃ 📈 ${prefix}𝐛𝐢𝐥𝐚𝐧𝐜𝐢𝐨 — Bilancio soldi del gruppo
 ╰━━━━━━━━━━━━━━━━━╯
 🎮 *Totale giochi:* 11
-𝑩𝒀 ${nomebot}
+𝐁𝐲 ${nomebot}
 `.trim();
 }
