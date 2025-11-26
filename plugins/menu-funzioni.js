@@ -6,6 +6,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         detect: '𝐝𝐞𝐭𝐞𝐜𝐭',
         benvenuto: '𝐛𝐞𝐧𝐯𝐞𝐧𝐮𝐭𝐨',
         bestemmiometro: '𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐨𝐦𝐞𝐭𝐫𝐨',
+        cinema: '𝐜𝐢𝐧𝐞𝐦𝐚',
         level: '𝐥𝐞𝐯𝐞𝐥',
         soloadmin: '𝐬𝐨𝐥𝐨𝐚𝐝𝐦𝐢𝐧',
         soloviewonce: '𝐬𝐨𝐥𝐨𝐯𝐢𝐞𝐰𝐨𝐧𝐜𝐞',
