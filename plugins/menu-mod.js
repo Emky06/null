@@ -109,6 +109,6 @@ function generateModMenuText(prefix) {
 ┃ 🔒 ${prefix}𝐜𝐡𝐢𝐮𝐬𝐨𝐭𝐞𝐦𝐩 — Chiudi chat per tot min
 ┃ 🔒 ${prefix}𝐫𝐞𝐦𝐨𝐭𝐞𝐠𝐩/𝐫𝐠𝐩 — Chiudi/apri gruppo a distanza con id
 ╰━━━━━━━━━━━━━━━━━━━╯
-𝐁𝐲 ${nomebot}
+*𝐁𝐲 ${nomebot}*
 `.trim();
 }
