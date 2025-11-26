@@ -39,8 +39,8 @@ const handler = async (message, { conn, usedPrefix }) => {
 ➤ ${usedPrefix}𝐩𝐨𝐥𝐢𝐳𝐢𝐚
 ➤ ${usedPrefix}𝐭𝐫𝐚𝐥𝐥𝐚𝐥𝐥𝐞𝐫𝐨
 ─────────────────────
-𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆: ${vs}
-𝐁𝐲 ${nomebot}
+*𝑽𝒆𝒓𝒔𝒊𝒐𝒏𝒆: ${vs}*
+*𝐁𝐲 ${nomebot}*
 `.trim();
 
     await conn.sendMessage(message.chat, {
