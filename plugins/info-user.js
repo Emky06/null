@@ -32,7 +32,13 @@ const handler = async (m, { conn }) => {
     }
 
     const userData = global.db.data.users[mention];
-    const nomeUtente = await conn.getName(mention).catch(() => "Sconosciuto");
+    let nomeUtente = "Sconosciuto";
+    try {
+      nomeUtente = await conn.getName(mention);
+      if (!nomeUtente) nomeUtente = "Sconosciuto";
+    } catch {
+      nomeUtente = "Sconosciuto";
+    }
 
     const rawNumero = mention.split("@")[0];
     const numeroObj = new PhoneNumber(rawNumero);
