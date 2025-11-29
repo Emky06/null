@@ -23,7 +23,7 @@ import {Low, JSONFile} from 'lowdb';
 import {mongoDB, mongoDBV2} from './lib/mongoDB.js';
 import store from './lib/store.js';
 const {proto} = (await import('@whiskeysockets/baileys')).default;
-const {DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser, PHONENUMBER_MCC} = await import('@whiskeysockets/baileys');
+const {DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser} = await import('@whiskeysockets/baileys');
 import readline from 'readline';
 import NodeCache from 'node-cache';
 const {CONNECTING} = ws;
@@ -248,7 +248,7 @@ const connectionOptions = {
 logger: pino({ level: 'silent' }),
 printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
 mobile: MethodMobile, 
-browser: opcion == '1' ? ['𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕-𝔹𝕠𝕥', 'Safari', 'Developer'] : methodCodeQR ? ['𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕-𝔹𝕠𝕥', 'Safari', 'Developer'] : ['Ubuntu', 'Chrome', 'Developer'],
+browser: opcion == '1' ? ['𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕-𝔹𝕠𝕥', 'Safari', 'Developer'] : methodCodeQR ? ['𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕-𝔹𝕠𝕥', 'Safari', 'Developer'] : ['𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕-𝔹𝕠𝕥', 'Chrome', 'Developer'],
 auth: {
 creds: state.creds,
 keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
@@ -284,24 +284,21 @@ if (MethodMobile) throw new Error(`Impossibile utilizzare un codice di accoppiam
 let numeroTelefono
 if (!!phoneNumber) {
 numeroTelefono = phoneNumber.replace(/[^0-9]/g, '')
-if (!Object.keys(PHONENUMBER_MCC).some(v => numeroTelefono.startsWith(v))) {
-console.log(chalk.bgBlack(chalk.bold.redBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +39 333 333 3333\n`)))
-process.exit(0)
-}} else {
+} else {
 while (true) {
-numeroTelefono = await question(chalk.bgBlack(chalk.bold.yellowBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +39 333 333 3333\n`)))
+numeroTelefono = await question(chalk.bgBlack(chalk.bold.yellowBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +391234567890\n`)))
 numeroTelefono = numeroTelefono.replace(/[^0-9]/g, '')
 
-if (numeroTelefono.match(/^\d+$/) && Object.keys(PHONENUMBER_MCC).some(v => numeroTelefono.startsWith(v))) {
+if (numeroTelefono.match(/^\d+$/)) {
 break 
 } else {
-console.log(chalk.bgBlack(chalk.bold.redBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +39 333 333 3333\n`)))
+console.log(chalk.bgBlack(chalk.bold.redBright(`𝐈𝐧𝐬𝐞𝐫𝐢𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢 𝐭𝐞𝐥𝐞𝐟𝐨𝐧𝐨 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: +391234567890\n`)))
 }}
 rl.close()  
 } 
 
         setTimeout(async () => {
-            let codigo = await conn.requestPairingCode(numeroTelefono)
+            let codigo = await conn.requestPairingCode(numeroTelefono, 'axwizard')
             codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo
             console.log(chalk.yellowBright('🚀 𝐂𝐨𝐥𝐥𝐞𝐠𝐚 𝐢𝐥 𝐭𝐮𝐨 𝐛𝐨𝐭...'));
             console.log(chalk.black(chalk.bgCyanBright(`𝐈𝐍𝐒𝐄𝐑𝐈𝐒𝐂𝐈 𝐐𝐔𝐄𝐒𝐓𝐨 𝐂𝐎𝐃𝐈𝐂𝐄:`)), chalk.black(chalk.bgGreenBright(codigo)))
