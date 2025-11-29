@@ -6,7 +6,6 @@
 "type": "module",
 "directories": {
 "lib": "lib",
-"src": "src",
 "plugins": "plugins"
 },
 "scripts": {
@@ -16,16 +15,16 @@
 "eslint": "eslint .",
 "eslintfix": "eslint --fix ."
 },
-"homepage": "https://github.com/MoonContentCreator/BixbyBot-Md",
+"homepage": "https://github.com/AxtralWiZaRd/axtral",
 "author": {
-"name": "MoonContentCreator"
+"name": "AxtralWiZaRd"
 },
 "repository": {
 "type": "git",
-"url": "git+https://github.com/MoonContentCreator/BixbyBot-Md.git"
+"url": "git+https://github.com/AxtralWiZaRd/axtral.git"
 },
 "bugs": {
-"url": "https://github.com/MoonContentCreator/BixbyBot-Md/issues"
+"url": "https://github.com/AxtralWiZaRd/axtral/issues"
 },
 "license": "GPL-3.0-or-later",
 "dependencies": {
