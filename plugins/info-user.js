@@ -1,9 +1,7 @@
-// Codice di info-user.js
-
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs/promises';
 import PhoneNumber from 'awesome-phonenumber';
-import fetch from 'node-fetch'; // se non già importato
+import fetch from 'node-fetch';
 
 const handler = async (m, { conn }) => {
   try {
@@ -34,6 +32,7 @@ const handler = async (m, { conn }) => {
     }
 
     const userData = global.db.data.users[mention];
+    const nomeUtente = await conn.getName(mention).catch(() => "Sconosciuto");
 
     const rawNumero = mention.split("@")[0];
     const numeroObj = new PhoneNumber(rawNumero);
@@ -111,11 +110,11 @@ const handler = async (m, { conn }) => {
       contextInfo: {
         mentionedJid: [mention],
         externalAdReply: {
-  title: userData.name || "Sconosciuto",
-  body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍𝑩𝒐𝒕",
-  sourceUrl: "https://wa.me/" + rawNumero,
-  thumbnail: thumbnailBuffer
-}
+          title: nomeUtente,
+          body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
+          sourceUrl: "https://wa.me/" + rawNumero,
+          thumbnail: thumbnailBuffer
+        }
       }
     }, { quoted: m });
 
