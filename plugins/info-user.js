@@ -40,12 +40,6 @@ const handler = async (m, { conn }) => {
       nomeUtente = "Sconosciuto";
     }
 
-    const numeroObj = new PhoneNumber(rawNumero);
-    let numero = numeroObj.getNumber("e164");
-    if (!numero || !numeroObj.isValid()) {
-      numero = "+" + rawNumero.replace(/[^0-9]/g, "").replace(/^0+/, "");
-    }
-
     const categoria = userData.categoria || "🔘 Nessuna categoria";
 
     let ruolo = "Membro 🤍";
