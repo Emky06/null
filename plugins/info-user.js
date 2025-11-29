@@ -40,7 +40,6 @@ const handler = async (m, { conn }) => {
       nomeUtente = "Sconosciuto";
     }
 
-    const rawNumero = mention.split("@")[0];
     const numeroObj = new PhoneNumber(rawNumero);
     let numero = numeroObj.getNumber("e164");
     if (!numero || !numeroObj.isValid()) {
@@ -118,7 +117,7 @@ const handler = async (m, { conn }) => {
         externalAdReply: {
           title: nomeUtente,
           body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
-          sourceUrl: "https://wa.me/" + rawNumero,
+          sourceUrl: "https://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme?mode=hqrt2",
           thumbnail: thumbnailBuffer
         }
       }
