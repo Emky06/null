@@ -134,7 +134,6 @@ function generateMenuText(prefix) {
 
 🧊 *Extra Admin Tools:*
 ┣━ ❄️ .freeze @
-┣━ 🔍 .ispeziona (link)
 ┣━ 🗑️ .ds 
 ┣━ 👁️ .rivela
 ┣━ 🔗 .link
