@@ -110,7 +110,6 @@ function generateMenuText(prefix) {
 🙎 *Gestione Utenti*
 ┣━ ⛔ .banuser @ / .unbanuser @
 ┣━ 🚫 .blockuser @ / .unblockuser @
-┣━ 👋🏻 .pulizia <prefisso>
 ┣━ 📑 .setcategoria ┃ Assegna una categoria
 ┣━ 📑 .delcategoria ┃ Rimuovi categoria
 
@@ -133,8 +132,7 @@ function generateMenuText(prefix) {
 🛠️ *Strumenti Avanzati*
 ┣━ 🕒 .timer ┃ Timer automatico per attivare/disattivare soloadmin
 ┣━ 🔴 .timeroff ┃ Disattiva il timer
-┣━ 🚪 .out ┃ Il bot esce dal gruppo
-┣━ 🚪 .outall ┃ Da tutti i gruppi
+┣━ 🚪 .byebye ┃ Il bot esce dal gruppo
 ┣━ ⚙️ .prefisso / .resettaprefisso
 ┣━ 👑 .godmode ┃ Auto-admin
 
