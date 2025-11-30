@@ -124,6 +124,7 @@ function generateMenuText(prefix) {
 ┣━ 🎉 .setwelcome
 ┣━ 🥀 .setbye
 ┣━ ❌ .setremove
+┣━ 📜 .setregole
 ┣━ 🎲 .sim
 
 📊 *Gestione Gruppo:*
