@@ -247,26 +247,18 @@ chat.rules = ''
             let settings = global.db.data.settings[this.user.jid]
             if (typeof settings !== 'object') global.db.data.settings[this.user.jid] = {}
             if (settings) {
-                if (!('self' in settings)) settings.self = false
-                if (!('autoread' in settings)) settings.autoread = false
                 if (!('restrict' in settings)) settings.restrict = true
                 if (!('anticall' in settings)) settings.anticall = true
                 if (!('antiprivato' in settings)) settings.antiprivato = true
-          if (!('jadibot' in settings)) settings.jadibot = true   
             } else global.db.data.settings[this.user.jid] = {
-                self: false,
-                autoread: false,
                 restrict: true,
                 anticall: true,
                 antiprivato: true,
-                jadibot: true,
             }
         } catch (e) {
             console.error(e)
         }
         if (opts['nyimak'])
-            return
-        if (!m.fromMe && opts['self'])
             return
         if (opts['pconly'] && m.chat.endsWith('g.us'))
             return
@@ -699,15 +691,11 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
         } catch (e) {
             console.log(m, m.quoted, e)
         }
-        if (opts['autoread'])
-            await this.readMessages([m.key])
 
     }
 }
 
 export async function participantsUpdate({ id, participants, action }) {
-    if (opts['self'])
-        return
     if (this.isInit)
         return
     if (global.db.data == null)
@@ -829,8 +817,6 @@ export async function participantsUpdate({ id, participants, action }) {
 
 
 export async function groupsUpdate(groupsUpdate) {
-    if (opts['self'])
-        return
     for (const groupUpdate of groupsUpdate) {
         const id = groupUpdate.id
         if (!id) continue
