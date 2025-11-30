@@ -4,10 +4,6 @@
 "description": "Nada",
 "main": "index.js",
 "type": "module",
-"directories": {
-"lib": "lib",
-"plugins": "plugins"
-},
 "scripts": {
 "start": "node index.js",
 "test": "node test.js",
@@ -15,18 +11,6 @@
 "eslint": "eslint .",
 "eslintfix": "eslint --fix ."
 },
-"homepage": "https://github.com/AxtralWiZaRd/axtral",
-"author": {
-"name": "AxtralWiZaRd"
-},
-"repository": {
-"type": "git",
-"url": "git+https://github.com/AxtralWiZaRd/axtral.git"
-},
-"bugs": {
-"url": "https://github.com/AxtralWiZaRd/axtral/issues"
-},
-"license": "GPL-3.0-or-later",
 "dependencies": {
 "@adiwajshing/keyed-db": "^0.2.4",
 "@bochilteam/scraper": "^4.2.4",
