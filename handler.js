@@ -16,10 +16,10 @@ global.lastRemovals = global.lastRemovals || {}
 
 // Inizializzazione cache per gruppi e admin
 if (!global.groupCache) {
-    global.groupCache = new NodeCache({ stdTTL: 5 * 60, useClones: false })
+    global.groupCache = new NodeCache({ stdTTL: 1 * 60, useClones: false })
 }
 if (!global.adminCache) {
-    global.adminCache = new NodeCache({ stdTTL: 5 * 60, useClones: false })
+    global.adminCache = new NodeCache({ stdTTL: 1 * 60, useClones: false })
 }
 
 // Funzione per recuperare i metadati del gruppo
