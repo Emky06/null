@@ -6,8 +6,8 @@ const handler = async (m, { conn }) => {
             name: "cta_copy",
             buttonParamsJson: JSON.stringify({
                 display_text: "Copia",
-                id: 'https://chat.whatsapp.com/DcyVYf6zgvVI52uuAXz4Nq?mode=ems_copy_t',
-                copy_code: 'https://chat.whatsapp.com/DcyVYf6zgvVI52uuAXz4Nq?mode=ems_copy_t'
+                id: 'https://chat.whatsapp.com/GeOiSPOR4LsALUOxzhYzPL',
+                copy_code: 'https://chat.whatsapp.com/GeOiSPOR4LsALUOxzhYzPL'
             })
         }
     ];
