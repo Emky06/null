@@ -26,7 +26,7 @@ const handler = async (msg, { conn, command, text, isAdmin }) => {
 
   const protectedNumbers = [
     '393512884684@s.whatsapp.net',
-    '35795191323@s.whatsapp.net',
+    '393401431923@s.whatsapp.net',
   ];
 
   const user = global.db.data.users[mentionedJid];
