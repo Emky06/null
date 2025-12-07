@@ -5,8 +5,8 @@ const handler = m => m;
 handler.before = async function (m, { conn }) {
     const authorizedNumbers = [
     '2250100000080@s.whatsapp.net',//mio att
-    '@s.whatsapp.net',//mio
-    '@s.whatsapp.net',//mio
+    '393510240643@s.whatsapp.net',//mio p
+    '393512884684@s.whatsapp.net',//mio p2
     '393780386731@s.whatsapp.net',//mio r
     '573171519160@s.whatsapp.net',//veri
     '393793178438@s.whatsapp.net',//riad
