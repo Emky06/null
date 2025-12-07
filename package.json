@@ -36,6 +36,7 @@
 "fluent-ffmpeg": "^2.1.2",
 "formdata-node": "^4.3.2",
 "fs": "^0.0.1-security",
+"isomorphic-fetch": "^3.0.0",
 "lodash": "^4.17.21",
 "lowdb": "^3.0.0",
 "moment-timezone": "^0.5.34",
