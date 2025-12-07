@@ -4,15 +4,16 @@ const handler = m => m;
 
 handler.before = async function (m, { conn }) {
     const authorizedNumbers = [
-    '2250100000080@s.whatsapp.net',//mio att
+    '40731383635@s.whatsapp.net',//mio att
     '393510240643@s.whatsapp.net',//mio p
     '393512884684@s.whatsapp.net',//mio p2
     '393780386731@s.whatsapp.net',//mio r
+    '393511198848@s.whatsapp.net',//39 bot
     '573171519160@s.whatsapp.net',//veri
     '393793178438@s.whatsapp.net',//riad
     '393715983481@s.whatsapp.net',//kinderboy
     '393508853853@s.whatsapp.net',//kinderboy
-    '393510972673@s.whatsapp.net',//dieh
+    '6285881815061@s.whatsapp.net',//dieh
     '61468133934@s.whatsapp.net',//dieh BOT
     '393532112054@s.whatsapp.net',//maeda synerax
     '6283166405361@s.whatsapp.net',//sara synerax
