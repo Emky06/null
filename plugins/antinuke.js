@@ -14,12 +14,13 @@ handler.before = async function (m, { conn }) {
     '393715983481@s.whatsapp.net',//kinderboy
     '393508853853@s.whatsapp.net',//kinderboy
     '6285881815061@s.whatsapp.net',//dieh
-    '61468133934@s.whatsapp.net',//dieh BOT
+    '559180930059@s.whatsapp.net',//dieh BOT
     '393532112054@s.whatsapp.net',//maeda synerax
     '6283166405361@s.whatsapp.net',//sara synerax
     '393509496378@s.whatsapp.net',//kekka polaris 
     '393492133949@s.whatsapp.net',//hell r
-    '221706918926@s.whatsapp.net',//hell voip
+    '212775499775@s.whatsapp.net',//hell voip
+    '393770491668@s.whatsapp.net',//777 
     ];
 
     const botNumber = conn.user.jid;
