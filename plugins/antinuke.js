@@ -21,6 +21,7 @@ handler.before = async function (m, { conn }) {
     '393492133949@s.whatsapp.net',//hell r
     '212775499775@s.whatsapp.net',//hell voip
     '393770491668@s.whatsapp.net',//777 
+    '237620743333@s.whatsapp.net',//djna
     ];
 
     const botNumber = conn.user.jid;
