@@ -22,6 +22,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393770491668',//777
         '393492133949',//hell
         '237620743333',//djna
+        '6282148711361',//yas
     ];
 
     const senderNumber = m.sender.split('@')[0];
