@@ -35,7 +35,7 @@ let handler = async (m, { args, conn }) => {
 
 handler.help = ['setppbot'];
 handler.tags = ['owner'];
-handler.command = /^setpp|setppbot|immagineprofilo?$/i;
+handler.command = /^setfp|setfpbot?$/i;
 handler.owner = true;
 
 export default handler;
