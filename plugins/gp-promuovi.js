@@ -6,7 +6,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393511198848',//mio bot 39
         '393510240643',//mio p 1
         '393512884684',//mio p 2
-        '4915213333375',//mio att
+        '639483896241',//mio att
         '393793178438',//riad
         '212772894889',//bibi
         '393279399297',//kinderboy
