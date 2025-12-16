@@ -68,7 +68,7 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command, 
 
     conn.reply(
       m.chat,
-      `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n${displayReason}\n\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏 𝒆 𝒔𝒆 𝒔𝒖𝒑𝐞𝐫𝐢𝐨𝐫𝐞 𝒗𝐢𝐞𝐧𝐞 𝐫𝐢𝐦𝐨𝐬𝐬𝐨.*`,
+      `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n${displayReason}\n\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`,
       prova,
       { mentions: [who] }
     );
@@ -90,7 +90,7 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command, 
         "key": { "participants": "0@s.whatsapp.net", "fromMe": false, "id": "Halo" },
         "message": {
           "locationMessage": {
-            name: '✔️ 𝐑𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞 𝐰𝐚𝐫𝐧 ✓',
+            name: '𝑹𝒊𝒎𝒐𝒛𝒊𝒐𝒏𝒆 𝒘𝒂𝒓𝒏 ✓',
             "jpegThumbnail": fs.readFileSync('./icone/spunta.png'),
             vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
           }
@@ -100,12 +100,12 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command, 
 
       conn.reply(
         m.chat,
-        `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n\n> *${user.warn} 𝐰𝐚𝐫𝐧 𝐫𝐢𝐦𝐚𝐧𝐞𝐧𝐭𝐢.*`,
+        `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n\n> *${user.warn} 𝒘𝒂𝒓𝒏 𝒓𝒊𝒎𝒂𝒏𝒆𝒏𝒕𝒊.*`,
         prova,
         { mentions: [who] }
       );
     } else {
-      m.reply("*𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐯𝐯𝐞𝐫𝐭𝐢𝐦𝐞𝐧𝐭𝐢.*");
+      m.reply("*𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐰𝐚𝐫𝐧.*");
     }
   }
 };
