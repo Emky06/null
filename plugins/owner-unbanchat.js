@@ -5,7 +5,7 @@ if (!global.tempCodes) global.tempCodes = {};
 let handler = async (m, { args }) => {
 
     if (!global.db.data.chats[m.chat].isBanned) {
-        return m.reply('*✓ 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐠𝐢𝐚̀ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚 ✓*');
+        return m.reply('*𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐠𝐢𝐚̀ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚 ✓*');
     }
 
     if (!args[0]) {
@@ -27,7 +27,7 @@ let handler = async (m, { args }) => {
 
     global.db.data.chats[m.chat].isBanned = false;
     delete global.tempCodes[m.chat];
-    m.reply('*✓ 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚 ✓*');
+    m.reply('*𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚 ✓*');
 };
 
 handler.help = ['unbanchat'];
