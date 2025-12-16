@@ -1,19 +1,26 @@
-let BOT_CODE = Math.floor(1000 + Math.random() * 9000).toString();
+// Plugin fatto da Axtral_WiZaRd
+let SHADOW_CODE = null;
 
 let handler = async (m, { args }) => {
-    console.log(`🔐 Codice Shadow di questo bot: ${BOT_CODE}`); // Stampa qui quando esegui il comando
+    
+    SHADOW_CODE = Math.floor(1000 + Math.random() * 9000).toString();
+    console.log(`🔐 Codice Shadow di questo bot: ${SHADOW_CODE}`);
 
-    if (!args[0]) return m.reply(`Per attivare Shadow, inserisci il codice a 4 cifre. Es: shadow 1234`);
+    if (!args[0]) {
+        return m.reply(`𝐏𝐞𝐫 𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐥𝐚 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚, 𝐢𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐜𝐨𝐝𝐢𝐜𝐞 𝐚 𝟒 𝐜𝐢𝐟𝐫𝐞. 𝐄𝐬: .𝐬𝐡𝐚𝐝𝐨𝐰 𝟏𝟐𝟑𝟒`);
+    }
 
-    if (args[0] !== BOT_CODE) return m.reply('Codice errato! Questo bot non verrà disattivato.');
+    if (args[0] !== SHADOW_CODE) {
+        return m.reply('𝐂𝐨𝐝𝐢𝐜𝐞 𝐞𝐫𝐫𝐚𝐭𝐨! 𝐐𝐮𝐞𝐬𝐭𝐨 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐯𝐞𝐫𝐫𝐚̀ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.');
+    }
 
-    global.db.data.chats[m.chat].isBanned = true
-    m.reply('*✓ 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚... 𝐧𝐨𝐧 𝐬𝐞𝐧𝐭𝐢𝐫𝐞𝐭𝐞 𝐧𝐮𝐥𝐥𝐚.*')
-}
+    global.db.data.chats[m.chat].isBanned = true;
+    m.reply('*✓ 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚 𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐚... 𝐧𝐨𝐧 𝐬𝐞𝐧𝐭𝐢𝐫𝐞𝐭𝐞 𝐧𝐮𝐥𝐥𝐚.*');
+};
 
-handler.help = ['banchat']
-handler.tags = ['owner']
-handler.command = /^shadow$/i
-handler.rowner = true
+handler.help = ['banchat'];
+handler.tags = ['owner'];
+handler.command = /^shadow$/i;
+handler.rowner = true;
 
-export default handler
+export default handler;
