@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
 const time = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
