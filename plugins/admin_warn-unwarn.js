@@ -26,7 +26,7 @@ if (m.isGroup) {
     .map(p => p.id)
 
   if (admins.includes(who)) {
-    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐠𝐥𝐢 𝐚𝐦𝐦𝐢𝐧𝐢𝐬𝐭𝐫𝐚𝐭𝐨𝐫𝐢.*')
+    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*')
   }
 }
 
