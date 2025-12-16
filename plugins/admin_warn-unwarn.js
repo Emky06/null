@@ -1,5 +1,4 @@
-// Codice di admin_warn-unwarn.js
-
+//Plugin fatto da Axtral_WiZaRd
 const time = async (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
@@ -19,6 +18,17 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command }
   if (who === ownerBot) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.*');
   if (who === conn.user.jid) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐛𝐨𝐭.*');
   if (who === m.sender) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.*');
+  
+ 
+if (m.isGroup) {
+  let admins = groupMetadata.participants
+    .filter(p => p.admin)
+    .map(p => p.id)
+
+  if (admins.includes(who)) {
+    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐠𝐥𝐢 𝐚𝐦𝐦𝐢𝐧𝐢𝐬𝐭𝐫𝐚𝐭𝐨𝐫𝐢.*')
+  }
+}
 
   if (command == 'warn' || command == "ammonisci") {
     let war = 2;
