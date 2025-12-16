@@ -11,7 +11,7 @@ let handler = async (m, { args }) => {
     }
 
     if (args[0] !== SHADOW_CODE) {
-        return m.reply('𝐂𝐨𝐝𝐢𝐜𝐞 𝐞𝐫𝐫𝐚𝐭𝐨! 𝐐𝐮𝐞𝐬𝐭𝐨 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐯𝐞𝐫𝐫𝐚̀ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.');
+        return m.reply('❌ 𝐂𝐨𝐝𝐢𝐜𝐞 𝐞𝐫𝐫𝐚𝐭𝐨! 𝐐𝐮𝐞𝐬𝐭𝐨 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐯𝐞𝐫𝐫𝐚̀ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.');
     }
 
     global.db.data.chats[m.chat].isBanned = true;
