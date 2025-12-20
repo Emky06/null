@@ -1,9 +1,9 @@
 // Plugin fatto da Axtral_WiZaRd
-export async function before(m, { conn, isAdmin, isBotAdmin }) {
+export async function before(m, { conn, isAdmin, isBotAdmin, isPrems }) {
   let chat = db.data.chats[m.chat];
   if (!chat.soloviewonce || chat.isBanned) return;
 
-  if (m.fromMe || isAdmin) return;
+  if (m.fromMe || isAdmin || isPrems) return;
 
   if (m.mtype === 'imageMessage' || m.mtype === 'videoMessage') {
     await conn.sendMessage(m.chat, { delete: m.key });
