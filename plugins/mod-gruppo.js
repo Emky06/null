@@ -12,7 +12,7 @@ let handler = async (m, { conn }) => {
     const groupName = groupMetadata?.subject || 'Gruppo senza nome';
 
     let text = `╭━━━━━━━━━━━━━━━━━━━╮
-             _*𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐝𝐢*_
+                _*𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐝𝐢*_
   *${groupName}*
 ╰━━━━━━━━━━━━━━━━━━━╯\n╭━━━━━━━━━━━━━━━━━━━╮\n`;
 
