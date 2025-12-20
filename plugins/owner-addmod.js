@@ -27,7 +27,7 @@ who = number + '@s.whatsapp.net';
   }
 
   if (!who) {
-    return m.reply(`❌ Devi specificare un utente. Esempio: ${usedPrefix + command} @utente o ${usedPrefix + command} +39 350 014 8400`);
+    return m.reply(`❌ Devi specificare un utente. Esempio: ${usedPrefix + command} @utente o ${usedPrefix + command} +39 333 444 5555`);
   }
 
   const decoded = conn.decodeJid ? conn.decodeJid(who) : who;
