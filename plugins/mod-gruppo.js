@@ -1,5 +1,5 @@
 // Plugin fatto da Axtral_WiZaRd
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, args }) => {
     if (!global.db || !global.db.data.groups) return m.reply('Nessun dato disponibile.');
 
     const groupId = m.chat;
@@ -11,10 +11,20 @@ let handler = async (m, { conn }) => {
     const groupMetadata = await conn.groupMetadata(groupId).catch(() => null);
     const groupName = groupMetadata?.subject || 'Gruppo senza nome';
 
+   
+    let pesan = args.join(' ');
+    let message = pesan ? pesan : '❌ Nessun messaggio fornito';
+
     let text = `╭━━━━━━━━━━━━━━━━━━━╮
                   _*𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐝𝐢*_
   *${groupName}*
-╰━━━━━━━━━━━━━━━━━━━╯\n╭━━━━━━━━━━━━━━━━━━━╮\n`;
+╰━━━━━━━━━━━━━━━━━━━╯
+
+✎ *𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨:*  
+➥ ${message}
+
+╭━━━━━━━━━━━━━━━━━━━╮
+`;
 
     let mentions = [];
     prems.forEach(user => {
@@ -26,7 +36,7 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(groupId, { text, mentions });
 };
 
-handler.help = ['mymods'];
+handler.help = ['mymods <messaggio>'];
 handler.tags = ['group'];
 handler.command = /^(mymods|moderatori)$/i;
 handler.group = true;
