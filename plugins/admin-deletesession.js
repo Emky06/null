@@ -41,7 +41,7 @@ const handler = async (m, { conn, usedPrefix }) => {
       }
     }
 
-    const botName = global.db?.data?.nomedelbot || "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
+    const botName = global.nomebot || "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
     const quotedMessage = {
       key: {
         participants: "0@s.whatsapp.net",
