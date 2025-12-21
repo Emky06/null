@@ -20,14 +20,8 @@ let handler = async (m, { conn, usedPrefix, command, args: [evento], text }) => 
         case 'bye':
         case 'leave':
         case 'addio':
-            act = 'leave'
-            testoEvento = "𝐚𝐝𝐝𝐢𝐨"
-            break
-        case 'remove':
-        case 'rimozione':
-        case 'kick':
             act = 'remove'
-            testoEvento = "𝐫𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞"
+            testoEvento = "𝐚𝐝𝐝𝐢𝐨"
             break
         case 'promote':
         case 'promozione':
@@ -42,12 +36,12 @@ let handler = async (m, { conn, usedPrefix, command, args: [evento], text }) => 
             testoEvento = "𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞"
             break
         default:
-            throw `ⓘ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧𝐚 𝐨𝐩𝐳𝐢𝐨𝐧𝐞 𝐯𝐚𝐥𝐢𝐝𝐚:\n\n> ${usedPrefix + command} benvenuto @user\n> ${usedPrefix + command} addio @user\n> ${usedPrefix + command} promozione/p @user\n> ${usedPrefix + command} retrocessione/r @user\n> ${usedPrefix + command} rimozione @user`
+            throw `ⓘ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧𝐚 𝐨𝐩𝐳𝐢𝐨𝐧𝐞 𝐯𝐚𝐥𝐢𝐝𝐚:\n\n> ${usedPrefix + command} benvenuto @user\n> ${usedPrefix + command} addio @user\n> ${usedPrefix + command} promozione/p @user\n> ${usedPrefix + command} retrocessione/r @user`
     }
 
     m.reply(`> ⚠️ 𝐒𝐢𝐦𝐮𝐥𝐚𝐳𝐢𝐨𝐧𝐞 ${testoEvento}...\n> ⓘ 𝐈𝐥 𝐛𝐨𝐭 𝐬𝐭𝐚 𝐬𝐢𝐦𝐮𝐥𝐚𝐧𝐝𝐨 𝐮𝐧 𝐞𝐯𝐞𝐧𝐭𝐨, 𝐬𝐞𝐧𝐳𝐚 𝐞𝐟𝐟𝐞𝐭𝐭𝐢 𝐜𝐨𝐧𝐜𝐫𝐞𝐭𝐢 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.`)
 
-    if (act === 'add' || act === 'leave' || act === 'remove') {
+    if (act === 'add' || act === 'remove') {
         return conn.participantsUpdate({
             id: m.chat,
             participants: part,
