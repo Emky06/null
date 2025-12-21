@@ -560,7 +560,7 @@ export async function participantsUpdate({ id, participants, action }) {
 
     switch (action) {
         case 'add':
-        case 'leave':
+        case 'remove':
             if (!chat.benvenuto) return
 
             let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
@@ -578,7 +578,7 @@ export async function participantsUpdate({ id, participants, action }) {
                         .replace('@subject', await this.getName(id))
                         .replace('@desc', groupMetadata.desc?.toString() || '')
                         .replace('@user', '@' + user.split('@')[0])
-                } else if (action === 'leave') {
+                } else if (action === 'remove') {
                     text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
                         .replace('@user', '@' + user.split('@')[0])
                 }
