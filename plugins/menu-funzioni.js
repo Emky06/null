@@ -8,7 +8,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         bestemmiometro: '𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐨𝐦𝐞𝐭𝐫𝐨',
         cinema: '𝐜𝐢𝐧𝐞𝐦𝐚',
         level: '𝐥𝐞𝐯𝐞𝐥',
-        soloadmin: '𝐬𝐨𝐥𝐨𝐚𝐝𝐦𝐢𝐧',
+        solostaff: '𝐬𝐨𝐥𝐨𝐬𝐭𝐚𝐟𝐟',
         soloviewonce: '𝐬𝐨𝐥𝐨𝐯𝐢𝐞𝐰𝐨𝐧𝐜𝐞',
         antispam: '𝐚𝐧𝐭𝐢𝐬𝐩𝐚𝐦',
         antisondaggi: '𝐚𝐧𝐭𝐢𝐬𝐨𝐧𝐝𝐚𝐠𝐠𝐢',
