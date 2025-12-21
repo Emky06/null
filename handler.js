@@ -116,7 +116,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!('antilinktotale' in chat)) chat.antilinktotale = false
               if (!('antinuke' in chat)) chat.antinuke = false
               if (!('level' in chat)) chat.level = true              
-              if (!('soloadmin' in chat)) chat.soloadmin = true
+              if (!('solostaff' in chat)) chat.solostaff = true
               if (!isNumber(chat.expired)) chat.expired = 0
               if (!isNumber(chat.messaggi)) chat.messaggi = 0
               if (!isNumber(chat.blasphemy)) chat.blashpemy = 0
@@ -140,7 +140,7 @@ chat.rules = ''
                   antitiktok: false,
                   soloviewonce: false,
                   antitrava: true, 
-                  soloadmin: true,
+                  solostaff: true,
                   name: m.name,
                   rules: '',
               }
@@ -329,7 +329,7 @@ const isPrems = m.isGroup
                         return
                 }
           let hl = _prefix 
-                let adminMode = global.db.data.chats[m.chat].soloadmin
+                let adminMode = global.db.data.chats[m.chat].solostaff
                 let mystica = `${plugin.botAdmin || plugin.admin || plugin.group || plugin || noPrefix || hl ||  m.text.slice(0, 1) == hl || plugin.command}`
                 if (adminMode && !isOwner && !isROwner && m.isGroup && !isAdmin && !isPrems && mystica) return   
 
