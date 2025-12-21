@@ -10,7 +10,7 @@ let handler = async (msg, { conn, usedPrefix, command, args }) => {
     const toggleOptions = {
         antitelegram: { configKey: "antitelegram", label: " *𝒂𝒏𝒕𝒊𝒕𝒆𝒍𝒆𝒈𝒓𝒂𝒎* " },
         benvenuto: { configKey: "benvenuto", label: " *𝒃𝒆𝒏𝒗𝒆𝒏𝒖𝒕𝒐* " },
-        soloadmin: { configKey: "soloadmin", label: " *𝒔𝒐𝒍𝒐𝒂𝒅𝒎𝒊𝒏* " },
+        solostaff: { configKey: "solostaff", label: " *𝒔𝒐𝒍𝒐𝒔𝒕𝒂𝒇𝒇* " },
         soloviewonce: { configKey: "soloviewonce", label: " *𝒔𝒐𝒍𝒐𝒗𝒊𝒆𝒘𝒐𝒏𝒄𝒆* " },
         antilink: { configKey: "antilink", label: " *𝒂𝒏𝒕𝒊𝒍𝒊𝒏𝒌* " },
         antilinktotale: { configKey: "antilinktotale", label: " *𝒂𝒏𝒕𝒊𝒍𝒊𝒏𝒌𝒕𝒐𝒕𝒂𝒍𝒆* " },
