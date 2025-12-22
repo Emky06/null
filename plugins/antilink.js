@@ -1,3 +1,5 @@
+// Codice di antilink.js
+
 // Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 import fetch from 'node-fetch'
@@ -99,7 +101,6 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
     let chatData = global.db.data.chats[msg.chat]
     let sender = msg.key.participant
     let messageId = msg.key.id
-    let warnLimit = 3
     let botSettings = global.db.data.settings[this.user.jid] || {}
 
     if (!chatData.antilink) return true
@@ -123,7 +124,19 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
                 return true
             }
 
-            await handleWarn({ conn, msg, sender, messageId, violation: `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎` })
+            const violation = `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
+
+            // Kick immediato per link WhatsApp
+            if (
+                site.name === '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
+                site.name === '𝐂𝐀𝐍𝐀𝐋𝐄 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
+                site.name === '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊'
+            ) {
+                await handleKick({ conn, msg, sender, messageId, violation })
+                return false
+            }
+
+            await handleWarn({ conn, msg, sender, messageId, violation })
             return false
         }
     }
@@ -136,7 +149,14 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
         if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
             if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
-            await handleWarn({ conn, msg, sender, messageId, violation: `𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎` })
+            // Kick immediato per QR WhatsApp
+            await handleKick({
+                conn,
+                msg,
+                sender,
+                messageId,
+                violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
+            })
             return false
         }
     }
@@ -196,8 +216,25 @@ END:VCARD`
         user.warn = 0
         user.warnReasons = []
         await conn.sendMessage(msg.chat, { 
-    text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈' 
-})
-await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
+            text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈' 
+        })
+        await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
     }
+}
+
+async function handleKick({ conn, msg, sender, messageId, violation }) {
+    await conn.sendMessage(msg.chat, {
+        delete: {
+            remoteJid: msg.chat,
+            fromMe: false,
+            id: messageId,
+            participant: sender,
+        },
+    })
+
+    await conn.sendMessage(msg.chat, {
+        text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀*\n${violation}`
+    })
+
+    await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
 }
