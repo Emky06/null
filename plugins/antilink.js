@@ -217,7 +217,7 @@ END:VCARD`
     }
 }
 
-async function handleKick({ conn, msg, sender, violation }) {
+async function handleKick({ conn, msg, sender, violation, messageId }) {
     await conn.groupSettingUpdate(msg.chat, 'announcement')
 
           await conn.sendMessage(msg.chat, {
