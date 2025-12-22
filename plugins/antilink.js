@@ -4,7 +4,6 @@ import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { downloadContentFromMessage } from '@whiskeysockets/baileys'
 
-// Canali permessi
 let allowedChannels = [
     'https://whatsapp.com/channel/0029VbAS02hBadmeRQCfCu2R',
 ]
@@ -103,6 +102,9 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
 
     if (!chatData.antilink) return true
 
+    if (!global.msgQueue) global.msgQueue = {}
+    if (!global.msgQueue[msg.chat]) global.msgQueue[msg.chat] = []
+
     let rawText = extractText(msg)
     let cleanedText = normalizeText(rawText)
 
@@ -124,13 +126,13 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
 
             const violation = `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
 
-            // Kick immediato per link WhatsApp
             if (
                 site.name === '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
                 site.name === '𝐂𝐀𝐍𝐀𝐋𝐄 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
                 site.name === '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊'
             ) {
-                await handleKick({ conn, msg, sender, messageId, violation })
+                global.msgQueue[msg.chat].push(msg.key.id)
+                await handleKick({ conn, msg, sender, violation })
                 return false
             }
 
@@ -147,12 +149,11 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
         if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
             if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
-            // Kick immediato per QR WhatsApp
+            global.msgQueue[msg.chat].push(msg.key.id)
             await handleKick({
                 conn,
                 msg,
                 sender,
-                messageId,
                 violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
             })
             return false
@@ -220,19 +221,25 @@ END:VCARD`
     }
 }
 
-async function handleKick({ conn, msg, sender, messageId, violation }) {
-    await conn.sendMessage(msg.chat, {
-        delete: {
-            remoteJid: msg.chat,
-            fromMe: false,
-            id: messageId,
-            participant: sender,
-        },
-    })
-
-    await conn.sendMessage(msg.chat, {
-        text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀*\n${violation}`
-    })
-
+async function handleKick({ conn, msg, sender, violation }) {
     await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
+    await conn.groupSettingUpdate(msg.chat, 'announcement')
+    await conn.sendMessage(msg.chat, {
+        text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀* per ${sender}\n${violation}`
+    })
+
+    if (global.msgQueue?.[msg.chat]) {
+        for (let mid of global.msgQueue[msg.chat]) {
+            try {
+                await conn.sendMessage(msg.chat, {
+                    delete: { remoteJid: msg.chat, fromMe: false, id: mid, participant: sender }
+                })
+            } catch (e) {
+                console.log('Errore eliminazione messaggio:', e)
+            }
+        }
+        global.msgQueue[msg.chat] = []
+    }
+
+    await conn.groupSettingUpdate(msg.chat, 'not_announcement')
 }
