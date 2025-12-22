@@ -5,7 +5,7 @@ const handler = async (m, { conn, text, usedprefix }) => {
     const jid = m.chat;
     const prefix = usedprefix || '.';
 
-    if (!text?.trim()) return m.reply('📌 Inserisci il nome del video da cercare.', m);
+    if (!text?.trim()) return m.reply('📌 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐧𝐨𝐦𝐞 𝐝𝐞𝐥 𝐯𝐢𝐝𝐞𝐨 𝐝𝐚 𝐜𝐞𝐫𝐜𝐚𝐫𝐞.', m);
 
     try {
         const searchResults = await ytSearch(text);
@@ -47,7 +47,7 @@ const handler = async (m, { conn, text, usedprefix }) => {
         const cards = await Promise.all(cardsPromises);
 
         await conn.sendMessage(jid, {
-            text: `『 🔍 』 *Risultati trovati per:* ${text}`,
+            text: `『 🔍 』 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐢 𝐩𝐞𝐫: ${text}`,
             footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫',
             cards
         }, { quoted: m });
@@ -60,7 +60,7 @@ const handler = async (m, { conn, text, usedprefix }) => {
         }));
 
         await conn.sendMessage(jid, {
-            text: '🔢 *Seleziona un video dai risultati sopra per scegliere il formato da scaricare:*',
+            text: '🔢 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧 𝐯𝐢𝐝𝐞𝐨 𝐝𝐚𝐢 𝐫𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐬𝐨𝐩𝐫𝐚 𝐩𝐞𝐫 𝐬𝐜𝐞𝐠𝐥𝐢𝐞𝐫𝐞 𝐢𝐥 𝐟𝐨𝐫𝐦𝐚𝐭𝐨 𝐝𝐚 𝐬𝐜𝐚𝐫𝐢𝐜𝐚𝐫𝐞:',
             footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫',
             buttons: formatButtons,
             headerType: 1
