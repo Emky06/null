@@ -54,7 +54,7 @@ const handler = async (m, { conn, text, usedprefix }) => {
 
 
         const formatButtons = videos.map((video, i) => ({
-            buttonId: `${prefix}play1 ${video.url}`,
+            buttonId: `${prefix}ytformat ${video.url}`,
             buttonText: { displayText: `${i + 1}` },
             type: 1
         }));
