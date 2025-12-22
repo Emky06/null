@@ -1,5 +1,3 @@
-// Codice di antilink.js
-
 // Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 import fetch from 'node-fetch'
