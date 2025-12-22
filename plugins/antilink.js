@@ -91,7 +91,7 @@ async function readQRCode(imageBuffer) {
         return null
     }
 }
-        
+
 export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
     if (msg.isBaileys || msg.fromMe) return true
     if (!msg.isGroup) return false
@@ -124,12 +124,13 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
 
             const violation = `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
 
+            // Kick immediato per link WhatsApp
             if (
                 site.name === '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
                 site.name === '𝐂𝐀𝐍𝐀𝐋𝐄 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
                 site.name === '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊'
             ) {
-                await handleKick({ conn, msg, sender, violation })
+                await handleKick({ conn, msg, sender, messageId, violation })
                 return false
             }
 
@@ -146,10 +147,12 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
         if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
             if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
+            // Kick immediato per QR WhatsApp
             await handleKick({
                 conn,
                 msg,
                 sender,
+                messageId,
                 violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
             })
             return false
@@ -217,32 +220,19 @@ END:VCARD`
     }
 }
 
-async function handleKick({ conn, msg, sender, violation, messageId }) {
-    await conn.groupSettingUpdate(msg.chat, 'announcement')
-
-          await conn.sendMessage(msg.chat, {
-    delete: {
-        remoteJid: msg.chat,
-        fromMe: false,
-        id: messageId,
-        participant: sender,
-    },
-})
-
+async function handleKick({ conn, msg, sender, messageId, violation }) {
     await conn.sendMessage(msg.chat, {
         delete: {
             remoteJid: msg.chat,
             fromMe: false,
-            id: msg.key.id,
+            id: messageId,
             participant: sender,
         },
     })
-
-    await conn.groupParticipantsUpdate(msg.chat, [sender], 'remove')
 
     await conn.sendMessage(msg.chat, {
         text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀*\n${violation}`
     })
 
-    await conn.groupSettingUpdate(msg.chat, 'not_announcement')
+    await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
 }
