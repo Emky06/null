@@ -1,3 +1,4 @@
+//Plugin fatto da Deadly, mod by Axtral
 let delay = ms => new Promise(res => setTimeout(res, ms));
 
 let handler = async (m, { conn, args }) => {
