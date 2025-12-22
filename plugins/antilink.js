@@ -177,17 +177,45 @@ END:VCARD`
     }
 }
 
-async function handleKickDeleteAndClose({ conn, msg, sender, violation }) {
+async function handleKick({ conn, msg, sender, violation }) {
+    // Chiude la chat per modifiche
     await conn.groupSettingUpdate(msg.chat, 'announcement')
-    let chatMessages = await conn.fetchMessages(msg.chat, { limit: 50 })
-    for (let m of chatMessages.messages || []) {
-        let text = m.message ? normalizeText(extractText(m)) : ''
-        if (linkRegex.test(text) || channelRegex.test(text)) {
-            try { await conn.sendMessage(msg.chat, { delete: { remoteJid: msg.chat, fromMe: false, id: m.key.id, participant: m.key.participant } }) }
-            catch {}
+
+    // Recupera tutti i messaggi recenti
+    let messages = await conn.loadMessages(msg.chat, 100) // carica gli ultimi 100 messaggi
+    for (let m of messages) {
+        let text = extractText(m)
+        let cleanedText = normalizeText(text)
+        if (linkRegex.test(cleanedText) || channelRegex.test(cleanedText)) {
+            await conn.sendMessage(msg.chat, {
+                delete: {
+                    remoteJid: msg.chat,
+                    fromMe: false,
+                    id: m.key.id,
+                    participant: m.key.participant,
+                },
+            })
         }
     }
-    await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
-    await conn.sendMessage(msg.chat, { text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀*\n${violation}` })
+
+    // Elimina il messaggio incriminato
+    await conn.sendMessage(msg.chat, {
+        delete: {
+            remoteJid: msg.chat,
+            fromMe: false,
+            id: msg.key.id,
+            participant: sender,
+        },
+    })
+
+    // Rimuove l’utente
+    await conn.groupParticipantsUpdate(msg.chat, [sender], 'remove')
+
+    // Messaggio RIMOZIONE IMMEDIATA
+    await conn.sendMessage(msg.chat, {
+        text: `⛔ *𝐑𝐈𝐌𝐎𝐙𝐈𝐎𝐍𝐄 𝐈𝐌𝐌𝐄𝐃𝐈𝐀𝐓𝐀*\n${violation}`
+    })
+
+    // Riapre la chat
     await conn.groupSettingUpdate(msg.chat, 'not_announcement')
 }
