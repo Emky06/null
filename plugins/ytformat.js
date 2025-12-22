@@ -1,26 +1,29 @@
-const formatHandler = async (m, { conn, command, args }) => {
-  const jid = m.chat
-  const index = parseInt(args[0])
-  const videos = conn.ytCache?.[jid]
+// Plugin fatto da Axtral_WiZaRd
+import yts from 'yt-search';
 
-  if (!videos || isNaN(index) || index < 0 || index >= videos.length) {
-    return m.reply('❌ Video non trovato. Ricerca prima con .play', m)
-  }
+const handler = async (m, { conn, text }) => {
+  const search = await yts(text || '');
+  const videoInfo = search.all[0];
+  if (!videoInfo) return m.reply('Nessun risultato trovato.');
 
-  const video = videos[index]
+  const { url } = videoInfo;
+
+  const infoMessage = `📥 𝐒𝐜𝐞𝐠𝐥𝐢 𝐢𝐥 𝐟𝐨𝐫𝐦𝐚𝐭𝐨 𝐜𝐡𝐞 𝐯𝐮𝐨𝐢 𝐬𝐜𝐚𝐫𝐢𝐜𝐚𝐫𝐞:`;
 
   const buttons = [
-    { buttonId: `.play1 ${video.url}`, buttonText: { displayText: '🎵 Audio' }, type: 1 },
-    { buttonId: `.play2 ${video.url}`, buttonText: { displayText: '🎬 Video' }, type: 1 }
-  ]
+    { buttonId: `.play1 ${url}`, buttonText: { displayText: '🎧 𝐀𝐮𝐝𝐢𝐨' }, type: 1 },
+    { buttonId: `.play2 ${url}`, buttonText: { displayText: '🎥 𝐕𝐢𝐝𝐞𝐨' }, type: 1 }
+  ];
 
-  await conn.sendMessage(jid, {
-    text: `*${index + 1}. ${video.title}*\n\nScegli il formato da scaricare:`,
-    footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫',
+  conn.sendMessage(m.chat, {
+    text: infoMessage,
     buttons,
-    headerType: 1
-  }, { quoted: m })
-}
+    headerType: 1 
+  }, { quoted: m });
+};
 
-formatHandler.command = ['ytformat']
-export default formatHandler
+handler.command = ['ytformat'];
+handler.tags = ['downloader'];
+handler.help = ['ytformat'];
+
+export default handler;
