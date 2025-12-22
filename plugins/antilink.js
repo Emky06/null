@@ -220,21 +220,21 @@ END:VCARD`
 async function handleKick({ conn, msg, sender, violation }) {
     await conn.groupSettingUpdate(msg.chat, 'announcement')
 
-    let messages = await conn.loadMessages(msg.chat, 100)
-    for (let m of messages) {
-        let text = extractText(m)
-        let cleanedText = normalizeText(text)
-        if (linkRegex.test(cleanedText) || channelRegex.test(cleanedText)) {
-            await conn.sendMessage(msg.chat, {
-                delete: {
-                    remoteJid: msg.chat,
-                    fromMe: false,
-                    id: m.key.id,
-                    participant: m.key.participant,
-                },
-            })
-        }
+    const messages = await conn.fetchMessages(msg.chat, { limit: 50 }) // ultimi 50 messaggi
+for (let m of messages) {
+    let text = extractText(m)
+    let cleanedText = normalizeText(text)
+    if (linkRegex.test(cleanedText) || channelRegex.test(cleanedText)) {
+        await conn.sendMessage(msg.chat, {
+            delete: {
+                remoteJid: msg.chat,
+                fromMe: false,
+                id: m.key.id,
+                participant: m.key.participant,
+            },
+        })
     }
+}
 
     await conn.sendMessage(msg.chat, {
         delete: {
