@@ -92,6 +92,17 @@ async function readQRCode(imageBuffer) {
     }
 }
 
+// salva gli ID dei messaggi da cancellare in un array
+let deleteQueue = []
+
+function queueDelete(msg) {
+    deleteQueue.push(msg.key.id)
+    if (deleteQueue.length >= 5) { // cancella in batch se sono 5
+        conn.sendMessage(msg.chat, { delete: { remoteJid: msg.chat, fromMe: false, id: deleteQueue }})
+        deleteQueue = []
+    }
+}
+
 export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
     if (msg.isBaileys || msg.fromMe) return true
     if (!msg.isGroup) return false
