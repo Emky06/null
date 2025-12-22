@@ -23,7 +23,7 @@ const handler = async (m, { conn, text, usedprefix }) => {
             return {
                 image: { url: thumbnailUrl },
                 title: `${index + 1}. ${shortTitle}`,
-                body: `『 👤 』 *${author}*\n『 ⏱️ 』 *${duration}*\n 『 👁️ 』 *${views}*`,
+                body: `『 👤 』 *${author}*\n『 ⏱️ 』 *${duration}*\n『 👁️ 』 *${views}*`,
                 footer: `Risultato ${index + 1} di ${videos.length}`,
                 buttons: [
                     {
