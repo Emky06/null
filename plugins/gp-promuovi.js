@@ -6,7 +6,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '393511198848',//mio bot 39
         '393510240643',//mio p 1
         '393512884684',//mio p 2
-        '639483896241',//mio att
+        '212620211345',//mio att
         '393793178438',//riad
         '212772894889',//bibi
         '393279399297',//kinderboy
@@ -20,10 +20,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         '212669861308',//fefe cocomera
         '393701521934',//ily cocomera
         '393273097621',//linda
-        '393770491668',//777
-        '393492133949',//hell
-        '237620743333',//djna
-        '6282148711361',//yas
+
     ];
 
     const senderNumber = m.sender.split('@')[0];
