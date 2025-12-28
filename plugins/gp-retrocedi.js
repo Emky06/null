@@ -28,9 +28,16 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 
     const senderNumber = m.sender.split('@')[0];
 
-    if (!authorizedNumbers.includes(senderNumber)) {
-        return m.reply('⛔ Non sei autorizzato a usare questo comando.');
-    }
+const ownerNumbers = (global.owner || []).map(o => o[0]);
+
+
+const isAuthorized =
+    authorizedNumbers.includes(senderNumber) ||
+    ownerNumbers.includes(senderNumber);
+
+if (!isAuthorized) {
+    return m.reply('⛔ Non sei autorizzato a usare questo comando.');
+}
 
     let user;
 
