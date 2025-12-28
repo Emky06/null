@@ -4,12 +4,7 @@ const handler = m => m;
 
 handler.before = async function (m, { conn }) {
     const authorizedNumbers = [
-    '212620211345@s.whatsapp.net',//mio att
-    '393510240643@s.whatsapp.net',//mio p
-    '393512884684@s.whatsapp.net',//mio p2
     '393780386731@s.whatsapp.net',//mio r
-    '393511198848@s.whatsapp.net',//39 bot
-    '573171519160@s.whatsapp.net',//veri
     '393793178438@s.whatsapp.net',//riad
     '393715983481@s.whatsapp.net',//kinderboy
     '393508853853@s.whatsapp.net',//kinderboy
@@ -23,7 +18,13 @@ handler.before = async function (m, { conn }) {
     ];
 
     const botNumber = conn.user.jid;
-    const isAuthorized = jid => authorizedNumbers.includes(jid) || jid === botNumber;
+    
+const ownerNumbers = (global.owner || []).map(o => o[0] + '@s.whatsapp.net');
+
+const isAuthorized = jid =>
+    authorizedNumbers.includes(jid) ||
+    jid === botNumber ||
+    ownerNumbers.includes(jid);
 
 
     const cleanAdmins = async () => {
