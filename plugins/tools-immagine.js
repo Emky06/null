@@ -43,7 +43,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
           }
         });
 
-        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> 🌐  Sito Origine: ${contextLink}`;
+        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n>` `🌐  Sito Origine: ${contextLink}`;
 
         albumItems.push({
           image: Buffer.from(imageResponse.data),
