@@ -1,5 +1,4 @@
-import { search } from 'bing-scraper'
-import { promisify } from 'util'
+import bing from 'bing-scraper'
 
 const paroleproibite = [
   'sangue','gore','decapitazione','omicidio','suicidio','cadavere','corpo morto',
@@ -23,57 +22,56 @@ function shuffle(a) {
   }
 }
 
-const searchAsync = promisify(search)
-
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   const input = text || m.quoted?.text
-  if (!input) return conn.reply(m.chat, `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`, m)
+  if (!input)
+    return conn.reply(
+      m.chat,
+      `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`,
+      m
+    )
 
   if (paroleproibite.some(w => input.toLowerCase().includes(w)))
     return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
 
-  let results
-  try {
-    const res = await searchAsync(input, 365)
-    results = res.images
-  } catch {
-    return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
-  }
+  bing.searchImages({ q: input, pageCount: 1 }, async (err, res) => {
+    if (err) return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
 
-  if (!results || results.length === 0)
-    return conn.reply(m.chat, '𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 😢', m)
+    if (!res || !res.results || res.results.length === 0)
+      return conn.reply(m.chat, '𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 😢', m)
 
-  const urls = results.map(v => v.url).filter(Boolean)
-  shuffle(urls)
-  const images = urls.slice(0, 5)
+    const urls = res.results.map(v => v.url).filter(Boolean)
+    shuffle(urls)
+    const images = urls.slice(0, 5)
 
-  const cards = images.map((img, i) => ({
-    image: { url: img },
-    title: `𝐈𝐦𝐦𝐚𝐠𝐢𝐧𝐞 #${i + 1}`,
-    body: `𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐨 𝐩𝐞𝐫: ${input}`,
-    footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-    buttons: [
-      {
-        name: 'cta_url',
-        buttonParamsJson: JSON.stringify({
-          display_text: '𝐀𝐩𝐫𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞',
-          url: img
-        })
-      }
-    ]
-  }))
-
-  await conn.sendMessage(
-    m.chat,
-    {
-      text: `🔍 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐩𝐞𝐫: ${input}`,
-      title: '𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢',
-      subtitle: '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞',
+    const cards = images.map((img, i) => ({
+      image: { url: img },
+      title: `𝐈𝐦𝐦𝐚𝐠𝐢𝐧𝐞 #${i + 1}`,
+      body: `𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐨 𝐩𝐞𝐫: ${input}`,
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-      cards
-    },
-    { quoted: m }
-  )
+      buttons: [
+        {
+          name: 'cta_url',
+          buttonParamsJson: JSON.stringify({
+            display_text: '𝐀𝐩𝐫𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞',
+            url: img
+          })
+        }
+      ]
+    }))
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        text: `🔍 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐩𝐞𝐫: ${input}`,
+        title: '𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢',
+        subtitle: '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞',
+        footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
+        cards
+      },
+      { quoted: m }
+    )
+  })
 }
 
 handler.command = ['cercaimmagine', 'ci']
