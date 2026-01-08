@@ -6,7 +6,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 ┃ Inserisci il testo per cercare un'immagine
 ┃
 ┃ 📝 *Esempio:*
-┃ ${usedPrefix + command} fragole
+┃ ${usedPrefix + command} conad city
 ╰━━━━━━━━━━━━━━⊱`);
   }
 
@@ -43,7 +43,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
           }
         });
 
-        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n>` `🌐  Sito Origine: ${contextLink}`;
+        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
 
         albumItems.push({
           image: Buffer.from(imageResponse.data),
@@ -63,7 +63,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
             }
           });
 
-          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : ` 🌐  Sito Origine: ${contextLink}`;
+          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
 
           albumItems.push({
             image: Buffer.from(thumbResponse.data),
@@ -108,7 +108,7 @@ const handleCardButtons = async (m, { conn, text }) => {
     try {
       await conn.sendMessage(m.chat, {
         image: { url: imageUrl },
-        caption: ' 🖼️  Ecco la tua immagine!'
+        caption: '『 🖼️ 』 Ecco la tua immagine!'
       }, { quoted: m });
     } catch (e) {
       console.error('Errore invio immagine:', e);
