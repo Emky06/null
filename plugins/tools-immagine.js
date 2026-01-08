@@ -1,6 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
-import { googleImage } from '@bochilteam/scraper'
-import { existsSync } from 'fs'
+import bing from 'bing-scraper'
 import axios from 'axios'
 
 const paroleproibite = [
@@ -26,45 +24,62 @@ function shuffle(array) {
 }
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
-  
-
   const input = text || m.quoted?.text
-  if (!input) return conn.reply(m.chat, `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`, m)
+  if (!input)
+    return conn.reply(
+      m.chat,
+      `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`,
+      m
+    )
 
-  const filtroGPT = `
+
+  try {
+    const filtroGPT = `
 Controlla se nel seguente testo è presente un termine inappropriato o ostile, in qualsiasi lingua:
 
 "${input}"
 
 Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili, rispondi solo con "vietato", altrimenti rispondi "ok".
 `
-
-  try {
-    const filtro = await axios.post("https://luminai.my.id", {
+    const filtro = await axios.post('https://luminai.my.id', {
       content: filtroGPT,
-      user: m.pushName || "utente",
-      prompt: `Rispondi con una singola parola.`,
+      user: m.pushName || 'utente',
+      prompt: 'Rispondi con una singola parola.',
       webSearchMode: false
     })
 
     const out = filtro.data?.result?.toLowerCase()
-    if (out.includes('vietato')) {
+    if (out?.includes('vietato'))
       return conn.reply(m.chat, '⚠️ Contenuto non permesso.', m)
-    }
-  } catch (err) {
-    console.log('Filtro GPT fallito, fallback su lista manuale.')
-    if (paroleproibite.some(word => input.toLowerCase().includes(word))) {
+  } catch {
+    
+    if (paroleproibite.some(w => input.toLowerCase().includes(w)))
       return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
-    }
   }
 
-  const randomOffset = Math.floor(Math.random() * 10)
-  const query = `${input} ${randomOffset}`
-  const res = await googleImage(query)
-  if (!res || res.length === 0) return conn.reply(m.chat, '𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 😢', m)
 
-  shuffle(res)
-  const images = res.slice(0, 5)
+  let results
+  try {
+    results = await bing.images(input, {
+      count: 15,
+      safeSearch: true,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
+      }
+    })
+  } catch (e) {
+    console.log(e)
+    return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
+  }
+
+  if (!results || results.length === 0)
+    return conn.reply(m.chat, '𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 😢', m)
+
+  const urls = results.map(v => v.url).filter(Boolean)
+  shuffle(urls)
+
+  const images = urls.slice(0, 5)
 
   const cards = images.map((img, i) => ({
     image: { url: img },
@@ -86,8 +101,8 @@ Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili
     m.chat,
     {
       text: `🔍 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐩𝐞𝐫: ${input}`,
-      title: `𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢`,
-      subtitle: `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞 𝐬𝐮 𝐆𝐨𝐨𝐠𝐥𝐞`,
+      title: '𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢',
+      subtitle: '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞',
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       cards
     },
@@ -97,11 +112,11 @@ Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili
   await conn.sendMessage(
     m.chat,
     {
-      text: '🔄 𝐕𝐮𝐨𝐢 𝐜𝐞𝐫𝐜𝐚𝐫𝐞 𝐚𝐥𝐭𝐫𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐜𝐨𝐧 𝐥𝐨 𝐬𝐭𝐞𝐬𝐬𝐨 𝐭𝐞𝐫𝐦𝐢𝐧𝐞?',
+      text: '🔄 𝐕𝐮𝐨𝐢 𝐜𝐞𝐫𝐜𝐚𝐫𝐞 𝐚𝐥𝐭𝐫𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢?',
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       buttons: [
         {
-          buttonId: `${usedPrefix}cercaimmagine ${input}`,
+          buttonId: `${usedPrefix + command} ${input}`,
           buttonText: { displayText: '𝐂𝐞𝐫𝐜𝐚 𝐝𝐢 𝐧𝐮𝐨𝐯𝐨' },
           type: 1
         }
