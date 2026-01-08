@@ -113,5 +113,5 @@ Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili
   )
 }
 
-handler.command = ['cercaimmagine|ci']
+handler.command = ['cercaimmagine', 'ci']
 export default handler
