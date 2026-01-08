@@ -1,4 +1,4 @@
-import bing from 'bing-scraper'
+import { search } from 'bing-scraper'
 import axios from 'axios'
 
 const paroleproibite = [
@@ -32,44 +32,18 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       m
     )
 
-
-  try {
-    const filtroGPT = `
-Controlla se nel seguente testo è presente un termine inappropriato o ostile, in qualsiasi lingua:
-
-"${input}"
-
-Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili, rispondi solo con "vietato", altrimenti rispondi "ok".
-`
-    const filtro = await axios.post('https://luminai.my.id', {
-      content: filtroGPT,
-      user: m.pushName || 'utente',
-      prompt: 'Rispondi con una singola parola.',
-      webSearchMode: false
-    })
-
-    const out = filtro.data?.result?.toLowerCase()
-    if (out?.includes('vietato'))
-      return conn.reply(m.chat, '⚠️ Contenuto non permesso.', m)
-  } catch {
-    
-    if (paroleproibite.some(w => input.toLowerCase().includes(w)))
-      return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
-  }
-
+  if (paroleproibite.some(w => input.toLowerCase().includes(w)))
+    return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
 
   let results
   try {
-    results = await bing.images(input, {
-      count: 15,
-      safeSearch: true,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36'
-      }
+    const res = await search({
+      q: input,
+      recency: 365,
+      domains: null
     })
+    results = res.images
   } catch (e) {
-    console.log(e)
     return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
   }
 
@@ -78,7 +52,6 @@ Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili
 
   const urls = results.map(v => v.url).filter(Boolean)
   shuffle(urls)
-
   const images = urls.slice(0, 5)
 
   const cards = images.map((img, i) => ({
