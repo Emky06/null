@@ -1,4 +1,5 @@
 import { search } from 'bing-scraper'
+import { promisify } from 'util'
 
 const paroleproibite = [
   'sangue','gore','decapitazione','omicidio','suicidio','cadavere','corpo morto',
@@ -22,21 +23,18 @@ function shuffle(a) {
   }
 }
 
+const searchAsync = promisify(search)
+
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   const input = text || m.quoted?.text
-  if (!input)
-    return conn.reply(
-      m.chat,
-      `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`,
-      m
-    )
+  if (!input) return conn.reply(m.chat, `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`, m)
 
   if (paroleproibite.some(w => input.toLowerCase().includes(w)))
     return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
 
   let results
   try {
-    const res = await search(input, 365, null)
+    const res = await searchAsync(input, 365)
     results = res.images
   } catch {
     return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
