@@ -1,25 +1,24 @@
 import { search } from 'bing-scraper'
-import axios from 'axios'
 
 const paroleproibite = [
-  'sangue', 'gore', 'decapitazione', 'omicidio', 'suicidio', 'cadavere', 'corpo morto',
-  'autolesionismo', 'arma', 'sparare', 'mutilazione',
-  'porno', 'sessuale', 'nudo', 'nuda', 'nudità', 'sex', 'xxx', 'hardcore', 'orgia',
-  'tette', 'seni', 'pene', 'vagina', 'culo', 'anale', 'masturbazione', 'fellatio',
-  '69', 'sesso', 'gay sex', 'lesbica', 'incesto', 'fetish', 'bdsm',
-  'nazista', 'hitler', 'razzismo', 'omofobia', 'islamofobia', 'antisemitismo',
-  'terrorismo', 'pedofilia', 'necrofili',
-  'droga', 'eroina', 'cocaina', 'stupefacenti', 'pedopornografia', 'bestialità',
-  'stupri', 'stupro', 'violentare', 'tortura', 'traffico di organi', 'snuff',
-  'deepfake', 'fake nudes', 'fake porno', 'modifica porno',
-  'impiccarsi', 'tagliarsi', 'soffocare', 'morire', 'uccidersi', 'suicidarsi',
-  'sexy', 'sensuale', 'hot girl', 'hot boy', 'cam girl', 'webcam sex', 'striptease'
+  'sangue','gore','decapitazione','omicidio','suicidio','cadavere','corpo morto',
+  'autolesionismo','arma','sparare','mutilazione',
+  'porno','sessuale','nudo','nuda','nudità','sex','xxx','hardcore','orgia',
+  'tette','seni','pene','vagina','culo','anale','masturbazione','fellatio',
+  '69','sesso','gay sex','lesbica','incesto','fetish','bdsm',
+  'nazista','hitler','razzismo','omofobia','islamofobia','antisemitismo',
+  'terrorismo','pedofilia','necrofili',
+  'droga','eroina','cocaina','stupefacenti','pedopornografia','bestialità',
+  'stupri','stupro','violentare','tortura','traffico di organi','snuff',
+  'deepfake','fake nudes','fake porno','modifica porno',
+  'impiccarsi','tagliarsi','soffocare','morire','uccidersi','suicidarsi',
+  'sexy','sensuale','hot girl','hot boy','cam girl','webcam sex','striptease'
 ]
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
 }
 
@@ -37,13 +36,9 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
   let results
   try {
-    const res = await search({
-      q: input,
-      recency: 365,
-      domains: null
-    })
+    const res = await search(input, 365, null)
     results = res.images
-  } catch (e) {
+  } catch {
     return conn.reply(m.chat, '❌ Errore durante la ricerca immagini.', m)
   }
 
@@ -78,23 +73,6 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       subtitle: '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞',
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       cards
-    },
-    { quoted: m }
-  )
-
-  await conn.sendMessage(
-    m.chat,
-    {
-      text: '🔄 𝐕𝐮𝐨𝐢 𝐜𝐞𝐫𝐜𝐚𝐫𝐞 𝐚𝐥𝐭𝐫𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢?',
-      footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-      buttons: [
-        {
-          buttonId: `${usedPrefix + command} ${input}`,
-          buttonText: { displayText: '𝐂𝐞𝐫𝐜𝐚 𝐝𝐢 𝐧𝐮𝐨𝐯𝐨' },
-          type: 1
-        }
-      ],
-      headerType: 1
     },
     { quoted: m }
   )
