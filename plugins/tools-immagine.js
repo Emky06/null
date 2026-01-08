@@ -1,116 +1,128 @@
-//Plugin fatto da Axtral_WiZaRd
-import { googleImage } from '@bochilteam/scraper'
-import { existsSync } from 'fs'
-import axios from 'axios'
+import axios from 'axios';
 
-const paroleproibite = [
-  'sangue', 'gore', 'decapitazione', 'omicidio', 'suicidio', 'cadavere', 'corpo morto',
-  'autolesionismo', 'arma', 'sparare', 'mutilazione',
-  'porno', 'sessuale', 'nudo', 'nuda', 'nudità', 'sex', 'xxx', 'hardcore', 'orgia',
-  'tette', 'seni', 'pene', 'vagina', 'culo', 'anale', 'masturbazione', 'fellatio',
-  '69', 'sesso', 'gay sex', 'lesbica', 'incesto', 'fetish', 'bdsm',
-  'nazista', 'hitler', 'razzismo', 'omofobia', 'islamofobia', 'antisemitismo',
-  'terrorismo', 'pedofilia', 'necrofili',
-  'droga', 'eroina', 'cocaina', 'stupefacenti', 'pedopornografia', 'bestialità',
-  'stupri', 'stupro', 'violentare', 'tortura', 'traffico di organi', 'snuff',
-  'deepfake', 'fake nudes', 'fake porno', 'modifica porno',
-  'impiccarsi', 'tagliarsi', 'soffocare', 'morire', 'uccidersi', 'suicidarsi',
-  'sexy', 'sensuale', 'hot girl', 'hot boy', 'cam girl', 'webcam sex', 'striptease'
-]
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) {
+    return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
+┃ Inserisci il testo per cercare un'immagine
+┃
+┃ 📝 *Esempio:*
+┃ ${usedPrefix + command} conad city
+╰━━━━━━━━━━━━━━⊱`);
   }
-}
-
-const handler = async (m, { conn, text, usedPrefix, command }) => {
-  
-
-  const input = text || m.quoted?.text
-  if (!input) return conn.reply(m.chat, `> ⓘ Uso del comando:\n> ${usedPrefix + command} <parola chiave>`, m)
-
-  const filtroGPT = `
-Controlla se nel seguente testo è presente un termine inappropriato o ostile, in qualsiasi lingua:
-
-"${input}"
-
-Se contiene contenuti sessuali, violenti, razzisti, illegali, deepfake, o simili, rispondi solo con "vietato", altrimenti rispondi "ok".
-`
 
   try {
-    const filtro = await axios.post("https://luminai.my.id", {
-      content: filtroGPT,
-      user: m.pushName || "utente",
-      prompt: `Rispondi con una singola parola.`,
-      webSearchMode: false
-    })
+    const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${global.APIKeys.google}&cx=${global.APIKeys.googleCX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
+    const response = await axios.get(apiUrl);
+    const data = response.data;
 
-    const out = filtro.data?.result?.toLowerCase()
-    if (out.includes('vietato')) {
-      return conn.reply(m.chat, '⚠️ Contenuto non permesso.', m)
+    if (!data.items || data.items.length === 0) {
+      await m.react('❌');
+      return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
+┃ Nessuna immagine trovata per: *${text}*
+┃
+┃ 💡 *Suggerimento:*
+┃ Prova con termini di ricerca diversi
+╰━━━━━━━━━━━━━━⊱`);
     }
-  } catch (err) {
-    console.log('Filtro GPT fallito, fallback su lista manuale.')
-    if (paroleproibite.some(word => input.toLowerCase().includes(word))) {
-      return conn.reply(m.chat, '⚠️ Questo contenuto non è permesso.', m)
-    }
-  }
+    const maxImages = Math.min(data.items.length, 10);
+    const albumItems = [];
 
-  const randomOffset = Math.floor(Math.random() * 10)
-  const query = `${input} ${randomOffset}`
-  const res = await googleImage(query)
-  if (!res || res.length === 0) return conn.reply(m.chat, '𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 😢', m)
+    for (let i = 0; i < maxImages; i++) {
+      const item = data.items[i];
+      const imageUrl = item.link;
+      const imageTitle = item.title || `Immagine ${i + 1}`;
+      const contextLink = item.image?.contextLink || item.displayLink || imageUrl;
+      const shortTitle = imageTitle.length > 35 ?
+        imageTitle.substring(0, 35) + '...' : imageTitle;
 
-  shuffle(res)
-  const images = res.slice(0, 5)
+      try {
+        const imageResponse = await axios.get(imageUrl, {
+          responseType: 'arraybuffer',
+          headers: {
+            'User-Agent': 'Varebot/2.5 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          }
+        });
 
-  const cards = images.map((img, i) => ({
-    image: { url: img },
-    title: `𝐈𝐦𝐦𝐚𝐠𝐢𝐧𝐞 #${i + 1}`,
-    body: `𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐨 𝐩𝐞𝐫: ${input}`,
-    footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-    buttons: [
-      {
-        name: 'cta_url',
-        buttonParamsJson: JSON.stringify({
-          display_text: '𝐀𝐩𝐫𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞',
-          url: img
-        })
-      }
-    ]
-  }))
+        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
 
-  await conn.sendMessage(
-    m.chat,
-    {
-      text: `🔍 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐩𝐞𝐫: ${input}`,
-      title: `𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢`,
-      subtitle: `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐞 𝐬𝐮 𝐆𝐨𝐨𝐠𝐥𝐞`,
-      footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-      cards
-    },
-    { quoted: m }
-  )
-
-  await conn.sendMessage(
-    m.chat,
-    {
-      text: '🔄 𝐕𝐮𝐨𝐢 𝐜𝐞𝐫𝐜𝐚𝐫𝐞 𝐚𝐥𝐭𝐫𝐞 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢 𝐜𝐨𝐧 𝐥𝐨 𝐬𝐭𝐞𝐬𝐬𝐨 𝐭𝐞𝐫𝐦𝐢𝐧𝐞?',
-      footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-      buttons: [
-        {
-          buttonId: `${usedPrefix}cercaimmagine ${input}`,
-          buttonText: { displayText: '𝐂𝐞𝐫𝐜𝐚 𝐝𝐢 𝐧𝐮𝐨𝐯𝐨' },
-          type: 1
+        albumItems.push({
+          image: Buffer.from(imageResponse.data),
+          caption: caption
+        });
+      } catch (imageError) {
+        console.error('Errore nel caricamento dell\'immagine:', imageError);
+        let thumbnailUrl = item.image?.thumbnailLink || imageUrl;
+        if (thumbnailUrl.includes('encrypted-tbn') || thumbnailUrl.includes('s=')) {
+          thumbnailUrl = thumbnailUrl.replace(/s=\d+/, 's=1024');
         }
-      ],
-      headerType: 1
-    },
-    { quoted: m }
-  )
-}
+        try {
+          const thumbResponse = await axios.get(thumbnailUrl, {
+            responseType: 'arraybuffer',
+            headers: {
+              'User-Agent': 'Varebot/2.5 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+          });
 
-handler.command = ['cercaimmagine', 'ci']
-export default handler
+          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
+
+          albumItems.push({
+            image: Buffer.from(thumbResponse.data),
+            caption: caption
+          });
+        } catch (thumbError) {
+          console.error('Errore nel caricamento del thumbnail:', thumbError);
+        }
+      }
+    }
+
+    if (albumItems.length > 0) {
+      await conn.sendMessage(m.chat, {
+        album: albumItems
+      }, { quoted: m });
+    } else {
+      await m.reply('❌ Nessuna immagine valida trovata');
+    }
+
+    await m.react('✅');
+
+  } catch (error) {
+    console.error('Errore durante la ricerca di immagini:', error);
+    await m.react('❌');
+    let errorMessage = `${global.errore}`;
+    
+    if (error.response) {
+      if (error.response.status === 403) {
+        errorMessage = `╭━━⊱「 ❌ *API ERROR* 」
+┃ Quota API esaurita o chiave non valida
+┃
+╰━━━━━━━━━━━━━━⊱`;
+      }
+    }
+    
+    return m.reply(errorMessage);
+  }
+};
+const handleCardButtons = async (m, { conn, text }) => {
+  if (text.startsWith('sendimg_')) {
+    const imageUrl = text.replace('sendimg_', '');
+    try {
+      await conn.sendMessage(m.chat, {
+        image: { url: imageUrl },
+        caption: '『 🖼️ 』 Ecco la tua immagine!'
+      }, { quoted: m });
+    } catch (e) {
+      console.error('Errore invio immagine:', e);
+      m.reply('❌ Errore nel caricare l\'immagine');
+    }
+  } else if (text.startsWith('newsearch_')) {
+    const searchTerm = text.replace('newsearch_', '');
+    m.reply(`🔄 Prova a cercare con termini diversi per "${searchTerm}" o usa il comando di nuovo con parole chiave più specifiche!`);
+  }
+};
+
+handler.help = ['immagine <testo>'];
+handler.tags = ['ricerca'];
+handler.command = ['immagine', 'img', 'image'];
+handler.register = true;
+
+export default handler;
