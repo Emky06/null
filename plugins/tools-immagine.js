@@ -1,5 +1,4 @@
-// Codice di tools-immagine.js
-
+//Plugin fatto da Axtral_WiZaRd
 import { googleImage } from '@bochilteam/scraper'
 import { existsSync } from 'fs'
 import axios from 'axios'
