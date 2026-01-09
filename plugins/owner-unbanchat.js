@@ -18,7 +18,7 @@ let handler = async (m, { args }) => {
             if (global.tempCodes[m.chat] === code) delete global.tempCodes[m.chat];
         }, 60_000);
 
-        return m.reply(`𝐏𝐞𝐫 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐥𝐚 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚, 𝐢𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐜𝐨𝐝𝐢𝐜𝐞 𝐚 𝟒 𝐜𝐢𝐟𝐫𝐞. 𝐄𝐬: .𝐫𝐞𝐯𝐞𝐚𝐥 𝟏𝟐𝟑𝟒`);
+        return m.reply(`𝐏𝐞𝐫 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐥𝐚 𝐌𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐟𝐚𝐧𝐭𝐚𝐬𝐦𝐚, 𝐢𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐜𝐨𝐝𝐢𝐜𝐞 𝐚 𝟒 𝐜𝐢𝐟𝐫𝐞. 𝐄𝐬: .𝐫𝐞𝐯𝐞𝐚𝐥 ${code}`);
     }
 
     if (args[0] !== global.tempCodes[m.chat]) {
