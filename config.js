@@ -59,7 +59,7 @@ global.author = ''
 
 //────────────────────────────
 
-global.vs = '𝟐.𝟎'
+global.vs = '𝟑.𝟎'
 
 global.nomebot = '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
 
