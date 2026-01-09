@@ -21,12 +21,14 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 
     const senderNumber = m.sender.split('@')[0];
 
+const botNumber = conn.user.jid;
 const ownerNumbers = (global.owner || []).map(o => o[0]);
 
 
 const isAuthorized =
     authorizedNumbers.includes(senderNumber) ||
-    ownerNumbers.includes(senderNumber);
+    ownerNumbers.includes(senderNumber) ||
+    senderNumber + '@s.whatsapp.net' === botNumber;
 
 if (!isAuthorized) {
     return m.reply('⛔ Non sei autorizzato a usare questo comando.');
