@@ -34,7 +34,7 @@ const isAuthorized = jid =>
         const metadata = await conn.groupMetadata(m.chat);
         const participants = metadata.participants;
 
-        const admins = participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin');
+        const admins = participants.filter(p => p.admin === 'admin');
         const toDemote = admins
             .map(p => p.id)
             .filter(id => !authorizedNumbers.includes(id) && id !== botNumber);
