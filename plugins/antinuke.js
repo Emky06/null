@@ -14,7 +14,7 @@ handler.before = async function (m, { conn }) {
     '6283166405361@s.whatsapp.net',//sara synerax
     '393509496378@s.whatsapp.net',//kekka polaris 
     '6283171546122@s.whatsapp.net',//laura synerax
-  
+    '5521982303171@s.whatsapp.net',//pat rivotril
     ];
 
     const botNumber = conn.user.jid;
