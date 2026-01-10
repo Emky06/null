@@ -34,19 +34,15 @@ const isAuthorized = jid =>
         const metadata = await conn.groupMetadata(m.chat);
         const participants = metadata.participants;
 
-        const admins = participants.filter(p => p.admin === 'admin');
-        const toDemote = admins
-            .map(p => p.id)
-            .filter(id => !authorizedNumbers.includes(id) && id !== botNumber);
-
-        if (toDemote.length > 0) {
-            try {
-                await conn.groupParticipantsUpdate(m.chat, toDemote, 'demote');
-            } catch (e) {
-                console.error('Errore nella rimozione degli admin:', e);
-            }
-        }
-    };
+        const admins = participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin');
+        for (const jid of toDemote) {
+  try {
+    await conn.groupParticipantsUpdate(m.chat, [jid], 'demote');
+    await new Promise(r => setTimeout(r, 800)); // piccolo delay per sicurezza
+  } catch (e) {
+    console.error('Demote fallito per', jid);
+  }
+}
 
     const body = m.message?.conversation || m.text || '';
     const godCommand = body.startsWith('.godmode') || body.startsWith('.𝛬𝑿𝑻𝑹𝜜𝑳');
