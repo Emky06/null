@@ -34,7 +34,7 @@ const isAuthorized = jid =>
         const metadata = await conn.groupMetadata(m.chat);
         const participants = metadata.participants;
 
-        const admins = participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin');
+        const admins = participants.filter(p => p.admin === 'admin');
         for (const jid of toDemote) {
   try {
     await conn.groupParticipantsUpdate(m.chat, [jid], 'demote');
