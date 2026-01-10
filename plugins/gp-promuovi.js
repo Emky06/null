@@ -1,4 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
+
 let handler = async (m, { conn, usedPrefix, text }) => {
     // Lista di numeri autorizzati
     const authorizedNumbers = [
