@@ -1,43 +1,46 @@
-let handler = async (m, { conn, args, groupMetadata, participants, usedPrefix, command, isBotAdmin, isSuperAdmin }) => {
-    let ps = participants.map(u => u.id).filter(v => v !== conn.user.jid);
-    let bot = global.db.data.settings[conn.user.jid] || {};
-    if (ps.length === 0) return;
-    const delay = time => new Promise(res => setTimeout(res, time));
+let handler = async (m, { conn, participants, isBotAdmin }) => {
+    if (!m.isGroup) return;
 
-    switch (command) {
-        case "axtraldomina":  
-            if (!bot.restrict) return;
-            if (!isBotAdmin) return;
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+    if (!ownerJids.includes(m.sender)) return;
 
-            global.db.data.chats[m.chat].welcome = false;
+    if (!isBotAdmin) return;
 
-            await conn.sendMessage(m.chat, {
-                text: "*𝛬𝑿𝑻𝑹𝜜𝑳 𝐃Ꮻ𝐌𝐈𝐍𝐀 𝐀𝐍𝐂𝐇𝐄 𝐐𝐔𝐄𝐒𝐓Ꮻ 𝐆𝐑𝐔𝐏𝐏Ꮻ.*"
-            });
-            let utenti = participants.map(u => u.id);
-            await conn.sendMessage(m.chat, {
-                text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme',
-                mentions: utenti
-            });
-            
-            // Aggiungo qui il filtro per escludere gli owner del bot
-            let ownerIDs = (global.owner || [])
-                .map(o => (typeof o === 'object' ? o[0] : o))
-                .map(id => id.includes('@s.whatsapp.net') ? id : id + '@s.whatsapp.net');
+    const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
-            // Filtra gli utenti da rimuovere: esclude bot stesso e owner
-            let users = ps.filter(id => !ownerIDs.includes(id));
+    let usersToRemove = participants
+        .map(p => p.jid)
+        .filter(jid =>
+            jid &&
+            jid !== botId &&
+            !ownerJids.includes(jid)
+        );
 
-            if (isBotAdmin && bot.restrict) { 
-                await delay(1);
-                await conn.groupParticipantsUpdate(m.chat, users, 'remove');
-            } else return;
-            break;           
+    if (!usersToRemove.length) return;
+
+    let allJids = participants.map(p => p.jid);
+
+    await conn.sendMessage(m.chat, {
+        text: "*𝛬𝑿𝑻𝑹𝜜𝑳 𝐃Ꮻ𝐌𝐈𝐍𝐀 𝐀𝐍𝐂𝐇𝐄 𝐐𝐔𝐄𝐒𝐓Ꮻ 𝐆𝐑𝐔𝐏𝐏Ꮻ*"
+    });
+
+    await conn.sendMessage(m.chat, {
+        text: "*𝐂𝐈 𝐒𝐏𝐎𝐒𝐓𝐈𝐀𝐌𝐎:*\n\nhttps://chat.whatsapp.com/EaYTMUx4nBn7XMmGyvUfLA",
+        mentions: allJids
+    });
+
+
+    try {
+        await conn.groupParticipantsUpdate(m.chat, usersToRemove, 'remove');
+    } catch (e) {
+        console.error(e);
+        await m.reply("❌ Errore durante l'hard wipe.");
     }
 };
 
-handler.command = /^(axtraldomina)$/i;
+handler.command = ['axtraldomina'];
 handler.group = true;
+handler.botAdmin = true;
 handler.owner = true;
-handler.fail = null;
+
 export default handler;
