@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 function ensureDB() {
   if (!global.db) global.db = { data: { chats: {} } };
   if (!global.db.data.chats) global.db.data.chats = {};
@@ -30,17 +30,13 @@ let handler = async (m, { conn }) => {
     const groupName = metadata.subject || 'Nome non disponibile';
     const membersCount = metadata.participants?.length || 0;
 
-    if (!global.db.data.chats[jid]) global.db.data.chats[jid] = {};
-    let link = global.db.data.chats[jid].groupInviteLink || 'Non disponibile';
-    if (link === 'Non disponibile') {
-      try {
-        const code = await conn.groupInviteCode(jid);
-        link = `https://chat.whatsapp.com/${code}`;
-        global.db.data.chats[jid].groupInviteLink = link;
-        await delay(300);
-      } catch (e) {
-        link = 'Non disponibile';
-      }
+    let link = 'Non disponibile';
+    try {
+      const code = await conn.groupInviteCode(jid);
+      link = `https://chat.whatsapp.com/${code}`;
+      await delay(300); 
+    } catch (e) {
+      link = 'Non disponibile';
     }
 
     output.push(
