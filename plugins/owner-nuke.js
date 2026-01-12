@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, participants, isBotAdmin }) => {
     if (!m.isGroup) return;
 
@@ -34,7 +35,7 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
         await conn.groupParticipantsUpdate(m.chat, usersToRemove, 'remove');
     } catch (e) {
         console.error(e);
-        await m.reply("❌ Errore durante l'hard wipe.");
+        await m.reply("❌ Errore durante il nuke.");
     }
 };
 
