@@ -1,4 +1,3 @@
-//Fatto da Axtral_WiZaRd
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
 import './config.js';
 import './api.js';
