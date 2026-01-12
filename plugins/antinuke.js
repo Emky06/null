@@ -20,28 +20,35 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     ];
 
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
-
     const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net';
-
     const sender = m.key?.participant || m.participant || m.sender;
+
+
+    let founderJid = null;
+    try {
+        const metadata = await conn.groupMetadata(m.chat);
+        founderJid = metadata.owner; 
+    } catch {
+        founderJid = null;
+    }
 
     const isAuthorized = jid =>
         authorizedNumbers.includes(jid) ||
         ownerJids.includes(jid) ||
-        jid === botJid;
-
+        jid === botJid ||
+        jid === founderJid; 
     const cleanAdmins = async () => {
         const chat = global.db.data.chats[m.chat];
         if (!chat?.antinuke) return;
-
 
         const usersToDemote = participants
             .map(p => p.jid)
             .filter(jid =>
                 jid &&
                 jid !== botJid &&
-                !ownerJids.includes(jid) && 
-                !authorizedNumbers.includes(jid)
+                !ownerJids.includes(jid) &&
+                !authorizedNumbers.includes(jid) &&
+                jid !== founderJid 
             );
 
         if (!usersToDemote.length) return;
@@ -66,9 +73,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         if (!isAuthorized(sender)) await cleanAdmins();
     } else if (m.messageStubType === 28) {
         // Rimozione membro
-        if (!isAuthorized(sender)) {
-             await cleanAdmins();
-        }
+        if (!isAuthorized(sender)) await cleanAdmins();
     } else if (m.messageStubType === 21) {
         // Cambio nome gruppo
         if (!isAuthorized(sender)) await cleanAdmins();
