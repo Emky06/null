@@ -13,9 +13,9 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         '6285881815061@s.whatsapp.net', // dieh
         '559180930059@s.whatsapp.net',  // dieh BOT
         '393532112054@s.whatsapp.net',  // maeda synerax
-        '6283166405361@s.whatsapp.net', // sara synerax
         '393509496378@s.whatsapp.net',  // kekka polaris
         '6283171546122@s.whatsapp.net', // laura synerax
+        '393533242715@s.whatsapp.net', //naomi
         '5521982303171@s.whatsapp.net', // pat rivotril
     ];
 
