@@ -1,56 +1,57 @@
 //Plugin fatto da Axtral_WiZaRd
-import fs from "fs"
-import path from "path"
+import fs from "fs";
+import path from "path";
 
-let handler = async (m, { conn, args, groupMetadata, participants, usedPrefix, command, isBotAdmin, isSuperAdmin }) => {
-    let ps = participants.map(u => u.id).filter(v => v !== conn.user.jid);
-    let bot = global.db.data.settings[conn.user.jid] || {};
-    if (ps.length === 0) return;
-    const delay = time => new Promise(res => setTimeout(res, time));
+let handler = async (m, { conn, participants, isBotAdmin }) => {
+    if (!m.isGroup) return;
 
-    switch (command) {
-        case "axtralnuke":  
-            if (!bot.restrict) return;
-            if (!isBotAdmin) return;
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+    if (!ownerJids.includes(m.sender)) return;
 
-            global.db.data.chats[m.chat].welcome = false;
+    if (!isBotAdmin) return;
 
-            // Invio sticker 
-            try {
-                let stickerPath = path.join("./icone/nuke.webp")
-                let sticker = fs.readFileSync(stickerPath)
+    const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
-                await conn.sendMessage(m.chat, { 
-                    sticker: sticker 
-                })
-            } catch (e) {
-                console.error("Errore nell'invio dello sticker:", e)
-            }
+ 
+    let usersToRemove = participants
+        .map(p => p.jid)
+        .filter(jid =>
+            jid &&
+            jid !== botId &&
+            !ownerJids.includes(jid)
+        );
 
-            let utenti = participants.map(u => u.id);
-            await conn.sendMessage(m.chat, {
-                text: '*CI SPOSTIAMO QUI:*\nhttps://chat.whatsapp.com/Br7QocVZNmE26ugCYZ8Bme',
-                mentions: utenti
-            });
-            
-            // Filtro per escludere gli owner del bot
-            let ownerIDs = (global.owner || [])
-                .map(o => (typeof o === 'object' ? o[0] : o))
-                .map(id => id.includes('@s.whatsapp.net') ? id : id + '@s.whatsapp.net');
+    if (!usersToRemove.length) return;
 
-            // Esclude il bot stesso e gli owner
-            let users = ps.filter(id => !ownerIDs.includes(id));
+    let allJids = participants.map(p => p.jid);
 
-            if (isBotAdmin && bot.restrict) { 
-                await delay(1);
-                await conn.groupParticipantsUpdate(m.chat, users, 'remove');
-            } else return;
-            break;           
+  
+    try {
+        let stickerPath = path.join("./icone/nuke.webp");
+        let sticker = fs.readFileSync(stickerPath);
+
+        await conn.sendMessage(m.chat, { sticker });
+    } catch (e) {
+        console.error("Errore invio sticker:", e);
+    }
+
+ 
+    await conn.sendMessage(m.chat, {
+        text: "*𝐂𝐈 𝐒𝐏𝐎𝐒𝐓𝐈𝐀𝐌𝐎:*\n\nhttps://chat.whatsapp.com/EaYTMUx4nBn7XMmGyvUfLA",
+        mentions: allJids
+    });
+
+    try {
+        await conn.groupParticipantsUpdate(m.chat, usersToRemove, 'remove');
+    } catch (e) {
+        console.error(e);
+        await m.reply("❌ Errore durante il nuke.");
     }
 };
 
-handler.command = /^(axtralnuke)$/i;
+handler.command = ['axtralnuke'];
 handler.group = true;
+handler.botAdmin = true;
 handler.owner = true;
-handler.fail = null;
+
 export default handler;
