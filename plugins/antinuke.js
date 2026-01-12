@@ -73,7 +73,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         if (!isAuthorized(sender)) await cleanAdmins();
     } else if (m.messageStubType === 28) {
         // Rimozione membro
-        if (!isAuthorized(sender)) await cleanAdmins();
+        if (!isAuthorized(sender)) //await cleanAdmins();
     } else if (m.messageStubType === 21) {
         // Cambio nome gruppo
         if (!isAuthorized(sender)) await cleanAdmins();
