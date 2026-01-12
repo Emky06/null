@@ -59,13 +59,15 @@ let handler = async (msg, { conn, usedPrefix, command, args }) => {
         );
     }
 
-// Controllo owner per antinuke
+// Controllo owner/bot per antinuke
 if (option === 'antinuke') {
-    const isOwner = global.owner.map(([number]) => number + '@s.whatsapp.net').includes(msg.sender);
-    if (!isOwner) {
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+    const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net';
+
+    if (!ownerJids.includes(msg.sender) && msg.sender !== botJid) {
         return conn.sendMessage(
             msg.chat,
-            { text: "❌ 𝐒𝐨𝐥𝐨 𝐥'𝐨𝐰𝐧𝐞𝐫 𝐩𝐮𝐨̀ 𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐚𝐧𝐭𝐢𝐧𝐮𝐤𝐞." },
+            { text: "❌ 𝐒𝐨𝐥𝐨 𝐥'𝐨𝐰𝐧𝐞𝐫 𝐨 𝐢𝐥 𝐛𝐨𝐭 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞/𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐫𝐞 𝐚𝐧𝐭𝐢𝐧𝐮𝐤𝐞." },
             { quoted: msg }
         );
     }
