@@ -1,3 +1,4 @@
+//Fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from "@whiskeysockets/baileys"
 import { smsg } from './lib/simple.js'
 import { format } from 'util'
