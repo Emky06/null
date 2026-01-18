@@ -152,8 +152,8 @@ const handler = async (m, { conn, usedPrefix, text, command }) => {
       mentions: conn.parseMention(caption),
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       buttons: [
-        { buttonId: `${usedPrefix}like|${m.sender}`, buttonText: { displayText: '❤️ Like' }, type: 1 },
-        { buttonId: `${usedPrefix}dislike|${m.sender}`, buttonText: { displayText: '💔 Dislike' }, type: 1 },
+        { buttonId: `${usedPrefix}like ${m.sender}`, buttonText: { displayText: '❤️ Like' }, type: 1 },
+        { buttonId: `${usedPrefix}dislike ${m.sender}`, buttonText: { displayText: '💔 Dislike' }, type: 1 },
         { buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`, buttonText: { displayText: '⬇️ Scarica Audio' }, type: 1 }
       ],
       headerType: 4
