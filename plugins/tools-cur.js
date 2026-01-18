@@ -74,32 +74,22 @@ async function generateTrackImage(track) {
   }
 }
 
+async function handleReaction(m, conn, type, target) {
+  const users = getUsers()
+  initUser(users, target)
+
+  if (type === 'like') users[target].likes++
+  if (type === 'dislike') users[target].dislikes++
+
+  saveUsers(users)
+
+  await conn.sendMessage(m.chat, {
+    text: `${type === 'like' ? '❤️' : '💔'} 𝐇𝐚𝐢 𝐫𝐞𝐚𝐠𝐢𝐭𝐨 𝐚 @${target.split('@')[0]}`,
+    mentions: [target]
+  })
+}
+
 const handler = async (m, { conn, usedPrefix, text, command }) => {
-
-  if (m.message?.buttonsResponseMessage) {
-    const id = m.message.buttonsResponseMessage.selectedButtonId
-    if (!id.startsWith('like|') && !id.startsWith('dislike|')) return
-
-    const [type, target] = id.split('|')
-    if (m.sender === target) {
-      return conn.sendMessage(m.chat, {
-        text: '🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐥𝐢𝐤𝐞 𝐨 𝐝𝐢𝐬𝐥𝐢𝐤𝐞 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.'
-      })
-    }
-
-    const users = getUsers()
-    initUser(users, target)
-
-    if (type === 'like') users[target].likes++
-    if (type === 'dislike') users[target].dislikes++
-
-    saveUsers(users)
-
-    return conn.sendMessage(m.chat, {
-      text: `${type === 'like' ? '❤️' : '💔'} 𝐇𝐚𝐢 𝐫𝐞𝐚𝐠𝐢𝐭𝐨 𝐚 @${target.split('@')[0]}`,
-      mentions: [target]
-    })
-  }
 
   if (command === 'setuser') {
     if (!text) {
@@ -190,6 +180,12 @@ const handler = async (m, { conn, usedPrefix, text, command }) => {
       text: `👤 *𝐏𝐫𝐨𝐟𝐢𝐥𝐨 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐞*\n@${target.split('@')[0]}\n\n❤️ 𝐋𝐢𝐤𝐞: ${u.likes}\n💔 𝐃𝐢𝐬𝐥𝐢𝐤𝐞: ${u.dislikes}\n\n🕒 *𝐔𝐥𝐭𝐢𝐦𝐞 𝐜𝐚𝐧𝐳𝐨𝐧𝐢:*\n${last}`,
       mentions: [target]
     })
+  }
+
+  if (command === 'like' || command === 'dislike') {
+    let target = m.quoted?.sender || (text ? text.replace('@', '') + '@s.whatsapp.net' : m.sender)
+    if (target === m.sender) return conn.sendMessage(m.chat, { text: '🚫 Non puoi mettere like/dislike a te stesso' })
+    await handleReaction(m, conn, command, target)
   }
 }
 
