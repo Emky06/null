@@ -193,7 +193,7 @@ const handler = async (m, { conn, usedPrefix, text, command }) => {
   }
 }
 
-handler.command = ['setuser', 'cur', 'cronologia', 'ilmiocur']
+handler.command = ['setuser', 'cur', 'cronologia', 'ilmiocur', 'like', 'dislike']
 handler.group = true
 
 export default handler
