@@ -58,10 +58,20 @@ async function getTrackInfo(username, artist, track) {
 }
 
 async function generateTrackImage(track) {
-  const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text'] || 'https://via.placeholder.com/600x300'
-  const img = await Jimp.read(imageUrl)
-  img.cover(600, 600)
-  return img.getBufferAsync(Jimp.MIME_JPEG)
+  const width = 600
+  const height = 600
+
+  let imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text']
+
+  try {
+    if (!imageUrl) throw 'no image'
+    const img = await Jimp.read(imageUrl)
+    img.cover(width, height)
+    return await img.getBufferAsync(Jimp.MIME_JPEG)
+  } catch {
+    const fallback = new Jimp(width, height, '#111111')
+    return await fallback.getBufferAsync(Jimp.MIME_JPEG)
+  }
 }
 
 const handler = async (m, { conn, usedPrefix, text, command }) => {
@@ -142,8 +152,8 @@ const handler = async (m, { conn, usedPrefix, text, command }) => {
       mentions: conn.parseMention(caption),
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       buttons: [
-        { buttonId: `like|${m.sender}`, buttonText: { displayText: '❤️ Like' }, type: 1 },
-        { buttonId: `dislike|${m.sender}`, buttonText: { displayText: '💔 Dislike' }, type: 1 },
+        { buttonId: `${usedPrefix}like|${m.sender}`, buttonText: { displayText: '❤️ Like' }, type: 1 },
+        { buttonId: `${usedPrefix}dislike|${m.sender}`, buttonText: { displayText: '💔 Dislike' }, type: 1 },
         { buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`, buttonText: { displayText: '⬇️ Scarica Audio' }, type: 1 }
       ],
       headerType: 4
