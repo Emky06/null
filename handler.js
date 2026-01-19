@@ -178,7 +178,7 @@ chat.rules = ''
 const isPrems = m.isGroup
     ? (
         global.prems.includes(userId) || 
-        (global.db.data.groups[m.chat]?.prems || []).includes(userId) || 
+        (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId) ||  
         m.isAdmin || 
         global.owner.includes(userId)
       )
