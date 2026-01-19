@@ -591,7 +591,7 @@ export async function participantsUpdate({ id, participants, action }) {
                         forwardingScore: 99,
                         isForwarded: true,
                         forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363259442839354@newsletter',
+                            newsletterJid: '',
                             serverMessageId: '',
                             newsletterName: nomeDelBot
                         },
