@@ -31,7 +31,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
 handler.help = ['delete'];
 handler.tags = ['group'];
-handler.command = /^dell?$/i;
+handler.command = /^dell$/i;
 handler.group = true; 
 handler.premium = true;
 handler.botAdmin = true;
