@@ -20,7 +20,7 @@ let handler = async (m, { conn, args }) => {
 
   if (cmd !== 'espelli') return m.reply('❌ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐨, 𝐮𝐬𝐚 𝐬𝐨𝐥𝐨 "𝐞𝐬𝐩𝐞𝐥𝐥𝐢"');
 
-  const isActivating = /^mattiva$/i.test(m.text);
+  const isActivating = /^mattiva$/i.test(args[0]);
   groupData.kickPerms[mention] = isActivating;
 
   if (global.db.write) await global.db.write();
@@ -29,11 +29,11 @@ let handler = async (m, { conn, args }) => {
   const actionText = isActivating ? '𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨' : '𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨';
 
   const messaggio = 
-`╭━━━━━━━━━━━━━━━━━━━╮
+`╭━━━━━━━━━━━━━━━━━━╮
 ┃ ✅ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐤𝐢𝐜𝐤 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢
 ┃ ➤ 𝐔𝐭𝐞𝐧𝐭𝐞: ${userTag}
 ┃ ➤ 𝐒𝐭𝐚𝐭𝐨: ${actionText}
-╰━━━━━━━━━━━━━━━━━━━╯`;
+╰━━━━━━━━━━━━━━━━━━╯`;
 
   m.reply(messaggio, null, { mentions: [mention] });
 };
