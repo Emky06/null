@@ -6,13 +6,12 @@ let handler = async (m, { conn, args }) => {
   const groupId = m.chat;
   const groupData = global.db.data.groups[groupId] || (global.db.data.groups[groupId] = {});
   groupData.kickPerms = groupData.kickPerms || {};
-groupData.prems = groupData.prems || [];
+  groupData.prems = groupData.prems || [];
 
   const cmd = args[0]?.toLowerCase();
   const mention = m.mentionedJid?.[0];
   if (!cmd || !mention) return m.reply(`❌ 𝐔𝐬𝐚: .mattiva espelli @utente 𝐨𝐩𝐩𝐮𝐫𝐞 .mdisattiva espelli @utente`);
 
-  
   const isPremium = groupData.prems.some(u => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`;
     return jid === mention;
