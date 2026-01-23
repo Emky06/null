@@ -20,21 +20,27 @@ async function handler(m, { isBotAdmin, text, conn }) {
   const owner = utente?.admin == 'superadmin'
   const admin = utente?.admin == 'admin'
 
-  if (!global.db) global.db = { data: {} }
-  if (!global.db.data.groups) global.db.data.groups = {}
-  if (!global.db.data.groups[m.chat]) global.db.data.groups[m.chat] = {}
+  // --- LEGGO IL DATABASE JSON ---
+  let db = {}
+  try {
+    db = JSON.parse(fs.readFileSync('./database.json'))
+  } catch (e) {
+    db = { groups: {} }
+  }
 
-  const groupData = global.db.data.groups[m.chat]
+  if (!db.groups) db.groups = {}
+  if (!db.groups[m.chat]) db.groups[m.chat] = {}
+  const groupData = db.groups[m.chat]
   groupData.kickPerms = groupData.kickPerms || {}
-  const kickPerms = groupData.kickPerms
   groupData.prems = groupData.prems || []
 
-  // Controllo se chi invia il comando ha kick disattivato
+  const kickPerms = groupData.kickPerms
+  const prems = groupData.prems
+
+  // Controllo permesso chi invia il comando
   const senderPerm = kickPerms[m.sender]
   if (senderPerm === false) return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
   if (senderPerm === undefined) kickPerms[m.sender] = true
-
-  const prems = groupData.prems
 
   const isPremiumTarget = prems.some(u => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
@@ -63,6 +69,9 @@ async function handler(m, { isBotAdmin, text, conn }) {
 
   conn.reply(m.chat, messaggio, fake, { mentions: [mention, m.sender] })
   conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
+
+  // Salvo il database aggiornato
+  fs.writeFileSync('./database.json', JSON.stringify(db, null, 2))
 }
 
 handler.command = /^espelli$/i
