@@ -23,15 +23,18 @@ async function handler(m, { isBotAdmin, text, conn }) {
   if (!global.db) global.db = { data: {} }
   if (!global.db.data.groups) global.db.data.groups = {}
   if (!global.db.data.groups[m.chat]) global.db.data.groups[m.chat] = {}
+
   const groupData = global.db.data.groups[m.chat]
   groupData.kickPerms = groupData.kickPerms || {}
   const kickPerms = groupData.kickPerms
+  groupData.prems = groupData.prems || []
 
-  if (kickPerms[m.sender] === false) return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
-  if (kickPerms[m.sender] === undefined) kickPerms[m.sender] = true
+  // Controllo se chi invia il comando ha kick disattivato
+  const senderPerm = kickPerms[m.sender]
+  if (senderPerm === false) return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
+  if (senderPerm === undefined) kickPerms[m.sender] = true
 
-  const groupDataPrems = global.db?.data?.groups?.[m.chat] || {}
-  const prems = groupDataPrems?.prems || []
+  const prems = groupData.prems
 
   const isPremiumTarget = prems.some(u => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
