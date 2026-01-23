@@ -18,7 +18,7 @@ let handler = async (m, { conn, args }) => {
     return jid === target;
   });
 
-  if (!isPremium) return m.reply('❌ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐬𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐧𝐨𝐧 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.);
+  if (!isPremium) return m.reply('❌ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐬𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐧𝐨𝐧 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.');
 
   const espelliStatus = groupData.kickPerms[target] ? '✅ 𝐀𝐭𝐭𝐢𝐯𝐨' : '❌ 𝐃𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨';
 
