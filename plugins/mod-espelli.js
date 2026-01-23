@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
 async function handler(m, { isBotAdmin, text, conn }) {
@@ -26,7 +25,8 @@ async function handler(m, { isBotAdmin, text, conn }) {
   const kickPerms = groupData?.kickPerms || {}
 
   if (!prems.includes(m.sender)) return m.reply('❌ 𝐒𝐨𝐥𝐨 𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐮𝐬𝐚𝐫𝐞 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨.')
-  if (!kickPerms[m.sender]) return m.reply('❌ 𝐈𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐬𝐩𝐞𝐥𝐥𝐢 𝐧𝐨𝐧 𝐭𝐢 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐚𝐧𝐜𝐨𝐫𝐚 𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.') // corretto controllo
+  if (!(m.sender in kickPerms)) kickPerms[m.sender] = true
+  if (!kickPerms[m.sender]) return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
 
   const isPremiumTarget = prems.some(u => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
