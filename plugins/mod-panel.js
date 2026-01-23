@@ -24,7 +24,7 @@ let handler = async (m, { conn, args }) => {
 
   const userTag = `@${target.split('@')[0]}`;
   const messaggio = 
-`╭━━━[ *𝐏𝐚𝐧𝐧𝐞𝐥𝐥𝐨 𝐌𝐨𝐝* ]━━━╮
+`╭━━━━[ *𝐏𝐚𝐧𝐧𝐞𝐥𝐥𝐨 𝐌𝐨𝐝* ]━━━━╮
 ┃ 👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${userTag}
 ┃ ⚡ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐞𝐬𝐩𝐞𝐥𝐥𝐢: ${espelliStatus}
 ╰━━━━━━━━━━━━━━━━━━━╯`;
