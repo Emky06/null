@@ -26,14 +26,14 @@ let handler = async (m, { conn, args }) => {
   if (global.db.write) await global.db.write();
 
   const userTag = `@${mention.split('@')[0]}`;
-  const actionText = isActivating ? '𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨' : '𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨';
+  const actionText = isActivating ? '✅ 𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨' : '❌ 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨';
 
   const messaggio = 
-`╭━━━━━━━━━━━━━━━━━━━╮
+`╭━━━━━━━━━━━━━━━━━━╮
 ┃ ✅ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐤𝐢𝐜𝐤 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢
 ┃ ➤ 𝐔𝐭𝐞𝐧𝐭𝐞: ${userTag}
 ┃ ➤ 𝐒𝐭𝐚𝐭𝐨: ${actionText}
-╰━━━━━━━━━━━━━━━━━━━╯`;
+╰━━━━━━━━━━━━━━━━━━╯`;
 
   m.reply(messaggio, null, { mentions: [mention] });
 };
