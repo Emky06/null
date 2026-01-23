@@ -6,7 +6,7 @@ let handler = async (m, { conn, args }) => {
   const groupId = m.chat;
   const groupData = global.db.data.groups[groupId] || (global.db.data.groups[groupId] = {});
   groupData.prems = groupData.prems || [];
-  groupData.kickPerms ||= {};
+  groupData.kickPerms = groupData.kickPerms || {};
 
   let target = m.mentionedJid?.[0] || m.quoted?.sender || args.join(' ').replace(/\D/g, '');
   if (!target) return m.reply('❌ 𝐃𝐞𝐯𝐢 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞 𝐚𝐥 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨.');
