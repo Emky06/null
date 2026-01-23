@@ -20,12 +20,16 @@ async function handler(m, { isBotAdmin, text, conn }) {
   const owner = utente?.admin == 'superadmin'
   const admin = utente?.admin == 'admin'
 
-  const groupData = global.db?.data?.groups?.[m.chat] || {}
-  const prems = groupData?.prems || []
-  const kickPerms = groupData?.kickPerms || {}
+  
+const groupData = global.db?.data?.groups?.[m.chat] = global.db?.data?.groups?.[m.chat] || {}
+groupData.kickPerms = groupData.kickPerms || {}
 
-  if (!prems.includes(m.sender)) return m.reply('❌ 𝐒𝐨𝐥𝐨 𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐮𝐬𝐚𝐫𝐞 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨.')
-  if (kickPerms[m.sender] === false) return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
+const kickPerms = groupData.kickPerms
+
+if (kickPerms[m.sender] === false) {
+    return m.reply('❌ 𝐇𝐚𝐢 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨.')
+}
+
 if (kickPerms[m.sender] === undefined) kickPerms[m.sender] = true
 
   const isPremiumTarget = prems.some(u => {
