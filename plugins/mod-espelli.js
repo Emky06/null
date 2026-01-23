@@ -53,4 +53,6 @@ async function handler(m, { isBotAdmin, text, conn }) {
 }
 
 handler.command = /^espelli$/i
+handler.premium = true
+
 export default handler
