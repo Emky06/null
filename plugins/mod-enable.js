@@ -9,7 +9,22 @@ let handler = async (m, { conn, args }) => {
   groupData.prems = groupData.prems || [];
 
   const cmd = args[0]?.toLowerCase();
-  const mention = m.mentionedJid?.[0];
+
+let mention;
+
+if (m.mentionedJid && m.mentionedJid[0]) {
+    
+    mention = m.mentionedJid[0];
+} else if (m.quoted && m.quoted.sender) {
+    
+    mention = m.quoted.sender;
+} else if (args[1]) {
+    
+    let number = args[1].replace(/\D/g, ''); 
+    mention = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+}
+
+if (!mention) return m.reply(`❌ 𝐔𝐬𝐚: .mattiva espelli @utente, .mdisattiva espelli @utente, 𝐨𝐩𝐩𝐮𝐫𝐞 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚𝐥 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐨 𝐬𝐜𝐫𝐢𝐯𝐢 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨.`);
   if (!cmd || !mention) return m.reply(`❌ 𝐔𝐬𝐚: .mattiva espelli @utente 𝐨𝐩𝐩𝐮𝐫𝐞 .mdisattiva espelli @utente`);
 
   const isPremium = groupData.prems.some(u => {
