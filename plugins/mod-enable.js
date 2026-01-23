@@ -5,8 +5,8 @@ let handler = async (m, { conn, args }) => {
 
   const groupId = m.chat;
   const groupData = global.db.data.groups[groupId] || (global.db.data.groups[groupId] = {});
-  groupData.kickPerms ||= {};
-  groupData.prems ||= [];
+  groupData.kickPerms = groupData.kickPerms || {};
+groupData.prems = groupData.prems || [];
 
   const cmd = args[0]?.toLowerCase();
   const mention = m.mentionedJid?.[0];
@@ -17,7 +17,7 @@ let handler = async (m, { conn, args }) => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`;
     return jid === mention;
   });
-  if (!isPremium) return m.reply('❌ L\'utente non è premium.');
+  if (!isPremium) return m.reply('❌ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.');
 
   if (cmd !== 'espelli') return m.reply('❌ 𝐂𝐨𝐦𝐚𝐧𝐝𝐨 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐨, 𝐮𝐬𝐚 𝐬𝐨𝐥𝐨 "𝐞𝐬𝐩𝐞𝐥𝐥𝐢"');
 
