@@ -1,6 +1,3 @@
-Ecco il tuo primo handler.js modificato con le parti cruciali del secondo handler integrate:
-
-```javascript
 //Fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from "@whiskeysockets/baileys"
 import { smsg } from './lib/simple.js'
