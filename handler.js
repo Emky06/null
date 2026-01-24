@@ -7,7 +7,6 @@ import path, { join } from 'path'
 import { unwatchFile, watchFile } from 'fs'
 import fs from 'fs'
 import chalk from 'chalk'
-import NodeCache from 'node-cache'
 
 const { proto } = (await import('@whiskeysockets/baileys')).default
 const isNumber = x => typeof x === 'number' && !isNaN(x)
@@ -17,58 +16,9 @@ const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function (
 }, ms))
 
 // Inizializzazione sistema anti-spam globale
-global.ignoredUsersGlobal = new Set()
-global.ignoredUsersGroup = {}
-global.groupSpam = {}
-
-// Aggiunto dal secondo handler: Sistema di cache
-if (!global.groupCache) {
-    global.groupCache = new NodeCache({ stdTTL: 5 * 60, useClones: false })
-}
-if (!global.jidCache) {
-    global.jidCache = new NodeCache({ stdTTL: 600, useClones: false })
-}
-if (!global.nameCache) {
-    global.nameCache = new NodeCache({ stdTTL: 600, useClones: false });
-}
-
-export const fetchMetadata = async (conn, chatId) => await conn.groupMetadata(chatId)
-
-const fetchGroupMetadataWithRetry = async (conn, chatId, retries = 3, delay = 1000) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            return await conn.groupMetadata(chatId);
-        } catch (e) {
-            if (i === retries - 1) throw e;
-            await new Promise(resolve => setTimeout(resolve, delay));
-        }
-    }
-}
-
-if (!global.cacheListenersSet) {
-    const conn = global.conn
-    if (conn) {
-        conn.ev.on('groups.update', async (updates) => {
-            for (const update of updates) {
-                if (!update || !update.id) {
-                    continue;
-                }
-                try {
-                    const metadata = await fetchGroupMetadataWithRetry(conn, update.id)
-                    if (!metadata) {
-                        continue
-                    }
-                    global.groupCache.set(update.id, metadata, { ttl: 300 })
-                } catch (e) {
-                    if (!e.message?.includes('not authorized') && !e.message?.includes('chat not found') && !e.message?.includes('not in group')) {
-                        console.error(`[ERRORE] Errore nell'aggiornamento cache su groups.update per ${update.id}:`, e)
-                    }
-                }
-            }
-        })
-        global.cacheListenersSet = true
-    }
-}
+global.ignoredUsersGlobal = global.ignoredUsersGlobal || new Set()
+global.ignoredUsersGroup = global.ignoredUsersGroup || {}
+global.groupSpam = global.groupSpam || {}
 
 export async function handler(chatUpdate) {
     this.msgqueque = this.msgqueque || []
@@ -261,45 +211,6 @@ const isPrems = m.isGroup
         const isAdmin = m.isGroup ? await isUserAdmin(this, m.chat, m.sender) : false
         const isBotAdmin = m.isGroup ? await isUserAdmin(this, m.chat, this.user.jid) : false
         //FINE PATCH RUOLI ADMIN
-
-        // AGGIUNTO DAL SECONDO HANDLER: Correzione JID per groupParticipantsUpdate
-        if (m.key) {
-            m.key.remoteJid = this.decodeJid(m.key.remoteJid)
-            if (m.key.participant) m.key.participant = this.decodeJid(m.key.participant)
-        }
-        if (!m.key.remoteJid) return
-        if (!this.originalGroupParticipantsUpdate) {
-            this.originalGroupParticipantsUpdate = this.groupParticipantsUpdate
-            this.groupParticipantsUpdate = async function(chatId, users, action) {
-                try {
-                    let metadata = global.groupCache.get(chatId)
-                    if (!metadata) {
-                        metadata = await fetchMetadata(this, chatId)
-                        if (metadata) global.groupCache.set(chatId, metadata, { ttl: 300 })
-                    }
-                    if (!metadata) {
-                        console.error('[ERRORE] Nessun metadato del gruppo disponibile per un aggiornamento sicuro')
-                        return this.originalGroupParticipantsUpdate.call(this, chatId, users, action)
-                    }
-
-                    const correctedUsers = users.map(userJid => {
-                        const decoded = this.decodeJid(userJid)
-                        const phone = decoded.split('@')[0].replace(/:\d+$/, '')
-                        const participant = metadata.participants.find(p => {
-                            const pId = this.decodeJid(p.id)
-                            const pPhone = pId.split('@')[0].replace(/:\d+$/, '')
-                            return pPhone === phone
-                        })
-                        return participant ? participant.id : userJid
-                    })
-
-                    return this.originalGroupParticipantsUpdate.call(this, chatId, correctedUsers, action)
-                } catch (e) {
-                    console.error('[ERRORE] Errore in safeGroupParticipantsUpdate:', e)
-                    throw e
-                }
-            }
-        }
                 
         const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), './plugins')
         for (let name in global.plugins) {
@@ -618,93 +529,68 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
     }
 }
 
-// AGGIUNTO DAL SECONDO HANDLER: participantsUpdate migliorata
+
 export async function participantsUpdate({ id, participants, action }) {
-    if (global.db.data.chats[id]?.detect === false) return
+    if (this.isInit) return
+    if (global.db.data == null) await loadDatabase()
 
-    try {
-        let metadata = global.groupCache.get(id) || await fetchMetadata(this, id)
-        if (!metadata) return
+    let chat = global.db.data.chats[id] || {}
+    let text = ''
+    const nomeDelBot = global.nomebot || this.user?.name || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
 
-        global.groupCache.set(id, metadata, { ttl: 300 })
-        for (const user of participants) {
-            const normalizedUser = this.decodeJid(user)
-            let userName = global.nameCache.get(normalizedUser);
-            if (!userName) {
-              userName = (await this.getName(normalizedUser)) || normalizedUser.split('@')[0] || 'Sconosciuto'
-              global.nameCache.set(normalizedUser, userName);
-            }
-            
-            // AGGIUNTA CRITICA: Rilevamento richieste di ingresso
-            if (action === 'request') {
-                console.log(`📩 RICHIESTA DI INGRESSO RILEVATA: ${userName} (${normalizedUser})`)
-                
-                // Qui puoi gestire la richiesta
-                const chat = global.db.data.chats[id] || {}
-                const nomeDelBot = global.nomebot || this.user?.name || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
-                
-                // Verifica se il bot è admin
-                const isBotAdmin = metadata.participants?.some(p => {
-                    const pId = this.decodeJid(p.id)
-                    return pId === this.user.jid && (p.admin === 'admin' || p.admin === 'superadmin')
-                })
-                
-                if (isBotAdmin && chat.benvenuto) {
-                    // Notifica agli admin
-                    const admins = metadata.participants.filter(p => 
-                        p.admin === 'admin' || p.admin === 'superadmin'
-                    )
-                    
-                    for (let admin of admins) {
-                        const adminId = this.decodeJid(admin.id)
-                        if (adminId !== this.user.jid) {
-                            await this.sendMessage(adminId, {
-                                text: `📨 *NUOVA RICHIESTA DI INGRESSO*\n\n👤 Utente: @${userName}\n👥 Gruppo: ${metadata.subject}`,
-                                mentions: [normalizedUser]
-                            }).catch(console.error)
+    switch (action) {
+        case 'add':
+        case 'remove':
+            if (!chat.benvenuto) return
+
+            let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
+
+            for (let user of participants) {
+                let pp = './icone/benvenuto.png'
+                try {
+                    pp = await this.profilePictureUrl(user, 'image')
+                } catch {}
+
+                let apii = await this.getFile(pp)
+
+                if (action === 'add') {
+                    text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
+                        .replace('@subject', await this.getName(id))
+                        .replace('@desc', groupMetadata.desc?.toString() || '')
+                        .replace('@user', '@' + user.split('@')[0])
+                } else if (action === 'remove') {
+                    text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
+                        .replace('@user', '@' + user.split('@')[0])
+                }
+
+                await this.sendMessage(id, {
+                    text,
+                    contextInfo: {
+                        mentionedJid: [user],
+                        forwardingScore: 99,
+                        isForwarded: true,
+                        forwardedNewsletterMessageInfo: {
+                            newsletterJid: '',
+                            serverMessageId: '',
+                            newsletterName: nomeDelBot
+                        },
+                        externalAdReply: {
+                            title: action === 'add'
+                                ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
+                                : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
+                            body: '',
+                            previewType: 'PHOTO',
+                            thumbnail: apii.data,
+                            mediaType: 1,
+                            renderLargerThumbnail: false
                         }
                     }
-                    
-                    // Notifica nel gruppo
-                    await this.sendMessage(id, {
-                        text: `📨 Nuova richiesta di ingresso da @${userName}`,
-                        mentions: [normalizedUser]
-                    }).catch(console.error)
-                }
+                })
             }
-            
-            // Gestione eventi normali
-            switch (action) {
-                case 'add':
-                    if (chat.benvenuto) {
-                        const text = (chat.sWelcome || 'Benvenuto/a @user!')
-                            .replace('@subject', metadata.subject || '')
-                            .replace('@desc', metadata.desc?.toString() || '')
-                            .replace('@user', '@' + userName)
-                        
-                        await this.sendMessage(id, {
-                            text,
-                            mentions: [normalizedUser]
-                        }).catch(console.error)
-                    }
-                    break
-                case 'remove':
-                    if (chat.benvenuto) {
-                        const text = (chat.sBye || 'Addio @user!')
-                            .replace('@user', '@' + userName)
-                        
-                        await this.sendMessage(id, {
-                            text,
-                            mentions: [normalizedUser]
-                        }).catch(console.error)
-                    }
-                    break
-            }
-        }
-    } catch (e) {
-        console.error(`[ERRORE] Errore in participantsUpdate per ${id}:`, e)
+            break
     }
 }
+
 
 export async function groupsUpdate(groupsUpdate) {
     for (const groupUpdate of groupsUpdate) {
@@ -759,4 +645,4 @@ watchFile(file, async () => {
     unwatchFile(file)
     console.log(chalk.redBright("Update 'handler.js'"))
     if (global.reloadHandler) console.log(await global.reloadHandler())
-})        
+})
