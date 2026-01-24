@@ -73,7 +73,7 @@ const creationDate = `${day}/${month}/${year}`
 ┃➤ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
 ┃➤ 𝐔𝐭𝐞𝐧𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalUsers)}
 ┃➤ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
-┃➤ 𝐂𝐨𝐦𝐚𝐧𝐝𝐢: 𝐮𝐬𝐚 ${usedPrefix}menu
+┃➤ 𝐂𝐨𝐦𝐚𝐧𝐝𝐢: 𝐮𝐬𝐚 ${usedPrefix}menu 𝐩𝐞𝐫 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim()
 
