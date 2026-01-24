@@ -4,7 +4,7 @@ import fs from 'fs'
 const toMathematicalAlphanumericSymbols = number => {
   const map = {
     '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒',
-    '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
+    '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗', '10' : '𝟏𝟎'
   }
   return number.toString().split('').map(d => map[d] || d).join('')
 }
