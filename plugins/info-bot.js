@@ -9,13 +9,6 @@ const toMathematicalAlphanumericSymbols = number => {
   return number.toString().split('').map(d => map[d] || d).join('')
 }
 
-const formatDate = date => {
-  const day = toMathematicalAlphanumericSymbols(String(date.getDate()).padStart(2, '0'))
-  const month = toMathematicalAlphanumericSymbols(String(date.getMonth() + 1).padStart(2, '0'))
-  const year = toMathematicalAlphanumericSymbols(String(date.getFullYear()))
-  return `${day}/${month}/${year}`
-}
-
 let handler = async (m, { conn, usedPrefix }) => {
   const chats = Object.entries(conn.chats).filter(([id, data]) => id && data.isChats)
 
@@ -39,11 +32,9 @@ let handler = async (m, { conn, usedPrefix }) => {
   const totalPlugins = Object.keys(global.plugins).length
 
   const ownerNumber = global.owner?.[0]?.[0] || ''
-  const ownerLink = ownerNumber
-    ? `https://wa.me/${toMathematicalAlphanumericSymbols(ownerNumber)}`
-    : 'Non disponibile'
+  const ownerLink = ownerNumber ? `https://wa.me/${ownerNumber}` : 'Non disponibile'
 
-  const creationDate = `${toMathematicalAlphanumericSymbols(16)}/${toMathematicalAlphanumericSymbols(2)}/${toMathematicalAlphanumericSymbols(2025)}`
+  const creationDate = `${toMathematicalAlphanumericSymbols(08)}/${toMathematicalAlphanumericSymbols(02)}/${toMathematicalAlphanumericSymbols(2025)}`
 
   const quoted = {
     key: {
@@ -68,10 +59,9 @@ let handler = async (m, { conn, usedPrefix }) => {
 ┃   ${ownerLink}
 ┃
 ┃➤ 𝐍𝐨𝐦𝐞 𝐁𝐨𝐭:
-┃   𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
+┃   ${nomebot}
 ┃
-┃➤ 𝐒𝐭𝐚𝐭𝐨:
-┃   _Online_
+┃➤ 𝐒𝐭𝐚𝐭𝐨: _Online_
 ┃
 ┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:
 ┃   ${creationDate}
