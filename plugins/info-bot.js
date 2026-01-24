@@ -62,13 +62,11 @@ const creationDate = `${day}/${month}/${year}`
 ┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:
 ┃   ${ownerLink}
 ┃
-┃➤ 𝐍𝐨𝐦𝐞 𝐁𝐨𝐭:
-┃   ${nomebot}
+┃➤ 𝐍𝐨𝐦𝐞 𝐁𝐨𝐭: ${nomebot}
 ┃
 ┃➤ 𝐒𝐭𝐚𝐭𝐨: _Online_
 ┃
-┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:
-┃   ${creationDate}
+┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥: ${creationDate}
 ┃
 ┃➤ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
 ┃➤ 𝐔𝐭𝐞𝐧𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalUsers)}
