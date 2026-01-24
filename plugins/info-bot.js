@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
 const toMathematicalAlphanumericSymbols = number => {
@@ -6,58 +6,88 @@ const toMathematicalAlphanumericSymbols = number => {
     '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑', '4': '𝟒',
     '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
   }
-  return number.toString().split('').map(digit => map[digit] || digit).join('')
+  return number.toString().split('').map(d => map[d] || d).join('')
 }
 
-const handler = async (m, { conn, usedPrefix, command }) => {
+const formatDate = date => {
+  const day = toMathematicalAlphanumericSymbols(date.getDate())
+  const month = toMathematicalAlphanumericSymbols(date.getMonth() + 1)
+  const year = toMathematicalAlphanumericSymbols(date.getFullYear())
+  return `${day}/${month}/${year}`
+}
+
+let handler = async (m, { conn, usedPrefix }) => {
   const chats = Object.entries(conn.chats).filter(([id, data]) => id && data.isChats)
 
-  const groupsIn = await Promise.all(
-    chats
-      .filter(([id]) => id.endsWith('@g.us'))
-      .map(async ([id, data]) => {
-        try {
-          const meta = data.metadata || (await conn.groupMetadata(id))
-          if (meta?.isCommunity || meta?.announce || meta?.read_only) return null
-          return [id, data]
-        } catch {
-          return null
-        }
-      })
-  )
-  const groupsFiltered = groupsIn.filter(Boolean)
+  const groupsFiltered = (
+    await Promise.all(
+      chats
+        .filter(([id]) => id.endsWith('@g.us'))
+        .map(async ([id, data]) => {
+          try {
+            const meta = data.metadata || await conn.groupMetadata(id)
+            if (meta?.isCommunity || meta?.announce || meta?.read_only) return null
+            return id
+          } catch {
+            return null
+          }
+        })
+    )
+  ).filter(Boolean)
 
-  const totalreg = Object.keys(global.db.data.users).length
+  const totalUsers = Object.keys(global.db.data.users).length
   const totalPlugins = Object.keys(global.plugins).length
 
-  const thumbnail = fs.readFileSync('icone/logobot.png')
+  const ownerNumber = global.owner?.[0]?.[0] || ''
+  const ownerLink = ownerNumber
+    ? `https://wa.me/${toMathematicalAlphanumericSymbols(ownerNumber)}`
+    : 'Non disponibile'
 
-  let prova = {
-    key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
+  const creationDate = formatDate(new Date('2025-04-10'))
+
+  const quoted = {
+    key: {
+      participants: '0@s.whatsapp.net',
+      fromMe: false,
+      id: 'InfoBot'
+    },
     message: {
       locationMessage: {
-        name: `𝐈𝐧𝐟𝐨 ${global.nomebot}`,
-        jpegThumbnail: thumbnail,
-        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
+        name: '𝐈𝐧𝐟𝐨𝐁𝐨𝐭',
+        jpegThumbnail: fs.readFileSync('icone/logobot.png')
       }
     },
-    participant: "0@s.whatsapp.net"
+    participant: '0@s.whatsapp.net'
   }
 
-  const ownerNumber = global.owner?.[0]?.[0] || ''
-const ownerLink = ownerNumber ? `https://wa.me/${ownerNumber}` : 'Non disponibile'
+  const text = `
+╭━━━━━━━━━━━━━━━━━━━╮
+┃ 🤖 *𝐈𝐧𝐟𝐨𝐁𝐨𝐭* 🤖
+┃
+┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:
+┃   ${ownerLink}
+┃
+┃➤ 𝐍𝐨𝐦𝐞 𝐁𝐨𝐭:
+┃   𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
+┃
+┃➤ 𝐒𝐭𝐚𝐭𝐨:
+┃   _Online_
+┃
+┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:
+┃   ${creationDate}
+┃
+┃➤ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
+┃➤ 𝐔𝐭𝐞𝐧𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalUsers)}
+┃➤ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
+┃➤ 𝐌𝐞𝐧𝐮: ${usedPrefix}menu
+╰━━━━━━━━━━━━━━━━━━━╯
+`.trim()
 
-  conn.sendMessage(m.chat, {
-    text: `════════•⊰✦⊱•════════
-𝐏𝐞𝐫 𝐯𝐞𝐝𝐞𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐮𝐬𝐚 ${usedPrefix}𝐦𝐞𝐧𝐮
-
-➣ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
-➣ 𝐔𝐭𝐞𝐧𝐭𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalreg)}
-➣ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
-➣ 𝐎𝐰𝐧𝐞𝐫: ${ownerLink}
-════════•⊰✦⊱•════════`
-  }, { quoted: prova })
+  await conn.sendMessage(m.chat, { text }, { quoted })
 }
 
-handler.command = ['infobot']
+handler.command = ['infobot', 'botinfo']
+handler.tags = ['menu']
+handler.help = ['infobot']
+
 export default handler
