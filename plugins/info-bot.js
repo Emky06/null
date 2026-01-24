@@ -34,7 +34,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   const ownerNumber = global.owner?.[0]?.[0] || ''
   const ownerLink = ownerNumber ? `https://wa.me/${ownerNumber}` : 'Non disponibile'
 
-  const creationDate = `${toMathematicalAlphanumericSymbols(08)}/${toMathematicalAlphanumericSymbols(02)}/${toMathematicalAlphanumericSymbols(2025)}`
+const creationDate = `${toMathematicalAlphanumericSymbols(8).padStart(2, '0')}/${toMathematicalAlphanumericSymbols(2).padStart(2, '0')}/${toMathematicalAlphanumericSymbols(2025)}`
 
   const quoted = {
     key: {
