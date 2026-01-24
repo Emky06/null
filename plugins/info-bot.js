@@ -28,7 +28,6 @@ const handler = async (m, { conn, usedPrefix, command }) => {
   const groupsFiltered = groupsIn.filter(Boolean)
 
   const totalreg = Object.keys(global.db.data.users).length
-  const rtotalreg = Object.values(global.db.data.users).filter(user => user.instagram).length
   const totalPlugins = Object.keys(global.plugins).length
 
   const thumbnail = fs.readFileSync('icone/logobot.png')
@@ -45,15 +44,17 @@ const handler = async (m, { conn, usedPrefix, command }) => {
     participant: "0@s.whatsapp.net"
   }
 
+  const ownerNumber = global.owner?.[0]?.[0] || ''
+const ownerLink = ownerNumber ? `https://wa.me/${ownerNumber}` : 'Non disponibile'
+
   conn.sendMessage(m.chat, {
     text: `════════•⊰✦⊱•════════
 𝐏𝐞𝐫 𝐯𝐞𝐝𝐞𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐮𝐬𝐚 ${usedPrefix}𝐦𝐞𝐧𝐮
 
 ➣ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
 ➣ 𝐔𝐭𝐞𝐧𝐭𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalreg)}
-➣ 𝐈𝐠 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢: ${toMathematicalAlphanumericSymbols(rtotalreg)}/${toMathematicalAlphanumericSymbols(totalreg)}
 ➣ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
-➣ 𝐎𝐰𝐧𝐞𝐫: +39 351 288 4684
+➣ 𝐎𝐰𝐧𝐞𝐫: ${ownerLink}
 ════════•⊰✦⊱•════════`
   }, { quoted: prova })
 }
