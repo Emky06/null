@@ -34,11 +34,11 @@ let handler = async (m, { conn, usedPrefix }) => {
   const ownerNumber = global.owner?.[0]?.[0] || ''
   const ownerLink = ownerNumber ? `https://wa.me/${ownerNumber}` : 'Non disponibile'
 
-const day = toMathematicalAlphanumericSymbols(String(8).padStart(2, '0')) // 𝟎𝟖
-const month = toMathematicalAlphanumericSymbols(String(2).padStart(2, '0')) // 𝟎𝟐
-const year = toMathematicalAlphanumericSymbols(2025) // 𝟐𝟎𝟐𝟓
+const day = toMathematicalAlphanumericSymbols(String(8).padStart(2, '0')) 
+const month = toMathematicalAlphanumericSymbols(String(2).padStart(2, '0')) 
+const year = toMathematicalAlphanumericSymbols(2025)
 
-const creationDate = `${day}/${month}/${year}` // 𝟎𝟖/𝟎𝟐/𝟐𝟎𝟐𝟓
+const creationDate = `${day}/${month}/${year}` 
 
   const quoted = {
     key: {
@@ -73,7 +73,7 @@ const creationDate = `${day}/${month}/${year}` // 𝟎𝟖/𝟎𝟐/𝟐𝟎𝟐
 ┃➤ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
 ┃➤ 𝐔𝐭𝐞𝐧𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalUsers)}
 ┃➤ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
-┃➤ 𝐌𝐞𝐧𝐮: ${usedPrefix}menu
+┃➤ 𝐂𝐨𝐦𝐚𝐧𝐝𝐢: 𝐮𝐬𝐚 ${usedPrefix}menu 𝐩𝐞𝐫 𝐯𝐞𝐝𝐞𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim()
 
