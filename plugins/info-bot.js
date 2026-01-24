@@ -57,7 +57,7 @@ const creationDate = `${day}/${month}/${year}`
 
   const text = `
 ╭━━━━━━━━━━━━━━━━━━━╮
-┃ 🤖 *𝐈𝐧𝐟𝐨𝐁𝐨𝐭* 🤖
+┃          🤖 *𝐈𝐧𝐟𝐨𝐁𝐨𝐭* 🤖
 ┃
 ┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:
 ┃   ${ownerLink}
