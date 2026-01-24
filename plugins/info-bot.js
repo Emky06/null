@@ -43,7 +43,7 @@ let handler = async (m, { conn, usedPrefix }) => {
     ? `https://wa.me/${toMathematicalAlphanumericSymbols(ownerNumber)}`
     : 'Non disponibile'
 
-  const creationDate = formatDate(new Date('2025-04-10'))
+  const creationDate = formatDate(new Date('2025-02-16'))
 
   const quoted = {
     key: {
