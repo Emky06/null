@@ -28,7 +28,6 @@ let handler = async (m, { conn, usedPrefix }) => {
     )
   ).filter(Boolean)
 
-  const totalUsers = Object.keys(global.db.data.users).length
   const totalPlugins = Object.keys(global.plugins).length
 
   const ownerNumber = global.owner?.[0]?.[0] || ''
@@ -59,19 +58,20 @@ const creationDate = `${day}/${month}/${year}`
 ╭━━━━━━━━━━━━━━━━━━━╮
 ┃             🤖 *𝐈𝐧𝐟𝐨𝐁𝐨𝐭* 🤖
 ┃
-┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:
+┃➤ *𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:*
 ┃   ${ownerLink}
 ┃
-┃➤ 𝐍𝐨𝐦𝐞 𝐁𝐨𝐭: ${nomebot}
+┃➤ *𝐍𝐨𝐦𝐞 𝐁𝐨𝐭:* ${nomebot}
 ┃
-┃➤ 𝐒𝐭𝐚𝐭𝐨: _Online_
+┃➤ *𝐕𝐞𝐫𝐬𝐢𝐨𝐧𝐞:* ${vs}
 ┃
-┃➤ 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥: ${creationDate}
+┃➤ *𝐒𝐭𝐚𝐭𝐨:* _Online_
 ┃
-┃➤ 𝐆𝐫𝐮𝐩𝐩𝐢: ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
-┃➤ 𝐔𝐭𝐞𝐧𝐭𝐢: ${toMathematicalAlphanumericSymbols(totalUsers)}
-┃➤ 𝐏𝐥𝐮𝐠𝐢𝐧𝐬: ${toMathematicalAlphanumericSymbols(totalPlugins)}
-┃➤ 𝐂𝐨𝐦𝐚𝐧𝐝𝐢: 
+┃➤ *𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:* ${creationDate}
+┃
+┃➤ *𝐆𝐫𝐮𝐩𝐩𝐢:* ${toMathematicalAlphanumericSymbols(groupsFiltered.length)}
+┃➤ *𝐏𝐥𝐮𝐠𝐢𝐧𝐬:* ${toMathematicalAlphanumericSymbols(totalPlugins)}
+┃➤ *𝐂𝐨𝐦𝐚𝐧𝐝𝐢:* 
 ┃ 𝐔𝐬𝐚 ${usedPrefix}menu 𝐩𝐞𝐫 𝐯𝐞𝐝𝐞𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim()
