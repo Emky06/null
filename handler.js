@@ -38,7 +38,7 @@ export async function handler(chatUpdate) {
       m.money = false;
       m.limit = false;
         try {
-            // TODO: use loop to insert data instead of this
+          
           let user = global.db.data.users[m.sender]
           if (typeof user !== 'object')
               global.db.data.users[m.sender] = {}
@@ -52,42 +52,21 @@ if (!isNumber(user.regTime)) user.regTime = -1
 }
               if (!isNumber(user.messaggi)) user.messaggi = 0
               if (!isNumber(user.command)) user.command = 0
-              if (!isNumber(user.blasphemy)) user.blashpemy = 0
-              if (!isNumber(user.msg)) user.msg = {}
-              if (!isNumber(user.exp)) user.exp = 0
               if (!isNumber(user.money)) user.money = 0 
-              if (!isNumber(user.lvl)) user.lvl = 0
-              if (!isNumber(user.warn)) user.warn = 0
-              if (!isNumber(user.warnlink)) user.warnlink = 0
-              if (!isNumber(user.joincount)) user.joincount = 2       
-                if (!isNumber(user.bank)) user.bank = 0
-                if (!isNumber(user.lvl)) user.lvl = 0                              
-                if (!isNumber(user.premdays)) user.premdays = 0
-                if (!isNumber(user.ultimoprelievo)) user.ultimoprelievo = 0
-                if (!isNumber(user.ultimodeposito)) user.ultimodeposito = 0
+              if (!isNumber(user.bank)) user.bank = 0
+              if (!isNumber(user.ultimoprelievo)) user.ultimoprelievo = 0
+              if (!isNumber(user.ultimodeposito)) user.ultimodeposito = 0
                 if (!('sposato' in user)) user.sposato = false
-                if (!('richiestally' in user)) user.richiestally = ['',1]
-                if (!('divoziato' in user)) user.divorziato = false
                 if (!('coniuge' in user)) user.coniuge = ""
                 if (!('ex' in user)) user.ex = ""
-              if (!('proposals' in user)) user.proposals = {}
-                if (!('pendmarry' in user)) user.pendmarry = []
-                if (!('pending' in user)) user.pending = []
                 if (!('amici' in user)) user.amici = []
-                if (!('ultimoreclamo' in user)) user.ultimoreclamo = ['10:10 - 20/20/2020',0]
-                if (!('comandi' in user)) user.comandi=[0,0,0]
-                if (!isNumber(user.maxblasph)) user.maxblasph = 2050
-              if (!('instagram' in user)) user.instagram = m.instagram
               if (!('muto' in user)) user.muto = false
           } else global.db.data.users[m.sender] = {
                   messaggi: 0,
                   command: 0,
-                  blasphemy: 0,
                   money: 0,
                   bank: 0,
-                  lvl: 0,
                   warn: 0,
-                  warnlink: 0,
                   muto: false,
                   registered: false,
                   age: '👶🏼🍼',                                   regTime: -1,
