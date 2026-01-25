@@ -78,7 +78,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               global.db.data.chats[m.chat] = {}
           if (chat) {
               if (!('isBanned' in chat)) chat.isBanned = false
-              if (!('benvenuto' in chat)) chat.benvenuto = true
+              if (!('benvenuto' in chat)) chat.benvenuto = false
               if (!('detect' in chat)) chat.detect = true
               if (!('sWelcome' in chat)) chat.sWelcome = ''
               if (!('sBye' in chat)) chat.sBye = ''
@@ -108,7 +108,7 @@ chat.rules = ''
               global.db.data.chats[m.chat] = {
                   name: this.getName(m.chat),
                   isBanned: false,
-                  benvenuto: true,
+                  benvenuto: false,
                   detect: true,
                   sWelcome: '',
                   sBye: '',
