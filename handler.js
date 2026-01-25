@@ -79,7 +79,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
           if (chat) {
               if (!('isBanned' in chat)) chat.isBanned = false
               if (!('benvenuto' in chat)) chat.benvenuto = false
-              if (!('detect' in chat)) chat.detect = true
+              if (!('detect' in chat)) chat.detect = false
               if (!('sWelcome' in chat)) chat.sWelcome = ''
               if (!('sBye' in chat)) chat.sBye = ''
               if (!('sPromote' in chat)) chat.sPromote = ''
@@ -109,7 +109,7 @@ chat.rules = ''
                   name: this.getName(m.chat),
                   isBanned: false,
                   benvenuto: false,
-                  detect: true,
+                  detect: false,
                   sWelcome: '',
                   sBye: '',
                   sPromote: '',
