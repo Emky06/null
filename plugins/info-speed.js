@@ -21,22 +21,16 @@ const cpu = cpus()[0].model
 
 let handler = async (m, { conn, usedPrefix }) => {
   try {
-  
+
     const start = speed()
     await conn.readMessages([m.key])
     const ping = (speed() - start).toFixed(2)
 
-    const uptime = fancyClock(process.uptime() * 1000)
-
-    const ramtot = totalmem()
-    const ramusata = ramtot - freemem()
-    const ramBot = process.memoryUsage().rss
-    const perc = ((ramusata / ramtot) * 100).toFixed(1)
+    const uptimeMs = process.uptime() * 1000
+    const uptime = fancyClock(uptimeMs)
 
    
-    const cpuThreads = cpus().length
-
-    const botStartTime = new Date(Date.now() - uptime)
+    const botStartTime = new Date(Date.now() - uptimeMs)
     const activationTime = botStartTime.toLocaleString('it-IT', {
       hour: '2-digit',
       minute: '2-digit',
@@ -45,6 +39,13 @@ let handler = async (m, { conn, usedPrefix }) => {
       month: '2-digit',
       year: 'numeric'
     })
+
+    const ramtot = totalmem()
+    const ramusata = ramtot - freemem()
+    const ramBot = process.memoryUsage().rss
+    const perc = ((ramusata / ramtot) * 100).toFixed(1)
+
+    const cpuThreads = cpus().length
 
     const message = `
 ╭━━━━━━•✦•━━━━━━╮
@@ -55,19 +56,20 @@ let handler = async (m, { conn, usedPrefix }) => {
 𝑷𝒊𝒏𝒈: ${ping} ms
 𝑼𝒑𝒕𝒊𝒎𝒆: ${uptime}
 𝑨𝒗𝒗𝒊𝒐: ${activationTime}
-╭━━━━━━•✦•━━━━━━╮
-𝑹𝑨𝑴 𝑻𝒐𝒕𝒂𝒍𝒆: ${formatBytes(ramtot)}
-𝑹𝑨𝑴 𝑼𝒔𝒂𝒕𝒂: ${formatBytes(ramusata)} (${perc}%)
-𝑹𝑨𝑴 𝑩𝒐𝒕: ${formatBytes(ramBot)}
 
-𝑪𝑷𝑼: ${cpu}
-𝑻𝒉𝒓𝒆𝒂𝒅𝒔: ${cpuThreads}
+╭━━━━━━•✦•━━━━━━╮
+ 𝑹𝑨𝑴 𝑻𝒐𝒕𝒂𝒍𝒆: ${formatBytes(ramtot)}
+ 𝑹𝑨𝑴 𝑼𝒔𝒂𝒕𝒂: ${formatBytes(ramusata)} (${perc}%)
+ 𝑹𝑨𝑴 𝑩𝒐𝒕: ${formatBytes(ramBot)}
+
+ 𝑪𝑷𝑼: ${cpu}
+ 𝑻𝒉𝒓𝒆𝒂𝒅𝒔: ${cpuThreads}
 ╰━━━━━━•✦•━━━━━━╯
 `.trim()
 
     await conn.sendMessage(m.chat, {
       text: message,
-      footer: `𝐒𝐩𝐞𝐞𝐝 𝐓𝐞𝐬𝐭 ${nomebot}`,
+      footer: `𝐒𝐩𝐞𝐞𝐝 𝐓𝐞𝐬𝐭`,
       headerType: 1,
       buttons: [
         { buttonId: `${usedPrefix}speed`, buttonText: { displayText: "🔄 𝐒𝐩𝐞𝐞𝐝" }, type: 1 },
