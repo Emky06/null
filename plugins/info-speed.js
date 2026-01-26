@@ -73,7 +73,7 @@ let handler = async (m, { conn, usedPrefix }) => {
       headerType: 1,
       buttons: [
         { buttonId: `${usedPrefix}speed`, buttonText: { displayText: "🔄 𝐒𝐩𝐞𝐞𝐝" }, type: 1 },
-        { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "🏓 𝐏𝐢𝐧𝐠" }, type: 1 },
+        { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "⚡ 𝐏𝐢𝐧𝐠" }, type: 1 },
         { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🗑️ 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
       ]
     })
