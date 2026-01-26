@@ -1,4 +1,4 @@
-const personaggiGenerali = [
+export const personaggiGenerali = [
   {
     nome: "Batman",
     maschio: true,
@@ -1376,5 +1376,3 @@ const personaggiGenerali = [
     ]
   }
 ];
-
-module.exports = { personaggiGenerali };
