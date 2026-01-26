@@ -18,7 +18,7 @@ let handler = async (m, { conn, args }) => {
       footer: '𝐒𝐨𝐥𝐨 𝐜𝐡𝐢 𝐡𝐚 𝐚𝐯𝐯𝐢𝐚𝐭𝐨 𝐩𝐮𝐨̀ 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞',
       buttons: [
         { buttonId: '.akinator anime', buttonText:{ displayText:'𝐀𝐧𝐢𝐦𝐞 🌀' }, type:1 },
-        { buttonId: '.akinator generale', buttonText:{ displayText:'𝐆𝐞𝐧𝐞𝐫𝐚𝐥𝐞 🎲' }, type:1 }
+        { buttonId: '.akinator generale', buttonText:{ displayText:'𝐆𝐞𝐧𝐞𝐫𝐚𝐥 🎲' }, type:1 }
       ],
       headerType:1
     });
@@ -29,13 +29,17 @@ let handler = async (m, { conn, args }) => {
     return m.reply('𝐒𝐨𝐥𝐨 𝐜𝐡𝐢 𝐡𝐚 𝐚𝐯𝐯𝐢𝐚𝐭𝐨 𝐩𝐮𝐨̀ 𝐠𝐢𝐨𝐜𝐚𝐫𝐞.');
   }
 
-  const mode = args[0];
+  const mode = args[0].toLowerCase();
   const characters = mode==='anime'? personaggiAnime : personaggiGenerali;
+
+  if (!characters || characters.length === 0) {
+    return m.reply('⚠️ Lista dei personaggi vuota!');
+  }
 
   const game = {
     player: sender,
     chat,
-    characters,
+    characters: [...characters], // copia della lista
     index: 0
   };
 
@@ -47,7 +51,11 @@ let handler = async (m, { conn, args }) => {
 
 async function inviaDomanda(conn, game) {
   if (game.index >= game.characters.length) {
-    const cand = game.characters[Math.floor(Math.random()*game.characters.length)];
+    if (game.characters.length === 0) {
+      activeGames.delete(game.chat);
+      return conn.sendMessage(game.chat, { text: '⚠️ Nessun personaggio corrisponde alle risposte date! Riprova la partita.' });
+    }
+    const cand = game.characters[Math.floor(Math.random() * game.characters.length)];
     activeGames.delete(game.chat);
     return conn.sendMessage(game.chat,{ text:`𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨 🎉 𝐄̀ ${cand.nome} (${cand.serie||'Generale'})` });
   }
@@ -55,7 +63,7 @@ async function inviaDomanda(conn, game) {
   const p = game.characters[game.index];
   const domanda = p.domande[Math.floor(Math.random()*p.domande.length)];
   await conn.sendMessage(game.chat,{
-    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: 𝐬𝐢 / 𝐧𝐨 / 𝐟𝐨𝐫𝐬𝐞 / 𝐧𝐨𝐧 𝐬𝐨`
+    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
   });
 }
 
@@ -79,6 +87,12 @@ handler.before = async (m, { conn }) => {
     
   } else {
     return conn.reply(game.chat, '⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: 𝐬𝐢 / 𝐧𝐨 / 𝐟𝐨𝐫𝐬𝐞 / 𝐧𝐨𝐧 𝐬𝐨');
+  }
+
+  // Se dopo il filtro non ci sono più personaggi
+  if (game.characters.length === 0) {
+    activeGames.delete(game.chat);
+    return conn.sendMessage(game.chat, { text: '⚠️ Nessun personaggio corrisponde alle tue risposte. Riprova la partita!' });
   }
 
   game.index++;
