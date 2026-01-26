@@ -19,19 +19,19 @@ export async function before(m, { conn, isAdmin, isPrems, isBotAdmin, isOwner, u
     },
     message: {
       groupInviteMessage: {
-        groupJid: "51995386439-1616969743@g.us",
-        inviteCode: "m",
-        groupName: "P",
-        caption: "𝐓𝐑𝐀𝐕𝐀-𝐃𝐄𝐓𝐄𝐂𝐓𝐄𝐃",
+        groupJid: "",
+        inviteCode: "",
+        groupName: "",
+        caption: "⚠️ 𝐀𝐧𝐭𝐢-𝐓𝐫𝐚𝐯𝐚 𝐚𝐭𝐭𝐢𝐯𝐨 ⚠️",
         jpegThumbnail: null
       }
     }
   }
 
-  if (chat.antitrava && m.text.length > 4000) { // Quantità massima di caratteri accettati
+  if (chat.antitrava && m.text.length > 6000) { // Quantità massima di caratteri accettati
     conn.sendMessage(
       m.chat,
-      `*𝐓𝐑𝐀𝐕𝐀 𝐑𝐈𝐋𝐄𝐕𝐀𝐓𝐎*\n${isBotAdmin ? '' : '𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐀𝐃𝐌𝐈𝐍 𝐄 𝐍𝐎𝐍 𝐏𝐎𝐒𝐒𝐎 𝐅𝐀𝐑𝐄 𝐍𝐈𝐄𝐍𝐓𝐄 :/'}`,
+      `*𝐓𝐞𝐬𝐭𝐨 𝐥𝐮𝐧𝐠𝐨 𝐫𝐢𝐥𝐞𝐯𝐚𝐭𝐨, 𝐩𝐨𝐬𝐬𝐢𝐛𝐢𝐥𝐞 𝐭𝐫𝐚𝐯𝐚*\n${isBotAdmin ? '' : '𝐍𝐎𝐍 𝐒𝐎𝐍𝐎 𝐀𝐃𝐌𝐈𝐍 𝐄 𝐍𝐎𝐍 𝐏𝐎𝐒𝐒𝐎 𝐅𝐀𝐑𝐄 𝐍𝐈𝐄𝐍𝐓𝐄 :/'}`,
       m
     )
 
@@ -41,7 +41,7 @@ export async function before(m, { conn, isAdmin, isPrems, isBotAdmin, isOwner, u
         conn.sendMessage(
           m.chat,
           { 
-            text: `𝐂𝐎𝐆𝐋𝐈𝐎𝐍𝐄 𝐓𝐎𝐋𝐓𝐎 ✓\n\n• @${m.sender.split("@")[0]} 𝐇𝐀 𝐈𝐍𝐕𝐈𝐀𝐓𝐎 𝐔𝐍 𝐓𝐑𝐀𝐕𝐀`, 
+            text: `𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✓\n\n𝐓𝐞𝐬𝐭𝐨 𝐥𝐮𝐧𝐠𝐨 𝐫𝐢𝐥𝐞𝐯𝐚𝐭𝐨 𝐝𝐚 @${m.sender.split("@")[0]}, 𝐩𝐨𝐬𝐬𝐢𝐛𝐢𝐥𝐞 𝐭𝐫𝐚𝐯𝐚. `, 
             mentions: [m.sender] 
           },
           { quoted: fakemek, ephemeralExpiration: 24 * 60 * 100, disappearingMessagesInChat: 24 * 60 * 100 }
