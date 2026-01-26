@@ -1,21 +1,26 @@
 import fs from 'fs';
 
 let handler = async (m, { conn }) => {
-    const path = './vittorieBandiere.json';
-    let vittorie = {};
-    if (fs.existsSync(path)) vittorie = JSON.parse(fs.readFileSync(path));
+    let users = global.db.data.users;
+
+    if (!users || Object.keys(users).length === 0) {
+        return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
+    }
 
     let chatMembers = Object.keys(await conn.groupMetadata(m.chat)
         .then(v => v.participants.reduce((acc, u) => ({ ...acc, [u.id]: true }), {}))
         .catch(() => ({}))
     );
 
-    let classifica = Object.entries(vittorie)
-        .filter(([id]) => chatMembers.includes(id))
-        .map(([id, v]) => ({ id, vittorie: v }))
+    let classifica = Object.entries(users)
+        .filter(([key]) => chatMembers.includes(key))
+        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera || 0 }))
         .filter(user => user.vittorie > 0)
-        .sort((a, b) => b.vittorie - a.vittorie)
-        .slice(0, 10);
+        .sort((a, b) => b.vittorie - a.vittorie);
+
+    if (classifica.length > 10) {
+        classifica = classifica.slice(0, 10);
+    }
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
@@ -35,13 +40,16 @@ let handler = async (m, { conn }) => {
         message += `${medal} *${index + 1}.* @${user.id.split('@')[0]} ➠ ${user.vittorie} 𝐯𝐢𝐭𝐭𝐨𝐫𝐢𝐞\n`;
         mentions.push(user.id);
 
-        if (user.id === m.sender) userPosition = index + 1;
+        if (user.id === m.sender) {
+            userPosition = index + 1;
+        }
     });
 
     let userMessage = userPosition !== null
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalMembers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
+    // Legge immagine locale ./icone/bandiera.png
     const profileBuffer = fs.readFileSync('./icone/bandiera.png');
 
     await conn.sendMessage(m.chat, {
