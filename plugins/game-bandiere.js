@@ -263,8 +263,6 @@ handler.before = async function (m, { conn }) {
   if (testo === partita.risposta) {
     const userId = m.sender;
 
-    const userId = m.sender;
-
 if (!global.db.data.users[userId]) global.db.data.users[userId] = {};
 
 if (typeof global.db.data.users[userId].vittorieBandiera !== 'number') {
