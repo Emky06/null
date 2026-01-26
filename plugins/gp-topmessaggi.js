@@ -1,54 +1,71 @@
+import fs from 'fs';
+
 let handler = async (m, { conn, args, participants }) => {
-    // Prendi tutti gli utenti eccetto il bot stesso
+    const users = global.db.data.users || {};
+
+    participants.forEach(p => {
+        if (!users[p.id]) users[p.id] = { messaggi: 0 };
+        if (typeof users[p.id].messaggi !== 'number') users[p.id].messaggi = 0;
+    });
+
     let usersData = participants
         .filter(p => p.id !== conn.user.jid)
-        .map(p => {
-            const userDb = global.db.data.users[p.id];
-            return {
-                ...userDb,
-                jid: p.id
-            };
-        });
+        .map(p => ({ ...users[p.id], jid: p.id }));
 
-    // Ordina per numero di messaggi (top 10 di default)
     let topCount = args[0] && parseInt(args[0]) > 0 ? Math.min(100, parseInt(args[0])) : 10;
-    let sortedUsers = usersData.sort((a, b) => (b.messaggi || 0) - (a.messaggi || 0)).slice(0, topCount);
 
-    let userJids = sortedUsers.map(u => u.jid);
-    let userPosition = sortedUsers.findIndex(u => u.jid === m.sender) + 1;
+    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, topCount);
 
-    // Genera messaggio classifica
-    let messageText = sortedUsers.map((u, i) => {
-        return `${getMedaglia(i + 1)} « ${u.messaggi || 0} » @${u.jid.split('@')[0]}`;
-    }).join('\n');
-
-    if (m.sender !== conn.user.jid) {
-        messageText += `\n\nLa tua posizione: ${userPosition > 0 ? userPosition + '°' : 'nessuna'}`;
+    if (sorted.length === 0) {
+        return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
     }
 
-    // Messaggio fittizio per la vCard e thumbnail
-    let quotedMessage = {
+    let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
+    let mentions = [];
+    let userPosition = null;
+
+    sorted.forEach((user, i) => {
+        let medal = "🏅";
+        if (i === 0) medal = "🥇";
+        else if (i === 1) medal = "🥈";
+        else if (i === 2) medal = "🥉";
+
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
+        mentions.push(user.jid);
+
+        if (user.jid === m.sender) userPosition = i + 1;
+    });
+
+    let totalPlayers = participants.length;
+    let userMessage = userPosition
+        ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
+        : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
+
+    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
+
+    const quotedMessage = {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
         message: {
             locationMessage: {
-                name: "Classifica Messaggi",
-                jpegThumbnail: await (await fetch("https://telegra.ph/file/b311b1ffefcc34f681e36.png")).arrayBuffer(),
-                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;Unlimited;;;\nFN:Unlimited\nORG:Unlimited\nTITLE:\nitem1.TEL;waid=19709001746:+1 (970) 900-1746\nitem1.X-ABLabel:Unlimited\nX-WA-BIZ-DESCRIPTION:ofc\nX-WA-BIZ-NAME:Unlimited\nEND:VCARD`
+                name: "Top Messaggi",
+                jpegThumbnail: profileBuffer,
+                vcard: `BEGIN:VCARD
+VERSION:3.0
+N:Sy;Bot;;;
+FN:y
+item1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}
+item1.X-ABLabel:Ponsel
+END:VCARD`
             }
         },
         participant: "0@s.whatsapp.net"
     };
 
-    await conn.reply(m.chat, messageText, quotedMessage, { mentions: userJids });
+    await conn.sendMessage(m.chat, {
+        text: message + `\n\n${userMessage}`,
+        mentions: mentions
+    }, { quoted: quotedMessage });
 };
 
-handler.command = /^(top)$/i;
-handler.group = true;
+handler.command = /^topmessaggi$/i;
 export default handler;
-
-function getMedaglia(pos) {
-    if (pos === 1) return '🥇';
-    if (pos === 2) return '🥈';
-    if (pos === 3) return '🥉';
-    return '🏅';
-}
