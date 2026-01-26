@@ -7,11 +7,12 @@ let handler = async (m, { conn, args, participants }) => {
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    // Creiamo l'array dei membri con messaggi dal DB
+    // Creiamo l'array dei membri con messaggi dal DB, normalizzando l'ID
     let groupUsers = participants
         .filter(p => p.id !== conn.user.jid)
         .map(p => {
-            const id = p.id;
+            // Normalizza ID: solo numeri + @s.whatsapp.net
+            const id = p.id.replace(/\D/g,'') + '@s.whatsapp.net';
             if (!users[id]) users[id] = { messaggi: 0 }; // se non esiste, inizializza
             return { jid: id, messaggi: users[id].messaggi || 0 };
         });
@@ -44,7 +45,7 @@ let handler = async (m, { conn, args, participants }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    const profileBuffer = fs.readFileSync('./icone/top.png');
+    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
 
     const quotedMessage = {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
