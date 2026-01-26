@@ -1,9 +1,7 @@
-import { personaggiAnime } from './akinator-anime.js';
-import { personaggiGenerali } from './akinator-generali.js';
+import { Aki } from 'aki-api';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
-const MAX_DOMANDE = 15;
 
 let handler = async (m, { conn, args }) => {
   const chat = m.chat;
@@ -15,11 +13,11 @@ let handler = async (m, { conn, args }) => {
   if (!args[0]) {
     pendingModeChoice.set(chat, sender);
     await conn.sendMessage(chat, {
-      text: '𝐒𝐜𝐞𝐠𝐥𝐢 𝐥𝐚 𝐦𝐨𝐝𝐚𝐥𝐢𝐭𝐚̀ 𝐝𝐢 𝐠𝐢𝐨𝐜𝐨:',
+      text: '𝐒𝐜𝐞𝐠𝐥𝐢 𝐥𝐚 𝐥𝐢𝐧𝐠𝐮𝐚 𝐝𝐢 𝐚𝐤𝐢𝐧𝐚𝐭𝐨𝐫:',
       footer: '𝐒𝐨𝐥𝐨 𝐜𝐡𝐢 𝐡𝐚 𝐚𝐯𝐯𝐢𝐚𝐭𝐨 𝐩𝐮𝐨̀ 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞',
       buttons: [
-        { buttonId: '.akinator anime', buttonText:{ displayText:'𝐀𝐧𝐢𝐦𝐞 🌀' }, type:1 },
-        { buttonId: '.akinator generale', buttonText:{ displayText:'𝐆𝐞𝐧𝐞𝐫𝐚𝐥 🎲' }, type:1 }
+        { buttonId: '.akinator start it', buttonText:{ displayText:'𝐈𝐭𝐚𝐥𝐢𝐚𝐧𝐨 🇮🇹' }, type:1 },
+        { buttonId: '.akinator start en', buttonText:{ displayText:'𝐈𝐧𝐠𝐥𝐞𝐬𝐞 🇬🇧' }, type:1 }
       ],
       headerType:1
     });
@@ -27,84 +25,58 @@ let handler = async (m, { conn, args }) => {
   }
 
   if (!pendingModeChoice.has(chat) || pendingModeChoice.get(chat)!==sender) {
-    return m.reply('𝐒𝐨𝐥𝐨 𝐜𝐡𝐢 𝐡𝐚 𝐚𝐯𝐯𝐢𝐚𝐭𝐨 𝐩𝐮𝐨̀ 𝐠𝐢𝐨𝐜𝐚𝐫𝐞.');
+    return m.reply('𝐒𝐨𝐥𝐨 𝐜𝐡𝐢 𝐡𝐚 𝐚𝐯𝐯𝐢𝐚𝐭𝐨 𝐢𝐥 𝐠𝐢𝐨𝐜𝐨 𝐩𝐮𝐨̀ 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞.');
   }
 
-  const mode = args[0].toLowerCase();
-  const characters = mode==='anime'? personaggiAnime : personaggiGenerali;
+  if (args[0] === 'start') {
+    const region = args[1] || 'en';
+    const aki = new Aki({ region });
 
-  if (!characters || characters.length === 0) {
-    return m.reply('⚠️ 𝐋𝐢𝐬𝐭𝐚 𝐝𝐞𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐠𝐠𝐢 𝐯𝐮𝐨𝐭𝐚!');
+    await aki.start();
+    activeGames.set(chat, { aki, sender });
+    pendingModeChoice.delete(chat);
+
+    return inviaDomanda(conn, chat, aki);
   }
-
-  const game = {
-    player: sender,
-    chat,
-    characters: [...characters],
-    index: 0,
-    risposte: []
-  };
-
-  activeGames.set(chat, game);
-  pendingModeChoice.delete(chat);
-
-  inviaDomanda(conn, game);
 };
 
-async function inviaDomanda(conn, game) {
-  if (game.index >= MAX_DOMANDE) {
-    let maxScore = -1;
-    let candidato = game.characters[0];
-    for (let c of game.characters) {
-      let score = 0;
-      for (let r of game.risposte) {
-        if (c.domande.includes(r.domanda) && ['si','sì'].includes(r.risposta)) score++;
-        else if (!c.domande.includes(r.domanda) && ['no'].includes(r.risposta)) score++;
-      }
-      if (score > maxScore) {
-        maxScore = score;
-        candidato = c;
-      }
-    }
-    activeGames.delete(game.chat);
-    return conn.sendMessage(game.chat, { 
-      text: `🎉 𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨! 𝐄̀ ${candidato.nome || 'Sconosciuto'} (${candidato.serie || 'Generale'})` 
-    });
-  }
+async function inviaDomanda(conn, chat, aki) {
+  const buttons = [
+    { buttonId: '.akinator answer si', buttonText:{ displayText:'𝐬𝐢 ✅' }, type:1 },
+    { buttonId: '.akinator answer no', buttonText:{ displayText:'𝐧𝐨 ❌' }, type:1 },
+    { buttonId: '.akinator answer forse', buttonText:{ displayText:'𝐟𝐨𝐫𝐬𝐞 🤔' }, type:1 },
+    { buttonId: '.akinator answer nonso', buttonText:{ displayText:'𝐧𝐨𝐧 𝐬𝐨 ❓' }, type:1 }
+  ];
 
-  const p = game.characters[game.index % game.characters.length];
-  p.domandeFatete = p.domandeFatete || [];
-  const domandeDisponibili = p.domande.filter(d => !p.domandeFatete.includes(d));
-  let domanda;
-  if (domandeDisponibili.length > 0) {
-    domanda = domandeDisponibili[Math.floor(Math.random() * domandeDisponibili.length)];
-    p.domandeFatete.push(domanda);
-  } else {
-    domanda = p.domande[Math.floor(Math.random() * p.domande.length)];
-  }
-
-  await conn.sendMessage(game.chat,{
-    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚 ${game.index+1} di ${MAX_DOMANDE}: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
+  await conn.sendMessage(chat, {
+    text: `❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚: ${aki.question}`,
+    footer: '𝐂𝐥𝐢𝐜𝐜𝐚 𝐬𝐮 𝐮𝐧 𝐩𝐮𝐥𝐬𝐚𝐧𝐭𝐞 per rispondere',
+    buttons: buttons,
+    headerType:1
   });
 }
 
-handler.before = async (m, { conn }) => {
+handler.before = async (m, { conn, args }) => {
   const chat = m.chat;
   if (!activeGames.has(chat)) return;
 
   const game = activeGames.get(chat);
-  if (m.sender !== game.player) return;
+  if (m.sender !== game.sender) return;
+  if (!args[0] || args[0] !== 'answer') return;
 
-  const risposta = (m.text || '').toLowerCase();
-  const p = game.characters[game.index % game.characters.length];
+  const text = args[1].toLowerCase();
+  const mapAnswers = { 'si':0, 'sì':0, 'no':1, 'forse':3, 'nonso':2, 'non so':2 };
+  if (!(text in mapAnswers)) return;
 
-  if (!['si','sì','no','forse','probabilmente','non so','nonso'].includes(risposta)) {
-    return conn.reply(game.chat,'⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so');
+  await game.aki.step(mapAnswers[text]);
+
+  if (game.aki.progress >= 80 || game.aki.currentStep >= 78) {
+    const guess = await game.aki.answer();
+    activeGames.delete(chat);
+    return conn.sendMessage(chat, { text: `🎉 𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨! *${guess.answers[0].name}*` });
   }
 
-  game.risposte.push({ domanda: p.domande[0], risposta });
-  game.index++;
-  inviaDomanda(conn, game);
+  return inviaDomanda(conn, chat, game.aki);
 };
 
 handler.help = ['akinator'];
