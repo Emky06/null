@@ -67,7 +67,7 @@ if (m.text && !m.isBaileys && !m.fromMe) {
     user.messaggi = (user.messaggi || 0) + 1;
     console.log(`📈 [CONTATORE] ${m.sender.split('@')[0]}: ${user.messaggi} messaggi`);
 }
-}
+
           } else global.db.data.users[m.sender] = {
                   messaggi: 1,
                   command: 0,
