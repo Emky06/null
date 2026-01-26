@@ -31,13 +31,25 @@ const handler = async (m, { conn, usedPrefix }) => {
       }
     }
 
+    const quotedMessage = {
+      key: { participants: "0@s.whatsapp.net", fromMe: false, id: 'Halo' },
+      message: {
+        locationMessage: {
+          name: `${nomebot}`,
+          jpegThumbnail: fs.readFileSync(path.join('icone', 'spunta.png')),
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Bot;;;\nFN:Bot\nORG:Bot\nTITLE:\nitem1.TEL;waid=11111111111:+1 (111) 111-1111\nitem1.X-ABLabel:Bot\nX-WA-BIZ-NAME:Bot\nEND:VCARD"
+        }
+      },
+      participant: '0@s.whatsapp.net'
+    };
+
     await conn.sendMessage(m.chat, {
       text: deletedCount === 0
         ? 'ⓘ 𝐋𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢 𝐬𝐨𝐧𝐨 𝐯𝐮𝐨𝐭𝐞, 𝐫𝐢𝐩𝐫𝐨𝐯𝐚 𝐭𝐫𝐚 𝐩𝐨𝐜𝐨‼️'
         : `🗑️ 𝐒𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 ${deletedCount} 𝐚𝐫𝐜𝐡𝐢𝐯𝐢 𝐝𝐞𝐥𝐥𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢! 𝐆𝐫𝐚𝐳𝐢𝐞 𝐩𝐞𝐫 𝐚𝐯𝐞𝐫𝐦𝐢 𝐬𝐯𝐮𝐨𝐭𝐚𝐭𝐨 😏`,
       buttons,
       headerType: 1
-    }, { quoted: m });
+    }, { quoted: quotedMessage });
 
   } catch (error) {
     await conn.sendMessage(m.chat, {
