@@ -55,7 +55,7 @@ return conn.sendMessage(game.chat,{ text:`𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧�
 const p = game.characters[game.index];
 const domanda = p.domande[Math.floor(Math.random()*p.domande.length)];
 await conn.sendMessage(game.chat,{
-text:❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: 𝐬𝐢 / 𝐧𝐨 / 𝐟𝐨𝐫𝐬𝐞 / 𝐧𝐨𝐧 𝐬𝐨
+text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: 𝐬𝐢 / 𝐧𝐨 / 𝐟𝐨𝐫𝐬𝐞 / 𝐧𝐨𝐧 𝐬𝐨`
 });
 }
 
