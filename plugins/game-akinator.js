@@ -49,7 +49,7 @@ async function inviaDomanda(conn, game) {
 if (game.index >= game.characters.length) {
 const cand = game.characters[Math.floor(Math.random()*game.characters.length)];
 activeGames.delete(game.chat);
-return conn.sendMessage(game.chat,{ text:𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨 🎉 𝐄̀ ${cand.nome} (${cand.serie||'Generale'}) });
+return conn.sendMessage(game.chat,{ text:`𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨 🎉 𝐄̀ ${cand.nome} (${cand.serie||'Generale'})` });
 }
 
 const p = game.characters[game.index];
