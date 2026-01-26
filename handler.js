@@ -62,8 +62,11 @@ if (!isNumber(user.regTime)) user.regTime = -1
                 if (!('amici' in user)) user.amici = []
               if (!('muto' in user)) user.muto = false
 
-if (m.text && !m.isBaileys && m.isGroup) {
-    user.messaggi = (user.messaggi || 0) + 1
+
+if (m.text && !m.isBaileys && !m.fromMe) {
+    user.messaggi = (user.messaggi || 0) + 1;
+    console.log(`📈 [CONTATORE] ${m.sender.split('@')[0]}: ${user.messaggi} messaggi`);
+}
 }
           } else global.db.data.users[m.sender] = {
                   messaggi: 1,
