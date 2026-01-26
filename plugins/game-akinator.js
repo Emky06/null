@@ -2,7 +2,7 @@ const activeGames = new Map()
 
 /* =======================
    DATABASE ANIME (MEGA)
-======================= */
+====================== */
 const animeCharacters = [
   { name:"Goku", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:true, villain:false, protagonist:true },
   { name:"Vegeta", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false },
