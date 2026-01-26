@@ -1,24 +1,21 @@
 import fs from 'fs';
 
 let handler = async (m, { conn }) => {
-    let users = global.db.data.users;
-
-    if (!users || Object.keys(users).length === 0) {
-        return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
-    }
+    const path = './vittorieBandiere.json';
+    let vittorie = {};
+    if (fs.existsSync(path)) vittorie = JSON.parse(fs.readFileSync(path));
 
     let chatMembers = Object.keys(await conn.groupMetadata(m.chat)
         .then(v => v.participants.reduce((acc, u) => ({ ...acc, [u.id]: true }), {}))
         .catch(() => ({}))
     );
 
-    let classifica = Object.entries(users)
-        .filter(([id, data]) => chatMembers.includes(id))
-        .map(([id, data]) => ({ id, vittorie: data.vittorieBandiera || 0 }))
+    let classifica = Object.entries(vittorie)
+        .filter(([id]) => chatMembers.includes(id))
+        .map(([id, v]) => ({ id, vittorie: v }))
         .filter(user => user.vittorie > 0)
-        .sort((a, b) => b.vittorie - a.vittorie);
-
-    if (classifica.length > 10) classifica = classifica.slice(0, 10);
+        .sort((a, b) => b.vittorie - a.vittorie)
+        .slice(0, 10);
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
