@@ -18,7 +18,7 @@ let handler = async (m, { conn }) => {
 
     // Creo la classifica solo per membri del gruppo
     let classifica = Object.entries(users)
-        .filter(([key, data]) => chatMembers.includes(key) && (data.vittorieBandiera || 0) > 0)
+        .filter(([key, data]) => chatMembers.some(id => id.toLowerCase() === key.toLowerCase()) && (data.vittorieBandiera || 0) > 0)
         .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
         .sort((a, b) => b.vittorie - a.vittorie)
         .slice(0, 10); // massimo 10
@@ -41,7 +41,7 @@ let handler = async (m, { conn }) => {
         message += `${medal} *${index + 1}.* @${user.id.split('@')[0]} ➠ ${user.vittorie} 𝐯𝐢𝐭𝐭𝐨𝐫𝐢𝐞\n`;
         mentions.push(user.id);
 
-        if (user.id === m.sender) {
+        if (user.id.toLowerCase() === m.sender.toLowerCase()) {
             userPosition = index + 1;
         }
     });
