@@ -27,7 +27,8 @@ const handler = async (m, { conn }) => {
         animali: [],
         cibo: 0,
         animaliMorti: 0,
-        grado: "Pollo"
+        grado: "Pollo",
+        fuochi: 0
       };
     }
 
@@ -92,6 +93,7 @@ const handler = async (m, { conn }) => {
       `🔵 *𝐑𝐮𝐨𝐥𝐨:* ${ruolo}\n` + 
       `🔮 *𝐆𝐫𝐚𝐝𝐨:* ${grado}\n` +
       `📊 *𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢:* ${userData.messaggi}\n` +
+      `🔥 *𝐅𝐮𝐨𝐜𝐡𝐢:* ${userData.fuochi || 0}\n` +
       `👛 *𝐏𝐨𝐫𝐭𝐚𝐟𝐨𝐠𝐥𝐢𝐨:* ${totale} €\n` +
       `❤️ *𝐒𝐭𝐚𝐭𝐨 𝐜𝐢𝐯𝐢𝐥𝐞:* ${statoCivile}\n` +
       `${animaliInfo}\n` +
