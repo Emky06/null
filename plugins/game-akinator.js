@@ -64,15 +64,21 @@ handler.before = async (m, { conn }) => {
   if (!activeGames.has(chat)) return;
 
   const game = activeGames.get(chat);
-  if (m.sender !== game.player) return;
+  if (m.sender !== game.player) return; 
 
-  const risposta = (m.text||'').toLowerCase();
+  const risposta = (m.text || '').toLowerCase(); 
   const p = game.characters[game.index];
 
-  if (['Si','si'].includes(risposta)) {
+  if (['si'].includes(risposta)) {
     game.characters = game.characters.filter(c => c.domande.includes(p.domande[0]));
-  } else if (['No','no'].includes(risposta)) {
+  } else if (['no'].includes(risposta)) {
     game.characters = game.characters.filter(c => !c.domande.includes(p.domande[0]));
+  } else if (['forse','probabilmente'].includes(risposta)) {
+    
+  } else if (['non so','nonso'].includes(risposta)) {
+    
+  } else {
+    return conn.reply(game.chat, '⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: 𝐬𝐢 / 𝐧𝐨 / 𝐟𝐨𝐫𝐬𝐞 / 𝐧𝐨𝐧 𝐬𝐨');
   }
 
   game.index++;
