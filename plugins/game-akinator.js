@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { personaggiAnime } from './akinator-anime.js';
 import { personaggiGenerali } from './akinator-generali.js';
 
