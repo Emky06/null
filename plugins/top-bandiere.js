@@ -2,26 +2,23 @@ import fs from 'fs';
 
 let handler = async (m, { conn }) => {
     let users = global.db.data.users;
-
     if (!users || Object.keys(users).length === 0) {
         return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
     }
 
-    // Prendo i membri del gruppo
     let chatMembers = [];
     try {
         const metadata = await conn.groupMetadata(m.chat);
-        chatMembers = metadata.participants.map(u => u.id);
+        chatMembers = metadata.participants.map(u => u.id.toLowerCase());
     } catch (e) {
         chatMembers = [];
     }
 
-    // Creo la classifica solo per membri del gruppo
     let classifica = Object.entries(users)
-        .filter(([key, data]) => chatMembers.some(id => id.toLowerCase() === key.toLowerCase()) && (data.vittorieBandiera || 0) > 0)
+        .filter(([key, data]) => chatMembers.includes(key.toLowerCase()) && (data.vittorieBandiera || 0) > 0)
         .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
         .sort((a, b) => b.vittorie - a.vittorie)
-        .slice(0, 10); // massimo 10
+        .slice(0, 10);
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
@@ -55,7 +52,6 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, {
         text: message + `\n\n${userMessage}`,
         mentions: mentions,
-        contextInfo: { forwardingScore: 0, isForwarded: false },
         quoted: {
             key: {
                 participants: "0@s.whatsapp.net",
