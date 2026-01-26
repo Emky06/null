@@ -66,7 +66,7 @@ if (m.text && !m.isBaileys && m.isGroup) {
     user.messaggi = (user.messaggi || 0) + 1
 }
           } else global.db.data.users[m.sender] = {
-                  messaggi: 0,
+                  messaggi: 1,
                   command: 0,
                   money: 0,
                   bank: 0,
