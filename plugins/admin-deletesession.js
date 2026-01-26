@@ -62,7 +62,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         ? 'ⓘ 𝐋𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢 𝐬𝐨𝐧𝐨 𝐯𝐮𝐨𝐭𝐞, 𝐫𝐢𝐩𝐫𝐨𝐯𝐚 𝐭𝐫𝐚 𝐩𝐨𝐜𝐨‼️'
         : `🗑️ 𝐒𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 ${deletedCount} 𝐚𝐫𝐜𝐡𝐢𝐯𝐢 𝐝𝐞𝐥𝐥𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢! 𝐆𝐫𝐚𝐳𝐢𝐞 𝐩𝐞𝐫 𝐚𝐯𝐞𝐫𝐦𝐢 𝐬𝐯𝐮𝐨𝐭𝐚𝐭𝐨 😏`,
       buttons: [
-        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐑𝐢𝐟𝐚𝐢 𝐝𝐬" }, type: 1 },
+        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
         { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "📊 𝐏𝐢𝐧𝐠" }, type: 1 },
         { buttonId: `${usedPrefix}pong`, buttonText: { displayText: "⚡ 𝐏𝐨𝐧𝐠" }, type: 1 }
       ],
