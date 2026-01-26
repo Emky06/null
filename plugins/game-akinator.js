@@ -1,7 +1,10 @@
+import https from 'https';
 import { Aki } from 'aki-api';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
+
+const agent = new https.Agent({ rejectUnauthorized: false });
 
 let handler = async (m, { conn, args }) => {
   const chat = m.chat;
@@ -29,8 +32,8 @@ let handler = async (m, { conn, args }) => {
   }
 
   if (args[0] === 'start') {
-    const region = args[1] || 'en';
-    const aki = new Aki({ region });
+    const region = args[1] || 'it';
+    const aki = new Aki({ region, httpsAgent: agent });
 
     await aki.start();
     activeGames.set(chat, { aki, sender });
