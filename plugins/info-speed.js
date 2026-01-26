@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { totalmem, freemem, cpus } from 'os'
 import process from 'process'
 import speed from 'performance-now'
@@ -20,24 +21,20 @@ const cpu = cpus()[0].model
 
 let handler = async (m, { conn }) => {
   try {
-    // 🏓 Ping
+   
     const start = speed()
     await conn.sendPresenceUpdate('composing', m.chat)
     const ping = (speed() - start).toFixed(2)
 
-    // ⏳ Uptime
     const uptime = fancyClock(process.uptime() * 1000)
 
-    // 💾 RAM
     const ramtot = totalmem()
     const ramusata = ramtot - freemem()
     const ramBot = process.memoryUsage().rss
     const perc = ((ramusata / ramtot) * 100).toFixed(1)
 
-    // ⚙️ CPU
     const cpuThreads = cpus().length
 
-    // 🌐 Speed fake (come prima)
     const dlSpeed = (Math.random() * 100 + 50).toFixed(2)
     const ulSpeed = (Math.random() * 50 + 10).toFixed(2)
 
