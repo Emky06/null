@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRdm
 import { totalmem, freemem, cpus } from 'os'
 import process from 'process'
 import speed from 'performance-now'
