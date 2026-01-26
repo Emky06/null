@@ -8,7 +8,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     return conn.sendMessage(m.chat, {
       text: "*🚨 𝐔𝐭𝐢𝐥𝐢𝐳𝐳𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐝𝐢𝐫𝐞𝐭𝐭𝐚𝐦𝐞𝐧𝐭𝐞 𝐧𝐞𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐞𝐥 𝐛𝐨𝐭.*",
       buttons: [
-        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐑𝐢𝐟𝐚𝐢 𝐝𝐬" }, type: 1 },
+        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
         { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "⚡ 𝐏𝐢𝐧𝐠" }, type: 1 },
         { buttonId: `${usedPrefix}pong`, buttonText: { displayText: "⚡ 𝐏𝐨𝐧𝐠" }, type: 1 }
       ],
@@ -23,7 +23,7 @@ const handler = async (m, { conn, usedPrefix }) => {
       return await conn.sendMessage(m.chat, {
         text: "*❌ 𝐋𝐚 𝐜𝐚𝐫𝐭𝐞𝐥𝐥𝐚 𝐝𝐞𝐥𝐥𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢 𝐞̀ 𝐯𝐮𝐨𝐭𝐚 o 𝐧𝐨𝐧 𝐞𝐬𝐢𝐬𝐭𝐞.*",
         buttons: [
-          { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐑𝐢𝐟𝐚𝐢 𝐝𝐬" }, type: 1 },
+          { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
           { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "⚡ 𝐏𝐢𝐧𝐠" }, type: 1 },
           { buttonId: `${usedPrefix}pong`, buttonText: { displayText: "⚡ 𝐏𝐨𝐧𝐠" }, type: 1 }
         ],
@@ -40,8 +40,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         deletedCount++;
       }
     }
-
-    const botName = global.nomebot || "𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕";
+    
     const quotedMessage = {
       key: {
         participants: "0@s.whatsapp.net",
@@ -50,7 +49,7 @@ const handler = async (m, { conn, usedPrefix }) => {
       },
       message: {
         locationMessage: {
-          name: botName,
+          name: ${nomebot},
           jpegThumbnail: fs.readFileSync(path.join('icone', 'spunta.png')),
           vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Bot;;;\nFN:Bot\nORG:Bot\nTITLE:\nitem1.TEL;waid=11111111111:+1 (111) 111-1111\nitem1.X-ABLabel:Bot\nX-WA-BIZ-NAME:Bot\nEND:VCARD"
         }
@@ -74,7 +73,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     await conn.sendMessage(m.chat, {
       text: "❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐝𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐳𝐢𝐨𝐧𝐞!",
       buttons: [
-        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐑𝐢𝐟𝐚𝐢 𝐝𝐬" }, type: 1 },
+        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🔄 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
         { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "📊 𝐏𝐢𝐧𝐠" }, type: 1 },
         { buttonId: `${usedPrefix}pong`, buttonText: { displayText: "⚡ 𝐏𝐨𝐧𝐠" }, type: 1 }
       ],
