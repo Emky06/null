@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import { personaggiAnime } from './akinator-anime.js';
 import { personaggiGenerali } from './akinator-generali.js';
 
@@ -53,31 +52,7 @@ let handler = async (m, { conn, args }) => {
 };
 
 async function inviaDomanda(conn, game) {
-  const p = game.characters[game.index % game.characters.length];
-  p.domandeFatete = p.domandeFatete || [];
-  const domandeDisponibili = p.domande.filter(d => !p.domandeFatete.includes(d));
-  let domanda;
-  if (domandeDisponibili.length > 0) {
-    domanda = domandeDisponibili[Math.floor(Math.random() * domandeDisponibili.length)];
-    p.domandeFatete.push(domanda);
-  } else {
-    domanda = p.domande[Math.floor(Math.random() * p.domande.length)];
-  }
-  await conn.sendMessage(game.chat,{
-    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚 ${game.index+1}: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
-  });
-}
-
-handler.before = async (m, { conn }) => {
-  const chat = m.chat;
-  if (!activeGames.has(chat)) return;
-
-  const game = activeGames.get(chat);
-  if (m.sender !== game.player) return;
-
-  const risposta = (m.text || '').toLowerCase();
-
-  if (risposta === '.akinator indovina') {
+  if (game.index >= MAX_DOMANDE) {
     let maxScore = -1;
     let candidato = game.characters[0];
     for (let c of game.characters) {
@@ -91,19 +66,43 @@ handler.before = async (m, { conn }) => {
         candidato = c;
       }
     }
-    activeGames.delete(chat);
-    return conn.sendMessage(chat, { 
-      text: `🎉 𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨! 𝐄̀ ${candidato.nome || 'Sconosciuto'} (${candidato.serie || 'Generale'})`
+    activeGames.delete(game.chat);
+    return conn.sendMessage(game.chat, { 
+      text: `🎉 𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨! 𝐄̀ ${candidato.nome || 'Sconosciuto'} (${candidato.serie || 'Generale'})` 
     });
   }
 
-  if (!['si','sì','no','forse','probabilmente','non so','nonso'].includes(risposta)) {
-    return conn.reply(game.chat,'⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so oppure .akinator indovina');
+  const p = game.characters[game.index % game.characters.length];
+  p.domandeFatete = p.domandeFatete || [];
+  const domandeDisponibili = p.domande.filter(d => !p.domandeFatete.includes(d));
+  let domanda;
+  if (domandeDisponibili.length > 0) {
+    domanda = domandeDisponibili[Math.floor(Math.random() * domandeDisponibili.length)];
+    p.domandeFatete.push(domanda);
+  } else {
+    domanda = p.domande[Math.floor(Math.random() * p.domande.length)];
   }
 
-  const p = game.characters[game.index % game.characters.length];
-  game.risposte.push({ domanda: p.domande[0], risposta });
+  await conn.sendMessage(game.chat,{
+    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚 ${game.index+1} di ${MAX_DOMANDE}: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
+  });
+}
 
+handler.before = async (m, { conn }) => {
+  const chat = m.chat;
+  if (!activeGames.has(chat)) return;
+
+  const game = activeGames.get(chat);
+  if (m.sender !== game.player) return;
+
+  const risposta = (m.text || '').toLowerCase();
+  const p = game.characters[game.index % game.characters.length];
+
+  if (!['si','sì','no','forse','probabilmente','non so','nonso'].includes(risposta)) {
+    return conn.reply(game.chat,'⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so');
+  }
+
+  game.risposte.push({ domanda: p.domande[0], risposta });
   game.index++;
   inviaDomanda(conn, game);
 };
