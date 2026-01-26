@@ -14,14 +14,13 @@ const formatBytes = (bytes) => {
   return `${size.toFixed(2)} ${units[unitIndex]}`
 }
 
-const cpu = cpus()[0].model
-  .replace(/(TM|CPU|@.*?)|\(.*?\)/gi, '')
-  .replace(/\s+/g, ' ')
-  .trim()
+const cpuInfo = cpus()[0]
+const cpu = cpuInfo
+  ? cpuInfo.model.replace(/(TM|CPU|@.*?)|\(.*?\)/gi, '').replace(/\s+/g, ' ').trim()
+  : 'CPU info non disponibile'
 
 let handler = async (m, { conn, usedPrefix }) => {
   try {
-
     const start = speed()
     await conn.readMessages([m.key])
     const ping = (speed() - start).toFixed(2)
