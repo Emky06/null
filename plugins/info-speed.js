@@ -36,6 +36,16 @@ let handler = async (m, { conn, usedPrefix }) => {
    
     const cpuThreads = cpus().length
 
+    const botStartTime = new Date(Date.now() - uptimeMs)
+    const activationTime = botStartTime.toLocaleString('it-IT', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+
     const message = `
 ╭━━━━━━•✦•━━━━━━╮
               𝑺𝑷𝑬𝑬𝑫
@@ -44,7 +54,7 @@ let handler = async (m, { conn, usedPrefix }) => {
 
 𝑷𝒊𝒏𝒈: ${ping} ms
 𝑼𝒑𝒕𝒊𝒎𝒆: ${uptime}
-
+𝑨𝒗𝒗𝒊𝒐: ${activationTime}
 ╭━━━━━━•✦•━━━━━━╮
 𝑹𝑨𝑴 𝑻𝒐𝒕𝒂𝒍𝒆: ${formatBytes(ramtot)}
 𝑹𝑨𝑴 𝑼𝒔𝒂𝒕𝒂: ${formatBytes(ramusata)} (${perc}%)
