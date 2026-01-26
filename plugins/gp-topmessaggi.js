@@ -3,24 +3,14 @@ import fs from 'fs';
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
-    // NON sovrascrivere l'utente esistente con un nuovo oggetto!
     participants.forEach(p => {
-        if (!users[p.id]) {
-            // Se l'utente non esiste, crealo con messaggi a 0
-            users[p.id] = {};
-        }
-        // Assicurati che messaggi esista e sia un numero
-        if (typeof users[p.id].messaggi !== 'number') {
-            users[p.id].messaggi = 0;
-        }
+        if (!users[p.id]) users[p.id] = { messaggi: 0 };
+        if (typeof users[p.id].messaggi !== 'number') users[p.id].messaggi = 0;
     });
 
     let usersData = participants
         .filter(p => p.id !== conn.user.jid)
-        .map(p => ({
-            messaggi: users[p.id] ? (users[p.id].messaggi || 0) : 0,
-            jid: p.id
-        }));
+        .map(p => ({ ...users[p.id], jid: p.id }));
 
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
