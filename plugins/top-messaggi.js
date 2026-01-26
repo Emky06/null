@@ -2,39 +2,43 @@ import fs from 'fs';
 
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
-
-    // CORREZIONE: Non sovrascrivere l'utente esistente
-    participants.forEach(p => {
-        if (!users[p.id]) {
-            users[p.id] = {};  // Solo oggetto vuoto se non esiste
-        }
-        // Inizializza solo messaggi se non è un numero
-        if (typeof users[p.id].messaggi !== 'number') {
-            users[p.id].messaggi = 0;
-        }
-    });
-
-    let usersData = participants
-        .filter(p => p.id !== conn.user.jid)
+    
+    // DEBUG: Mostra i dati reali
+    console.log('📊 DEBUG TOP - Utenti nel DB:', Object.keys(users).length);
+    
+    // Ottieni tutti i partecipanti del gruppo
+    let groupParticipants = participants || [];
+    
+    // Mappa i dati correttamente
+    let usersData = groupParticipants
+        .filter(p => p.id !== conn.user.jid)  // Escludi il bot
         .map(p => {
-            const userData = users[p.id] || {};
+            const userId = p.id;
+            const userData = users[userId] || {};
+            
+            // DEBUG per ogni utente
+            console.log(`👤 ${userId.split('@')[0]}: messaggi = ${userData.messaggi || 0}`);
+            
             return {
-                messaggi: userData.messaggi || 0,  // Prendi il valore o default a 0
-                jid: p.id
+                messaggi: userData.messaggi || 0,
+                jid: userId,
+                name: p.name || userId.split('@')[0]
             };
-        });
+        })
+        .filter(user => user.messaggi > 0);  // Filtra solo chi ha messaggi > 0
+
+    // DEBUG: Mostra dati estratti
+    console.log('📋 Utenti con messaggi > 0:', usersData.length);
+    console.log('📋 Dati estratti:', usersData.map(u => `${u.name}: ${u.messaggi}`));
 
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
-
-    if (sorted.length === 0) {
+    if (usersData.length === 0) {
         return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
     }
 
-    // DEBUG: Verifica i dati
-    console.log('DEBUG Top - Primi 3 utenti:', sorted.slice(0, 3));
+    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
 
     let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
     let mentions = [];
@@ -46,18 +50,19 @@ let handler = async (m, { conn, args, participants }) => {
         else if (i === 1) medal = "🥈";
         else if (i === 2) medal = "🥉";
 
-        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
+        const username = user.name || user.jid.split('@')[0];
+        message += `${medal} *${i + 1}.* @${username} ➠ ${user.messaggi} messaggi\n`;
         mentions.push(user.jid);
 
         if (user.jid === m.sender) userPosition = i + 1;
     });
 
-    let totalPlayers = participants.length - 1; // -1 per escludere il bot
+    let totalPlayers = groupParticipants.length - 1; // -1 per escludere il bot
     let userMessage = userPosition
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    const profileBuffer = fs.readFileSync('./icone/top.png');
+    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
 
     const quotedMessage = {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
