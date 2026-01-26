@@ -36,7 +36,7 @@ let handler = async (m, { conn, usedPrefix }) => {
    
     const cpuThreads = cpus().length
 
-    const botStartTime = new Date(Date.now() - uptimeMs)
+    const botStartTime = new Date(Date.now() - uptime)
     const activationTime = botStartTime.toLocaleString('it-IT', {
       hour: '2-digit',
       minute: '2-digit',
