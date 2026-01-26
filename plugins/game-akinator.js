@@ -3,6 +3,7 @@ import { personaggiGenerali } from './akinator-generali.js';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
+const MAX_DOMANDE = 20;
 
 let handler = async (m, { conn, args }) => {
   const chat = m.chat;
@@ -52,7 +53,15 @@ let handler = async (m, { conn, args }) => {
 
 async function inviaDomanda(conn, game) {
   const p = game.characters[game.index % game.characters.length];
-  const domanda = p.domande[Math.floor(Math.random()*p.domande.length)];
+  p.domandeFatete = p.domandeFatete || [];
+  const domandeDisponibili = p.domande.filter(d => !p.domandeFatete.includes(d));
+  let domanda;
+  if (domandeDisponibili.length > 0) {
+    domanda = domandeDisponibili[Math.floor(Math.random() * domandeDisponibili.length)];
+    p.domandeFatete.push(domanda);
+  } else {
+    domanda = p.domande[Math.floor(Math.random() * p.domande.length)];
+  }
   await conn.sendMessage(game.chat,{
     text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚 ${game.index+1}: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
   });
@@ -67,7 +76,6 @@ handler.before = async (m, { conn }) => {
 
   const risposta = (m.text || '').toLowerCase();
 
-  // Comando per far indovinare il bot
   if (risposta === '.akinator indovina') {
     let maxScore = -1;
     let candidato = game.characters[0];
@@ -76,7 +84,6 @@ handler.before = async (m, { conn }) => {
       for (let r of game.risposte) {
         if (c.domande.includes(r.domanda) && ['si','sì'].includes(r.risposta)) score++;
         else if (!c.domande.includes(r.domanda) && ['no'].includes(r.risposta)) score++;
-        // forse e non so non influenzano
       }
       if (score > maxScore) {
         maxScore = score;
