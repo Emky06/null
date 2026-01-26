@@ -1,64 +1,66 @@
 const activeGames = new Map()
 
-const characters = [
-  // ANIME
-  { name: "Goku", real: false, anime: true, movie: false, series: false, alive: false, male: true, powers: true, sport: false, singer: false },
-  { name: "Naruto Uzumaki", real: false, anime: true, movie: false, series: false, alive: true, male: true, powers: true, sport: false, singer: false },
-  { name: "Luffy", real: false, anime: true, movie: false, series: false, alive: true, male: true, powers: true, sport: false, singer: false },
-  { name: "Ichigo Kurosaki", real: false, anime: true, movie: false, series: false, alive: true, male: true, powers: true, sport: false, singer: false },
-  { name: "Eren Yeager", real: false, anime: true, movie: false, series: false, alive: false, male: true, powers: true, sport: false, singer: false },
-  { name: "Light Yagami", real: false, anime: true, movie: false, series: false, alive: false, male: true, powers: true, sport: false, singer: false },
-
-  // FILM / SERIE
-  { name: "Batman", real: false, anime: false, movie: true, series: true, alive: true, male: true, powers: false, sport: false, singer: false },
-  { name: "Spider-Man", real: false, anime: false, movie: true, series: true, alive: true, male: true, powers: true, sport: false, singer: false },
-  { name: "Iron Man", real: false, anime: false, movie: true, series: false, alive: false, male: true, powers: true, sport: false, singer: false },
-  { name: "Joker", real: false, anime: false, movie: true, series: true, alive: true, male: true, powers: false, sport: false, singer: false },
-  { name: "Walter White", real: false, anime: false, movie: false, series: true, alive: false, male: true, powers: false, sport: false, singer: false },
-  { name: "Darth Vader", real: false, anime: false, movie: true, series: true, alive: false, male: true, powers: true, sport: false, singer: false },
-
-  // ATTORI
-  { name: "Leonardo DiCaprio", real: true, anime: false, movie: true, series: false, alive: true, male: true, powers: false, sport: false, singer: false },
-  { name: "Johnny Depp", real: true, anime: false, movie: true, series: false, alive: true, male: true, powers: false, sport: false, singer: false },
-  { name: "Robert Downey Jr", real: true, anime: false, movie: true, series: false, alive: true, male: true, powers: false, sport: false, singer: false },
-  { name: "Tom Holland", real: true, anime: false, movie: true, series: false, alive: true, male: true, powers: false, sport: false, singer: false },
-
-  // CALCIATORI 
-  { name: "Cristiano Ronaldo", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: true, singer: false },
-  { name: "Lionel Messi", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: true, singer: false },
-  { name: "Neymar Jr", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: true, singer: false },
-  { name: "Zlatan Ibrahimović", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: true, singer: false },
-
-  // ALTRI SPORT 
-  { name: "Michael Jordan", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: true, singer: false },
-  { name: "Kobe Bryant", real: true, anime: false, movie: false, series: false, alive: false, male: true, powers: false, sport: true, singer: false },
-
-  // CANTANTI 
-  { name: "Michael Jackson", real: true, anime: false, movie: false, series: false, alive: false, male: true, powers: false, sport: false, singer: true },
-  { name: "Eminem", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: false, singer: true },
-  { name: "Bad Bunny", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: false, singer: true },
-  { name: "Drake", real: true, anime: false, movie: false, series: false, alive: true, male: true, powers: false, sport: false, singer: true },
-
-  // PERSONAGGI STORICI
-  { name: "Albert Einstein", real: true, anime: false, movie: false, series: false, alive: false, male: true, powers: false, sport: false, singer: false },
-  { name: "Napoleone Bonaparte", real: true, anime: false, movie: false, series: false, alive: false, male: true, powers: false, sport: false, singer: false },
-  { name: "Cleopatra", real: true, anime: false, movie: false, series: false, alive: false, male: false, powers: false, sport: false, singer: false }
+/* =======================
+   DATABASE ANIME (MEGA)
+======================= */
+const animeCharacters = [
+  { name:"Goku", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:true, villain:false, protagonist:true },
+  { name:"Vegeta", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false },
+  { name:"Naruto Uzumaki", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Sasuke Uchiha", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false },
+  { name:"Luffy", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Zoro Roronoa", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false },
+  { name:"Eren Yeager", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:true, villain:true, protagonist:true },
+  { name:"Levi Ackerman", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false },
+  { name:"Light Yagami", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:true, villain:true, protagonist:true },
+  { name:"L", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:false, villain:false, protagonist:false },
+  { name:"Ichigo Kurosaki", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Tanjiro Kamado", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Nezuko Kamado", anime:true, real:false, series:true, movie:false, male:false, alive:true, powers:true, villain:false, protagonist:false },
+  { name:"Gojo Satoru", anime:true, real:false, series:true, movie:false, male:true, alive:false, powers:true, villain:false, protagonist:false },
+  { name:"Yuji Itadori", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Gon Freecss", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:true },
+  { name:"Killua Zoldyck", anime:true, real:false, series:true, movie:false, male:true, alive:true, powers:true, villain:false, protagonist:false }
 ]
 
-// DOMANDE
+/* =======================
+   DATABASE GENERALE
+======================= */
+const generalCharacters = [
+  { name:"Batman", anime:false, real:false, series:true, movie:true, male:true, alive:true, powers:false },
+  { name:"Spider-Man", anime:false, real:false, series:true, movie:true, male:true, alive:true, powers:true },
+  { name:"Iron Man", anime:false, real:false, series:false, movie:true, male:true, alive:false, powers:true },
+  { name:"Walter White", anime:false, real:false, series:true, movie:false, male:true, alive:false, powers:false },
+
+  { name:"Leonardo DiCaprio", anime:false, real:true, series:false, movie:true, male:true, alive:true, powers:false },
+  { name:"Johnny Depp", anime:false, real:true, series:false, movie:true, male:true, alive:true, powers:false },
+
+  { name:"Cristiano Ronaldo", anime:false, real:true, series:false, movie:false, male:true, alive:true, powers:false },
+  { name:"Lionel Messi", anime:false, real:true, series:false, movie:false, male:true, alive:true, powers:false },
+  { name:"Michael Jordan", anime:false, real:true, series:false, movie:false, male:true, alive:true, powers:false },
+
+  { name:"Elon Musk", anime:false, real:true, series:false, movie:false, male:true, alive:true, powers:false },
+  { name:"Albert Einstein", anime:false, real:true, series:false, movie:false, male:true, alive:false, powers:false }
+]
+
+/* =======================
+   DOMANDE
+======================= */
 const questions = [
-  { key: "real", text: "È una persona reale?" },
-  { key: "anime", text: "È un personaggio anime?" },
-  { key: "movie", text: "È famoso per film?" },
-  { key: "series", text: "È famoso per una serie TV?" },
-  { key: "sport", text: "È uno sportivo?" },
-  { key: "singer", text: "È un cantante?" },
-  { key: "alive", text: "È vivo?" },
-  { key: "male", text: "È maschio?" },
-  { key: "powers", text: "Ha poteri o abilità sovrumane?" }
+  { key:"anime", text:"È un personaggio anime?" },
+  { key:"real", text:"È una persona reale?" },
+  { key:"series", text:"Appare in una serie?" },
+  { key:"movie", text:"È famoso per film?" },
+  { key:"protagonist", text:"È il protagonista?" },
+  { key:"villain", text:"È un antagonista?" },
+  { key:"powers", text:"Ha poteri o abilità speciali?" },
+  { key:"male", text:"È maschio?" },
+  { key:"alive", text:"È vivo?" }
 ]
 
-
+/* =======================
+   HANDLER
+======================= */
 let handler = async (m, { conn }) => {
   let chatConfig = global.db.data.chats[m.chat] || {}
   if (chatConfig.antigiochi) {
@@ -66,28 +68,25 @@ let handler = async (m, { conn }) => {
   }
 
   if (activeGames.has(m.chat)) {
-    return m.reply('『 ⚠️ 』- C\'è già una partita di Akinator in corso!')
+    return m.reply('『 ⚠️ 』- C\'è già una partita in corso!')
   }
 
-  activeGames.set(m.chat, {
-    candidates: [...characters],
-    asked: [],
-    current: null
-  })
-
-  m.reply(
-`╭〔 *🧠 AKINATOR* 〕╮
-┃ Pensa a un personaggio
-┃ (anime, film, sport, musica…)
-┃
-┃ Scrivi *ok* quando sei pronto
-╰━━━━━━━━━━━━━━╯`
-  )
+  await conn.sendMessage(m.chat, {
+    text: "🧠 *AKINATOR*\nScegli la modalità:",
+    buttons: [
+      { buttonId: '.akinator anime', buttonText: { displayText: '🎌 Anime' }, type: 1 },
+      { buttonId: '.akinator generale', buttonText: { displayText: '🌍 Generale' }, type: 1 }
+    ],
+    headerType: 1
+  }, { quoted: m })
 }
 
 handler.before = async (m, { conn }) => {
   const game = activeGames.get(m.chat)
   if (!game) return
+
+  // SOLO CHI HA AVVIATO
+  if (m.sender !== game.player) return
 
   const text = (m.text || '').toLowerCase()
 
@@ -95,7 +94,7 @@ handler.before = async (m, { conn }) => {
     return askQuestion(m, conn, game)
   }
 
-  if (!['si', 'no', 'non so', 'nonso'].includes(text)) return
+  if (!['si','no','non so','nonso'].includes(text)) return
   if (!game.current) return
 
   if (!text.startsWith('non')) {
@@ -110,8 +109,22 @@ handler.before = async (m, { conn }) => {
   }
 }
 
+/* =======================
+   COMANDI
+======================= */
+handler.command = ['akinator']
+
+handler.tags = ['giochi']
+handler.help = ['akinator']
+handler.register = false
+
+export default handler
+
+/* =======================
+   FUNZIONI
+======================= */
 function askQuestion(m, conn, game) {
-  const q = questions.find(q => !game.asked.includes(q.key))
+  const q = questions.find(q => !game.asked.includes(q.key) && game.candidates.some(c => q.key in c))
   if (!q) return finishGame(m, conn, game)
 
   game.current = q
@@ -127,7 +140,7 @@ function finishGame(m, conn, game) {
 
   if (!game.candidates.length) {
     return conn.sendMessage(m.chat, {
-      text: "😵 Non riesco a indovinare… forse non era nel mio database."
+      text: "😵 Non riesco a indovinare…"
     }, { quoted: m })
   }
 
@@ -140,9 +153,37 @@ function finishGame(m, conn, game) {
   }, { quoted: m })
 }
 
-handler.help = ['akinator']
-handler.tags = ['giochi']
-handler.command = ['akinator']
-handler.register = false
+/* =======================
+   AVVIO MODALITÀ
+======================= */
+handler.all = async (m, { conn, args }) => {
+  if (!m.text) return
+  if (!m.text.startsWith('.akinator')) return
 
-export default handler
+  if (activeGames.has(m.chat)) return
+
+  if (m.text.includes('anime')) {
+    startGame(m, conn, animeCharacters)
+  } else if (m.text.includes('generale')) {
+    startGame(m, conn, generalCharacters)
+  }
+}
+
+function startGame(m, conn, list) {
+  activeGames.set(m.chat, {
+    player: m.sender,
+    candidates: [...list],
+    asked: [],
+    current: null
+  })
+
+  conn.sendMessage(m.chat, {
+    text:
+`╭〔 *🧠 AKINATOR* 〕╮
+┃ Modalità: *${list === animeCharacters ? 'ANIME 🎌' : 'GENERALE 🌍'}*
+┃
+┃ Solo chi ha avviato può rispondere
+┃ Scrivi *ok* quando sei pronto
+╰━━━━━━━━━━━━━━╯`
+  }, { quoted: m })
+}
