@@ -19,26 +19,30 @@ const cpu = cpus()[0].model
   .replace(/\s+/g, ' ')
   .trim()
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, usedPrefix }) => {
   try {
-   
+    // 🔹 Ping reale
     const start = speed()
-    await conn.sendPresenceUpdate('composing', m.chat)
+    await conn.readMessages([m.key])
     const ping = (speed() - start).toFixed(2)
 
+    // ⏳ Uptime
     const uptime = fancyClock(process.uptime() * 1000)
 
+    // 💾 RAM
     const ramtot = totalmem()
     const ramusata = ramtot - freemem()
     const ramBot = process.memoryUsage().rss
     const perc = ((ramusata / ramtot) * 100).toFixed(1)
 
+    // ⚙️ CPU
     const cpuThreads = cpus().length
 
+    // 🌐 Speed fake
     const dlSpeed = (Math.random() * 100 + 50).toFixed(2)
     const ulSpeed = (Math.random() * 50 + 10).toFixed(2)
 
-    const text = `
+    const message = `
 ╭━━━━━━•✦•━━━━━━╮
               𝑺𝑷𝑬𝑬𝑫
         𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
@@ -58,13 +62,18 @@ let handler = async (m, { conn }) => {
 𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅: ${dlSpeed} Mbps
 𝑼𝒑𝒍𝒐𝒂𝒅: ${ulSpeed} Mbps
 ╰━━━━━━•✦•━━━━━━╯
-
-╭━━━━━━•✦•━━━━━━╮
-   𝑺𝒕𝒂𝒕𝒐: _Online_
-╰━━━━━━•✦•━━━━━━╯
 `.trim()
 
-    await conn.reply(m.chat, text, m, { ...global.rcanal })
+    await conn.sendMessage(m.chat, {
+      text: message,
+      footer: `𝐒𝐩𝐞𝐞𝐝 𝐓𝐞𝐬𝐭 ${nomebot}`,
+      headerType: 1,
+      buttons: [
+        { buttonId: `${usedPrefix}speed`, buttonText: { displayText: "🔄 𝐒𝐩𝐞𝐞𝐝" }, type: 1 },
+        { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "🏓 𝐏𝐢𝐧𝐠" }, type: 1 },
+        { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🗑️ 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
+      ]
+    })
 
   } catch (e) {
     console.error(e)
