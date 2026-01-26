@@ -1,73 +1,85 @@
-import fs from 'fs';
+import fetch from 'node-fetch';
+
+function sort(key, asc = true) {
+  if (key) {
+    return (a, b) => (asc ? a[key] - b[key] : b[key] - a[key]);
+  } else {
+    return (a, b) => (asc ? a - b : b - a);
+  }
+}
+
+function getMedaglia(pos) {
+  if (pos === 1) return '🥇';
+  if (pos === 2) return '🥈';
+  if (pos === 3) return '🥉';
+  return '🏅';
+}
+
+function enumGetKey(obj) {
+  return obj.jid;
+}
 
 let handler = async (m, { conn, args, participants }) => {
-    const users = global.db.data.users || {};
-
-    // Prendi solo i membri del gruppo e assicurati che abbiano il campo messaggi
-    let groupUsers = participants
-        .filter(p => p.id !== conn.user.jid)
-        .map(p => ({
-            jid: p.id,
-            messaggi: users[p.id]?.messaggi || 0
-        }));
-
-    // Numero di utenti da mostrare: 10, 50 o 100
-    let count = 10;
-    if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
-
-    // Ordina per messaggi e prendi i primi count
-    let sorted = groupUsers.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
-
-    if (sorted.length === 0) {
-        return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
-    }
-
-    let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
-    let mentions = [];
-    let userPosition = null;
-
-    sorted.forEach((user, i) => {
-        let medal = "🏅";
-        if (i === 0) medal = "🥇";
-        else if (i === 1) medal = "🥈";
-        else if (i === 2) medal = "🥉";
-
-        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
-        mentions.push(user.jid);
-
-        if (user.jid === m.sender) userPosition = i + 1;
+  // Prendo solo i partecipanti attivi nel gruppo escludendo il bot
+  let groupUsers = participants
+    .filter(u => u.id !== conn.user.jid)
+    .map(u => {
+      let userData = global.db.data.users[u.id] || {};
+      return { jid: u.id, messaggi: userData.messaggi || 0 };
     });
 
-    let totalPlayers = participants.length;
-    let userMessage = userPosition
-        ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
-        : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
+  // Ordino dal più alto al più basso per messaggi
+  let sorted = groupUsers.sort(sort('messaggi', false));
 
-    const profileBuffer = fs.readFileSync('./icone/top.png');
+  // Gestione argomento: multipli di 10 fino a 100, default 10
+  let maxEntries = 10;
+  if (args[0]) {
+    let n = parseInt(args[0]);
+    if (!isNaN(n) && n >= 10 && n <= 100 && n % 10 === 0) {
+      maxEntries = n;
+    }
+  }
 
-    const quotedMessage = {
-        key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
-        message: {
-            locationMessage: {
-                name: "Top Messaggi",
-                jpegThumbnail: profileBuffer,
-                vcard: `BEGIN:VCARD
-VERSION:3.0
-N:Sy;Bot;;;
-FN:y
-item1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}
-item1.X-ABLabel:Ponsel
-END:VCARD`
-            }
-        },
-        participant: "0@s.whatsapp.net"
-    };
+  // Titolo dinamico in base a maxEntries
+  let title = ` *🏆 𝐓𝐨𝐩 ${maxEntries} 𝐜𝐚𝐦𝐩𝐢𝐨𝐧𝐢* 🏆`;
 
-    await conn.sendMessage(m.chat, {
-        text: message + `\n\n${userMessage}`,
-        mentions: mentions
-    }, { quoted: quotedMessage });
+  // Prendo solo i primi maxEntries utenti
+  let topList = sorted.slice(0, maxEntries);
+
+  // Costruisco la classifica
+  let rankList = topList
+    .map(({ jid, messaggi }, i) =>
+      `${getMedaglia(i + 1)} *${messaggi}*  ➠ @${jid.split('@')[0]}`
+    ).join('\n');
+
+  // Posizione dell'utente che ha mandato il comando
+  let pos = sorted.findIndex(u => u.jid === m.sender) + 1;
+  let total = sorted.length;
+  let footer = '';
+  if (pos > 0) footer = `\n\n 𝐿𝑎 𝑡𝑢𝑎 𝑝𝑜𝑠𝑖𝑧𝑖𝑜𝑛𝑒: *${pos}° 𝑠𝑢 ${total}* `;
+
+  let message = `${title}\n\n${rankList}${footer}`;
+
+  // Definizione dei 4 bottoni
+  const buttons = [
+    { buttonId: '.topc', buttonText: { displayText: '𝐓𝐨𝐩 𝟏𝟎 𝐢𝐧𝐭𝐞𝐫𝐚𝐭𝐭𝐢𝐯𝐚 🏅' }, type: 1 },
+    { buttonId: '.tap 20', buttonText: { displayText: '𝐓𝐨𝐩 𝟐𝟎 🏆' }, type: 1 },
+    { buttonId: '.tap 50', buttonText: { displayText: '𝐓𝐨𝐩 𝟓𝟎 🏆' }, type: 1 },
+    { buttonId: '.tap 100', buttonText: { displayText: '𝐓𝐨𝐩 𝟏𝟎𝟎 🏆' }, type: 1 },
+    { buttonId: '.top', buttonText: { displayText: '𝐓𝐨𝐫𝐧𝐚 𝐚𝐥 𝐦𝐞𝐧𝐮̀ 𝐝𝐞𝐥𝐥𝐞 𝐭𝐨𝐩 🔙' }, type: 1 },
+    { buttonId: '.tap', buttonText: { displayText: '𝐑𝐢𝐟𝐚𝐢 𝐥𝐚 𝐭𝐨𝐩 𝟏𝟎 𝐜𝐥𝐚𝐬𝐬𝐢𝐜𝐚 🏆' }, type: 1 },
+  ];
+
+  await conn.sendMessage(m.chat, {
+    text: message.trim(),
+    buttons: buttons,
+    headerType: 1,
+    mentions: topList.map(enumGetKey)
+});
 };
 
 handler.command = /^top$/i;
+handler.admin = false;
+handler.group = true;
+
 export default handler;
