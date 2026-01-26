@@ -1,5 +1,5 @@
 import { personaggiAnime } from './plugins/akinator-anime.js';
-import { personaggiGenerali } from './plugins/akinator-generale.js';
+import { personaggiGenerali } from './plugins/akinator-generali.js';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
