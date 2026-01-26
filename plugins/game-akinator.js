@@ -3,7 +3,6 @@ import { personaggiGenerali } from './akinator-generali.js';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
-const MAX_DOMANDE = 15;
 
 let handler = async (m, { conn, args }) => {
   const chat = m.chat;
@@ -34,7 +33,7 @@ let handler = async (m, { conn, args }) => {
   const characters = mode==='anime'? personaggiAnime : personaggiGenerali;
 
   if (!characters || characters.length === 0) {
-    return m.reply('⚠️ Lista dei personaggi vuota!');
+    return m.reply('⚠️ 𝐋𝐢𝐬𝐭𝐚 𝐝𝐞𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐠𝐠𝐢 𝐯𝐮𝐨𝐭𝐚!');
   }
 
   const game = {
@@ -52,33 +51,10 @@ let handler = async (m, { conn, args }) => {
 };
 
 async function inviaDomanda(conn, game) {
-  if (game.index >= MAX_DOMANDE) {
-    // Calcolo del personaggio più probabile
-    let maxScore = -1;
-    let candidato = game.characters[0];
-    for (let c of game.characters) {
-      let score = 0;
-      for (let r of game.risposte) {
-        if (c.domande.includes(r.domanda) && ['si','sì'].includes(r.risposta)) score++;
-        else if (!c.domande.includes(r.domanda) && ['no'].includes(r.risposta)) score++;
-        // forse e non so non cambiano lo score
-      }
-      if (score > maxScore) {
-        maxScore = score;
-        candidato = c;
-      }
-    }
-
-    activeGames.delete(game.chat);
-    return conn.sendMessage(game.chat, { 
-      text: `🎉 Ho indovinato! È ${candidato.nome || 'Sconosciuto'} (${candidato.serie || 'Generale'})` 
-    });
-  }
-
   const p = game.characters[game.index % game.characters.length];
   const domanda = p.domande[Math.floor(Math.random()*p.domande.length)];
   await conn.sendMessage(game.chat,{
-    text:`❓ Domanda ${game.index+1} di ${MAX_DOMANDE}: ${domanda}\nRispondi con: sì / no / forse / non so`
+    text:`❓ 𝐃𝐨𝐦𝐚𝐧𝐝𝐚 ${game.index+1}: ${domanda}\n𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so`
   });
 }
 
@@ -90,13 +66,34 @@ handler.before = async (m, { conn }) => {
   if (m.sender !== game.player) return;
 
   const risposta = (m.text || '').toLowerCase();
-  const p = game.characters[game.index % game.characters.length];
 
-  if (!['si','sì','no','forse','probabilmente','non so','nonso'].includes(risposta)) {
-    return conn.reply(game.chat,'⚠️ Risposta non valida! Rispondi con: sì / no / forse / non so');
+  // Comando per far indovinare il bot
+  if (risposta === '.akinator indovina') {
+    let maxScore = -1;
+    let candidato = game.characters[0];
+    for (let c of game.characters) {
+      let score = 0;
+      for (let r of game.risposte) {
+        if (c.domande.includes(r.domanda) && ['si','sì'].includes(r.risposta)) score++;
+        else if (!c.domande.includes(r.domanda) && ['no'].includes(r.risposta)) score++;
+        // forse e non so non influenzano
+      }
+      if (score > maxScore) {
+        maxScore = score;
+        candidato = c;
+      }
+    }
+    activeGames.delete(chat);
+    return conn.sendMessage(chat, { 
+      text: `🎉 𝐇𝐨 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨! 𝐄̀ ${candidato.nome || 'Sconosciuto'} (${candidato.serie || 'Generale'})`
+    });
   }
 
-  // Salva la risposta
+  if (!['si','sì','no','forse','probabilmente','non so','nonso'].includes(risposta)) {
+    return conn.reply(game.chat,'⚠️ 𝐑𝐢𝐬𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚! 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐜𝐨𝐧: sì / no / forse / non so oppure .akinator indovina');
+  }
+
+  const p = game.characters[game.index % game.characters.length];
   game.risposte.push({ domanda: p.domande[0], risposta });
 
   game.index++;
