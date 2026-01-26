@@ -1,4 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
+import fs from 'fs';
+
 const bandiere = [
   { emoji: '🇦🇫', paese: 'afghanistan' },
   { emoji: '🇦🇱', paese: 'albania' },
@@ -261,17 +263,16 @@ handler.before = async function (m, { conn }) {
   partita.tentativi++;
 
   if (testo === partita.risposta) {
-    const userId = m.sender;
+    
+const path = './vittorieBandiere.json';
 
-if (!global.db.data.users[userId]) global.db.data.users[userId] = {};
+let vittorie = {};
+if (fs.existsSync(path)) vittorie = JSON.parse(fs.readFileSync(path));
 
-if (typeof global.db.data.users[userId].vittorieBandiera !== 'number') {
-    global.db.data.users[userId].vittorieBandiera = 0;
-}
+const userId = m.sender;
+vittorie[userId] = (vittorie[userId] || 0) + 1;
 
-global.db.data.users[userId].vittorieBandiera += 1;
-
-if (typeof global.db.write === 'function') await global.db.write();
+fs.writeFileSync(path, JSON.stringify(vittorie, null, 2));
 
     const reward = 200;
     global.db.data.users[userId].money = (global.db.data.users[userId].money || 0) + reward;
