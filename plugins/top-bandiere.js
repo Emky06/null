@@ -7,24 +7,28 @@ let handler = async (m, { conn }) => {
         return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
     }
 
-    let chatMembers = Object.keys(await conn.groupMetadata(m.chat)
-        .then(v => v.participants.reduce((acc, u) => ({ ...acc, [u.id]: true }), {}))
-        .catch(() => ({}))
-    );
+    // Prendi tutti gli ID dei membri del gruppo
+    let chatMembers = await conn.groupMetadata(m.chat)
+        .then(v => v.participants.map(u => u.id))
+        .catch(() => []);
 
-    let classifica = Object.entries(users)
-        .filter(([key]) => chatMembers.includes(key))
-        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera || 0 }))
-        .filter(user => user.vittorie > 0)
-        .sort((a, b) => b.vittorie - a.vittorie);
-
-    if (classifica.length > 10) {
-        classifica = classifica.slice(0, 10);
+    if (chatMembers.length === 0) {
+        return m.reply("⚠︎ Non sono riuscito a leggere i membri del gruppo.");
     }
+
+    const chatMembersSet = new Set(chatMembers);
+
+    // Costruisci la classifica filtrando solo membri del gruppo
+    let classifica = Object.entries(users)
+        .filter(([key, data]) => chatMembersSet.has(key) && (data.vittorieBandiera || 0) > 0)
+        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
+        .sort((a, b) => b.vittorie - a.vittorie);
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
     }
+
+    if (classifica.length > 10) classifica = classifica.slice(0, 10);
 
     let totalMembers = chatMembers.length;
     let message = `🏆 𝕋𝕆ℙ 𝕍𝕀𝕋𝕋𝕆ℝ𝕀𝔼 𝔹𝔸ℕ𝔻𝕀𝔼ℝ𝔼 \n\n`;
