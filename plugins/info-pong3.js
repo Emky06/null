@@ -1,4 +1,4 @@
-//by kinderino, mod da axtral
+//Plugin fatto da Axtral_WiZaRd
 import os from 'os';
 import 'util';
 import '@whiskeysockets/baileys';
