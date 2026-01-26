@@ -3,23 +3,20 @@ import fs from 'fs';
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
-    // Assicurati che ogni utente del gruppo abbia un oggetto nel DB
-    participants.forEach(p => {
-        if (!users[p.id]) users[p.id] = { messaggi: 0 };
-        if (typeof users[p.id].messaggi !== 'number') users[p.id].messaggi = 0;
-    });
-
-    // Crea un array di utenti del gruppo con messaggi
-    let usersData = participants
+    // Prendi solo i membri del gruppo e assicurati che abbiano il campo messaggi
+    let groupUsers = participants
         .filter(p => p.id !== conn.user.jid)
-        .map(p => ({ ...users[p.id], jid: p.id }));
+        .map(p => ({
+            jid: p.id,
+            messaggi: users[p.id]?.messaggi || 0
+        }));
 
     // Numero di utenti da mostrare: 10, 50 o 100
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    // Ordina per messaggi e prendi i primi "count"
-    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
+    // Ordina per messaggi e prendi i primi count
+    let sorted = groupUsers.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
 
     if (sorted.length === 0) {
         return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
