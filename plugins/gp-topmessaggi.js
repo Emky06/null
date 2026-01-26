@@ -42,7 +42,7 @@ let handler = async (m, { conn, args, participants }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    const profileBuffer = fs.readFileSync('./icone/top.png');
+    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
 
     const quotedMessage = {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
