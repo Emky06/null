@@ -90,5 +90,3 @@ handler.tags = ['giochi'];
 handler.command = ['akinator'];
 
 export default handler;
-
-Perché non prende le risposte che dò? Si no ecc
