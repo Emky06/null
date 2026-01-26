@@ -1,4 +1,4 @@
-export const personaggiAnime = [
+const personaggiAnime = [
   // --- DRAGON BALL (10 personaggi) ---
   {
     nome: "Son Goku",
@@ -1811,3 +1811,5 @@ export const personaggiAnime = [
     ]
   }
 ];
+
+module.exports = { personaggiAnime };
