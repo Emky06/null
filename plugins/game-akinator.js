@@ -4,7 +4,7 @@ import { personaggiGenerali } from './akinator-generali.js';
 
 const activeGames = new Map();
 const pendingModeChoice = new Map();
-const MAX_DOMANDE = 20;
+const MAX_DOMANDE = 15;
 
 let handler = async (m, { conn, args }) => {
   const chat = m.chat;
