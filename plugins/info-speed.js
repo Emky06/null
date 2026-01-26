@@ -21,26 +21,20 @@ const cpu = cpus()[0].model
 
 let handler = async (m, { conn, usedPrefix }) => {
   try {
-    // 🔹 Ping reale
+  
     const start = speed()
     await conn.readMessages([m.key])
     const ping = (speed() - start).toFixed(2)
 
-    // ⏳ Uptime
     const uptime = fancyClock(process.uptime() * 1000)
 
-    // 💾 RAM
     const ramtot = totalmem()
     const ramusata = ramtot - freemem()
     const ramBot = process.memoryUsage().rss
     const perc = ((ramusata / ramtot) * 100).toFixed(1)
 
-    // ⚙️ CPU
+   
     const cpuThreads = cpus().length
-
-    // 🌐 Speed fake
-    const dlSpeed = (Math.random() * 100 + 50).toFixed(2)
-    const ulSpeed = (Math.random() * 50 + 10).toFixed(2)
 
     const message = `
 ╭━━━━━━•✦•━━━━━━╮
@@ -58,9 +52,6 @@ let handler = async (m, { conn, usedPrefix }) => {
 
 𝑪𝑷𝑼: ${cpu}
 𝑻𝒉𝒓𝒆𝒂𝒅𝒔: ${cpuThreads}
-
-𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅: ${dlSpeed} Mbps
-𝑼𝒑𝒍𝒐𝒂𝒅: ${ulSpeed} Mbps
 ╰━━━━━━•✦•━━━━━━╯
 `.trim()
 
