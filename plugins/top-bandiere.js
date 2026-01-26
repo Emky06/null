@@ -7,20 +7,21 @@ let handler = async (m, { conn }) => {
         return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
     }
 
-    let chatMembers = Object.keys(await conn.groupMetadata(m.chat)
-        .then(v => v.participants.reduce((acc, u) => ({ ...acc, [u.id]: true }), {}))
-        .catch(() => ({}))
-    );
-
-    let classifica = Object.entries(users)
-        .filter(([key]) => chatMembers.includes(key))
-        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera || 0 }))
-        .filter(user => user.vittorie > 0)
-        .sort((a, b) => b.vittorie - a.vittorie);
-
-    if (classifica.length > 10) {
-        classifica = classifica.slice(0, 10);
+    // Prendo i membri del gruppo
+    let chatMembers = [];
+    try {
+        const metadata = await conn.groupMetadata(m.chat);
+        chatMembers = metadata.participants.map(u => u.id);
+    } catch (e) {
+        chatMembers = [];
     }
+
+    // Creo la classifica solo per membri del gruppo
+    let classifica = Object.entries(users)
+        .filter(([key, data]) => chatMembers.includes(key) && (data.vittorieBandiera || 0) > 0)
+        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
+        .sort((a, b) => b.vittorie - a.vittorie)
+        .slice(0, 10); // massimo 10
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
@@ -49,13 +50,12 @@ let handler = async (m, { conn }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalMembers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    // Legge immagine locale ./icone/bandiera.png
     const profileBuffer = fs.readFileSync('./icone/bandiera.png');
 
     await conn.sendMessage(m.chat, {
         text: message + `\n\n${userMessage}`,
-        mentions: mentions
-    }, {
+        mentions: mentions,
+        contextInfo: { forwardingScore: 0, isForwarded: false },
         quoted: {
             key: {
                 participants: "0@s.whatsapp.net",
@@ -67,10 +67,10 @@ let handler = async (m, { conn }) => {
                     name: "𝑻𝒐𝒑 𝒃𝒂𝒏𝒅𝒊𝒆𝒓𝒆 🚩",
                     jpegThumbnail: profileBuffer,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
-                },
+                }
             },
-            participant: "0@s.whatsapp.net",
-        },
+            participant: "0@s.whatsapp.net"
+        }
     });
 };
 
