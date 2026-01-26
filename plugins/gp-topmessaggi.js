@@ -12,9 +12,10 @@ let handler = async (m, { conn, args, participants }) => {
         .filter(p => p.id !== conn.user.jid)
         .map(p => ({ ...users[p.id], jid: p.id }));
 
-    let topCount = args[0] && parseInt(args[0]) > 0 ? Math.min(100, parseInt(args[0])) : 10;
+    let count = 10;
+    if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, topCount);
+    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
 
     if (sorted.length === 0) {
         return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
@@ -41,7 +42,7 @@ let handler = async (m, { conn, args, participants }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
+    const profileBuffer = fs.readFileSync('./icone/top.png');
 
     const quotedMessage = {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
@@ -67,5 +68,5 @@ END:VCARD`
     }, { quoted: quotedMessage });
 };
 
-handler.command = /^topmessaggi$/i;
+handler.command = /^top$/i;
 export default handler;
