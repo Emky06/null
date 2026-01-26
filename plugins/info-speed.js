@@ -49,8 +49,8 @@ let handler = async (m, { conn, usedPrefix }) => {
 
     const message = `
 ╭━━━━━━•✦•━━━━━━╮
-              𝑺𝑷𝑬𝑬𝑫
-        𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
+                𝑺𝑷𝑬𝑬𝑫
+         𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕
 ╰━━━━━━•✦•━━━━━━╯
 
 𝑷𝒊𝒏𝒈: ${ping} ms
@@ -58,12 +58,12 @@ let handler = async (m, { conn, usedPrefix }) => {
 𝑨𝒗𝒗𝒊𝒐: ${activationTime}
 
 ╭━━━━━━•✦•━━━━━━╮
- 𝑹𝑨𝑴 𝑻𝒐𝒕𝒂𝒍𝒆: ${formatBytes(ramtot)}
- 𝑹𝑨𝑴 𝑼𝒔𝒂𝒕𝒂: ${formatBytes(ramusata)} (${perc}%)
- 𝑹𝑨𝑴 𝑩𝒐𝒕: ${formatBytes(ramBot)}
+  𝑹𝑨𝑴 𝑻𝒐𝒕𝒂𝒍𝒆: ${formatBytes(ramtot)}
+  𝑹𝑨𝑴 𝑼𝒔𝒂𝒕𝒂: ${formatBytes(ramusata)} (${perc}%)
+  𝑹𝑨𝑴 𝑩𝒐𝒕: ${formatBytes(ramBot)}
 
- 𝑪𝑷𝑼: ${cpu}
- 𝑻𝒉𝒓𝒆𝒂𝒅𝒔: ${cpuThreads}
+  𝑪𝑷𝑼: ${cpu}
+  𝑻𝒉𝒓𝒆𝒂𝒅𝒔: ${cpuThreads}
 ╰━━━━━━•✦•━━━━━━╯
 `.trim()
 
