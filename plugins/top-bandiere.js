@@ -2,30 +2,27 @@ import fs from 'fs';
 
 let handler = async (m, { conn }) => {
     let users = global.db.data.users;
+
     if (!users || Object.keys(users).length === 0) {
         return m.reply("⚠︎ Non ci sono ancora giocatori registrati nella classifica!");
     }
 
-    let chatMembers = [];
-    try {
-        const metadata = await conn.groupMetadata(m.chat);
-        chatMembers = metadata.participants.map(u => u.id.toLowerCase());
-    } catch (e) {
-        chatMembers = [];
-    }
+    // Prendi tutti i membri del gruppo
+    let chatMembers = Object.keys(await conn.groupMetadata(m.chat)
+        .then(v => v.participants.reduce((acc, u) => ({ ...acc, [u.id]: true }), {}))
+        .catch(() => ({}))
+    );
 
-    // DEBUG DIRETTO NEL GRUPPO
-    let debugMessage = '🛠️ DEBUG TOP BANDIERE 🛠️\n\n';
-    debugMessage += `Membri gruppo (${chatMembers.length}):\n${chatMembers.join('\n')}\n\n`;
-    debugMessage += `Utenti nel DB (${Object.keys(users).length}):\n${Object.keys(users).map(u => u + ' ➜ ' + (users[u].vittorieBandiera || 0)).join('\n')}\n\n`;
-
-    await conn.sendMessage(m.chat, { text: debugMessage });
-
+    // Filtra utenti che hanno vittorie e appartengono al gruppo
     let classifica = Object.entries(users)
-        .filter(([key, data]) => chatMembers.includes(key.toLowerCase()) && (data.vittorieBandiera || 0) > 0)
-        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
-        .sort((a, b) => b.vittorie - a.vittorie)
-        .slice(0, 10);
+        .filter(([key]) => chatMembers.includes(key))
+        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera || 0 }))
+        .filter(user => user.vittorie > 0)
+        .sort((a, b) => b.vittorie - a.vittorie);
+
+    if (classifica.length > 10) {
+        classifica = classifica.slice(0, 10);
+    }
 
     if (classifica.length === 0) {
         return m.reply("⚠︎ Nessun giocatore di questo gruppo ha ancora vinto una partita nel gioco delle bandiere!");
@@ -45,7 +42,7 @@ let handler = async (m, { conn }) => {
         message += `${medal} *${index + 1}.* @${user.id.split('@')[0]} ➠ ${user.vittorie} 𝐯𝐢𝐭𝐭𝐨𝐫𝐢𝐞\n`;
         mentions.push(user.id);
 
-        if (user.id.toLowerCase() === m.sender.toLowerCase()) {
+        if (user.id === m.sender) {
             userPosition = index + 1;
         }
     });
@@ -54,11 +51,13 @@ let handler = async (m, { conn }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalMembers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
+    // Legge immagine locale ./icone/bandiera.png
     const profileBuffer = fs.readFileSync('./icone/bandiera.png');
 
     await conn.sendMessage(m.chat, {
         text: message + `\n\n${userMessage}`,
-        mentions: mentions,
+        mentions: mentions
+    }, {
         quoted: {
             key: {
                 participants: "0@s.whatsapp.net",
@@ -70,10 +69,10 @@ let handler = async (m, { conn }) => {
                     name: "𝑻𝒐𝒑 𝒃𝒂𝒏𝒅𝒊𝒆𝒓𝒆 🚩",
                     jpegThumbnail: profileBuffer,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
-                }
+                },
             },
-            participant: "0@s.whatsapp.net"
-        }
+            participant: "0@s.whatsapp.net",
+        },
     });
 };
 
