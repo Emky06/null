@@ -25,11 +25,10 @@ let handler = async (m, { conn, usedPrefix }) => {
     const start = speed()
     await conn.readMessages([m.key])
     const ping = (speed() - start).toFixed(2)
-
+    
     const uptimeMs = process.uptime() * 1000
     const uptime = fancyClock(uptimeMs)
 
-   
     const botStartTime = new Date(Date.now() - uptimeMs)
     const activationTime = botStartTime.toLocaleString('it-IT', {
       hour: '2-digit',
