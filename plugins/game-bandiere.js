@@ -263,9 +263,17 @@ handler.before = async function (m, { conn }) {
   if (testo === partita.risposta) {
     const userId = m.sender;
 
-    if (!global.db.data.users[userId]) global.db.data.users[userId] = {};
-    if (!global.db.data.users[userId].vittorieBandiera) global.db.data.users[userId].vittorieBandiera = 0;
-    global.db.data.users[userId].vittorieBandiera += 1;
+    const userId = m.sender;
+
+if (!global.db.data.users[userId]) global.db.data.users[userId] = {};
+
+if (typeof global.db.data.users[userId].vittorieBandiera !== 'number') {
+    global.db.data.users[userId].vittorieBandiera = 0;
+}
+
+global.db.data.users[userId].vittorieBandiera += 1;
+
+if (typeof global.db.write === 'function') await global.db.write();
 
     const reward = 200;
     global.db.data.users[userId].money = (global.db.data.users[userId].money || 0) + reward;
