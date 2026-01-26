@@ -22,9 +22,7 @@ let handler = async (m, { conn, usedPrefix }) => {
         { buttonId: `${usedPrefix}ds`, buttonText: { displayText: "🗑️ 𝐒𝐯𝐮𝐨𝐭𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
       ],
       headerType: 1,
-      contextInfo: {
-        mentionedJid: conn.parseMention(botName),
-      },
+     
     });
   } catch (err) {
     console.error("Errore nell'handler:", err);
