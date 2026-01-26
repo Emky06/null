@@ -14,6 +14,13 @@ let handler = async (m, { conn }) => {
         chatMembers = [];
     }
 
+    // DEBUG DIRETTO NEL GRUPPO
+    let debugMessage = '🛠️ DEBUG TOP BANDIERE 🛠️\n\n';
+    debugMessage += `Membri gruppo (${chatMembers.length}):\n${chatMembers.join('\n')}\n\n`;
+    debugMessage += `Utenti nel DB (${Object.keys(users).length}):\n${Object.keys(users).map(u => u + ' ➜ ' + (users[u].vittorieBandiera || 0)).join('\n')}\n\n`;
+
+    await conn.sendMessage(m.chat, { text: debugMessage });
+
     let classifica = Object.entries(users)
         .filter(([key, data]) => chatMembers.includes(key.toLowerCase()) && (data.vittorieBandiera || 0) > 0)
         .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
