@@ -1,15 +1,13 @@
-// Plugin Top 10 Bestemmiatori by Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
 let handler = async (m, { conn }) => {
     const users = global.db.data.users || {};
 
-    // Assicuriamoci che tutti gli utenti abbiano il campo blasphemy
     Object.keys(users).forEach(id => {
         if (typeof users[id].blasphemy !== 'number') users[id].blasphemy = 0;
     });
 
-    // Prendi i primi 10 con più bestemmie
     let classifica = Object.entries(users)
         .filter(([key, data]) => (data.blasphemy || 0) > 0)
         .map(([key, data]) => ({ id: key, bestemmie: data.blasphemy }))
@@ -41,7 +39,7 @@ let handler = async (m, { conn }) => {
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
-    const profileBuffer = fs.readFileSync('./icone/bestemmiometro.jpg'); // thumbnail
+    const profileBuffer = fs.readFileSync('./icone/bestemmiometro.jpg');
 
     await conn.sendMessage(m.chat, {
         text: message + `\n\n${userMessage}`,
