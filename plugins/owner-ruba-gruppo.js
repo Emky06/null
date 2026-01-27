@@ -2,19 +2,15 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
   if (!m.isGroup) return
   if (!isBotAdmin) return
 
-  // Owner IDs (supporta array e stringhe)
   const ownerJids = global.owner
     .map(o => (typeof o === 'object' ? o[0] : o) + '@s.whatsapp.net')
 
-  // JID del bot (formato corretto stile Axtral)
   const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
 
-  // Trova solo gli admin
   let admins = participants.filter(
     p => p.admin === 'admin' || p.admin === 'superadmin'
   )
 
-  // Admin da degradare (esclude owner e bot)
   let toDemote = admins
     .map(p => p.jid)
     .filter(jid =>
@@ -41,6 +37,5 @@ handler.tags = ['group']
 handler.command = /^(domina|𝐃Ꮻ𝐌𝐈𝐍𝐀)$/i
 handler.group = true
 handler.owner = true
-handler.botAdmin = true
 
 export default handler
