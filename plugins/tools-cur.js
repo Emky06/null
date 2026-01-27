@@ -53,14 +53,13 @@ async function getTrackInfo(username, artist, track) {
   return json?.track
 }
 
-/* ===== FIX FUNZIONE ===== */
 async function generateTrackImage(track) {
   const width = 600
   const height = 600
 
   const imageUrl =
-    track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
-    'https://via.placeholder.com/600x600'
+  track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
+  path.join(__dirname, '../icone/cur.jpg')
 
   const img = await Jimp.read(imageUrl)
   img.cover(width, height)
