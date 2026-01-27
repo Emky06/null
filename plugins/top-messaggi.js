@@ -58,7 +58,7 @@ let handler = async (m, { conn, args, participants }) => {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
         message: {
             locationMessage: {
-                name: "𝐓𝐨𝐩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢 ",
+                name: "𝐓𝐨𝐩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢 🏆",
                 jpegThumbnail: profileBuffer,
                 vcard: `BEGIN:VCARD
 VERSION:3.0
