@@ -3,13 +3,17 @@ import fs from 'fs';
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
+    // Ottieni tutti i JID dei partecipanti come nell'esempio
+    const participantJids = participants.map(p => p.jid).filter(jid => jid);
+
     // Assicuriamoci che tutti i partecipanti siano nel database
-    participants.forEach(p => {
-        const jid = p.id || p.jid;
+    participantJids.forEach(jid => {
         if (!users[jid]) {
             users[jid] = { 
                 messaggi: 0,
-                name: p.notify || p.name || 'Utente'
+                name: participants.find(p => p.jid === jid)?.notify || 
+                      participants.find(p => p.jid === jid)?.name || 
+                      jid.split('@')[0]
             };
         }
         if (typeof users[jid].messaggi !== 'number') users[jid].messaggi = 0;
@@ -18,18 +22,17 @@ let handler = async (m, { conn, args, participants }) => {
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    // Filtra e ordina gli utenti
-    let usersData = Object.entries(users)
-        .filter(([jid]) => {
-            // Escludi il bot e utenti non presenti nel gruppo
+    // Filtra e ordina gli utenti usando jid come nell'esempio
+    let usersData = participantJids
+        .filter(jid => {
+            // Escludi il bot
             const isBot = jid === conn.user.jid;
-            const inGroup = participants.some(p => (p.id || p.jid) === jid);
-            return !isBot && inGroup;
+            return !isBot && users[jid];
         })
-        .map(([jid, userData]) => ({
-            ...userData,
-            jid: jid, // Usa il JID corretto
-            messaggi: userData.messaggi || 0
+        .map(jid => ({
+            ...users[jid],
+            jid: jid, // Usa il jid corretto
+            messaggi: users[jid].messaggi || 0
         }))
         .sort((a, b) => b.messaggi - a.messaggi)
         .slice(0, count);
@@ -48,7 +51,7 @@ let handler = async (m, { conn, args, participants }) => {
         else if (i === 1) medal = "🥈";
         else if (i === 2) medal = "🥉";
 
-        // Ottieni il nome dell'utente
+        // Usa il nome dal database o il JID
         const name = user.name || `@${user.jid.split('@')[0]}`;
         message += `${medal} *${i + 1}.* ${name} ➠ ${user.messaggi} messaggi\n`;
         mentions.push(user.jid);
