@@ -18,7 +18,7 @@ let handler = async (m, { conn }) => {
         return conn.reply(m.chat, "😇 Nessuno ha bestemmiato in questo gruppo!", m);
     }
 
-    let message = `🏆 *Top 10 Bestemmiatori del Gruppo* 🏆\n\n`;
+    let message = `🏆 *𝐓𝐨𝐩 𝟏𝟎 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐚𝐭𝐨𝐫𝐢 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n`;
     let mentions = [];
     let userPosition = null;
 
@@ -28,7 +28,7 @@ let handler = async (m, { conn }) => {
         else if (index === 1) medal = "🥈";
         else if (index === 2) medal = "🥉";
 
-        message += `${medal} *${index + 1}.* @${user.id.split('@')[0]} ➠ ${user.bestemmie} bestemmie\n`;
+        message += `${medal} *${index + 1}.* @${user.id.split('@')[0]} ➠ ${user.bestemmie} 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞\n`;
         mentions.push(user.id);
 
         if (user.id === m.sender) userPosition = index + 1;
@@ -53,7 +53,7 @@ let handler = async (m, { conn }) => {
             },
             message: {
                 locationMessage: {
-                    name: "𝐁𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐨𝐦𝐞𝐭𝐫𝐨",
+                    name: "𝐓𝐨𝐩 𝐁𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐚𝐭𝐨𝐫𝐢 🏆",
                     jpegThumbnail: profileBuffer,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
                 },
