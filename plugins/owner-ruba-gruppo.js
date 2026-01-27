@@ -1,24 +1,38 @@
-let handler = async (m, { conn, participants }) => {
-  const botNumber = conn.user.jid
+let handler = async (m, { conn, participants, isBotAdmin }) => {
+  if (!m.isGroup) return
+  if (!isBotAdmin) return
 
-  // Owner ID (supporta sia stringhe che array di array)
-  const ownerIDs = global.owner.map(o => (typeof o === 'object' ? o[0] : o)).map(id => id + '@s.whatsapp.net')
+  // Owner IDs (supporta array e stringhe)
+  const ownerJids = global.owner
+    .map(o => (typeof o === 'object' ? o[0] : o) + '@s.whatsapp.net')
 
-  // Trova tutti gli admin
-  let admins = participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin')
+  // JID del bot (formato corretto stile Axtral)
+  const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
 
-  // Esclude owner e bot dalla lista da degradare
+  // Trova solo gli admin
+  let admins = participants.filter(
+    p => p.admin === 'admin' || p.admin === 'superadmin'
+  )
+
+  // Admin da degradare (esclude owner e bot)
   let toDemote = admins
-    .map(p => p.id)
-    .filter(id => !ownerIDs.includes(id) && id !== botNumber)
+    .map(p => p.jid)
+    .filter(jid =>
+      jid &&
+      jid !== botJid &&
+      !ownerJids.includes(jid)
+    )
 
-  // Esegui la degradazione senza messaggi
+  if (!toDemote.length) return
+
   try {
     await conn.groupParticipantsUpdate(m.chat, toDemote, 'demote')
-    await m.reply('👑 𝑻𝒊 𝒔𝒆𝒊 𝒊𝒏𝒄𝒐𝒓𝒐𝒏𝒂𝒕𝒐 𝒔𝒐𝒗𝒓𝒂𝒏𝒐 𝒅𝒊 𝒒𝒖𝒆𝒔𝒕𝒐 𝒈𝒓𝒖𝒑𝒑𝒐. 𝑪𝒉𝒆 𝒊𝒏𝒊𝒛𝒊 𝒊𝒍 𝒕𝒖𝒐 𝒅𝒐𝒎𝒊𝒏𝒊𝒐.')
+
+    await m.reply(
+      '👑 𝑻𝒊 𝒔𝒆𝒊 𝒊𝒏𝒄𝒐𝒓𝒐𝒏𝒂𝒕𝒐 𝒔𝒐𝒗𝒓𝒂𝒏𝒐 𝒅𝒊 𝒒𝒖𝒆𝒔𝒕𝒐 𝒈𝒓𝒖𝒑𝒑𝒐.\n𝑪𝒉𝒆 𝒊𝒏𝒊𝒛𝒊 𝒊𝒍 𝒕𝒖𝒐 𝒅𝒐𝒎𝒊𝒏𝒊𝒐.'
+    )
   } catch (e) {
-    // Nessun messaggio nemmeno in caso di errore
-    console.error('Errore nel comando ruba:', e)
+    console.error('Errore nel comando domina:', e)
   }
 }
 
