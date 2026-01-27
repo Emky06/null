@@ -31,7 +31,7 @@ let handler = async (m, { conn, args, participants }) => {
         return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐡𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨!", m);
     }
 
-    let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
+    let message = `🏆 𝐓𝐨𝐩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢 🏆\n\n`;
     let mentions = [];
     let userPosition = null;
 
