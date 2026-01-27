@@ -15,7 +15,7 @@ let handler = async (m, { conn }) => {
         .slice(0, 10);
 
     if (classifica.length === 0) {
-        return conn.reply(m.chat, "😇 Nessuno ha bestemmiato in questo gruppo!", m);
+        return conn.reply(m.chat, "😇 𝐍𝐞𝐬𝐬𝐮𝐧𝐨 𝐡𝐚 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐚𝐭𝐨 𝐢𝐧 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨!", m);
     }
 
     let message = `🏆 *𝐓𝐨𝐩 𝟏𝟎 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐚𝐭𝐨𝐫𝐢 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n`;
