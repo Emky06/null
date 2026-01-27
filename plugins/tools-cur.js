@@ -162,7 +162,7 @@ const messageOptions = {
   ]
 }
 
-if (buffer) messageOptions.image = { buffer, mimetype: 'image/jpeg' }
+if (buffer) messageOptions.image = buffer 
 
 await conn.sendMessage(m.chat, messageOptions)
   return
