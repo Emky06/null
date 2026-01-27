@@ -36,19 +36,16 @@ let handler = async (m, { conn, args, participants }) => {
     let userPosition = null;
 
     usersData.forEach((user, i) => {
-    let medal = "🏅";
-    if (i === 0) medal = "🥇";
-    else if (i === 1) medal = "🥈";
-    else if (i === 2) medal = "🥉";
+        let medal = "🏅";
+        if (i === 0) medal = "🥇";
+        else if (i === 1) medal = "🥈";
+        else if (i === 2) medal = "🥉";
 
-    // Rimuove caratteri invisibili LEFT-TO-RIGHT ISOLATE ecc.
-    const cleanJid = user.jid.replace(/[\u2066-\u2069]/g, '');
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\n`;
+        mentions.push(user.jid);
 
-    message += `${medal} *${i + 1}.* @${cleanJid} ➠ ${user.messaggi} messaggi\n`;
-    mentions.push(user.jid);
-
-    if (user.jid === m.sender) userPosition = i + 1;
-});
+        if (user.jid === m.sender) userPosition = i + 1;
+    });
 
     let totalPlayers = participants.length;
     let userMessage = userPosition
