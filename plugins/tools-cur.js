@@ -144,7 +144,7 @@ await conn.sendMessage(
 
   const buffer = await generateTrackImage(track)
 
-  const messageOptions = {
+const messageOptions = {
   caption,
   mentions: conn.parseMention(caption),
   footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
@@ -162,7 +162,7 @@ await conn.sendMessage(
   ]
 }
 
-if (buffer) messageOptions.image = buffer
+if (buffer) messageOptions.image = { buffer, mimetype: 'image/jpeg' }
 
 await conn.sendMessage(m.chat, messageOptions)
   return
