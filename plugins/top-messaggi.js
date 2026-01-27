@@ -3,21 +3,38 @@ import fs from 'fs';
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
+    // Assicuriamoci che tutti i partecipanti siano nel database
     participants.forEach(p => {
-        if (!users[p.id]) users[p.id] = { messaggi: 0 };
-        if (typeof users[p.id].messaggi !== 'number') users[p.id].messaggi = 0;
+        const jid = p.id || p.jid;
+        if (!users[jid]) {
+            users[jid] = { 
+                messaggi: 0,
+                name: p.notify || p.name || 'Utente'
+            };
+        }
+        if (typeof users[jid].messaggi !== 'number') users[jid].messaggi = 0;
     });
-
-    let usersData = participants
-        .filter(p => p.id !== conn.user.jid)
-        .map(p => ({ ...users[p.id], jid: p.id }));
 
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
+    // Filtra e ordina gli utenti
+    let usersData = Object.entries(users)
+        .filter(([jid]) => {
+            // Escludi il bot e utenti non presenti nel gruppo
+            const isBot = jid === conn.user.jid;
+            const inGroup = participants.some(p => (p.id || p.jid) === jid);
+            return !isBot && inGroup;
+        })
+        .map(([jid, userData]) => ({
+            ...userData,
+            jid: jid, // Usa il JID corretto
+            messaggi: userData.messaggi || 0
+        }))
+        .sort((a, b) => b.messaggi - a.messaggi)
+        .slice(0, count);
 
-    if (sorted.length === 0) {
+    if (usersData.length === 0) {
         return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
     }
 
@@ -25,13 +42,15 @@ let handler = async (m, { conn, args, participants }) => {
     let mentions = [];
     let userPosition = null;
 
-    sorted.forEach((user, i) => {
+    usersData.forEach((user, i) => {
         let medal = "🏅";
         if (i === 0) medal = "🥇";
         else if (i === 1) medal = "🥈";
         else if (i === 2) medal = "🥉";
 
-        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
+        // Ottieni il nome dell'utente
+        const name = user.name || `@${user.jid.split('@')[0]}`;
+        message += `${medal} *${i + 1}.* ${name} ➠ ${user.messaggi} messaggi\n`;
         mentions.push(user.jid);
 
         if (user.jid === m.sender) userPosition = i + 1;
