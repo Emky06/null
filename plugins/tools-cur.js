@@ -9,11 +9,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const USERS_FILE = path.join(__dirname, '..', 'lastfm_users.json')
 
-
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}')
 
 const LASTFM_API_KEY = '36f859a1fc4121e7f0e931806507d5f9'
-
 
 function getLastfmUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'))
@@ -33,7 +31,6 @@ function setLastfmUsername(userId, username) {
   users[userId] = username
   saveLastfmUsers(users)
 }
-
 
 async function getRecentTrack(username) {
   const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${LASTFM_API_KEY}&format=json&limit=1`
@@ -56,19 +53,19 @@ async function getTrackInfo(username, artist, track) {
   return json?.track
 }
 
-
+/* ===== FIX FUNZIONE ===== */
 async function generateTrackImage(track) {
   const width = 600
   const height = 600
-  async function generateTrackImage(track) {
-const width = 600
-const height = 600
-const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text'] || 'https://via.placeholder.com/600x300'
 
-const img = await Jimp.read(imageUrl)
-img.cover(width, height)
+  const imageUrl =
+    track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
+    'https://via.placeholder.com/600x600'
 
-return await img.getBufferAsync(Jimp.MIME_JPEG)
+  const img = await Jimp.read(imageUrl)
+  img.cover(width, height)
+
+  return await img.getBufferAsync(Jimp.MIME_JPEG)
 }
 
 const handler = async (m, { conn, args, usedPrefix, text, command }) => {
@@ -85,88 +82,76 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
   }
 
   if (command === 'fire') {
-  const [target, track] = text.split('|').map(t => t.trim())
+    const [target, track] = text.split('|').map(t => t.trim())
 
-  if (target === m.sender) {
-    await conn.sendMessage(m.chat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: m })
+    if (target === m.sender) {
+      await conn.sendMessage(m.chat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: m })
+      return
+    }
+
+    if (!global.db.data.users[target]) return
+
+    global.db.data.users[target].fuochi =
+      (global.db.data.users[target].fuochi || 0) + 1
+
+    await conn.sendMessage(m.chat, {
+      text: `🔥 @${m.sender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 𝐥𝐢𝐤𝐞 𝐚 *"${track}"* 𝐝𝐢 @${target.split('@')[0]}`,
+      mentions: [m.sender, target]
+    }, { quoted: m })
+
     return
   }
 
-  if (!global.db.data.users[target]) return
-
-  global.db.data.users[target].fuochi =
-    (global.db.data.users[target].fuochi || 0) + 1
-
-  await conn.sendMessage(m.chat, {
-    text: `🔥 @${m.sender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 𝐥𝐢𝐤𝐞 𝐚 *"${track}"* 𝐝𝐢 @${target.split('@')[0]}`,
-    mentions: [m.sender, target]
-  }, { quoted: m })
-
-  return
-}
-
   const user = getLastfmUsername(m.sender)
   if (!user) {
-    const jid = m.sender;
-await conn.sendMessage(
-    m.chat,
-    {
+    const jid = m.sender
+    await conn.sendMessage(
+      m.chat,
+      {
         text: `🎵 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐳𝐢𝐨𝐧𝐞 Last.fm 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐚
 
 @${m.sender.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
 
 📱 𝐔𝐬𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨:
-.setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>
-
-💡 𝐍𝐨𝐧 𝐡𝐚𝐢 Last.fm?
-𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢 𝐬𝐮𝐥 𝐬𝐢𝐭𝐨, 𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐢 𝐬𝐮 𝐒𝐩𝐨𝐭𝐢𝐟𝐲 𝐞 𝐢𝐧𝐢𝐳𝐢𝐚 𝐚 𝐟𝐚𝐫𝐞 𝐬𝐜𝐫𝐨𝐛𝐛𝐥𝐢𝐧𝐠 𝐝𝐞𝐥𝐥𝐚 𝐭𝐮𝐚 𝐦𝐮𝐬𝐢𝐜𝐚!`,
-        mentions: [jid] 
-    },
-    { quoted: m }
-);
+.setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>`,
+        mentions: [jid]
+      },
+      { quoted: m }
+    )
     return
   }
 
   if (command === 'cur') {
-  const track = await getRecentTrack(user)
-  if (!track) return conn.sendMessage(m.chat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐭𝐫𝐚𝐜𝐜𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
+    const track = await getRecentTrack(user)
+    if (!track) return conn.sendMessage(m.chat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐭𝐫𝐚𝐜𝐜𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
 
-  const detailedTrack = await getTrackInfo(user, track.artist['#text'], track.name)
-  const userPlaycount = parseInt(detailedTrack?.userplaycount) || 0
-  const globalPlaycount = parseInt(detailedTrack?.playcount) || 0
-  const globalListeners = parseInt(detailedTrack?.listeners) || 0
+    const detailedTrack = await getTrackInfo(user, track.artist['#text'], track.name)
+    const userPlaycount = parseInt(detailedTrack?.userplaycount) || 0
+    const globalPlaycount = parseInt(detailedTrack?.playcount) || 0
+    const globalListeners = parseInt(detailedTrack?.listeners) || 0
 
-  const caption = track['@attr']?.nowplaying === 'true'
-    ? `🎧 𝐈𝐧 𝐫𝐢𝐩𝐫𝐨𝐝𝐮𝐳𝐢𝐨𝐧𝐞 𝐨𝐫𝐚 • @${m.sender.split('@')[0]}\n\n` +
-      `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n💿 ${track.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
-      `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
-    : `⏹️ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐛𝐫𝐚𝐧𝐨 𝐝𝐢 @${m.sender.split('@')[0]}:\n\n` +
-      `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n💿 ${track.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
-      `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
+    const buffer = await generateTrackImage(track)
 
-  await conn.sendMessage(m.chat, {
-image: buffer,
-caption,
-mentions: conn.parseMention(caption),
-footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-buttons: [
-{
-buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
-buttonText: { displayText: "🔥" },
-type: 1
-},
-{
-buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
-buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
-type: 1
-}
-],
-headerType: 4
-})
-return
-}
+    const caption =
+      `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n\n` +
+      `🔁 ${userPlaycount}\n🌍 ${globalPlaycount}\n👥 ${globalListeners}`
 
- 
+    await conn.sendMessage(m.chat, {
+      image: buffer,
+      caption,
+      mentions: conn.parseMention(caption),
+      buttons: [
+        {
+          buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
+          buttonText: { displayText: "🔥" },
+          type: 1
+        }
+      ],
+      headerType: 4
+    })
+    return
+  }
+
   if (command === 'cronologia') {
     const tracks = await getRecentTracks(user, 5)
     if (!tracks.length) return conn.sendMessage(m.chat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐜𝐫𝐨𝐧𝐨𝐥𝐨𝐠𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
