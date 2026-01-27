@@ -1,104 +1,98 @@
 import fs from 'fs';
 
-let handler = async (m, { conn, args }) => {
-    try {
-        // 1. Ottieni tutti gli utenti dal database
-        const allUsers = global.db.data.users || {};
-        
-        // 2. Ottieni i partecipanti del gruppo corrente
-        const groupData = await conn.groupMetadata(m.chat);
-        const groupParticipants = groupData.participants || [];
-        
-        // 3. Prepara l'array con i dati
-        let topData = [];
-        
-        for (let participant of groupParticipants) {
-            const userJid = participant.id;
-            
-            // Salta il bot stesso
-            if (userJid === conn.user.jid) continue;
-            
-            // Cerca i dati dell'utente nel database
-            const userData = allUsers[userJid];
-            const messaggi = userData?.messaggi || 0;
-            
-            topData.push({
-                jid: userJid,
-                name: participant.name || participant.notify || userJid.split('@')[0],
-                messaggi: messaggi
-            });
-        }
-        
-        // 4. Ordina dal più alto al più basso
-        topData.sort((a, b) => b.messaggi - a.messaggi);
-        
-        // 5. Filtra chi ha 0 messaggi (opzionale, commenta se vuoi tutti)
-        topData = topData.filter(user => user.messaggi > 0);
-        
-        if (topData.length === 0) {
-            return m.reply("📭 Nessun utente ha messaggi registrati in questo gruppo!");
-        }
-        
-        // 6. Limita i risultati
-        let limit = 10;
-        if (args[0]) {
-            const num = parseInt(args[0]);
-            if ([10, 20, 50, 100].includes(num)) limit = num;
-        }
-        
-        const topResults = topData.slice(0, limit);
-        
-        // 7. Crea il messaggio della classifica
-        let leaderboard = "🏆 *CLASSIFICA MESSAGGI* 🏆\n\n";
-        let mentions = [];
-        
-        topResults.forEach((user, index) => {
-            // Medaglie per i primi 3
-            let medal = "▫️";
-            if (index === 0) medal = "🥇";
-            else if (index === 1) medal = "🥈";
-            else if (index === 2) medal = "🥉";
-            else if (index < 10) medal = `${index + 1}️⃣`;
-            
-            leaderboard += `${medal} *${index + 1}.* @${user.jid.split('@')[0]}\n`;
-            leaderboard += `   📊 ${user.messaggi} messaggi\n\n`;
-            mentions.push(user.jid);
-        });
-        
-        // 8. Trova la posizione dell'utente che ha eseguito il comando
-        const userIndex = topData.findIndex(user => user.jid === m.sender);
-        const userPosition = userIndex + 1;
-        
-        let userStats = "";
-        if (userPosition > 0) {
-            const userMessages = topData[userIndex].messaggi;
-            userStats = `\n─────────────────\n`;
-            userStats += `📈 *La tua posizione:* ${userPosition}° / ${topData.length}\n`;
-            userStats += `💬 *I tuoi messaggi:* ${userMessages}`;
-        } else {
-            userStats = `\n─────────────────\n`;
-            userStats += `📭 *Non sei in classifica*\n`;
-            userStats += `💬 Invia più messaggi per apparire!`;
-        }
-        
-        // 9. Crea il messaggio finale
-        const finalMessage = leaderboard + userStats;
-        
-        // 10. Invia il messaggio con menzioni
-        await conn.sendMessage(m.chat, {
-            text: finalMessage,
-            mentions: mentions
-        }, { quoted: m });
-        
-    } catch (error) {
-        console.error("❌ Errore nel comando top:", error);
-        m.reply("❌ Si è verificato un errore durante la generazione della classifica.");
+let handler = async (m, { conn, args, participants }) => {
+    const users = global.db.data.users || {};
+
+    // DEBUG: mostra tutti gli utenti nel database
+    console.log('=== DEBUG TOP ===');
+    console.log('Utenti nel DB:', Object.keys(users).length);
+    
+    // Mostra i primi 5 utenti con i loro messaggi
+    Object.keys(users).slice(0, 5).forEach(jid => {
+        const user = users[jid];
+        console.log(`${jid.split('@')[0]}: ${user.messaggi || 0} messaggi`);
+    });
+
+    // Prepara i dati per la classifica
+    let usersData = participants
+        .filter(p => p.id !== conn.user.jid) // escludi bot
+        .map(p => {
+            const user = users[p.id] || {};
+            return {
+                messaggi: user.messaggi || 0,
+                jid: p.id,
+                name: p.name || p.id.split('@')[0]
+            };
+        })
+        .filter(user => user.messaggi > 0); // mostra solo chi ha messaggi
+
+    console.log('Utenti con messaggi > 0:', usersData.length);
+    console.log('==================');
+
+    let count = 10;
+    if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
+
+    let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi).slice(0, count);
+
+    if (sorted.length === 0) {
+        return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
     }
+
+    let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
+    let mentions = [];
+    let userPosition = null;
+
+    sorted.forEach((user, i) => {
+        let medal = "🏅";
+        if (i === 0) medal = "🥇";
+        else if (i === 1) medal = "🥈";
+        else if (i === 2) medal = "🥉";
+
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
+        mentions.push(user.jid);
+
+        if (user.jid === m.sender) userPosition = i + 1;
+    });
+
+    // Trova la posizione esatta dell'utente anche se non è in top 10
+    if (!userPosition) {
+        const allSorted = usersData.sort((a, b) => b.messaggi - a.messaggi);
+        const exactIndex = allSorted.findIndex(u => u.jid === m.sender);
+        if (exactIndex !== -1) {
+            userPosition = exactIndex + 1;
+        }
+    }
+
+    let totalPlayers = participants.length - 1; // -1 per il bot
+    let userMessage = userPosition
+        ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
+        : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
+
+    const profileBuffer = fs.readFileSync('./icone/messaggi.png');
+
+    const quotedMessage = {
+        key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
+        message: {
+            locationMessage: {
+                name: "Top Messaggi",
+                jpegThumbnail: profileBuffer,
+                vcard: `BEGIN:VCARD
+VERSION:3.0
+N:Sy;Bot;;;
+FN:y
+item1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}
+item1.X-ABLabel:Ponsel
+END:VCARD`
+            }
+        },
+        participant: "0@s.whatsapp.net"
+    };
+
+    await conn.sendMessage(m.chat, {
+        text: message + `\n\n${userMessage}`,
+        mentions: mentions
+    }, { quoted: quotedMessage });
 };
 
-handler.help = ['top'];
-handler.tags = ['group'];
-handler.command = ['top', 'classifica', 'leaderboard'];
-handler.group = true;
-
+handler.command = /^top$/i;
 export default handler;
