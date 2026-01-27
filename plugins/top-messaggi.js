@@ -1,33 +1,17 @@
+
 import fs from 'fs';
 
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
-    // DEBUG: mostra tutti gli utenti nel database
-    console.log('=== DEBUG TOP ===');
-    console.log('Utenti nel DB:', Object.keys(users).length);
-    
-    // Mostra i primi 5 utenti con i loro messaggi
-    Object.keys(users).slice(0, 5).forEach(jid => {
-        const user = users[jid];
-        console.log(`${jid.split('@')[0]}: ${user.messaggi || 0} messaggi`);
+    participants.forEach(p => {
+        if (!users[p.id]) users[p.id] = { messaggi: 0 };
+        if (typeof users[p.id].messaggi !== 'number') users[p.id].messaggi = 0;
     });
 
-    // Prepara i dati per la classifica
     let usersData = participants
-        .filter(p => p.id !== conn.user.jid) // escludi bot
-        .map(p => {
-            const user = users[p.id] || {};
-            return {
-                messaggi: user.messaggi || 0,
-                jid: p.id,
-                name: p.name || p.id.split('@')[0]
-            };
-        })
-        .filter(user => user.messaggi > 0); // mostra solo chi ha messaggi
-
-    console.log('Utenti con messaggi > 0:', usersData.length);
-    console.log('==================');
+        .filter(p => p.id !== conn.user.jid)
+        .map(p => ({ ...users[p.id], jid: p.id }));
 
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
@@ -54,16 +38,7 @@ let handler = async (m, { conn, args, participants }) => {
         if (user.jid === m.sender) userPosition = i + 1;
     });
 
-    // Trova la posizione esatta dell'utente anche se non è in top 10
-    if (!userPosition) {
-        const allSorted = usersData.sort((a, b) => b.messaggi - a.messaggi);
-        const exactIndex = allSorted.findIndex(u => u.jid === m.sender);
-        if (exactIndex !== -1) {
-            userPosition = exactIndex + 1;
-        }
-    }
-
-    let totalPlayers = participants.length - 1; // -1 per il bot
+    let totalPlayers = participants.length;
     let userMessage = userPosition
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
