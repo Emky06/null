@@ -77,6 +77,27 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
       return
     }
 
+    if (command === 'fire') {
+  const [target, track] = text.split('|').map(t => t.trim())
+
+  if (target === m.sender) {
+    await conn.sendMessage(m.chat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: m })
+    return
+  }
+
+  if (!global.db.data.users[target]) return
+
+  global.db.data.users[target].fuochi =
+    (global.db.data.users[target].fuochi || 0) + 1
+
+  await conn.sendMessage(m.chat, {
+    text: `🔥 @${m.sender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 𝐥𝐢𝐤𝐞 𝐚 *"${track}"* 𝐝𝐢 @${target.split('@')[0]}`,
+    mentions: [m.sender, target]
+  }, { quoted: m })
+
+  return
+}
+
     setLastfmUsername(m.sender, username)
     await conn.sendMessage(m.chat, { text: `✅ 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 *${username}* 𝐬𝐚𝐥𝐯𝐚𝐭𝐨!` })
     return
@@ -145,27 +166,7 @@ await conn.sendMessage(
   return
 }
 
-  if (command === 'fire') {
-  const [target, track] = text.split('|').map(t => t.trim())
-
-  if (target === m.sender) {
-    await conn.sendMessage(m.chat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: m })
-    return
-  }
-
-  if (!global.db.data.users[target]) return
-
-  global.db.data.users[target].fuochi =
-    (global.db.data.users[target].fuochi || 0) + 1
-
-  await conn.sendMessage(m.chat, {
-    text: `🔥 @${m.sender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 𝐥𝐢𝐤𝐞 𝐚 *"${track}"* 𝐝𝐢 @${target.split('@')[0]}`,
-    mentions: [m.sender, target]
-  }, { quoted: m })
-
-  return
-}
-
+ 
   if (command === 'cronologia') {
     const tracks = await getRecentTracks(user, 5)
     if (!tracks.length) return conn.sendMessage(m.chat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐜𝐫𝐨𝐧𝐨𝐥𝐨𝐠𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
