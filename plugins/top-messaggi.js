@@ -109,7 +109,7 @@ let handler = async (m, { conn, args }) => {
         console.log(`📤 Invio messaggio con ${sorted.length} utenti nella top...`);
         
         // Prepara l'anteprima
-        const profileBuffer = fs.readFileSync('./icone/messaggi.png');
+        const profileBuffer = fs.readFileSync('./icone/top.png');
         
         const quotedMessage = {
             key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
