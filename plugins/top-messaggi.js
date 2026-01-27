@@ -63,7 +63,7 @@ let handler = async (m, { conn, args, participants }) => {
         // Formatta il nome per la visualizzazione
         const formattedName = displayName.replace(/[@]/g, '');
         
-        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} (${formattedName}) ➠ ${user.messaggi} messaggi\n`;
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
         mentions.push(user.jid);
 
         if (user.jid === m.sender) userPosition = i + 1;
