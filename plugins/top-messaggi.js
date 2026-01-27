@@ -3,17 +3,16 @@ import fs from 'fs';
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
-    // Ottieni tutti i JID dei partecipanti come nell'esempio
+    // Ottieni tutti i JID dei partecipanti
     const participantJids = participants.map(p => p.jid).filter(jid => jid);
 
     // Assicuriamoci che tutti i partecipanti siano nel database
     participantJids.forEach(jid => {
         if (!users[jid]) {
+            const participant = participants.find(p => p.jid === jid);
             users[jid] = { 
                 messaggi: 0,
-                name: participants.find(p => p.jid === jid)?.notify || 
-                      participants.find(p => p.jid === jid)?.name || 
-                      jid.split('@')[0]
+                name: participant?.notify || participant?.name || jid.split('@')[0]
             };
         }
         if (typeof users[jid].messaggi !== 'number') users[jid].messaggi = 0;
@@ -22,18 +21,25 @@ let handler = async (m, { conn, args, participants }) => {
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    // Filtra e ordina gli utenti usando jid come nell'esempio
+    // Filtra e ordina gli utenti
     let usersData = participantJids
         .filter(jid => {
             // Escludi il bot
             const isBot = jid === conn.user.jid;
             return !isBot && users[jid];
         })
-        .map(jid => ({
-            ...users[jid],
-            jid: jid, // Usa il jid corretto
-            messaggi: users[jid].messaggi || 0
-        }))
+        .map(jid => {
+            const participant = participants.find(p => p.jid === jid);
+            const userData = users[jid];
+            
+            return {
+                ...userData,
+                jid: jid,
+                messaggi: userData.messaggi || 0,
+                // Ottieni il nome reale dal partecipante se disponibile
+                realName: participant?.notify || participant?.name || userData.name || jid.split('@')[0]
+            };
+        })
         .sort((a, b) => b.messaggi - a.messaggi)
         .slice(0, count);
 
@@ -51,9 +57,13 @@ let handler = async (m, { conn, args, participants }) => {
         else if (i === 1) medal = "🥈";
         else if (i === 2) medal = "🥉";
 
-        // Usa il nome dal database o il JID
-        const name = user.name || `@${user.jid.split('@')[0]}`;
-        message += `${medal} *${i + 1}.* ${name} ➠ ${user.messaggi} messaggi\n`;
+        // Usa il nome reale e mantieni il tag corretto
+        const displayName = user.realName || `@${user.jid.split('@')[0]}`;
+        
+        // Formatta il nome per la visualizzazione
+        const formattedName = displayName.replace(/[@]/g, '');
+        
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} (${formattedName}) ➠ ${user.messaggi} messaggi\n`;
         mentions.push(user.jid);
 
         if (user.jid === m.sender) userPosition = i + 1;
