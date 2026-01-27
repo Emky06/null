@@ -151,12 +151,12 @@ mentions: conn.parseMention(caption),
 footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
 buttons: [
 {
-buttonId: ${usedPrefix}fire ${m.sender}|${track.name},
+buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
 buttonText: { displayText: "🔥" },
 type: 1
 },
 {
-buttonId: ${usedPrefix}play1 ${track.artist['#text']} ${track.name},
+buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
 buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
 type: 1
 }
