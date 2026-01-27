@@ -53,13 +53,14 @@ async function getTrackInfo(username, artist, track) {
   return json?.track
 }
 
+/* ===== FUNZIONE IMMAGINE (FIX) ===== */
 async function generateTrackImage(track) {
   const width = 600
   const height = 600
 
   const imageUrl =
-  track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
-  path.join(__dirname, '../icone/cur.jpg')
+    track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
+    path.join(__dirname, '../icone/cur.jpg')
 
   const img = await Jimp.read(imageUrl)
   img.cover(width, height)
@@ -112,7 +113,10 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 @${m.sender.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
 
 📱 𝐔𝐬𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨:
-.setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>`,
+.setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>
+
+💡 𝐍𝐨𝐧 𝐡𝐚𝐢 Last.fm?
+𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢 𝐬𝐮𝐥 𝐬𝐢𝐭𝐨, 𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐢 𝐬𝐮 𝐒𝐩𝐨𝐭𝐢𝐟𝐲 𝐞 𝐢𝐧𝐢𝐳𝐢𝐚 𝐚 𝐟𝐚𝐫𝐞 𝐬𝐜𝐫𝐨𝐛𝐛𝐥𝐢𝐧𝐠 𝐝𝐞𝐥𝐥𝐚 𝐭𝐮𝐚 𝐦𝐮𝐬𝐢𝐜𝐚!`,
         mentions: [jid]
       },
       { quoted: m }
@@ -131,18 +135,28 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 
     const buffer = await generateTrackImage(track)
 
-    const caption =
-      `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n\n` +
-      `🔁 ${userPlaycount}\n🌍 ${globalPlaycount}\n👥 ${globalListeners}`
+    const caption = track['@attr']?.nowplaying === 'true'
+      ? `🎧 𝐈𝐧 𝐫𝐢𝐩𝐫𝐨𝐝𝐮𝐳𝐢𝐨𝐧𝐞 𝐨𝐫𝐚 • @${m.sender.split('@')[0]}\n\n` +
+        `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n💿 ${track.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
+        `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
+      : `⏹️ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐛𝐫𝐚𝐧𝐨 𝐝𝐢 @${m.sender.split('@')[0]}:\n\n` +
+        `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n💿 ${track.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
+        `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
 
     await conn.sendMessage(m.chat, {
       image: buffer,
       caption,
       mentions: conn.parseMention(caption),
+      footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       buttons: [
         {
           buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
           buttonText: { displayText: "🔥" },
+          type: 1
+        },
+        {
+          buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
+          buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
           type: 1
         }
       ],
