@@ -229,7 +229,6 @@ if (opts['autocleartmp'] && (global.support || {}).find) (tmp.forEach((filename)
 }
 }
 
-if (opts['server']) (await import('./server.js')).default(global.conn, PORT);
 
 function clearTmp() {
 const tmp = [join(__dirname, './tmp')];
