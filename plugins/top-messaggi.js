@@ -1,18 +1,15 @@
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
 let handler = async (m, { conn, args, participants }) => {
     const users = global.db.data.users || {};
 
-    // Ottieni tutti i JID dei partecipanti
     const participantJids = participants.map(p => p.jid).filter(jid => jid);
 
-    // Assicuriamoci che tutti i partecipanti siano nel database
     participantJids.forEach(jid => {
         if (!users[jid]) {
-            const participant = participants.find(p => p.jid === jid);
             users[jid] = { 
-                messaggi: 0,
-                name: participant?.notify || participant?.name || jid.split('@')[0]
+                messaggi: 0
             };
         }
         if (typeof users[jid].messaggi !== 'number') users[jid].messaggi = 0;
@@ -21,30 +18,17 @@ let handler = async (m, { conn, args, participants }) => {
     let count = 10;
     if (args[0] && ['10', '50', '100'].includes(args[0])) count = parseInt(args[0]);
 
-    // Filtra e ordina gli utenti
     let usersData = participantJids
-        .filter(jid => {
-            // Escludi il bot
-            const isBot = jid === conn.user.jid;
-            return !isBot && users[jid];
-        })
-        .map(jid => {
-            const participant = participants.find(p => p.jid === jid);
-            const userData = users[jid];
-            
-            return {
-                ...userData,
-                jid: jid,
-                messaggi: userData.messaggi || 0,
-                // Ottieni il nome reale dal partecipante se disponibile
-                realName: participant?.notify || participant?.name || userData.name || jid.split('@')[0]
-            };
-        })
+        .filter(jid => jid !== conn.user.jid && users[jid])
+        .map(jid => ({
+            jid: jid,
+            messaggi: users[jid].messaggi || 0
+        }))
         .sort((a, b) => b.messaggi - a.messaggi)
         .slice(0, count);
 
     if (usersData.length === 0) {
-        return conn.reply(m.chat, "⚠︎ Nessun utente ha inviato messaggi nel gruppo!", m);
+        return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐡𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨!", m);
     }
 
     let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
@@ -57,13 +41,7 @@ let handler = async (m, { conn, args, participants }) => {
         else if (i === 1) medal = "🥈";
         else if (i === 2) medal = "🥉";
 
-        // Usa il nome reale e mantieni il tag corretto
-        const displayName = user.realName || `@${user.jid.split('@')[0]}`;
-        
-        // Formatta il nome per la visualizzazione
-        const formattedName = displayName.replace(/[@]/g, '');
-        
-        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} messaggi\n`;
+        message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\n`;
         mentions.push(user.jid);
 
         if (user.jid === m.sender) userPosition = i + 1;
@@ -80,7 +58,7 @@ let handler = async (m, { conn, args, participants }) => {
         key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
         message: {
             locationMessage: {
-                name: "Top Messaggi",
+                name: "𝐓𝐨𝐩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢 ",
                 jpegThumbnail: profileBuffer,
                 vcard: `BEGIN:VCARD
 VERSION:3.0
