@@ -67,7 +67,7 @@ if (!imageUrl) return null
 const img = await Jimp.read(imageUrl)
 img.cover(width, height)
 return await img.getBufferAsync(Jimp.MIME_JPEG)
-
+}
 
 const handler = async (m, { conn, args, usedPrefix, text, command }) => {
   if (command === 'setuser') {
