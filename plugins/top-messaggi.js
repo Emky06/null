@@ -2,146 +2,103 @@ import fs from 'fs';
 
 let handler = async (m, { conn, args }) => {
     try {
-        console.log('🚀 AVVIO COMANDO TOP');
+        // 1. Ottieni tutti gli utenti dal database
+        const allUsers = global.db.data.users || {};
         
-        // Prendi i dati del database
-        const users = global.db.data?.users || {};
-        console.log(`📊 Totale utenti nel DB: ${Object.keys(users).length}`);
+        // 2. Ottieni i partecipanti del gruppo corrente
+        const groupData = await conn.groupMetadata(m.chat);
+        const groupParticipants = groupData.participants || [];
         
-        // Prendi i metadati del gruppo
-        let groupMetadata;
-        try {
-            groupMetadata = await conn.groupMetadata(m.chat);
-            console.log(`👥 Partecipanti nel gruppo: ${groupMetadata.participants.length}`);
-        } catch (error) {
-            console.error('❌ Errore nel prendere i metadati:', error);
-            return m.reply("❌ Errore nel recuperare i dati del gruppo!");
-        }
+        // 3. Prepara l'array con i dati
+        let topData = [];
         
-        const participants = groupMetadata.participants || [];
-        
-        // Crea l'array dei dati
-        let usersData = [];
-        let foundCurrentUser = false;
-        
-        for (let participant of participants) {
-            const userId = participant.id;
+        for (let participant of groupParticipants) {
+            const userJid = participant.id;
             
-            // Salta il bot
-            if (userId === conn.user.jid) continue;
+            // Salta il bot stesso
+            if (userJid === conn.user.jid) continue;
             
-            const userData = users[userId] || {};
-            const messaggiCount = userData.messaggi || 0;
+            // Cerca i dati dell'utente nel database
+            const userData = allUsers[userJid];
+            const messaggi = userData?.messaggi || 0;
             
-            // DEBUG: mostra l'utente corrente
-            if (userId === m.sender) {
-                console.log(`🎯 UTENTE CORRENTE: ${userId.split('@')[0]} - ${messaggiCount} messaggi`);
-                foundCurrentUser = true;
-            }
-            
-            usersData.push({
-                messaggi: messaggiCount,
-                jid: userId,
-                name: participant.name || participant.notify || userId.split('@')[0]
+            topData.push({
+                jid: userJid,
+                name: participant.name || participant.notify || userJid.split('@')[0],
+                messaggi: messaggi
             });
         }
         
-        if (!foundCurrentUser) {
-            console.log(`⚠️ Utente corrente ${m.sender.split('@')[0]} non trovato nei partecipanti!`);
+        // 4. Ordina dal più alto al più basso
+        topData.sort((a, b) => b.messaggi - a.messaggi);
+        
+        // 5. Filtra chi ha 0 messaggi (opzionale, commenta se vuoi tutti)
+        topData = topData.filter(user => user.messaggi > 0);
+        
+        if (topData.length === 0) {
+            return m.reply("📭 Nessun utente ha messaggi registrati in questo gruppo!");
         }
         
-        console.log(`📋 Dati elaborati: ${usersData.length} utenti`);
-        
-        // Filtra se vuoi mostrare solo chi ha messaggi > 0 (commenta se vuoi tutti)
-        usersData = usersData.filter(user => user.messaggi > 0);
-        console.log(`📋 Utenti con messaggi > 0: ${usersData.length}`);
-        
-        if (usersData.length === 0) {
-            return m.reply("⚠️ Nessun utente ha inviato messaggi nel gruppo!");
+        // 6. Limita i risultati
+        let limit = 10;
+        if (args[0]) {
+            const num = parseInt(args[0]);
+            if ([10, 20, 50, 100].includes(num)) limit = num;
         }
         
-        // Ordina per messaggi
-        let sorted = usersData.sort((a, b) => b.messaggi - a.messaggi);
+        const topResults = topData.slice(0, limit);
         
-        // Limita il numero
-        let count = 10;
-        if (args[0] && ['10', '50', '100'].includes(args[0])) {
-            count = parseInt(args[0]);
-        }
-        sorted = sorted.slice(0, count);
-        
-        // Crea il messaggio
-        let message = `🏆 𝕋𝕆ℙ 𝕄𝔼𝕊𝕊𝔸𝔾𝔾𝕀 🏆\n\n`;
+        // 7. Crea il messaggio della classifica
+        let leaderboard = "🏆 *CLASSIFICA MESSAGGI* 🏆\n\n";
         let mentions = [];
-        let userPosition = null;
         
-        sorted.forEach((user, i) => {
-            let medal = "🏅";
-            if (i === 0) medal = "🥇";
-            else if (i === 1) medal = "🥈";
-            else if (i === 2) medal = "🥉";
+        topResults.forEach((user, index) => {
+            // Medaglie per i primi 3
+            let medal = "▫️";
+            if (index === 0) medal = "🥇";
+            else if (index === 1) medal = "🥈";
+            else if (index === 2) medal = "🥉";
+            else if (index < 10) medal = `${index + 1}️⃣`;
             
-            const username = user.name || user.jid.split('@')[0];
-            message += `${medal} *${i + 1}.* @${username} ➠ ${user.messaggi} messaggi\n`;
+            leaderboard += `${medal} *${index + 1}.* @${user.jid.split('@')[0]}\n`;
+            leaderboard += `   📊 ${user.messaggi} messaggi\n\n`;
             mentions.push(user.jid);
-            
-            if (user.jid === m.sender) {
-                userPosition = i + 1;
-                console.log(`🏆 Posizione trovata: ${userPosition}°`);
-            }
         });
         
-        // Trova la posizione esatta se non è nella top
-        if (userPosition === null) {
-            const allSorted = usersData.sort((a, b) => b.messaggi - a.messaggi);
-            const exactPosition = allSorted.findIndex(user => user.jid === m.sender) + 1;
-            if (exactPosition > 0) {
-                userPosition = exactPosition;
-                console.log(`📊 Posizione esatta fuori top: ${userPosition}°`);
-            }
+        // 8. Trova la posizione dell'utente che ha eseguito il comando
+        const userIndex = topData.findIndex(user => user.jid === m.sender);
+        const userPosition = userIndex + 1;
+        
+        let userStats = "";
+        if (userPosition > 0) {
+            const userMessages = topData[userIndex].messaggi;
+            userStats = `\n─────────────────\n`;
+            userStats += `📈 *La tua posizione:* ${userPosition}° / ${topData.length}\n`;
+            userStats += `💬 *I tuoi messaggi:* ${userMessages}`;
+        } else {
+            userStats = `\n─────────────────\n`;
+            userStats += `📭 *Non sei in classifica*\n`;
+            userStats += `💬 Invia più messaggi per apparire!`;
         }
         
-        let totalPlayers = participants.length - 1; // -1 per escludere il bot
-        let userMessage = userPosition
-            ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
-            : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
+        // 9. Crea il messaggio finale
+        const finalMessage = leaderboard + userStats;
         
-        console.log(`📤 Invio messaggio con ${sorted.length} utenti nella top...`);
-        
-        // Prepara l'anteprima
-        const profileBuffer = fs.readFileSync('./icone/top.png');
-        
-        const quotedMessage = {
-            key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
-            message: {
-                locationMessage: {
-                    name: "Top Messaggi",
-                    jpegThumbnail: profileBuffer,
-                    vcard: `BEGIN:VCARD
-VERSION:3.0
-N:Sy;Bot;;;
-FN:y
-item1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}
-item1.X-ABLabel:Ponsel
-END:VCARD`
-                }
-            },
-            participant: "0@s.whatsapp.net"
-        };
-        
+        // 10. Invia il messaggio con menzioni
         await conn.sendMessage(m.chat, {
-            text: message + `\n\n${userMessage}`,
+            text: finalMessage,
             mentions: mentions
-        }, { quoted: quotedMessage });
-        
-        console.log('✅ Comando top completato con successo!');
+        }, { quoted: m });
         
     } catch (error) {
-        console.error('❌ Errore critico in top:', error);
-        m.reply(`❌ Errore: ${error.message}`);
+        console.error("❌ Errore nel comando top:", error);
+        m.reply("❌ Si è verificato un errore durante la generazione della classifica.");
     }
 };
 
-handler.command = /^top$/i;
+handler.help = ['top'];
+handler.tags = ['group'];
+handler.command = ['top', 'classifica', 'leaderboard'];
 handler.group = true;
+
 export default handler;
