@@ -60,12 +60,14 @@ async function getTrackInfo(username, artist, track) {
 async function generateTrackImage(track) {
   const width = 600
   const height = 600
-  const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text']
-
-if (!imageUrl) return null
+  async function generateTrackImage(track) {
+const width = 600
+const height = 600
+const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text'] || 'https://via.placeholder.com/600x300'
 
 const img = await Jimp.read(imageUrl)
 img.cover(width, height)
+
 return await img.getBufferAsync(Jimp.MIME_JPEG)
 }
 
@@ -77,7 +79,12 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
       return
     }
 
-    if (command === 'fire') {
+    setLastfmUsername(m.sender, username)
+    await conn.sendMessage(m.chat, { text: `✅ 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 *${username}* 𝐬𝐚𝐥𝐯𝐚𝐭𝐨!` })
+    return
+  }
+
+  if (command === 'fire') {
   const [target, track] = text.split('|').map(t => t.trim())
 
   if (target === m.sender) {
@@ -97,11 +104,6 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 
   return
 }
-
-    setLastfmUsername(m.sender, username)
-    await conn.sendMessage(m.chat, { text: `✅ 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 *${username}* 𝐬𝐚𝐥𝐯𝐚𝐭𝐨!` })
-    return
-  }
 
   const user = getLastfmUsername(m.sender)
   if (!user) {
@@ -142,30 +144,26 @@ await conn.sendMessage(
       `🎵 *${track.name}*\n🎤 ${track.artist['#text']}\n💿 ${track.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
       `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
 
-  const buffer = await generateTrackImage(track)
-
-const messageOptions = {
-  caption,
-  mentions: conn.parseMention(caption),
-  footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-  buttons: [
-    {
-      buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
-      buttonText: { displayText: "🔥" },
-      type: 1
-    },
-    {
-      buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
-      buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
-      type: 1
-    }
-  ]
+  await conn.sendMessage(m.chat, {
+image: buffer,
+caption,
+mentions: conn.parseMention(caption),
+footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
+buttons: [
+{
+buttonId: ${usedPrefix}fire ${m.sender}|${track.name},
+buttonText: { displayText: "🔥" },
+type: 1
+},
+{
+buttonId: ${usedPrefix}play1 ${track.artist['#text']} ${track.name},
+buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
+type: 1
 }
-
-if (buffer) messageOptions.image = buffer 
-
-await conn.sendMessage(m.chat, messageOptions)
-  return
+],
+headerType: 4
+})
+return
 }
 
  
