@@ -62,14 +62,8 @@ if (!isNumber(user.regTime)) user.regTime = -1
                 if (!('amici' in user)) user.amici = []
               if (!('muto' in user)) user.muto = false
 
-
-if (m.text && !m.isBaileys && !m.fromMe) {
-    user.messaggi = (user.messaggi || 0) + 1;
-    console.log(`📈 [CONTATORE] ${m.sender.split('@')[0]}: ${user.messaggi} messaggi`);
-}
-
           } else global.db.data.users[m.sender] = {
-                  messaggi: 1,
+                  messaggi: 0,
                   command: 0,
                   money: 0,
                   bank: 0,
@@ -494,7 +488,7 @@ remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
                 user.exp += m.exp
                 user.limit -= m.limit * 1
                 user.money -= m.money * 1 
-              //user.messaggi +=1
+                user.messaggi +=1
                 chat.messaggi +=1
             }
 
