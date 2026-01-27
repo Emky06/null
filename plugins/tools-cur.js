@@ -60,13 +60,13 @@ async function getTrackInfo(username, artist, track) {
 async function generateTrackImage(track) {
   const width = 600
   const height = 600
-  const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text'] || 'https://via.placeholder.com/600x300'
+  const imageUrl = track.image?.find(img => img.size === 'extralarge')?.['#text']
 
-  const img = await Jimp.read(imageUrl)
-  img.cover(width, height)
+if (!imageUrl) return null
 
-  return await img.getBufferAsync(Jimp.MIME_JPEG)
-}
+const img = await Jimp.read(imageUrl)
+img.cover(width, height)
+return await img.getBufferAsync(Jimp.MIME_JPEG)
 
 
 const handler = async (m, { conn, args, usedPrefix, text, command }) => {
@@ -144,25 +144,27 @@ await conn.sendMessage(
 
   const buffer = await generateTrackImage(track)
 
-  await conn.sendMessage(m.chat, {
-    image: buffer,
-    caption,
-    mentions: conn.parseMention(caption),
-    footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
-    buttons: [
-  {
-    buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
-    buttonText: { displayText: "🔥" },
-    type: 1
-  },
-  {
-    buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
-    buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
-    type: 1
-  }
-],
-    headerType: 4
-  })
+  const messageOptions = {
+  caption,
+  mentions: conn.parseMention(caption),
+  footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
+  buttons: [
+    {
+      buttonId: `${usedPrefix}fire ${m.sender}|${track.name}`,
+      buttonText: { displayText: "🔥" },
+      type: 1
+    },
+    {
+      buttonId: `${usedPrefix}play1 ${track.artist['#text']} ${track.name}`,
+      buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
+      type: 1
+    }
+  ]
+}
+
+if (buffer) messageOptions.image = buffer
+
+await conn.sendMessage(m.chat, messageOptions)
   return
 }
 
