@@ -94,7 +94,7 @@ let handler = async (m, { conn, args }) => {
             : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
         
         // 8. PREPARA L'ANTEPRIMA
-        const profileBuffer = fs.readFileSync('./icone/messaggi.png');
+        const profileBuffer = fs.readFileSync('./icone/top.png');
         
         const quotedMessage = {
             key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
