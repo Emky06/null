@@ -11,10 +11,10 @@ let handler = async (m, { conn }) => {
         .slice(0, 10);
 
     if (classifica.length === 0) {
-        return conn.reply(m.chat, "⚠︎ Nessun giocatore ha ancora vinto una partita nel gioco delle bandiere!", m);
+        return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐯𝐢𝐧𝐭𝐨 𝐮𝐧𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚 𝐧𝐞𝐥 𝐠𝐢𝐨𝐜𝐨 𝐝𝐞𝐥𝐥𝐞 𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞!", m);
     }
 
-    let message = `🏆 𝕋𝕆ℙ 𝕍𝕀𝕋𝕋𝕆ℝ𝕀𝔼 𝔹𝔸ℕ𝔻𝕀𝔼ℝ𝔼 🏆\n\n`;
+    let message = `🏆 𝐓𝐨𝐩 𝟏𝟎 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐯𝐢𝐭𝐭𝐨𝐫𝐢𝐞 𝐧𝐞𝐥𝐥𝐞 𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞 🏆\n\n`;
     let mentions = [];
     let userPosition = null;
 
