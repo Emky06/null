@@ -10,7 +10,7 @@ export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, c
   let senderId = m.key.participant;
   let messageId = m.key.id;
 
-  let tiktokRegex = /(?:https?:\/\/)?(?:www\.)?(vm\.tiktok\.com|tiktok\.com)\/[^\s]*/i;
+  let tiktokRegex = /(?:https?:\/\/)?(?:www\.)?[^\/\s]*tiktok[^\/\s]*\/?[^\s]*/i;
   const isTiktokLink = tiktokRegex.exec(m.text);
   const avvisoTesto = '° 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐎';
 
