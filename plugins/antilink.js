@@ -126,7 +126,7 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
 
             const violation =
     site.name === '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄'
-        ? '𝐋𝐈𝐍𝐊 𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄\n𝐏𝐎𝐒𝐒𝐈𝐁𝐈𝐋𝐄 𝐐𝐑 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏'
+        ? '𝐋𝐈𝐍𝐊 𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄 𝐂𝐎𝐍 𝐏𝐎𝐒𝐒𝐈𝐁𝐈𝐋𝐄 𝐐𝐑 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏'
         : `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
 
            
