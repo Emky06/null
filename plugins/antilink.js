@@ -4,6 +4,7 @@ import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { downloadContentFromMessage } from '@whiskeysockets/baileys'
 
+// Canali permessi
 let allowedChannels = [
     'https://whatsapp.com/channel/0029VbAS02hBadmeRQCfCu2R',
 ]
@@ -14,11 +15,12 @@ let warnLinks = [
     { name: '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊', regex: /(?:https?:\/\/)?(?:www.)?short-link.me\/[^\s]+/i },
     { name: '𝐏𝐎𝐑𝐍𝐇𝐔𝐁', regex: /(?:https?:\/\/)?(?:www.)?(pornhub.com)/i },
     { name: '𝐎𝐍𝐋𝐘𝐅𝐀𝐍𝐒', regex: /(?:https?:\/\/)?(?:www.)?(onlyfans.com)/i },
+
+    { name: '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄', regex: /(?:https?:\/\/)?(?:www\.)?(imgur\.com|i\.imgur\.com|imgbb\.com|ibb\.co|postimg\.cc|prnt\.sc)\/[^\s]+/i },
 ]
 
 const linkRegex = /\bchat[\s.\u200B\u200C\u200D\uFEFF]*whatsapp[\s.\u200B\u200C\u200D\uFEFF]*com\/([0-9A-Za-z]{20,24})/i
 const channelRegex = /\bwhatsapp[\s.\u200B\u200C\u200D\uFEFF]*com\/channel\/([0-9A-Za-z]{20,24})/i
-const imageHostRegex = /(imgur\.com|i\.imgur\.com|ibb\.co|imgbb\.com|postimg\.cc|prnt\.sc)/i
 
 const imagePath = './icone/link.png'
 const thumbnail = fs.readFileSync(imagePath)
@@ -33,14 +35,14 @@ function normalizeText(text) {
 function extractText(msg) {
     if (!msg.message) return ''
     let result = ''
-    function recurse(obj) {
+    function recurse(obj, parentKey = '') {
         if (!obj) return
         if (typeof obj === 'string') {
             result += obj + ' '
         } else if (typeof obj === 'object') {
             for (let key in obj) {
-                if (key === 'quotedMessage') continue
-                recurse(obj[key])
+                if (key === 'quotedMessage') continue 
+                recurse(obj[key], key)
             }
         }
     }
@@ -48,74 +50,46 @@ function extractText(msg) {
     return result
 }
 
-function extractUrls(text) {
-    return text.match(/https?:\/\/[^\s]+/gi) || []
-}
-
 async function getMediaBuffer(message) {
-    try {
-        const msg =
-            message.message?.imageMessage ||
-            message.message?.videoMessage
+  try {
+    const msg =
+      message.message?.imageMessage ||
+      message.message?.videoMessage
 
-        if (!msg) return null
-        const type = msg.mimetype?.startsWith('video') ? 'video' : 'image'
-        const stream = await downloadContentFromMessage(msg, type)
+    if (!msg) return null
+    const type = msg.mimetype?.startsWith('video') ? 'video' : 'image'
+    const stream = await downloadContentFromMessage(msg, type)
 
-        let buffer = Buffer.from([])
-        for await (const chunk of stream) {
-            buffer = Buffer.concat([buffer, chunk])
-        }
-        return buffer
-    } catch {
-        return null
+    let buffer = Buffer.from([])
+    for await (const chunk of stream) {
+      buffer = Buffer.concat([buffer, chunk])
     }
-}
-
-async function downloadImageFromUrl(url) {
-    try {
-        if (/imgur\.com\/[^.]+$/i.test(url)) {
-            url = url.replace('imgur.com', 'i.imgur.com') + '.jpg'
-        }
-
-        const res = await fetch(url)
-        if (!res.ok) return null
-
-        const contentType = res.headers.get('content-type')
-        if (!contentType?.startsWith('image')) return null
-
-        return await res.buffer()
-    } catch {
-        return null
-    }
-}
-
-async function downloadImagesFromImgur(url) {
-    try {
-        const res = await fetch(url)
-        if (!res.ok) return []
-
-        const html = await res.text()
-        const matches = [...html.matchAll(/https:\/\/i\.imgur\.com\/[A-Za-z0-9]+\.jpg/g)]
-        return [...new Set(matches.map(m => m[0]))]
-    } catch {
-        return []
-    }
+    return buffer
+  } catch (e) {
+    console.error('Errore nel download media:', e)
+    return null
+  }
 }
 
 async function readQRCode(imageBuffer) {
     try {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 5000)
+
         const formData = new FormData()
         formData.append('file', imageBuffer, 'image.jpg')
 
         const response = await fetch('https://api.qrserver.com/v1/read-qr-code/', {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: controller.signal
         })
 
+        clearTimeout(timeout)
         const data = await response.json()
         return data?.[0]?.symbol?.[0]?.data || null
-    } catch {
+    } catch (e) {
+        console.error('Errore lettura QR:', e)
         return null
     }
 }
@@ -150,8 +124,12 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
                 return true
             }
 
-            const violation = `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
+            const violation =
+    site.name === '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄'
+        ? '𝐋𝐈𝐍𝐊 𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄\n𝐏𝐎𝐒𝐒𝐈𝐁𝐈𝐋𝐄 𝐐𝐑 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏'
+        : `𝐋𝐈𝐍𝐊 𝐃𝐈 ${site.name} 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎`
 
+           
             if (
                 site.name === '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
                 site.name === '𝐂𝐀𝐍𝐀𝐋𝐄 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏' ||
@@ -166,40 +144,6 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
         }
     }
 
-    const urls = extractUrls(rawText)
-    for (const url of urls) {
-        if (!imageHostRegex.test(url)) continue
-
-        let imageUrls = []
-
-        if (/imgur\.com\/a\/|imgur\.com\/gallery\//i.test(url)) {
-            imageUrls = await downloadImagesFromImgur(url)
-        } else {
-            imageUrls = [url]
-        }
-
-        for (const imgUrl of imageUrls) {
-            const imgBuffer = await downloadImageFromUrl(imgUrl)
-            if (!imgBuffer) continue
-
-            const qrData = await readQRCode(imgBuffer)
-            const qrText = qrData?.replace(/[\s\u200b\u200c\u200d\uFEFF]+/g, '') ?? ''
-
-            if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
-                if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
-
-                await handleKick({
-                    conn,
-                    msg,
-                    sender,
-                    messageId,
-                    violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
-                })
-                return false
-            }
-        }
-    }
-
     const media = await getMediaBuffer(msg)
     if (media) {
         const qrData = await readQRCode(media)
@@ -208,6 +152,7 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
         if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
             if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
 
+           
             await handleKick({
                 conn,
                 msg,
@@ -273,8 +218,8 @@ END:VCARD`
     } else {
         user.warn = 0
         user.warnReasons = []
-        await conn.sendMessage(msg.chat, {
-            text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈'
+        await conn.sendMessage(msg.chat, { 
+            text: '⛔ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 𝐃𝐎𝐏𝐎 𝟑 𝐀𝐕𝐕𝐄𝐑𝐓𝐈𝐌𝐄𝐍𝐓𝐈' 
         })
         await conn.groupParticipantsUpdate(msg.chat, [msg.sender], 'remove')
     }
