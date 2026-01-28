@@ -79,16 +79,27 @@ async function readQRCode(imageBuffer) {
         const formData = new FormData()
         formData.append('file', imageBuffer, 'image.jpg')
 
-        const response = await fetch('https://api.qrserver.com/v1/read-qr-code/', {
-            method: 'POST',
-            body: formData,
-            signal: controller.signal
-        })
+        let data
+        try {
+            const response = await fetch('https://api.qrserver.com/v1/read-qr-code/', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            })
 
-        clearTimeout(timeout)
-        const data = await response.json()
+            try {
+                data = await response.json()
+            } catch (e) {
+               
+                return null
+            }
+        } finally {
+            clearTimeout(timeout)
+        }
+
         return data?.[0]?.symbol?.[0]?.data || null
     } catch (e) {
+        
         console.error('Errore lettura QR:', e)
         return null
     }
