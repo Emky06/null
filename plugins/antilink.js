@@ -67,7 +67,7 @@ async function getMediaBuffer(message) {
             buffer = Buffer.concat([buffer, chunk])
         }
         return buffer
-    } catch (e) {
+    } catch {
         return null
     }
 }
@@ -85,8 +85,21 @@ async function downloadImageFromUrl(url) {
         if (!contentType?.startsWith('image')) return null
 
         return await res.buffer()
-    } catch (e) {
+    } catch {
         return null
+    }
+}
+
+async function downloadImagesFromImgur(url) {
+    try {
+        const res = await fetch(url)
+        if (!res.ok) return []
+
+        const html = await res.text()
+        const matches = [...html.matchAll(/https:\/\/i\.imgur\.com\/[A-Za-z0-9]+\.jpg/g)]
+        return [...new Set(matches.map(m => m[0]))]
+    } catch {
+        return []
     }
 }
 
@@ -102,7 +115,7 @@ async function readQRCode(imageBuffer) {
 
         const data = await response.json()
         return data?.[0]?.symbol?.[0]?.data || null
-    } catch (e) {
+    } catch {
         return null
     }
 }
@@ -157,23 +170,33 @@ export async function before(msg, { isAdmin, isBotAdmin, isPrems, conn }) {
     for (const url of urls) {
         if (!imageHostRegex.test(url)) continue
 
-        const imgBuffer = await downloadImageFromUrl(url)
-        if (!imgBuffer) continue
+        let imageUrls = []
 
-        const qrData = await readQRCode(imgBuffer)
-        const qrText = qrData?.replace(/[\s\u200b\u200c\u200d\uFEFF]+/g, '') ?? ''
+        if (/imgur\.com\/a\/|imgur\.com\/gallery\//i.test(url)) {
+            imageUrls = await downloadImagesFromImgur(url)
+        } else {
+            imageUrls = [url]
+        }
 
-        if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
-            if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
+        for (const imgUrl of imageUrls) {
+            const imgBuffer = await downloadImageFromUrl(imgUrl)
+            if (!imgBuffer) continue
 
-            await handleKick({
-                conn,
-                msg,
-                sender,
-                messageId,
-                violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
-            })
-            return false
+            const qrData = await readQRCode(imgBuffer)
+            const qrText = qrData?.replace(/[\s\u200b\u200c\u200d\uFEFF]+/g, '') ?? ''
+
+            if (qrData && (linkRegex.test(qrText) || channelRegex.test(qrText))) {
+                if (isAdmin || isPrems || !isBotAdmin || !botSettings.restrict) return true
+
+                await handleKick({
+                    conn,
+                    msg,
+                    sender,
+                    messageId,
+                    violation: '𝐐𝐑 𝐂𝐎𝐍 𝐋𝐈𝐍𝐊 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐍𝐎𝐍 𝐂𝐎𝐍𝐒𝐄𝐍𝐓𝐈𝐓𝐎'
+                })
+                return false
+            }
         }
     }
 
