@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-let linkRegex = /(?:https?:\/\/)?(?:www\.)?[^\/\s]*instagram[^\/\s]*\/?[^\s]*/i;
+let linkRegex = /(?:https?:\/\/|www\.)[^\s]*instagram[^\s]*|(?:^|\s)[^\s]*instagram[^\s]*\.(com|it|net|org|ru|me|co|io|tv)(?:\/[^\s]*)?/i;
 
 export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, conn }) {
   if (m.isBaileys || m.fromMe) return true;
