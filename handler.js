@@ -16,8 +16,6 @@ const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function (
 }, ms))
 
 // Inizializzazione sistema anti-spam globale
-global.ignoredUsersGlobal = global.ignoredUsersGlobal || new Set()
-global.ignoredUsersGroup = global.ignoredUsersGroup || {}
 global.groupSpam = global.groupSpam || {}
 
 export async function handler(chatUpdate) {
@@ -91,7 +89,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!('antitelegram' in chat)) chat.antitelegram = false
               if (!('antitiktok' in chat)) chat.antitiktok = false
               if (!('antispam' in chat)) chat.antispam = true
-              if (!('antispamcomandi' in chat)) chat.antispamcomandi = true
+              if (!('antispamcmd' in chat)) chat.antispamcmd = true
               if (!('soloviewonce' in chat)) chat.soloviewonce = false
               if (!('antitrava' in chat)) chat.antitrava = true
               if (!('antilinktotale' in chat)) chat.antilinktotale = false
@@ -353,8 +351,15 @@ const isPrems = m.isGroup
                     continue
                 }
                 m.isCommand = true
-                // Sistema anti-spam comandi avanzato (solo per comandi testuali)
-if (m.isGroup && !isOwner && typeof m.text === 'string' && (m.isCommand || hasValidPrefix(m.text, conn.prefix || global.prefix))) {
+                // Sistema anti-spam comandi avanzato
+const chat = global.db.data.chats[m.chat]
+
+if (
+  m.isGroup &&
+  !isOwner &&
+  chat.antispamcmd &&
+  m.isCommand
+) {
     if (!global.groupSpam[m.chat]) {
         global.groupSpam[m.chat] = {
             count: 0,
