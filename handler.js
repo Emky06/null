@@ -96,9 +96,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!('antinuke' in chat)) chat.antinuke = false
               if (!('level' in chat)) chat.level = true              
               if (!('solostaff' in chat)) chat.solostaff = true
-              if (!isNumber(chat.expired)) chat.expired = 0
               if (!isNumber(chat.messaggi)) chat.messaggi = 0
-              if (!isNumber(chat.blasphemy)) chat.blashpemy = 0
               if (!('name' in chat)) chat.name = m.name
               if (!('name' in chat)) chat.name = this.getName(m.chat)
               if (!('rules' in chat))
