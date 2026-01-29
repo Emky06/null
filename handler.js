@@ -350,12 +350,10 @@ const isPrems = m.isGroup
                 }
                 m.isCommand = true
                 // Sistema anti-spam comandi avanzato
-const chat = global.db.data.chats[m.chat]
 
 if (
   m.isGroup &&
   !isOwner &&
-  chat.antispamcmd &&
   m.isCommand
 ) {
     if (!global.groupSpam[m.chat]) {
