@@ -1,4 +1,4 @@
-// 𝐏𝐋𝐔𝐆𝐈𝐍 𝐁𝐘 𝐃𝐄𝐀𝐓𝐇 & 𝟑𝟑𝟑 𝐒𝐓𝐀𝐅𝐅
+//Plugin fatto da Axtral_WiZaRd
 import { Buffer } from 'buffer';
 
 let handler = async (m, { conn }) => {
@@ -36,27 +36,40 @@ let handler = async (m, { conn }) => {
         }
 
         let caption = '';
-        try {
-            const msg = q.message;
-            const type = originalMsgType || Object.keys(msg)[0];
-            const messageContent = msg[type];
 
-            if (messageContent?.caption) {
-                caption = messageContent.caption;
-            } else if (messageContent?.message?.[Object.keys(messageContent.message)[0]]?.caption) {
-                caption = messageContent.message[Object.keys(messageContent.message)[0]].caption;
+try {
+    if (!q?.message || typeof q.message !== 'object') {
+        caption = '';
+    } else {
+        const msg = q.message;
+        const type = originalMsgType || Object.keys(msg)[0];
+
+        if (!type || !msg[type]) {
+            caption = '';
+        } else {
+            const content = msg[type];
+
+            if (typeof content === 'object' && content.caption) {
+                caption = content.caption;
+            } else if (
+                content?.message &&
+                typeof content.message === 'object'
+            ) {
+                const innerType = Object.keys(content.message)[0];
+                caption = content.message?.[innerType]?.caption || '';
             }
-        } catch (captionError) {
-             console.error("𝐄𝐑𝐑𝐎𝐑𝐄 𝐂𝐀𝐏𝐓𝐈𝐎𝐍:", captionError);
-             caption = '';
         }
+    }
+} catch (e) {
+    caption = '';
+}
 
         if (/video/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝐃𝐄𝐀𝐓𝐇.mp4', caption || '', m);
+            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.mp4', caption || '', m);
         } else if (/image/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝐃𝐄𝐀𝐓𝐇.jpg', caption || '', m);
+            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.jpg', caption || '', m);
         } else if (/audio/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝐃𝐄𝐀𝐓𝐇.mp3', '', m, { asDocument: false, mimetype: 'audio/mpeg', ptt: false });
+            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.mp3', '', m, { asDocument: false, mimetype: 'audio/mpeg', ptt: false });
         }
 
     } catch (e) {
@@ -69,9 +82,9 @@ let handler = async (m, { conn }) => {
     }
 };
 
-handler.help = ['rivela', 'readvo', 'getmedia'];
+handler.help = ['rivela'];
 handler.tags = ['tools'];
-handler.command = ['readviewonce', 'view', 'nocap', 'rivela', 'readvo', 'getmedia'];
+handler.command = ['view', 'nocap', 'rivela', 'getmedia'];
 handler.admin = true;
 
 export default handler;
