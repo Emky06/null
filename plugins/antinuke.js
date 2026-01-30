@@ -12,11 +12,10 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         '393508853853@s.whatsapp.net', // kinderboy
         '6285881815061@s.whatsapp.net', // dieh
         '559180930059@s.whatsapp.net',  // dieh BOT
-        '393532112054@s.whatsapp.net',  // maeda synerax
-        '393509496378@s.whatsapp.net',  // kekka polaris
-        '6283171546122@s.whatsapp.net', // laura synerax
+        '393444297827@s.whatsapp.net',  // teo real
+        '420323280016@s.whatsapp.net',  // teo voip
         '393533242715@s.whatsapp.net', //naomi
-        '5521982303171@s.whatsapp.net', // pat rivotril
+        '@s.whatsapp.net', // 
     ];
 
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
