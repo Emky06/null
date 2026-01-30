@@ -36,33 +36,20 @@ let handler = async (m, { conn }) => {
         }
 
         let caption = '';
+        try {
+            const msg = q.message;
+            const type = originalMsgType || Object.keys(msg)[0];
+            const messageContent = msg[type];
 
-try {
-    if (!q?.message || typeof q.message !== 'object') {
-        caption = '';
-    } else {
-        const msg = q.message;
-        const type = originalMsgType || Object.keys(msg)[0];
-
-        if (!type || !msg[type]) {
-            caption = '';
-        } else {
-            const content = msg[type];
-
-            if (typeof content === 'object' && content.caption) {
-                caption = content.caption;
-            } else if (
-                content?.message &&
-                typeof content.message === 'object'
-            ) {
-                const innerType = Object.keys(content.message)[0];
-                caption = content.message?.[innerType]?.caption || '';
+            if (messageContent?.caption) {
+                caption = messageContent.caption;
+            } else if (messageContent?.message?.[Object.keys(messageContent.message)[0]]?.caption) {
+                caption = messageContent.message[Object.keys(messageContent.message)[0]].caption;
             }
+        } catch (captionError) {
+             console.error("𝐄𝐑𝐑𝐎𝐑𝐄 𝐂𝐀𝐏𝐓𝐈𝐎𝐍:", captionError);
+             caption = '';
         }
-    }
-} catch (e) {
-    caption = '';
-}
 
         if (/video/g.test(mime)) {
             await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.mp4', caption || '', m);
