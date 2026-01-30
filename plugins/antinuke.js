@@ -7,11 +7,8 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 
     const authorizedNumbers = [
         '393780386731@s.whatsapp.net', // mio
-        '393793178438@s.whatsapp.net', // riad
         '393715983481@s.whatsapp.net', // kinderboy
         '393508853853@s.whatsapp.net', // kinderboy
-        '6285881815061@s.whatsapp.net', // dieh
-        '559180930059@s.whatsapp.net',  // dieh BOT
         '393444297827@s.whatsapp.net',  // teo real
         '420323280016@s.whatsapp.net',  // teo voip
         '393533242715@s.whatsapp.net', //naomi
