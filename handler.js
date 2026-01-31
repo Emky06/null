@@ -151,17 +151,14 @@ chat.rules = ''
         const isMods = isOwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const userId = m.sender.split`@`[0];
 
-const isPrems = m.isGroup
-    ? (
-        global.prems.includes(userId) || 
-        (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId) ||  
-        m.isAdmin || 
-        global.owner.includes(userId)
-      )
-    : (
-        global.prems.includes(userId) || 
-        global.owner.includes(userId)
-      );
+const isPrems = isOwner || (
+    m.isGroup
+        ? (
+            global.prems.includes(userId) ||
+            (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId)
+        )
+        : global.prems.includes(userId)
+)
 
         if (opts['queque'] && m.text && !(isMods || isPrems)) {
             let queque = this.msgqueque, time = 1000 * 5
@@ -205,7 +202,7 @@ const isPrems = m.isGroup
         }
 
         const isRAdmin = user?.admin == 'superadmin' || false
-        const isAdmin = m.isGroup ? await isUserAdmin(this, m.chat, m.sender) : false
+        const isAdmin = isOwner || (m.isGroup ? await isUserAdmin(this, m.chat, m.sender) : false)
         const isBotAdmin = m.isGroup ? await isUserAdmin(this, m.chat, this.user.jid) : false
         //FINE PATCH RUOLI ADMIN
                 
