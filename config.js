@@ -7,12 +7,12 @@ global.botnumber = ""
 global.confirmCode = ""
 
 global.owner = [
-    ['393512884684', 'Owner', true],
+    ['4915212222268', 'Owner', true],
     ['393926119886', 'Vero', true],
     ['573171519160', 'Vero voip', true],
     ['393511198848', 'Owner', true],
     ['393510240643', 'Owner', true],
-    ['', 'Owner', true],
+    ['393512884684', 'Owner', true],
 ] 
 
 //────────────────────────────
