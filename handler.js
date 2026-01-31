@@ -151,16 +151,6 @@ chat.rules = ''
         const isMods = isOwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const userId = m.sender.split`@`[0];
 
-const isPrems = isOwner || (
-    m.isGroup
-        ? (
-            global.prems.includes(userId) ||
-            (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId) ||
-            isAdmin
-        )
-        : global.prems.includes(userId)
-)
-
         if (opts['queque'] && m.text && !(isMods || isPrems)) {
             let queque = this.msgqueque, time = 1000 * 5
             const previousID = queque[queque.length - 1]
@@ -207,6 +197,16 @@ const isPrems = isOwner || (
         const isBotAdmin = m.isGroup ? await isUserAdmin(this, m.chat, this.user.jid) : false
         //FINE PATCH RUOLI ADMIN
                 
+        const isPrems = isOwner || (
+    m.isGroup
+        ? (
+            global.prems.includes(userId) ||
+            (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId) ||
+            isAdmin
+        )
+        : global.prems.includes(userId)
+)
+
         const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), './plugins')
         for (let name in global.plugins) {
             let plugin = global.plugins[name]
