@@ -155,7 +155,8 @@ const isPrems = isOwner || (
     m.isGroup
         ? (
             global.prems.includes(userId) ||
-            (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId)
+            (global.db.data?.groups?.[m.chat]?.prems || []).includes(userId) ||
+            isAdmin
         )
         : global.prems.includes(userId)
 )
