@@ -43,22 +43,36 @@ const handler = async (m, { conn }) => {
 
     const categoria = userData.categoria || "🔘 Nessuna categoria";
 
-    let ruolo = "Membro 🤍";
-    try {
-      if (m.isGroup) {
-        const metadata = await conn.groupMetadata(m.chat);
-        const participants = metadata.participants;
-        const groupOwner = metadata.owner;
-        const participant = participants.find(p => p.id === mention);
+let ruolo = "Membro 🤍"
 
-        const isAdmin = participant && (participant.admin === 'admin' || participant.admin === 'superadmin');
-        const isFounder = mention === groupOwner;
+if (m.isGroup) {
+  try {
+    const metadata = await conn.groupMetadata(m.chat)
 
-        ruolo = isFounder ? 'Founder ⚜️' : isAdmin ? 'Admin 👑' : 'Membro 🤍';
-      }
-    } catch {
-      ruolo = "Membro 🤍";
-    }
+    const userJid = conn.decodeJid(mention)
+    const ownerJid = conn.decodeJid(metadata.owner)
+
+    const groupPrems = global.db?.data?.groups?.[m.chat]?.prems || []
+
+    const isFounder = ownerJid === userJid
+
+    const isAdmin = metadata.participants.some(p => {
+      const pid = conn.decodeJid(p.jid || p.id)
+      return pid === userJid && (p.admin === 'admin' || p.admin === 'superadmin')
+    })
+
+    const isPremium =
+      groupPrems.includes(userJid) ||
+      groupPrems.includes(userJid.split('@')[0])
+
+    if (isFounder) ruolo = "Founder ⚜️"
+    else if (isAdmin) ruolo = "Admin 🛡️"
+    else if (isPremium) ruolo = "Moderatore 👮🏻‍♂️"
+
+  } catch (e) {
+    ruolo = "Membro 🤍"
+  }
+}
 
     let profilo;
     try {
