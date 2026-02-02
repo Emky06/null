@@ -28,6 +28,17 @@ if (m.isGroup) {
   if (admins.includes(who)) {
     return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*')
   }
+
+  const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+
+  const isMod = prems.some(u => {
+    const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
+    return jid === who
+  })
+
+  if (isMod) {
+    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*')
+  }
 }
 
   if (command == 'warn' || command == "ammonisci") {
