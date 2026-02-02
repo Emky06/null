@@ -3,8 +3,7 @@ import fs from 'fs';
 
 const time = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command, isPrems }) => {
-  if (!isPrems) return m.reply('*❌ Solo utenti premium possono usare questo comando.*');
+let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command }) => {
 
   let who;
   if (m.isGroup) {
@@ -23,12 +22,23 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command, 
 
   let admins = [];
   if (m.isGroup) {
-    admins = groupMetadata.participants
-      .filter(p => p.admin)
-      .map(p => p.id);
+  admins = groupMetadata.participants
+    .filter(p => p.admin)
+    .map(p => p.id);
 
-    if (admins.includes(who)) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
-  }
+  if (admins.includes(who))
+    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
+
+  const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+
+  const isMod = prems.some(u => {
+    const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
+    return jid === who
+  })
+
+  if (isMod)
+    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*')
+}
 
   if (!(who in global.db.data.users)) {
     global.db.data.users[who] = { warn: 0, warnReasons: [] };
