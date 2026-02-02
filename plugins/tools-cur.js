@@ -162,7 +162,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
       footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
       buttons: [
         {
-          buttonId: `${usedPrefix}fire ${m.sender}|${current.name}`,
+          buttonId: `${usedPrefix}fire ${targetJid}|${current.name}`
           buttonText: { displayText: "🔥" },
           type: 1
         },
