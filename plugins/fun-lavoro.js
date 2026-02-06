@@ -20,7 +20,7 @@ global.work = [
   { description: '🌊 Scopri una città sommersa e sveli antichi segreti della civiltà perduta.', minReward: 400, maxReward: 600 },
   { description: '🔫 Lavori come spia internazionale e smascheri un complotto segreto.', minReward: 600, maxReward: 1000 },
   { description: '🏗️ Costruisci un grattacielo futuristico che diventa un simbolo della città.', minReward: 500, maxReward: 700 },
-  { description: '🛠️ Ripari una macchina del tempo e viaggi nel passato per riscrivere la storia!', minReward: 50p, maxReward: 800 },
+  { description: '🛠️ Ripari una macchina del tempo e viaggi nel passato per riscrivere la storia!', minReward: 500, maxReward: 800 },
   { description: '🦸‍♂️ Diventi un supereroe e salvi la città da una minaccia pericolosa!', minReward: 400, maxReward: 700 },
   { description: '🎭 Reciti in un’opera teatrale e ricevi una standing ovation!', minReward: 300, maxReward: 500 },
   { description: '🛳️ Parti per un’avventura in mare aperto e scopri un’isola sconosciuta.', minReward: 400, maxReward: 700 },
