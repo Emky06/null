@@ -83,7 +83,7 @@ const handler = async (m, { conn }) => {
   user.animali.push({
     nome: selezionato.nome,
     adottato: Date.now(),
-    prossimaPoppata: Date.now() + 8 * 60 * 60 * 1000
+    prossimaPoppata: Date.now() + 8 * 60 * 60 * 1000,
     chatId: m.chat
   });
 
