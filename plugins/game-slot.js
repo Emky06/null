@@ -1,6 +1,4 @@
 //Plugin fatto da Axtral_WiZaRd
-import * as baileys from '@whiskeysockets/baileys';
-
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
@@ -46,26 +44,26 @@ let chatConfig = global.db.data.chats[m.chat] || {};
     let now = Date.now();
 
     if (slotInGame.has(m.sender)) {
-        return await conn.reply(m.chat, `⏳ Hai già una partita di slot in corso, aspetta che finisca.`, m);
+        return await conn.reply(m.chat, `⏳ 𝐇𝐚𝐢 𝐠𝐢𝐚̀ 𝐮𝐧𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚 𝐝𝐢 𝐬𝐥𝐨𝐭 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨, 𝐚𝐬𝐩𝐞𝐭𝐭𝐚 𝐜𝐡𝐞 𝐟𝐢𝐧𝐢𝐬𝐜𝐚.`, m);
     }
 
     if (users.lastSlot && now - users.lastSlot < cooldown) {
         let waitTime = ((cooldown - (now - users.lastSlot)) / 1000).toFixed(1);
-        return await conn.reply(m.chat, `⏳ Devi aspettare *${waitTime} secondi* prima di poter giocare di nuovo alla slot.`, m);
+        return await conn.reply(m.chat, `⏳ 𝐃𝐞𝐯𝐢 𝐚𝐬𝐩𝐞𝐭𝐭𝐚𝐫𝐞 *${waitTime} 𝐬𝐞𝐜𝐨𝐧𝐝𝐢* 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐩𝐨𝐭𝐞𝐫 𝐠𝐢𝐨𝐜𝐚𝐫𝐞 𝐝𝐢 𝐧𝐮𝐨𝐯𝐨 𝐚𝐥𝐥𝐚 𝐬𝐥𝐨𝐭.`, m);
     }
 
     let scommessa = parseInt(args[0]);
     if (!scommessa || isNaN(scommessa) || scommessa <= 0) {
-        return await conn.reply(m.chat, `🎰 Usa: ${usedPrefix}slot <importo>`, m);
+        return await conn.reply(m.chat, `🎰 𝐔𝐬𝐚: ${usedPrefix}slot <importo>`, m);
     }
    
-     if (scommessa > 1000) {
-  return await conn.reply(m.chat, `🚫 *Limite massimo superato!*
-Puoi scommettere al massimo *1.000 €* per giocata.`, m);
+     if (scommessa > 100) {
+  return await conn.reply(m.chat, `🚫 *𝐋𝐢𝐦𝐢𝐭𝐞 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐬𝐮𝐩𝐞𝐫𝐚𝐭𝐨!*
+𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *𝟏𝟎𝟎 €* 𝐩𝐞𝐫 𝐠𝐢𝐨𝐜𝐚𝐭𝐚.`, m);
 }
     
     if (scommessa > users.money) {
-        return await conn.reply(m.chat, `💸 Non hai abbastanza soldi. Ti mancano ${ (scommessa - users.money).toLocaleString('it-IT') }€`, m);
+        return await conn.reply(m.chat, `💸 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐛𝐛𝐚𝐬𝐭𝐚𝐧𝐳𝐚 𝐬𝐨𝐥𝐝𝐢. 𝐓𝐢 𝐦𝐚𝐧𝐜𝐚𝐧𝐨 ${ (scommessa - users.money).toLocaleString('it-IT') }€`, m);
     }
 
     slotInGame.add(m.sender);
@@ -77,7 +75,7 @@ Puoi scommettere al massimo *1.000 €* per giocata.`, m);
                `╚═══════════╝`;
     }
 
-    let messaggio = await conn.reply(m.chat, `🎰 *Slot machine in partenza...*`, m);
+    let messaggio = await conn.reply(m.chat, `🎰 *𝐒𝐥𝐨𝐭 𝐦𝐚𝐜𝐡𝐢𝐧𝐞 𝐢𝐧 𝐩𝐚𝐫𝐭𝐞𝐧𝐳𝐚...*`, m);
     let frames = 5;
     let finalSlot = [];
 
@@ -85,7 +83,7 @@ Puoi scommettere al massimo *1.000 €* per giocata.`, m);
         let slot = generaSlotPersonalizzato();
         if (i === frames - 1) finalSlot = slot;
 
-        let testo = formattaSlot(slot) + `\n\n${i === frames - 1 ? '🎲 *Calcolo risultato...*' : '🎰 *Rotazione...*'}`;
+        let testo = formattaSlot(slot) + `\n\n${i === frames - 1 ? '🎲 *𝐂𝐚𝐥𝐜𝐨𝐥𝐨 𝐫𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐨...*' : '🎰 *𝐑𝐨𝐭𝐚𝐳𝐢𝐨𝐧𝐞...*'}`;
         await delay(800);
         await conn.sendMessage(m.chat, { text: testo, edit: messaggio.key });
     }
@@ -96,7 +94,7 @@ Puoi scommettere al massimo *1.000 €* per giocata.`, m);
     if (finalSlot.every(s => s === finalSlot[0])) {
         vincita = scommessa * 2;
         users.money += vincita;
-        testoFinale += `🎉 *HAI VINTO!*\n+${vincita.toLocaleString('it-IT')}€\n*Saldo attuale:* ${users.money.toLocaleString('it-IT')}€`;
+        testoFinale += `🎉 *𝐇𝐀𝐈 𝐕𝐈𝐍𝐓𝐎!*\n+${vincita.toLocaleString('it-IT')}€\n*𝐒𝐚𝐥𝐝𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞:* ${users.money.toLocaleString('it-IT')}€`;
     } else if (
         finalSlot[0] === finalSlot[1] ||
         finalSlot[1] === finalSlot[2] ||
@@ -107,7 +105,7 @@ Puoi scommettere al massimo *1.000 €* per giocata.`, m);
         testoFinale += `😊 *Vincita parziale!*\n+${vincita.toLocaleString('it-IT')}€\n*Saldo attuale:* ${users.money.toLocaleString('it-IT')}€`;
     } else {
         users.money -= scommessa;
-        testoFinale += `😢 *Hai perso!*\n-${scommessa.toLocaleString('it-IT')}€\n*Saldo attuale:* ${users.money.toLocaleString('it-IT')}€`;
+        testoFinale += `😢 *𝐇𝐚𝐢 𝐩𝐞𝐫𝐬𝐨!*\n-${scommessa.toLocaleString('it-IT')}€\n*𝐒𝐚𝐥𝐝𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞:* ${users.money.toLocaleString('it-IT')}€`;
     }
 
     await delay(800);
