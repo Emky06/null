@@ -22,6 +22,15 @@ const handler = async (m, { conn }) => {
   if (!user.animali) user.animali = [];
   if (typeof user.cibo !== 'number') user.cibo = 0;
 
+  // --- TEST: forzare un animale pronto da nutrire tra 5 secondi ---
+  if (user.animali.length === 0) {
+    user.animali.push({
+      nome: '🐶 Cane',
+      nomeUtente: 'Fido',
+      prossimaPoppata: Date.now() + 5000 // 5 secondi per test
+    });
+  }
+
   let text = '*🐾 I TUOI ANIMALI 🐾*\n\n';
   const animaliAttivi = [];
   let rimossi = 0;
@@ -77,3 +86,34 @@ const handler = async (m, { conn }) => {
 handler.command = /^animali$/i;
 handler.exp = 0;
 export default handler;
+
+// ----------------- PROMEMORIA AUTOMATICO -----------------
+setInterval(async () => {
+  const users = global.db.data.users;
+  const now = Date.now();
+
+  for (const userId in users) {
+    const user = users[userId];
+    if (!user.animali) continue;
+
+    for (const animale of user.animali) {
+      if (!animale.lastReminder) animale.lastReminder = 0;
+      const tempoRimanente = animale.prossimaPoppata - now;
+
+      // Se il tempo è scaduto e non abbiamo già inviato un reminder
+      if (tempoRimanente <= 0 && now - animale.lastReminder > 60000) {
+        animale.lastReminder = now;
+        const [emoji] = animale.nome.split(' ');
+        const nomePersonalizzato = animale.nomeUtente || animale.nome.split(' ').slice(1).join(' ');
+
+        // Invia messaggio taggando l'utente
+        await conn.sendMessage(userId, {
+          text: `⚠️ Hey @${userId.split('@')[0]}, è ora di dare da mangiare a *${nomePersonalizzato}* ${emoji}!`,
+          mentions: [userId],
+        });
+      }
+    }
+  }
+
+  global.db.write();
+}, 2000); // controlla ogni 2 secondi per il test
