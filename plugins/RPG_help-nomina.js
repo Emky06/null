@@ -17,4 +17,4 @@ const handler = async (m, { conn }) => {
 handler.command = /^helpnomina$/i;
 handler.group = true
 
-export default handlerNominaHelp;
+export default handler;
