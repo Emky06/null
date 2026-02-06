@@ -9,12 +9,8 @@ const handler = async (m, { conn }) => {
 
     if (!global.db.data.users[mention]) {
       global.db.data.users[mention] = {
-        name: "Sconosciuto",
         messaggi: 0,
         warn: 0,
-        warnlink: 0,
-        muto: false,
-        banned: false,
         command: 0,
         age: "👶🏼🍼",
         gender: "Non specificato",
@@ -23,10 +19,7 @@ const handler = async (m, { conn }) => {
         money: 0,
         bank: 0,
         sposato: false,
-        coniuge: null,
         animali: [],
-        cibo: 0,
-        animaliMorti: 0,
         grado: "Pollo",
         fuochi: 0
       };
