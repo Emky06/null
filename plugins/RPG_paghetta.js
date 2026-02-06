@@ -28,7 +28,7 @@ let handler = async (m, { isPrems, conn }) => {
     return await conn.reply(m.chat, `𝐃𝐞𝐯𝐢 𝐚𝐬𝐩𝐞𝐭𝐭𝐚𝐫𝐞 𝐚𝐧𝐜𝐨𝐫𝐚 *${remainingTimeString}* 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐩𝐨𝐭𝐞𝐫 𝐫𝐞𝐜𝐥𝐚𝐦𝐚𝐫𝐞 𝐧𝐮𝐨𝐯𝐚𝐦𝐞𝐧𝐭𝐞.`, fkontak);
   }
 
-  let moneyToAdd = 1000;
+  let moneyToAdd = 500;
   user.bank += moneyToAdd;
   user.lastclaim = currentTime;
 
