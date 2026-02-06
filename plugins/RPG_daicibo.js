@@ -39,10 +39,11 @@ const handler = async (m, { conn }) => {
     }, { quoted: m });
   }
 
-  // Dai da mangiare solo agli animali affamati
+ 
   for (const animale of animaliAffamati) {
-    animale.prossimaPoppata = now + 5 * 60 * 60 * 1000; // +5 ore
-  }
+  animale.prossimaPoppata = now + 5 * 60 * 60 * 1000; 
+  animale.lastReminder = false; 
+}
 
   user.cibo -= animaliAffamati.length;
   global.db.write();
