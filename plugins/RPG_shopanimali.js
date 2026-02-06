@@ -84,7 +84,7 @@ const handler = async (m, { conn }) => {
   user.animali.push({
     nome: selezionato.nome,
     adottato: Date.now(),
-    prossimaPoppata: Date.now() + 5 * 60 * 60 * 1000
+    prossimaPoppata: Date.now() + 10 * 1000
   });
 
   global.db.write();
