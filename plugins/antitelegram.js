@@ -21,7 +21,7 @@ export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, c
     if (!userData.warnReasons) userData.warnReasons = [];
 
     userData.warn += 1;
-    userData.warnReasons.push('Link Telegram');
+    userData.warnReasons.push('𝐋𝐢𝐧𝐤 𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦');
 
     await conn.sendMessage(m.chat, {
       delete: {
