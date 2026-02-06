@@ -21,7 +21,7 @@ export async function before(m, { isAdmin, isPrems, groupMetadata, isBotAdmin, c
     if (!global.db.data.users[m.sender].warnReasons) global.db.data.users[m.sender].warnReasons = [];
 
     global.db.data.users[m.sender].warn += 1;
-    global.db.data.users[m.sender].warnReasons.push('link tiktok');
+    global.db.data.users[m.sender].warnReasons.push('𝐋𝐢𝐧𝐤 𝐓𝐢𝐤𝐓𝐨𝐤');
 
     await conn.sendMessage(m.chat, {
       delete: {
