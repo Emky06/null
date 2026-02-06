@@ -42,7 +42,7 @@ const handler = async (m, { conn }) => {
 
  
   for (const animale of animaliAffamati) {
-  animale.prossimaPoppata = now + 5 * 60 * 1000; 
+  animale.prossimaPoppata = now + 8 * 60 * 60 * 1000; 
   animale.lastReminder = false; 
 }
 
