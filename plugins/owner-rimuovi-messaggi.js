@@ -50,13 +50,13 @@ END:VCARD`
   }
 
   await conn.sendMessage(
-    m.chat,
-    {
-      text: `🗑️ 𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 *${numero}* 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐮𝐭𝐞𝐧𝐭𝐞!`,
-      mentions: [user]
-    },
-    { quoted: quotedMessage }
-  )
+  m.chat,
+  {
+    text: `🗑️ 𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 *${numero}* 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐚 @${user.split('@')[0]}!`,
+    mentions: [user]
+  },
+  { quoted: quotedMessage }
+)
 }
 
 handler.command = /^(rimuovi)$/i
