@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const msToTime = (ms) => {
   if (ms <= 0) return 'ORA!';
   const h = Math.floor(ms / 3600000);
@@ -5,7 +6,7 @@ const msToTime = (ms) => {
   return `${h}h ${m}min`;
 };
 
-const animaliDisponibili = ['🐶 Cane', '🐱 Gatto', '🐰 Coniglio', '🦜 Pappagallo', '🐢 Tartaruga'];
+const animaliDisponibili = ['🐶 𝐂𝐚𝐧𝐞', '🐱 𝐆𝐚𝐭𝐭𝐨', '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨', '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚'];
 
 const handler = async (m, { conn }) => {
   const who = m.sender;
@@ -18,7 +19,7 @@ const handler = async (m, { conn }) => {
   if (!user.animali) user.animali = [];
   if (typeof user.cibo !== 'number') user.cibo = 0;
 
-  let text = '*🐾 I TUOI ANIMALI 🐾*\n\n';
+  let text = '*🐾 𝐈 𝐓𝐔𝐎𝐈 𝐀𝐍𝐈𝐌𝐀𝐋𝐈 🐾*\n\n';
   const animaliAttivi = [];
   let rimossi = 0;
 
@@ -35,24 +36,24 @@ const handler = async (m, { conn }) => {
   global.db.write();
 
   if (user.animali.length === 0) {
-    text += '_Non hai animali._\n';
+    text += '_𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐢𝐦𝐚𝐥𝐢._\n';
   } else {
     const now = Date.now();
     user.animali.forEach((a, i) => {
       const tempo = a.prossimaPoppata - now;
       const [emoji] = a.nome.split(' ');
       const nomePersonalizzato = a.nomeUtente || a.nome.split(' ').slice(1).join(' ');
-      text += `${i + 1}. ${emoji} *${nomePersonalizzato}* – da nutrire tra: *${msToTime(tempo)}*\n`;
+      text += `${i + 1}. ${emoji} *${nomePersonalizzato}* – 𝐝𝐚 𝐧𝐮𝐭𝐫𝐢𝐫𝐞 𝐭𝐫𝐚: *${msToTime(tempo)}*\n`;
     });
   }
 
-  text += `\n🥫 *Cibo disponibile:* ${user.cibo ?? 0}`;
-  if (rimossi > 0) text += `\n⚠️ *${rimossi} animale/i rimossi* dallo shop (non più disponibili)`;
+  text += `\n🥫 *𝐂𝐢𝐛𝐨 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞:* ${user.cibo ?? 0}`;
+  if (rimossi > 0) text += `\n⚠️ ${rimossi} 𝐚𝐧𝐢𝐦𝐚𝐥𝐞/𝐢 𝐫𝐢𝐦𝐨𝐬𝐬𝐢 𝐝𝐚𝐥𝐥𝐨 𝐬𝐡𝐨𝐩 (𝐧𝐨𝐧 𝐩𝐢𝐮̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐢)`;
 
   const buttons = [
-    { buttonId: '.daicibo', buttonText: { displayText: 'Dai da mangiare 🥫' } },
-    { buttonId: '.helpnomina', buttonText: { displayText: 'Come rinominare ✏️' } },
-    { buttonId: '.abbandonanimali', buttonText: { displayText: '⚠️ Abbandona animale ⚠️' } },
+    { buttonId: '.daicibo', buttonText: { displayText: '𝐃𝐚𝐢 𝐝𝐚 𝐦𝐚𝐧𝐠𝐢𝐚𝐫𝐞 🥫' } },
+    { buttonId: '.helpnomina', buttonText: { displayText: '𝐂𝐨𝐦𝐞 𝐫𝐢𝐧𝐨𝐦𝐢𝐧𝐚𝐫𝐞 ✏️' } },
+    { buttonId: '.abbandonanimali', buttonText: { displayText: '⚠️ 𝐀𝐛𝐛𝐚𝐧𝐝𝐨𝐧𝐚 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 ⚠️' } },
   ];
 
   await conn.sendMessage(
@@ -63,7 +64,8 @@ const handler = async (m, { conn }) => {
 };
 
 handler.command = /^animali$/i;
-handler.exp = 0;
+handler.group = true
+
 export default handler;
 
 
@@ -89,7 +91,7 @@ setInterval(async () => {
 
         if (animale.chatId) {
           await conn.sendMessage(animale.chatId, {
-            text: `⚠️ Hey @${userId.split('@')[0]}, è ora di dare da mangiare a *${nomePersonalizzato}* ${emoji}!`,
+            text: `⚠️ 𝐇𝐞𝐲 @${userId.split('@')[0]}, 𝐞̀ 𝐨𝐫𝐚 𝐝𝐢 𝐝𝐚𝐫𝐞 𝐝𝐚 𝐦𝐚𝐧𝐠𝐢𝐚𝐫𝐞 𝐚 *${nomePersonalizzato}* ${emoji}!`,
             mentions: [userId],
           });
         }
