@@ -117,6 +117,7 @@ function generateMenuText(prefix) {
 ┣━ 📉 .azzera @ ┃ Azzera msg
 ┣━ 📉 .azzeramoney @ ┃ Azzera soldi
 ┣━ 📉 .removeallmoney ┃ Azzera soldi di tutti gli utenti del gruppo
+┣━ 📉 .removeallmsg ┃ Azzera msg di tutti gli utenti del gruppo
 ┣━ 📉 .removeallblasph ┃ Azzera bestemmie di tutti gli utenti del gruppo
 ┣━ ➕ .aggiungi 10 @ ┃ Aggiunge msg
 ┣━ ➖ .rimuovi 10 @ ┃ Rimuove msg
