@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-const handler = async (m, { conn, participants, isOwner }) => {
+let handler = async (m, { conn, participants, isOwner }) => {
     if (!m.isGroup) {
         return conn.reply(m.chat, '❌ Questo comando può essere usato solo nei gruppi!', m);
     }
@@ -8,13 +8,26 @@ const handler = async (m, { conn, participants, isOwner }) => {
         return conn.reply(m.chat, '❌ Solo il proprietario del bot può usare questo comando!', m);
     }
 
-    for (const p of participants) {
-        const user = global.db.data.users[p.id];
+    const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+
+    let usersToReset = participants
+        .map(p => p.jid)
+        .filter(jid =>
+            jid &&
+            jid !== botId &&
+            !ownerJids.includes(jid)
+        );
+
+    for (const jid of usersToReset) {
+        const user = global.db.data.users[jid];
         if (user) {
             user.money = 0;
             user.bank = 0;
         }
     }
+
+    if (global.db.write) await global.db.write();
 
     conn.reply(
         m.chat,
