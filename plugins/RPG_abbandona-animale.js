@@ -73,7 +73,7 @@ const handler = async (m, { conn }) => {
 
   return conn.reply(
     m.chat,
-    `💔 𝐇𝐚𝐢 𝐚𝐛𝐛𝐚𝐧𝐝𝐨𝐧𝐚𝐭𝐨 ${nomeAbbandonato}.\n💸 𝐇𝐚𝐢 𝐩𝐚𝐠𝐚𝐭𝐨 𝐮𝐧𝐚 𝐦𝐮𝐥𝐭𝐚 𝐝𝐢 *${MULTA.toLocaleString('it-IT')} €*.`,
+    `💔 𝐇𝐚𝐢 𝐚𝐛𝐛𝐚𝐧𝐝𝐨𝐧𝐚𝐭𝐨 *${nomeAbbandonato}*.\n💸 𝐇𝐚𝐢 𝐩𝐚𝐠𝐚𝐭𝐨 𝐮𝐧𝐚 𝐦𝐮𝐥𝐭𝐚 𝐝𝐢 *${MULTA.toLocaleString('it-IT')} €*.`,
     m
   );
 };
