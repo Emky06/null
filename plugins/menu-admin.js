@@ -107,7 +107,7 @@ function generateMenuText(prefix) {
 ┣━ 🛡️ .warn / unwarn
 ┣━ 🛡️ .resetwarn
 ┣━ 🛡️ .muta / smuta
-┣━ 🛡️ .mutelist
+┣━ 🛡️ .mutati / listamutati
 ┣━ 🛡️ .listawarn
 ┣━ 🛡️ .del
 
