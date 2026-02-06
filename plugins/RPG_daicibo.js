@@ -14,8 +14,8 @@ const handler = async (m, { conn }) => {
 
   if (user.animali.length === 0) {
     return conn.sendMessage(m.chat, {
-      text: '❌ Non hai animali da nutrire.',
-      buttons: [{ buttonId: '.shopanimali', buttonText: { displayText: 'Compra un animale 🐾' } }],
+      text: '❌ 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐢𝐦𝐚𝐥𝐢 𝐝𝐚 𝐧𝐮𝐭𝐫𝐢𝐫𝐞.',
+      buttons: [{ buttonId: '.shopanimali', buttonText: { displayText: '𝐂𝐨𝐦𝐩𝐫𝐚 𝐮𝐧 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 🐾' } }],
       headerType: 1
     }, { quoted: m });
   }
@@ -25,16 +25,16 @@ const handler = async (m, { conn }) => {
 
   if (animaliAffamati.length === 0) {
     return conn.sendMessage(m.chat, {
-      text: '✅ I tuoi animali non hanno ancora fame. ⏳',
-      buttons: [{ buttonId: '.animali', buttonText: { displayText: 'Controlla animali 🐶' } }],
+      text: '✅ 𝐈 𝐭𝐮𝐨𝐢 𝐚𝐧𝐢𝐦𝐚𝐥𝐢 𝐧𝐨𝐧 𝐡𝐚𝐧𝐧𝐨 𝐚𝐧𝐜𝐨𝐫𝐚 𝐟𝐚𝐦𝐞. ⏳',
+      buttons: [{ buttonId: '.animali', buttonText: { displayText: '𝐂𝐨𝐧𝐭𝐫𝐨𝐥𝐥𝐚 𝐚𝐧𝐢𝐦𝐚𝐥𝐢 🐶' } }],
       headerType: 1
     }, { quoted: m });
   }
 
   if (user.cibo < animaliAffamati.length) {
     return conn.sendMessage(m.chat, {
-      text: `❌ Hai solo ${user.cibo} 🥫 ma ${animaliAffamati.length} animali hanno fame.\nCompra altro cibo per nutrirli tutti.`,
-      buttons: [{ buttonId: '.shopanimali', buttonText: { displayText: 'Compra cibo 🛒' } }],
+      text: `❌ 𝐇𝐚𝐢 𝐬𝐨𝐥𝐨 ${user.cibo} 🥫 𝐦𝐚 ${animaliAffamati.length} 𝐚𝐧𝐢𝐦𝐚𝐥𝐢 𝐡𝐚𝐧𝐧𝐨 𝐟𝐚𝐦𝐞.\n𝐂𝐨𝐦𝐩𝐫𝐚 𝐚𝐥𝐭𝐫𝐨 𝐜𝐢𝐛𝐨 𝐩𝐞𝐫 𝐧𝐮𝐭𝐫𝐢𝐫𝐥𝐢 𝐭𝐮𝐭𝐭𝐢.`,
+      buttons: [{ buttonId: '.shopanimali', buttonText: { displayText: '𝐂𝐨𝐦𝐩𝐫𝐚 𝐜𝐢𝐛𝐨 🛒' } }],
       headerType: 1
     }, { quoted: m });
   }
@@ -49,15 +49,16 @@ const handler = async (m, { conn }) => {
   global.db.write();
 
   return conn.sendMessage(m.chat, {
-    text: `🥫 Hai nutrito *${animaliAffamati.length}* animale/i!\nCibo rimasto: *${user.cibo}*`,
+    text: `🥫 𝐇𝐚𝐢 𝐧𝐮𝐭𝐫𝐢𝐭𝐨 *${animaliAffamati.length}* animale/i!\n𝐂𝐢𝐛𝐨 𝐫𝐢𝐦𝐚𝐬𝐭𝐨: *${user.cibo}*`,
     buttons: [
-      { buttonId: '.animali', buttonText: { displayText: 'Vedi animali 🐾' } },
-      { buttonId: '.shopanimali', buttonText: { displayText: 'Compra altro cibo 🛒' } }
+      { buttonId: '.animali', buttonText: { displayText: '𝐕𝐞𝐝𝐢 𝐚𝐧𝐢𝐦𝐚𝐥𝐢 🐾' } },
+      { buttonId: '.shopanimali', buttonText: { displayText: '𝐂𝐨𝐦𝐩𝐫𝐚 𝐚𝐥𝐭𝐫𝐨 𝐜𝐢𝐛𝐨 🛒' } }
     ],
     headerType: 1
   }, { quoted: m });
 };
 
 handler.command = /^daicibo$/i;
-handler.exp = 0;
+handler.group = true
+
 export default handler;
