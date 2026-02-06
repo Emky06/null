@@ -7,7 +7,7 @@ const handler = async (m, { conn }) => {
     
     return conn.reply(
       m.chat,
-      '✏️ 𝐏𝐞𝐫 𝐫𝐢𝐧𝐨𝐦𝐢𝐧𝐚𝐫𝐞 𝐮𝐧 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 𝐮𝐬𝐚:\n.nomina [numero animale] [nuovo nome]\n\nEsempio:\n.nomina 1 Zeus',
+      '✏️ 𝐏𝐞𝐫 𝐫𝐢𝐧𝐨𝐦𝐢𝐧𝐚𝐫𝐞 𝐮𝐧 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 𝐮𝐬𝐚:\n.nomina [numero animale] [nuovo nome]\n\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨:\n.nomina 1 Zeus',
       m
     );
   }
