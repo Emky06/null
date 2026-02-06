@@ -1,33 +1,37 @@
-//Plugin fatto da Axtral_WiZaRd
-let handler = async (m, { conn, isPrems }) => {
-  if (!isPrems) return m.reply('*❌ Solo utenti premium possono usare questo comando.*');
+let handler = async (m, { conn, isAdmin, isPrems }) => {
+  if (!isAdmin && !isPrems) 
+    return m.reply('⚠️ Questo comando può essere eseguito solo da admin o utenti premium.');
 
   // Recupera i membri del gruppo
-  let groupMetadata;
-  try {
-    groupMetadata = await conn.groupMetadata(m.chat);
-  } catch {
-    m.reply('Errore nel recuperare i mutati del gruppo.');
-    return;
+  let groupMetadata = await conn.groupMetadata(m.chat);
+  let groupMembers = groupMetadata.participants.map(u => u.jid);
+
+  // Filtra gli utenti mutati presenti nel gruppo
+  let usersMuted = Object.entries(global.db.data.users)
+    .filter(([jid, user]) => user.muto && groupMembers.includes(jid));
+
+  if (!usersMuted.length) 
+    return m.reply('⚠️ Nessun utente mutato in questo gruppo.');
+
+  // Costruisci il messaggio con menzioni
+  let caption = `🔇 𝐋𝐈𝐒𝐓𝐀 𝐔𝐓𝐄𝐍𝐓𝐈 𝐌𝐔𝐓𝐀𝐓𝐈 🔇\n╭•━━━━━━━━━━━━━━•\n┃ Totale: ${usersMuted.length} utente${usersMuted.length > 1 ? 'i' : ''}`;
+
+  for (let i = 0; i < usersMuted.length; i++) {
+    let [jid, user] = usersMuted[i];
+    let tag = `@${jid.split('@')[0]}`;
+    let motivo = user.muteReason || 'Nessun motivo specificato';
+
+    caption += `\n┃\n┃ ${i + 1}. ${tag}\n┃ Motivo: ${motivo}\n┣━━━━━━━━━━━━━━•`;
   }
-  let groupMembers = groupMetadata.participants.map(participant => participant.id);
 
-  // Filtra gli utenti e i gruppi mutati
-  let users = Object.entries(global.db.data.users).filter(([jid, user]) => user.muto && groupMembers.includes(jid));
-
-  // Costruisci il messaggio di risposta
-  let caption = `
-┌〔𝐔𝐭𝐞𝐧𝐭𝐢 *mutati* 👨🏻‍✈️〕
-├ 𝐓𝐨𝐭𝐚𝐥𝐞 : ${users.length} ${users.length ? '\n' + users.map(([jid], i) =>
-'├ @' + jid.split`@`[0] + '\n│ - - - - - - - - -').join('\n') : ''}
-└────
-`.trim();
+  caption += `\n╰•━━━━━━━━━━━━━━•`;
 
   // Manda il messaggio con menzioni
-  m.reply(caption, null, { mentions: users.map(([jid]) => jid) });
+  m.reply(caption, null, { mentions: usersMuted.map(([jid]) => jid) });
 }
 
 handler.command = /^mutati$/i;
+handler.group = true;
 handler.premium = true;
 
 export default handler;
