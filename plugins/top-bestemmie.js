@@ -1,16 +1,19 @@
-//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, participants }) => {
     const users = global.db.data.users || {};
+    const participantJids = participants.map(p => p.jid).filter(jid => jid);
 
-    Object.keys(users).forEach(id => {
-        if (typeof users[id].blasphemy !== 'number') users[id].blasphemy = 0;
+    participantJids.forEach(jid => {
+        if (!users[jid]) {
+            users[jid] = { blasphemy: 0 };
+        }
+        if (typeof users[jid].blasphemy !== 'number') users[jid].blasphemy = 0;
     });
 
-    let classifica = Object.entries(users)
-        .filter(([key, data]) => (data.blasphemy || 0) > 0)
-        .map(([key, data]) => ({ id: key, bestemmie: data.blasphemy }))
+    let classifica = participantJids
+        .map(jid => ({ id: jid, bestemmie: users[jid].blasphemy || 0 }))
+        .filter(u => u.bestemmie > 0)
         .sort((a, b) => b.bestemmie - a.bestemmie)
         .slice(0, 10);
 
@@ -34,7 +37,7 @@ let handler = async (m, { conn }) => {
         if (user.id === m.sender) userPosition = index + 1;
     });
 
-    let totalPlayers = Object.keys(users).length;
+    let totalPlayers = participantJids.length;
     let userMessage = userPosition !== null
         ? `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
         : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
