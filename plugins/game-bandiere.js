@@ -267,7 +267,7 @@ handler.before = async function (m, { conn }) {
     if (!global.db.data.users[userId].vittorieBandiera) global.db.data.users[userId].vittorieBandiera = 0;
     global.db.data.users[userId].vittorieBandiera += 1;
 
-    const reward = 200;
+    const reward = 100;
     global.db.data.users[userId].money = (global.db.data.users[userId].money || 0) + reward;
 
     const elapsed = Math.floor((Date.now() - partita.startTime) / 1000);
