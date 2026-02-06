@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const confirmationAcquistoAnimale = {};
 
 const handler = async (m, { conn }) => {
@@ -7,12 +8,12 @@ const handler = async (m, { conn }) => {
   const user = users[who];
 
   const animali = [
-    { nome: '🐶 𝐂𝐚𝐧𝐞', prezzo: 17000 },
-    { nome: '🐱 𝐆𝐚𝐭𝐭𝐨', prezzo: 15000 },
-    { nome: '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨', prezzo: 12000 },
-    { nome: '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', prezzo: 20000 },
-    { nome: '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚', prezzo: 13000 }, 
-    { nome: '🥫 𝐂𝐢𝐛𝐨 (𝐱𝟏)', prezzo: 2000, tipo: 'cibo' },
+    { nome: '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', prezzo: 6000 },
+    { nome: '🐶 𝐂𝐚𝐧𝐞', prezzo: 5000 },
+    { nome: '🐱 𝐆𝐚𝐭𝐭𝐨', prezzo: 4500 },
+    { nome: '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚', prezzo: 4000 },
+    { nome: '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨', prezzo: 3500 }, 
+    { nome: '🥫 𝐂𝐢𝐛𝐨 (𝐱𝟏)', prezzo: 1500, tipo: 'cibo' },
   ];
 
   const text = (m.text || '').trim();
