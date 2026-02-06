@@ -208,7 +208,7 @@ handler.before = async (m, { conn }) => {
     activeGames.delete(chat)
 
 
-    let reward = 300  
+    let reward = 100  
 
     if (!global.db.data.users[m.sender]) global.db.data.users[m.sender] = {}
     global.db.data.users[m.sender].money = (global.db.data.users[m.sender].money || 0) + reward
@@ -264,6 +264,5 @@ handler.before = async (m, { conn }) => {
 handler.help = ['indovinacanzone']
 handler.tags = ['giochi']
 handler.command = ['indovinacanzone', 'ic']
-handler.register = false
 
 export default handler
