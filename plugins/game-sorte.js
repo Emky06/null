@@ -9,26 +9,26 @@ let handler = async (m, { conn, text, command, usedPrefix, args }) => {
 
   if (!partecipante || !cavalli.includes(partecipante)) {
     return await conn.reply(m.chat, `══════•⊰✦⊱•══════
-❌ *Simbolo non valido!*
-Esempio: *${usedPrefix}sorte testa 150*
-Scegli tra: *${cavalli.join(', ')}*
+❌ *𝐒𝐢𝐦𝐛𝐨𝐥𝐨 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐨!*
+𝐄𝐬𝐞𝐦𝐩𝐢𝐨: *${usedPrefix}sorte testa 100*
+𝐒𝐜𝐞𝐠𝐥𝐢 𝐭𝐫𝐚: *${cavalli.join(', ')}*
 ══════•⊰✦⊱•══════`, m);
   }
 
   const scommessa = parseInt(args[1]);
   if (isNaN(scommessa) || scommessa <= 0) {
-    return await conn.reply(m.chat, `❌ *Inserisci un importo valido da scommettere!*
-Esempio: *${usedPrefix}sorte testa 150*`, m);
+    return await conn.reply(m.chat, `❌ *𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧 𝐢𝐦𝐩𝐨𝐫𝐭𝐨 𝐯𝐚𝐥𝐢𝐝𝐨 𝐝𝐚 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞!*
+𝐄𝐬𝐞𝐦𝐩𝐢𝐨: *${usedPrefix}sorte testa 100*`, m);
   }
   
-  if (scommessa > 1000) {
-  return await conn.reply(m.chat, `🚫 *Limite massimo superato!*
-Puoi scommettere al massimo *1.000 €* per giocata.`, m);
+  if (scommessa > 100) {
+  return await conn.reply(m.chat, `🚫 *𝐋𝐢𝐦𝐢𝐭𝐞 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐬𝐮𝐩𝐞𝐫𝐚𝐭𝐨!*
+𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *𝟏𝟎𝟎 €* 𝐩𝐞𝐫 𝐠𝐢𝐨𝐜𝐚𝐭𝐚.`, m);
 }
 
   if (scommessa > users.money) {
-    return await conn.reply(m.chat, `❌ *Sei troppo povero per i giochi d'azzardo!*
-Ti mancano *${(scommessa - users.money).toLocaleString()} €*.`, m);
+    return await conn.reply(m.chat, `❌ *𝐒𝐞𝐢 𝐭𝐫𝐨𝐩𝐩𝐨 𝐩𝐨𝐯𝐞𝐫𝐨 𝐩𝐞𝐫 𝐢 𝐠𝐢𝐨𝐜𝐡𝐢 𝐝'𝐚𝐳𝐳𝐚𝐫𝐝𝐨!*
+𝐓𝐢 𝐦𝐚𝐧𝐜𝐚𝐧𝐨 *${(scommessa - users.money).toLocaleString()} €*.`, m);
   }
 
   // Cooldown 30 secondi
@@ -38,7 +38,7 @@ Ti mancano *${(scommessa - users.money).toLocaleString()} €*.`, m);
 
   if (now - users.lastSorte < cooldown) {
     const timeLeft = ((cooldown - (now - users.lastSorte)) / 1000).toFixed(1);
-    return await conn.reply(m.chat, `⏳ *Aspetta ancora ${timeLeft}s prima di riprovare!*`, m);
+    return await conn.reply(m.chat, `⏳ *𝐀𝐬𝐩𝐞𝐭𝐭𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 ${timeLeft}s 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐫𝐢𝐩𝐫𝐨𝐯𝐚𝐫𝐞!*`, m);
   }
 
   users.lastSorte = now;
@@ -48,14 +48,14 @@ Ti mancano *${(scommessa - users.money).toLocaleString()} €*.`, m);
   if (partecipante === risultatoCorsa) {
     const vincita = scommessa * 2;
     users.money += vincita;
-    return m.reply(`✨ È uscito *${risultatoCorsa.toUpperCase()}*!  
-Hai *VINTO* *${vincita.toLocaleString()} €*!  
-Saldo attuale: *${users.money.toLocaleString()} €*`);
+    return m.reply(`✨ 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 *${risultatoCorsa.toUpperCase()}*!  
+𝐇𝐚𝐢 *𝐕𝐈𝐍𝐓𝐎* *${vincita.toLocaleString()} €*!  
+𝐒𝐚𝐥𝐝𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞: *${users.money.toLocaleString()} €*`);
   } else {
     users.money -= scommessa;
-    return m.reply(`☠️ È uscito *${risultatoCorsa.toUpperCase()}*!  
-Hai *PERSO* *${scommessa.toLocaleString()} €*...  
-Saldo attuale: *${users.money.toLocaleString()} €*`);
+    return m.reply(`☠️ 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 *${risultatoCorsa.toUpperCase()}*!  
+𝐇𝐚𝐢 *𝐏𝐄𝐑𝐒𝐎* *${scommessa.toLocaleString()} €*...  
+𝐒𝐚𝐥𝐝𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞: *${users.money.toLocaleString()} €*`);
   }
 };
 
