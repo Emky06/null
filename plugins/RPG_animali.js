@@ -18,7 +18,6 @@ const handler = async (m, { conn }) => {
 
   const user = users[who];
 
-  // Sicurezza dati
   if (!user.animali) user.animali = [];
   if (typeof user.cibo !== 'number') user.cibo = 0;
 
@@ -55,7 +54,6 @@ const handler = async (m, { conn }) => {
     text += `\n⚠️ *${rimossi} animale/i rimossi* dallo shop (non più disponibili)`;
   }
 
-  // Pulsanti
   const buttons = [
     { buttonId: '.daicibo', buttonText: { displayText: 'Dai da mangiare 🥫' } },
     { buttonId: '.shopanimali', buttonText: { displayText: 'Vai allo shop 🛒' } },
@@ -77,3 +75,38 @@ const handler = async (m, { conn }) => {
 handler.command = /^animali$/i;
 handler.exp = 0;
 export default handler;
+
+setInterval(async () => {
+  const users = global.db.data.users;
+  const now = Date.now();
+
+  for (const userId in users) {
+    const user = users[userId];
+    if (!user.animali) continue;
+
+    for (const animale of user.animali) {
+      if (!animale.lastReminder) animale.lastReminder = 0;
+      const tempoRimanente = animale.prossimaPoppata - now;
+
+      if (tempoRimanente <= 0 && now - animale.lastReminder > 60000) {
+        animale.lastReminder = now;
+        const [emoji] = animale.nome.split(' ');
+        const nomePersonalizzato = animale.nomeUtente || animale.nome.split(' ').slice(1).join(' ');
+
+        const chatIds = user.animali
+          .filter(a => a.chatId)
+          .map(a => a.chatId);
+
+        if (chatIds.length > 0) {
+          const gruppoCasuale = chatIds[Math.floor(Math.random() * chatIds.length)];
+          await conn.sendMessage(gruppoCasuale, {
+            text: `⚠️ Hey @${userId.split('@')[0]}, è ora di dare da mangiare a *${nomePersonalizzato}* ${emoji}!`,
+            mentions: [userId],
+          });
+        }
+      }
+    }
+  }
+
+  global.db.write();
+}, 60000);
