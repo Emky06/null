@@ -51,7 +51,6 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!isNumber(user.messaggi)) user.messaggi = 0
               if (!isNumber(user.warn)) user.warn = 0
               if (!isNumber(user.command)) user.command = 0
-              if (!isNumber(user.blasphemy)) user.blasphemy = 0
               if (!isNumber(user.money)) user.money = 0 
               if (!isNumber(user.bank)) user.bank = 0
               if (!isNumber(user.ultimoprelievo)) user.ultimoprelievo = 0
