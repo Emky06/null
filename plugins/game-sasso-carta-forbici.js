@@ -18,8 +18,8 @@ let handler = async (m, { conn, text, command, usedPrefix, args }) => {
     return await conn.reply(m.chat, `𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧 𝐢𝐦𝐩𝐨𝐫𝐭𝐨 𝐯𝐚𝐥𝐢𝐝𝐨 𝐝𝐚 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞.\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: .game sasso 150`, m);
   }
 
-  if (scommessa > 1000) {
-    return await conn.reply(m.chat, `🚫 𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *1.000 €* 𝐩𝐞𝐫 𝐩𝐚𝐫𝐭𝐢𝐭𝐚.`, m);
+  if (scommessa > 100) {
+    return await conn.reply(m.chat, `🚫 𝐏𝐮𝐨𝐢 𝐬𝐜𝐨𝐦𝐦𝐞𝐭𝐭𝐞𝐫𝐞 𝐚𝐥 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 *𝟏𝟎𝟎 €* 𝐩𝐞𝐫 𝐩𝐚𝐫𝐭𝐢𝐭𝐚.`, m);
   }
 
   if (scommessa > users.money) {
