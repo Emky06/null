@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, text, command, usedPrefix, args }) => {
   let chatConfig = global.db.data.chats[m.chat] || {};
     if (chatConfig.antigiochi) {
