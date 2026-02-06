@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-let handler = async (m, { conn, participants, isOwner }) => {
+const handler = async (m, { conn, participants, isOwner }) => {
     if (!m.isGroup) {
         return conn.reply(m.chat, '❌ Questo comando può essere usato solo nei gruppi!', m);
     }
@@ -10,7 +10,6 @@ let handler = async (m, { conn, participants, isOwner }) => {
 
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
 
-  
     let usersToReset = participants
         .map(p => p.jid)
         .filter(jid => jid && !ownerJids.includes(jid));
@@ -26,12 +25,12 @@ let handler = async (m, { conn, participants, isOwner }) => {
 
     conn.reply(
         m.chat,
-        `✅ 𝐋𝐞 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞 𝐝𝐢 𝐭𝐮𝐭𝐭𝐢 𝐢 𝐦𝐞𝐦𝐛𝐫𝐢 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐬𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐞 𝐚𝐳𝐳𝐞𝐫𝐚𝐭𝐞.`,
+        `✅ 𝐋𝐞 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞 𝐨𝐠𝐠𝐢 𝐝𝐢 𝐭𝐮𝐭𝐭𝐢 𝐢 𝐦𝐞𝐦𝐛𝐫𝐢 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐬𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐞 𝐚𝐳𝐳𝐞𝐫𝐚𝐭𝐞.`,
         m
     );
 };
 
-handler.command = /^removeallblasph/i;
+handler.command = /^removeallblasph$/i;
 handler.rowner = true;
 handler.group = true;
 
