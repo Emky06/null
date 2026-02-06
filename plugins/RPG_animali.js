@@ -1,9 +1,10 @@
 //Plugin fatto da Axtral_WiZaRd
 const msToTime = (ms) => {
-  if (ms <= 0) return 'ORA!';
+  if (ms <= 0) return '𝐎𝐑𝐀!';
   const h = Math.floor(ms / 3600000);
   const m = Math.floor((ms % 3600000) / 60000);
-  return `${h}h ${m}min`;
+  const s = Math.floor((ms % 60000) / 1000);
+  return `${h}h ${m}min ${s}s`;
 };
 
 const animaliDisponibili = ['🐶 𝐂𝐚𝐧𝐞', '🐱 𝐆𝐚𝐭𝐭𝐨', '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨', '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚'];
