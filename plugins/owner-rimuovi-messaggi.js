@@ -1,1 +1,65 @@
-const _0xd3a546=_0x2349;(function(_0x5e57de,_0x1f9d87){const _0x1ed98b=_0x2349,_0x2366d6=_0x5e57de();while(!![]){try{const _0x3050a7=-parseInt(_0x1ed98b(0x16d))/0x1*(parseInt(_0x1ed98b(0x16f))/0x2)+-parseInt(_0x1ed98b(0x181))/0x3*(parseInt(_0x1ed98b(0x179))/0x4)+parseInt(_0x1ed98b(0x178))/0x5*(-parseInt(_0x1ed98b(0x177))/0x6)+parseInt(_0x1ed98b(0x174))/0x7+parseInt(_0x1ed98b(0x169))/0x8+-parseInt(_0x1ed98b(0x16e))/0x9+parseInt(_0x1ed98b(0x17b))/0xa*(parseInt(_0x1ed98b(0x176))/0xb);if(_0x3050a7===_0x1f9d87)break;else _0x2366d6['push'](_0x2366d6['shift']());}catch(_0x2b2ba1){_0x2366d6['push'](_0x2366d6['shift']());}}}(_0x2189,0x24a4b));const handler=async _0x228007=>{const _0x17c62e=_0x2349,_0x4d52e3=_0x228007[_0x17c62e(0x16c)][0x0]||(_0x228007[_0x17c62e(0x17e)]?_0x228007[_0x17c62e(0x17e)]['sender']:_0x228007[_0x17c62e(0x172)]),_0x923ad5=global['db']['data'][_0x17c62e(0x173)][_0x4d52e3];if(!_0x923ad5)return _0x228007[_0x17c62e(0x170)](_0x17c62e(0x17f));const _0x296d4b=_0x228007[_0x17c62e(0x172)]['match'](/\d+/),_0x38b6e2=_0x296d4b?parseInt(_0x296d4b[0x0]):0x0;if(_0x38b6e2<=0x0)return _0x228007[_0x17c62e(0x170)](_0x17c62e(0x16b),_0x228007);if(!_0x923ad5[_0x17c62e(0x17c)]||_0x923ad5[_0x17c62e(0x17c)]<_0x38b6e2)return _0x228007[_0x17c62e(0x170)](_0x17c62e(0x180)+_0x4d52e3[_0x17c62e(0x16a)]('@')[0x0]+'\x20non\x20ha\x20abbastanza\x20messaggi\x20da\x20rimuovere.',null,{'mentions':[_0x4d52e3]});_0x923ad5[_0x17c62e(0x17c)]-=_0x38b6e2;let _0x43a0a8={'key':{'participants':_0x17c62e(0x17a),'fromMe':![],'id':'Halo'},'message':{'extendedTextMessage':{'text':_0x17c62e(0x175),'vcard':'BEGIN:VCARD\x0aVERSION:3.0\x0aN:;Unlimited;;;\x0aFN:Unlimited\x0aORG:Unlimited\x0aTITLE:\x0aitem1.TEL;waid=19709001746:+1\x20(970)\x20900-1746\x0aitem1.X-ABLabel:Unlimited\x0aX-WA-BIZ-DESCRIPTION:ofc\x0aX-WA-BIZ-NAME:Unlimited\x0aEND:VCARD'}},'participant':'0@s.whatsapp.net'};conn[_0x17c62e(0x170)](_0x228007['chat'],_0x17c62e(0x17d)+_0x38b6e2+'*\x20\x20𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\x20𝐚\x20𝐪𝐮𝐞𝐬𝐭𝐨\x20𝐮𝐭𝐞𝐧𝐭𝐞!',null,{'quoted':_0x43a0a8});};function _0x2189(){const _0x1ceee2=['users','288890kgfvky','𝐄𝐬𝐞𝐠𝐮𝐢𝐭𝐨\x20𝐜𝐨𝐧\x20𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨\x20✓','187gclVsX','281568JgDaoS','30hsvXjH','848wqkjAa','0@s.whatsapp.net','500810wsBXlg','messaggi','𝐇𝐨\x20𝐫𝐢𝐦𝐨𝐬𝐬𝐨\x20\x20*','quoted','Inserisci\x20la\x20menzione\x20nel\x20comando!','L\x27utente\x20@','2631INrhIo','96768ENGNkZ','split','Inserisci\x20un\x20numero\x20valido\x20di\x20messaggi\x20da\x20rimuovere!','mentionedJid','7869MyHBut','2513619xfpHPB','2egaUkA','reply','command','text'];_0x2189=function(){return _0x1ceee2;};return _0x2189();}handler[_0xd3a546(0x171)]=/^(rimuovi)$/i;function _0x2349(_0x56c819,_0x2fb5a6){const _0x218960=_0x2189();return _0x2349=function(_0x234946,_0x4b6160){_0x234946=_0x234946-0x169;let _0x3e4300=_0x218960[_0x234946];return _0x3e4300;},_0x2349(_0x56c819,_0x2fb5a6);}export default handler;
+//Plugin fatto da Axtral_WiZaRd
+import fs from 'fs'
+import path from 'path'
+
+const handler = async (m, { conn, text }) => {
+  let user = m.mentionedJid?.[0] || m.quoted?.sender
+  if (!user) {
+    return m.reply("❌ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐥𝐚 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐞!")
+  }
+
+  let userData = global.db.data.users[user]
+  if (!userData) {
+    return m.reply("❌ 𝐔𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐭𝐫𝐨𝐯𝐚𝐭𝐨!")
+  }
+
+  let numero = parseInt(text.match(/\d+/)?.[0] || 0)
+  if (numero <= 0) {
+    return m.reply("❌ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧 𝐧𝐮𝐦𝐞𝐫𝐨 𝐯𝐚𝐥𝐢𝐝𝐨!")
+  }
+
+  if (!userData.messaggi || userData.messaggi < numero) {
+    return conn.reply(
+      m.chat,
+      `❌ 𝐋'𝐮𝐭𝐞𝐧𝐭𝐞 @${user.split('@')[0]} 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐛𝐛𝐚𝐬𝐭𝐚𝐧𝐳𝐚 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢.`,
+      m,
+      { mentions: [user] }
+    )
+  }
+
+  userData.messaggi -= numero
+
+  const quotedMessage = {
+    key: {
+      fromMe: false,
+      participant: '0@s.whatsapp.net',
+      remoteJid: 'status@broadcast',
+      id: 'Halo'
+    },
+    message: {
+      locationMessage: {
+        name: `𝐑𝐢𝐦𝐨𝐬𝐬𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨`,
+        jpegThumbnail: fs.readFileSync(path.join('icone', 'spunta.png')),
+        vcard: `BEGIN:VCARD
+VERSION:3.0
+FN:Unlimited
+ORG:Unlimited
+END:VCARD`
+      }
+    }
+  }
+
+  await conn.sendMessage(
+    m.chat,
+    {
+      text: `🗑️ 𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 *${numero}* 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐮𝐭𝐞𝐧𝐭𝐞!`,
+      mentions: [user]
+    },
+    { quoted: quotedMessage }
+  )
+}
+
+handler.command = /^(rimuovi)$/i
+handler.owner = true
+
+export default handler
