@@ -1,4 +1,4 @@
-const handlerNominaHelp = async (m, { conn }) => {
+const handler = async (m, { conn }) => {
   const text = (m.text || '').trim();
   if (!text.toLowerCase().startsWith('.helpnomina')) return;
 
@@ -14,7 +14,7 @@ const handlerNominaHelp = async (m, { conn }) => {
  
 };
 
-handlerNominaHelp.command = /^helpnomina$/i;
+handler.command = /^helpnomina$/i;
 handler.group = true
 
 export default handlerNominaHelp;
