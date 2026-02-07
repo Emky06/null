@@ -20,6 +20,44 @@ class TicTacToe {
 
 const REWARD=100
 
+function renderGrid(room) {
+  let b = room.game.render().map(v=>({
+    X:'❎', O:'⭕', 1:'1️⃣',2:'2️⃣',3:'3️⃣',
+    4:'4️⃣',5:'5️⃣',6:'6️⃣',
+    7:'7️⃣',8:'8️⃣',9:'9️⃣'
+  })[v])
+  return ` ${b[0]} │ ${b[1]} │ ${b[2]}
+───┼───┼───
+ ${b[3]} │ ${b[4]} │ ${b[5]}
+───┼───┼───
+ ${b[6]} │ ${b[7]} │ ${b[8]}`
+}
+
+async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
+  let grid = renderGrid(room)
+  let txt = `╭━━━━━━ ${title} ━━━━━━╮
+┃ ❎ @${room.game.playerX.split('@')[0]}
+┃ ⭕ @${room.game.playerO.split('@')[0]}
+┣━━━━━━━━━━━━━━━━━━━
+${grid.split('\n').map(l => '┃ ' + l).join('\n')}
+┣━━━━━━━━━━━━━━━━━━━
+┃ 🎯 𝐓𝐮𝐫𝐧𝐨: @${room.game.currentTurn.split('@')[0]}
+╰━━━━━━━━━━━━━━━━━━━╯`
+
+  await conn.sendMessage(room.x, { text: txt, mentions: conn.parseMention(txt) })
+  if (room.o && room.o !== room.x)
+    await conn.sendMessage(room.o, { text: txt, mentions: conn.parseMention(txt) })
+}
+
+async function finishGame(conn,room,winner){
+  let users=global.db.data.users
+  if(winner)users[winner].money=(users[winner].money||0)+REWARD
+  let text=winner?`🏆 *@${winner.split('@')[0]} 𝐡𝐚 𝐯𝐢𝐧𝐭𝐨!* 💰 +${REWARD} €`:`🤝 𝐏𝐚𝐫𝐞𝐠𝐠𝐢𝐨!`
+  await conn.sendMessage(room.x,{text,mentions:winner?[winner]:[]})
+  if(room.o&&room.o!==room.x)await conn.sendMessage(room.o,{text,mentions:winner?[winner]:[]})
+  delete conn.game[room.id]
+}
+
 let handler = async (m, { conn, text, usedPrefix, command })=>{
   conn.game=conn.game||{}
   switch(command.toLowerCase()){
@@ -58,56 +96,23 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
       break
   }
 }
-handler.command=/^(tris|entra|esci)$/i
-export default handler
 
-// FUNZIONI COMUNI
-function renderGrid(room) {
-  let b = room.game.render().map(v=>({
-    X:'❎', O:'⭕', 1:'1️⃣',2:'2️⃣',3:'3️⃣',
-    4:'4️⃣',5:'5️⃣',6:'6️⃣',
-    7:'7️⃣',8:'8️⃣',9:'9️⃣'
-  })[v])
-  return ` ${b[0]} │ ${b[1]} │ ${b[2]}
-───┼───┼───
- ${b[3]} │ ${b[4]} │ ${b[5]}
-───┼───┼───
- ${b[6]} │ ${b[7]} │ ${b[8]}`
-}
-
-async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
-  let grid = renderGrid(room)
-  let txt = `╭━━━━━━ ${title} ━━━━━━╮
-┃ ❎ @${room.game.playerX.split('@')[0]}
-┃ ⭕ @${room.game.playerO.split('@')[0]}
-┣━━━━━━━━━━━━━━━━━━━
-${grid.split('\n').map(l => '┃ ' + l).join('\n')}
-┣━━━━━━━━━━━━━━━━━━━
-┃ 🎯 𝐓𝐮𝐫𝐧𝐨: @${room.game.currentTurn.split('@')[0]}
-╰━━━━━━━━━━━━━━━━━━━╯`
-
-  await conn.sendMessage(room.x, { text: txt, mentions: conn.parseMention(txt) })
-  if (room.o && room.o !== room.x)
-    await conn.sendMessage(room.o, { text: txt, mentions: conn.parseMention(txt) })
-}
-
-
- export async function before(m) {
+handler.before = async function(m) {
   let room = Object.values(this.game||{}).find(
-    r => r.state === 'PLAYING' && [r.game.playerX,r.game.playerO].includes(m.sender)
+    r => r.state === 'PLAYING' && [r.game.playerX, r.game.playerO].includes(m.sender)
   )
-  if(!room) return true
+  if(!room) return
 
   if(/^(resa|esci)$/i.test(m.text)){
-    let winner = m.sender===room.game.playerX ? room.game.playerO : room.game.playerX
+    let winner = m.sender === room.game.playerX ? room.game.playerO : room.game.playerX
     return finishGame(this, room, winner)
   }
 
-  if(!/^[1-9]$/.test(m.text)) return true
+  if(!/^[1-9]$/.test(m.text)) return
 
   if(m.sender !== room.game.currentTurn) {
     await m.reply(`❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨! 𝐓𝐨𝐜𝐜𝐚 𝐚 @${room.game.currentTurn.split('@')[0]}`)
-    return true
+    return
   }
 
   let pos = parseInt(m.text) - 1
@@ -117,16 +122,16 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
   switch(result) {
     case -1:
       await m.reply('❌ 𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚')
-      return true
+      return
     case -2:
       await m.reply('❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨')
-      return true
+      return
     case -3:
       await m.reply('❌ 𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐠𝐢à 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐚')
-      return true
+      return
     case 0:
       await m.reply('❌ 𝐂𝐞𝐥𝐥𝐚 𝐠𝐢à 𝐨𝐜𝐜𝐮𝐩𝐚𝐭𝐚')
-      return true
+      return
   }
 
   if(room.game.winner) {
@@ -140,11 +145,5 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
   return sendBoard(this, room, m)
 }
 
-async function finishGame(conn,room,winner){
-  let users=global.db.data.users
-  if(winner)users[winner].money=(users[winner].money||0)+REWARD
-  let text=winner?`🏆 *@${winner.split('@')[0]} 𝐡𝐚 𝐯𝐢𝐧𝐭𝐨!* 💰 +${REWARD} €`:`🤝 𝐏𝐚𝐫𝐞𝐠𝐠𝐢𝐨!`
-  await conn.sendMessage(room.x,{text,mentions:winner?[winner]:[]})
-  if(room.o&&room.o!==room.x)await conn.sendMessage(room.o,{text,mentions:winner?[winner]:[]})
-  delete conn.game[room.id]
-}
+handler.command = /^(tris|entra|esci)$/i
+export default handler
