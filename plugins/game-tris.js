@@ -91,34 +91,52 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
     await conn.sendMessage(room.o, { text: txt, mentions: conn.parseMention(txt) })
 }
 
-export async function before(m) {
+
+ export async function before(m) {
   let room = Object.values(this.game||{}).find(
     r => r.state === 'PLAYING' && [r.game.playerX,r.game.playerO].includes(m.sender)
   )
   if(!room) return true
 
-  // Se esce o si arrende
   if(/^(resa|esci)$/i.test(m.text)){
     let winner = m.sender===room.game.playerX ? room.game.playerO : room.game.playerX
     return finishGame(this, room, winner)
   }
 
-  // Controllo turno corretto
-  if(m.sender !== room.game.currentTurn) return true
+  if(!/^[1-9]$/.test(m.text)) return true
+
+  if(m.sender !== room.game.currentTurn) {
+    await m.reply(`❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨! 𝐓𝐨𝐜𝐜𝐚 𝐚 @${room.game.currentTurn.split('@')[0]}`)
+    return true
+  }
 
   let pos = parseInt(m.text) - 1
-  if(pos < 0 || pos > 8) return true
+  let player = m.sender === room.game.playerX ? 0 : 1
+  let result = room.game.turn(player, pos)
+  
+  switch(result) {
+    case -1:
+      await m.reply('❌ 𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚')
+      return true
+    case -2:
+      await m.reply('❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨')
+      return true
+    case -3:
+      await m.reply('❌ 𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐠𝐢à 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐚')
+      return true
+    case 0:
+      await m.reply('❌ 𝐂𝐞𝐥𝐥𝐚 𝐠𝐢à 𝐨𝐜𝐜𝐮𝐩𝐚𝐭𝐚')
+      return true
+  }
 
-  // Passiamo 0 per X e 1 per O, coerente con _currentTurn
-  let player = m.sender === room.game.playerO ? 1 : 0
-  let ok = room.game.turn(player, pos)
-  if(ok < 1) return true
+  if(room.game.winner) {
+    return finishGame(this, room, room.game.winner)
+  }
+  
+  if(room.game.board === 511) {
+    return finishGame(this, room, null)
+  }
 
-  // Controlla vittoria o pareggio
-  if(room.game.winner) return finishGame(this, room, room.game.winner)
-  if(room.game.board === 511) return finishGame(this, room, null)
-
-  // Mostra la nuova griglia
   return sendBoard(this, room, m)
 }
 
