@@ -31,7 +31,7 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
       conn.game[room.id]=room
       m.reply(`╭━━━━━❎ 𝐓𝐑𝐈𝐒 ⭕━━━━━╮
 ┃ 𝐒𝐭𝐚𝐧𝐳𝐚: *${text}*
-┃ 𝐈𝐧 𝐚𝐭𝐭𝐞𝐬𝐚 𝐝𝐢 𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞…
+┃ 𝐈𝐧 𝐚𝐭𝐭𝐞𝐬𝐬𝐚 𝐝𝐢 𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞…
 ┣━━━━━━━━━━━━━━━━━━
 ┃ ✍️ 𝐄𝐧𝐭𝐫𝐚 𝐜𝐨𝐧: ${usedPrefix}entra ${text}
 ╰━━━━━━━━━━━━━━━━━━╯`)
@@ -49,7 +49,11 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
     case 'esci': // USCITA
       let roomExit=Object.values(conn.game).find(r=>[r.game.playerX,r.game.playerO].includes(m.sender))
       if(!roomExit) return m.reply('𝐍𝐨𝐧 𝐬𝐞𝐢 𝐢𝐧 𝐩𝐚𝐫𝐭𝐢𝐭𝐚')
-      delete conn.game[roomExit.id]
+      if(roomExit.state==='PLAYING'){ 
+        // partita già iniziata → vittoria all'altro
+        let winner = m.sender===roomExit.game.playerX ? roomExit.game.playerO : roomExit.game.playerX
+        await finishGame(conn,roomExit,winner)
+      } else delete conn.game[roomExit.id]
       m.reply('🚪 𝐒𝐞𝐢 𝐮𝐬𝐜𝐢𝐭𝐨 𝐝𝐚𝐥𝐥𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚')
       break
   }
@@ -91,12 +95,19 @@ export async function before(m){
   let room=Object.values(this.game||{}).find(r=>r.state==='PLAYING'&&[r.game.playerX,r.game.playerO].includes(m.sender))
   if(!room)return true
   if(!/^[1-9]$|^(resa|esci)$/i.test(m.text))return true
-  if(!/^[1-9]$/.test(m.text)){room.game._currentTurn=m.sender===room.game.playerX;return finishGame(this,room,room.game.currentTurn)}
-  if(m.sender!==room.game.currentTurn)return true
-  let ok=room.game.turn(m.sender===room.game.playerO,parseInt(m.text)-1)
+
+  if(/^(resa|esci)$/i.test(m.text)){ 
+    let winner = m.sender===room.game.playerX ? room.game.playerO : room.game.playerX
+    return finishGame(this,room,winner)
+  }
+
+  let playerBool = m.sender===room.game.playerO
+  if(playerBool!==room.game._currentTurn) return true
+
+  let ok=room.game.turn(playerBool,parseInt(m.text)-1)
   if(ok<1)return true
-  if(room.game.winner)return finishGame(this,room,room.game.winner)
-  if(room.game.board===511)return finishGame(this,room,null)
+  if(room.game.winner) return finishGame(this,room,room.game.winner)
+  if(room.game.board===511) return finishGame(this,room,null)
   return sendBoard(this,room,m)
 }
 
