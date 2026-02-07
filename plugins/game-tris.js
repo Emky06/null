@@ -57,7 +57,7 @@ async function finishGame(conn, room, winner, surrender=false, quitter=null) {
   let txt
   
   if(surrender && quitter) {
-    txt = `╭❌ 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐀𝐁𝐁𝐀𝐍𝐃𝐎𝐍𝐀𝐓𝐀 ❌╮
+    txt = `╭━━❌ 𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐚𝐛𝐛𝐚𝐧𝐝𝐨𝐧𝐚𝐭𝐚 ❌━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -69,7 +69,7 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else if(winner) {
-    txt = `╭🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆╮
+    txt = `╭━━🏆 𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐚 🏆━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
