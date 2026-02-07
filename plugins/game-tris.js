@@ -92,23 +92,31 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 }
 
 export async function before(m){
-  let room=Object.values(this.game||{}).find(r=>r.state==='PLAYING'&&[r.game.playerX,r.game.playerO].includes(m.sender))
-  if(!room)return true
-  if(!/^[1-9]$|^(resa|esci)$/i.test(m.text))return true
+  let room = Object.values(this.game||{}).find(r=>r.state==='PLAYING' && [r.game.playerX,r.game.playerO].includes(m.sender))
+  if(!room) return true
+  if(!/^[1-9]$|^(resa|esci)$/i.test(m.text)) return true
 
-  if(/^(resa|esci)$/i.test(m.text)){ 
+  // Se esce o si arrende
+  if(/^(resa|esci)$/i.test(m.text)){
     let winner = m.sender===room.game.playerX ? room.game.playerO : room.game.playerX
-    return finishGame(this,room,winner)
+    return finishGame(this, room, winner)
   }
 
-  let playerBool = m.sender===room.game.playerO
-  if(playerBool!==room.game._currentTurn) return true
+  // Controllo turno corretto
+  if(m.sender !== room.game.currentTurn) return true
 
-  let ok=room.game.turn(playerBool,parseInt(m.text)-1)
-  if(ok<1)return true
-  if(room.game.winner) return finishGame(this,room,room.game.winner)
-  if(room.game.board===511) return finishGame(this,room,null)
-  return sendBoard(this,room,m)
+  // Converte il numero scritto in indice
+  let pos = parseInt(m.text) - 1
+  if(pos < 0 || pos > 8) return true
+
+  let playerBool = m.sender === room.game.playerO ? 1 : 0
+  let ok = room.game.turn(playerBool, pos)
+  if(ok < 1) return true
+
+  if(room.game.winner) return finishGame(this, room, room.game.winner)
+  if(room.game.board === 511) return finishGame(this, room, null)
+
+  return sendBoard(this, room, m)
 }
 
 async function finishGame(conn,room,winner){
