@@ -29,12 +29,12 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
         return m.reply('❌ 𝐒𝐭𝐚𝐢 𝐠𝐢𝐚̀ 𝐠𝐢𝐨𝐜𝐚𝐧𝐝𝐨 𝐮𝐧𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚')
       let room={id:'ttt-'+Date.now(),name:text,x:m.chat,o:'',game:new TicTacToe(m.sender,'o'),state:'WAITING'}
       conn.game[room.id]=room
-      m.reply(`╭━━━━━━❎ 𝐓𝐑𝐈𝐒 ⭕━━━━━━╮
+      m.reply(`╭━━━━━❎ 𝐓𝐑𝐈𝐒 ⭕━━━━━╮
 ┃ 𝐒𝐭𝐚𝐧𝐳𝐚: *${text}*
 ┃ 𝐈𝐧 𝐚𝐭𝐭𝐞𝐬𝐚 𝐝𝐢 𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞…
-┣━━━━━━━━━━━━━━━━━━━
+┣━━━━━━━━━━━━━━━━━
 ┃ ✍️ 𝐄𝐧𝐭𝐫𝐚 𝐜𝐨𝐧: ${usedPrefix}entra ${text}
-╰━━━━━━━━━━━━━━━━━━━╯`)
+╰━━━━━━━━━━━━━━━━━╯`)
       break
 
     case 'entra': // ENTRA STANZA
