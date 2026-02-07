@@ -69,7 +69,7 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else if(winner) {
-    txt = `╭━🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆━╮
+    txt = `╭🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
