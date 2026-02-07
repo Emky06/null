@@ -91,10 +91,11 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
     await conn.sendMessage(room.o, { text: txt, mentions: conn.parseMention(txt) })
 }
 
-export async function before(m){
-  let room = Object.values(this.game||{}).find(r=>r.state==='PLAYING' && [r.game.playerX,r.game.playerO].includes(m.sender))
+export async function before(m) {
+  let room = Object.values(this.game||{}).find(
+    r => r.state === 'PLAYING' && [r.game.playerX,r.game.playerO].includes(m.sender)
+  )
   if(!room) return true
-  if(!/^[1-9]$|^(resa|esci)$/i.test(m.text)) return true
 
   // Se esce o si arrende
   if(/^(resa|esci)$/i.test(m.text)){
@@ -105,17 +106,19 @@ export async function before(m){
   // Controllo turno corretto
   if(m.sender !== room.game.currentTurn) return true
 
-  // Converte il numero scritto in indice
   let pos = parseInt(m.text) - 1
   if(pos < 0 || pos > 8) return true
 
-  let playerBool = m.sender === room.game.playerO ? 1 : 0
-  let ok = room.game.turn(playerBool, pos)
+  // Passiamo 0 per X e 1 per O, coerente con _currentTurn
+  let player = m.sender === room.game.playerO ? 1 : 0
+  let ok = room.game.turn(player, pos)
   if(ok < 1) return true
 
+  // Controlla vittoria o pareggio
   if(room.game.winner) return finishGame(this, room, room.game.winner)
   if(room.game.board === 511) return finishGame(this, room, null)
 
+  // Mostra la nuova griglia
   return sendBoard(this, room, m)
 }
 
