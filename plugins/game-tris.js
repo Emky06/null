@@ -42,7 +42,7 @@ async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
 ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┣━━━━━━━━━━━━━━━━━━━
 ┃ 🎯 𝐓𝐮𝐫𝐧𝐨: @${room.game.currentTurn.split('@')[0]}
-╰━━━━━━━━━━━━━━━━━━━╯`
+╰━━━━━━━━━━━━━━━━━━╯`
 
   await conn.sendMessage(room.x, { text: txt, mentions: conn.parseMention(txt) })
   if (room.o && room.o !== room.x)
