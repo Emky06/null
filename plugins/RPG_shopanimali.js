@@ -8,25 +8,27 @@ const handler = async (m, { conn }) => {
   const user = users[who];
 
   const animali = [
+    { nome: '🐴 𝐂𝐚𝐯𝐚𝐥𝐥𝐨', prezzo: 9000 },
     { nome: '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', prezzo: 6000 },
     { nome: '🐶 𝐂𝐚𝐧𝐞', prezzo: 5000 },
     { nome: '🐱 𝐆𝐚𝐭𝐭𝐨', prezzo: 4500 },
     { nome: '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚', prezzo: 4000 },
     { nome: '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨', prezzo: 3500 }, 
-    { nome: '🥫 𝐂𝐢𝐛𝐨 (𝐱𝟏)', prezzo: 1500, tipo: 'cibo' },
+    { nome: '🥫 𝐂𝐢𝐛𝐨 (𝐱𝟏)', prezzo: 1500, tipo: 'cibo', quantita: 1 },
+{ nome: '🥫 𝐂𝐢𝐛𝐨 (𝐱𝟑)', prezzo: 4000, tipo: 'cibo', quantita: 3 },
   ];
 
   const text = (m.text || '').trim();
   const args = text.split(/\s+/);
 
   if (args.length === 1) {
-    let reply = '*🐾 𝐒𝐇𝐎𝐏 𝐀𝐍𝐈𝐌𝐀𝐋𝐈 🐾*\n\n𝐒𝐜𝐞𝐠𝐥𝐢 𝐜𝐨𝐬𝐚 𝐯𝐮𝐨𝐢 𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚𝐫𝐞:\n\n';
+    let reply = '*🐾 𝐏𝐄𝐓 𝐒𝐇𝐎𝐏 🐾*\n\n𝐒𝐜𝐞𝐠𝐥𝐢 𝐜𝐨𝐬𝐚 𝐯𝐮𝐨𝐢 𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚𝐫𝐞:\n\n';
     animali.forEach((a, i) => {
       reply += `${i + 1}. ${a.nome} – *${a.prezzo.toLocaleString('it-IT')} €*\n`;
     });
 
     const buttons = animali.map((a, i) => ({
-      buttonId: `.shopanimali ${i + 1}`,
+      buttonId: `.petshop ${i + 1}`,
       buttonText: { displayText: `𝐂𝐨𝐦𝐩𝐫𝐚 ${a.nome}` }
     }));
 
@@ -44,7 +46,7 @@ const handler = async (m, { conn }) => {
   }
 
   if (!(who in confirmationAcquistoAnimale)) {
-    return conn.reply(m.chat, '❌ 𝐃𝐞𝐯𝐢 𝐩𝐫𝐢𝐦𝐚 𝐚𝐩𝐫𝐢𝐫𝐞 𝐢𝐥 𝐦𝐞𝐧𝐮 𝐜𝐨𝐧 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 .shopanimali', m);
+    return conn.reply(m.chat, '❌ 𝐃𝐞𝐯𝐢 𝐩𝐫𝐢𝐦𝐚 𝐚𝐩𝐫𝐢𝐫𝐞 𝐢𝐥 𝐦𝐞𝐧𝐮 𝐜𝐨𝐧 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 .petshop', m);
   }
 
   const scelta = parseInt(args[1]);
@@ -75,10 +77,17 @@ const handler = async (m, { conn }) => {
   if (typeof user.cibo !== 'number') user.cibo = 0;
 
   if (selezionato.tipo === 'cibo') {
-    user.cibo += 1;
-    global.db.write();
-    return conn.reply(m.chat, `🥫 𝐇𝐚𝐢 𝐜𝐨𝐦𝐩𝐫𝐚𝐭𝐨 𝟏 𝐮𝐧𝐢𝐭𝐚̀ 𝐝𝐢 𝐜𝐢𝐛𝐨 𝐩𝐞𝐫 *${selezionato.prezzo.toLocaleString('it-IT')} €*.`, m);
-  }
+  const qta = selezionato.quantita || 1;
+  user.cibo += qta;
+
+  global.db.write();
+
+  return conn.reply(
+    m.chat,
+    `🥫 𝐇𝐚𝐢 𝐜𝐨𝐦𝐩𝐫𝐚𝐭𝐨 *${qta}* 𝐮𝐧𝐢𝐭𝐚̀ 𝐝𝐢 𝐜𝐢𝐛𝐨 𝐩𝐞𝐫 *${selezionato.prezzo.toLocaleString('it-IT')} €*.`,
+    m
+  );
+}
 
  
   user.animali.push({
@@ -97,7 +106,7 @@ const handler = async (m, { conn }) => {
   );
 };
 
-handler.command = /^shopanimali$/i;
+handler.command = /^petshop$/i;
 handler.group = true
 
 export default handler;
