@@ -38,9 +38,9 @@ async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
   let txt = `╭━━━━━❎ ${title} ⭕━━━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
-┣━━━━━━━━━━━━━━━━━━━
+┣━━━━━━━━━━━━━━━━━━
 ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
-┣━━━━━━━━━━━━━━━━━━━
+┣━━━━━━━━━━━━━━━━━━
 ┃ 🎯 𝐓𝐮𝐫𝐧𝐨: @${room.game.currentTurn.split('@')[0]}
 ╰━━━━━━━━━━━━━━━━━━╯`
 
