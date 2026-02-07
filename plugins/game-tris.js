@@ -35,7 +35,7 @@ function renderGrid(room) {
 
 async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
   let grid = renderGrid(room)
-  let txt = `╭━━━━━❎ ${title} ⭕━━━━━╮
+  let txt = `╭━━━ ${title} ━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -49,26 +49,27 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
     await conn.sendMessage(room.o, { text: txt, mentions: conn.parseMention(txt) })
 }
 
-async function finishGame(conn, room, winner, surrender=false) {
+async function finishGame(conn, room, winner, surrender=false, quitter=null) {
   let users = global.db.data.users
   if(winner) users[winner].money = (users[winner].money || 0) + REWARD
   
   let grid = renderGrid(room)
   let txt
   
-  if(surrender) {
-    txt = `╭━━━━ ❌ 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐀𝐁𝐁𝐀𝐍𝐃𝐎𝐍𝐀𝐓𝐀 ❌ ━━━━╮
+  if(surrender && quitter) {
+    txt = `╭━━━ ❌ 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐀𝐁𝐁𝐀𝐍𝐃𝐎𝐍𝐀𝐓𝐀 ❌ ━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
 ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┣━━━━━━━━━━━━━━━━━━━
+┃ 🚪 @${quitter.split('@')[0]} 𝐞̀ 𝐮𝐬𝐜𝐢𝐭𝐨 𝐝𝐚𝐥𝐥𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚
 ┃ ⚡ 𝐕𝐈𝐓𝐓𝐎𝐑𝐈𝐀 𝐀 𝐓𝐀𝐕𝐎𝐋𝐈𝐍𝐎!
 ┃ 🏆 𝐕𝐢𝐧𝐜𝐢𝐭𝐨𝐫𝐞: @${winner.split('@')[0]}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else if(winner) {
-    txt = `╭━━━━ 🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆 ━━━━╮
+    txt = `╭━━━ 🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆 ━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -78,7 +79,7 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else {
-    txt = `╭━━━━ 🤝 𝐏𝐀𝐑𝐄𝐆𝐆𝐈𝐎 🤝 ━━━━╮
+    txt = `╭━━━ 🤝 𝐏𝐀𝐑𝐄𝐆𝐆𝐈𝐎 🤝 ━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -127,9 +128,10 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
       if(!roomExit) return m.reply('𝐍𝐨𝐧 𝐬𝐞𝐢 𝐢𝐧 𝐩𝐚𝐫𝐭𝐢𝐭𝐚')
       if(roomExit.state==='PLAYING'){ 
         let winner = m.sender===roomExit.game.playerX ? roomExit.game.playerO : roomExit.game.playerX
-        await finishGame(conn, roomExit, winner, true)
-      } else delete conn.game[roomExit.id]
-      m.reply('🚪 𝐒𝐞𝐢 𝐮𝐬𝐜𝐢𝐭𝐨 𝐝𝐚𝐥𝐥𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚')
+        await finishGame(conn, roomExit, winner, true, m.sender)
+      } else {
+        delete conn.game[roomExit.id]
+      }
       break
   }
 }
@@ -142,7 +144,7 @@ handler.before = async function(m) {
 
   if(/^(resa|esci)$/i.test(m.text)){
     let winner = m.sender === room.game.playerX ? room.game.playerO : room.game.playerX
-    return finishGame(this, room, winner, true)
+    return finishGame(this, room, winner, true, m.sender)
   }
 
   if(!/^[1-9]$/.test(m.text)) return
