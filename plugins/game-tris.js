@@ -32,9 +32,9 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
       m.reply(`╭━━━━━❎ 𝐓𝐑𝐈𝐒 ⭕━━━━━╮
 ┃ 𝐒𝐭𝐚𝐧𝐳𝐚: *${text}*
 ┃ 𝐈𝐧 𝐚𝐭𝐭𝐞𝐬𝐚 𝐝𝐢 𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞…
-┣━━━━━━━━━━━━━━━━━
+┣━━━━━━━━━━━━━━━━━━
 ┃ ✍️ 𝐄𝐧𝐭𝐫𝐚 𝐜𝐨𝐧: ${usedPrefix}entra ${text}
-╰━━━━━━━━━━━━━━━━━╯`)
+╰━━━━━━━━━━━━━━━━━━╯`)
       break
 
     case 'entra': // ENTRA STANZA
