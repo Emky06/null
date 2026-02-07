@@ -35,7 +35,7 @@ function renderGrid(room) {
 
 async function sendBoard(conn, room, m, title='𝐓𝐑𝐈𝐒') {
   let grid = renderGrid(room)
-  let txt = `╭━━━━━━ ${title} ━━━━━━╮
+  let txt = `╭━━━━━❎ ${title} ⭕━━━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -57,7 +57,7 @@ async function finishGame(conn, room, winner, surrender=false) {
   let txt
   
   if(surrender) {
-    txt = `╭━━━━━━ ❌ 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐀𝐁𝐁𝐀𝐍𝐃𝐎𝐍𝐀𝐓𝐀 ❌ ━━━━━━╮
+    txt = `╭━━━━ ❌ 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐀𝐁𝐁𝐀𝐍𝐃𝐎𝐍𝐀𝐓𝐀 ❌ ━━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -68,7 +68,7 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else if(winner) {
-    txt = `╭━━━━━━ 🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆 ━━━━━━╮
+    txt = `╭━━━━ 🏆 𝐏𝐀𝐑𝐓𝐈𝐓𝐀 𝐓𝐄𝐑𝐌𝐈𝐍𝐀𝐓𝐀 🏆 ━━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
@@ -78,7 +78,7 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 ┃ 💰 𝐏𝐫𝐞𝐦𝐢𝐨: +${REWARD} €
 ╰━━━━━━━━━━━━━━━━━━━╯`
   } else {
-    txt = `╭━━━━━━ 🤝 𝐏𝐀𝐑𝐄𝐆𝐆𝐈𝐎 🤝 ━━━━━━╮
+    txt = `╭━━━━ 🤝 𝐏𝐀𝐑𝐄𝐆𝐆𝐈𝐎 🤝 ━━━━╮
 ┃ ❎ @${room.game.playerX.split('@')[0]}
 ┃ ⭕ @${room.game.playerO.split('@')[0]}
 ┣━━━━━━━━━━━━━━━━━━━
