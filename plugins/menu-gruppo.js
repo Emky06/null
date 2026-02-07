@@ -153,8 +153,8 @@ function generateMenuText(prefix) {
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🧸 *𝐑𝐏𝐆*  
 ┃
-┃🏪 ${prefix}𝐬𝐡𝐨𝐩𝐚𝐧𝐢𝐦𝐚𝐥𝐢  
-┃🐾 ${prefix}𝐚𝐧𝐢𝐦𝐚𝐥𝐢  
+┃🏪 ${prefix}𝐩𝐞𝐭𝐬𝐡𝐨𝐩
+┃🐾 ${prefix}𝐩𝐞𝐭
 ┃💰 ${prefix}𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚 (𝐦𝐬𝐠)  
 ┃👨‍👩‍👧‍👦 ${prefix}𝐟𝐚𝐦𝐢𝐠𝐥𝐢𝐚  
 ┃👶🏾 ${prefix}𝐚𝐝𝐨𝐭𝐭𝐚  
