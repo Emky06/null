@@ -150,9 +150,10 @@ handler.before = async function(m) {
   if(!/^[1-9]$/.test(m.text)) return
 
   if(m.sender !== room.game.currentTurn) {
-   
-    await this.sendMessage(m.chat, {
-      text: `❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨! 𝐓𝐨𝐜𝐜𝐚 𝐚 @${room.game.currentTurn}`,
+    
+    let currentPlayerNumber = room.game.currentTurn.split('@')[0]
+    await this.sendMessage(m.chat, { 
+      text: `❌ 𝐍𝐨𝐧 è 𝐢𝐥 𝐭𝐮𝐨 𝐭𝐮𝐫𝐧𝐨! 𝐓𝐨𝐜𝐜𝐚 𝐚 @${currentPlayerNumber}`,
       mentions: [room.game.currentTurn]
     }, { quoted: m })
     return
@@ -187,6 +188,7 @@ handler.before = async function(m) {
 
   return sendBoard(this, room, m)
 }
+
 
 handler.command = /^(tris|entra|esci)$/i
 export default handler
