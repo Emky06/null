@@ -188,16 +188,5 @@ handler.before = async function(m) {
   return sendBoard(this, room, m)
 }
 
-  if(room.game.winner) {
-    return finishGame(this, room, room.game.winner, false)
-  }
-  
-  if(room.game.board === 511) {
-    return finishGame(this, room, null, false)
-  }
-
-  return sendBoard(this, room, m)
-}
-
 handler.command = /^(tris|entra|esci)$/i
 export default handler
