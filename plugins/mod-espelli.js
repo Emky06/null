@@ -77,5 +77,6 @@ if (ownerJids.includes(decodedMention)) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩�
 
 handler.command = /^espelli$/i
 handler.premium = true
+handler.group = true
 
 export default handler
