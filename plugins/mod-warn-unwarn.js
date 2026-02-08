@@ -7,44 +7,57 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command }
 
   let who;
   if (m.isGroup) {
-    who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : false;
+    who = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : null);
   } else {
     who = m.chat;
   }
 
   if (!who) return m.reply("*❗𝐃𝐞𝐯𝐢 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞 𝐚 𝐪𝐮𝐚𝐥𝐜𝐮𝐧𝐨 𝐩𝐞𝐫 𝐝𝐚𝐫𝐠𝐥𝐢 𝐮𝐧 𝐰𝐚𝐫𝐧.*");
 
-  const ownerBot = global.owner[0][0] + '@s.whatsapp.net';
+  const decodedMention = conn.decodeJid(who);
 
-  if (who === ownerBot) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.*');
-  if (who === conn.user.jid) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐛𝐨𝐭.*');
-  if (who === m.sender) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.*');
+  if (decodedMention === conn.user.jid) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐥 𝐛𝐨𝐭.*');
+    if (decodedMention === m.sender) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.*');
+
+  const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+    if (ownerJids.includes(decodedMention)) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐨𝐰𝐧𝐞𝐫 𝐝𝐞𝐥 𝐛𝐨𝐭.*');
 
   let admins = [];
   if (m.isGroup) {
-  admins = groupMetadata.participants
-    .filter(p => p.admin)
-    .map(p => p.id);
+    try {
+      groupMetadata = await conn.groupMetadata(m.chat);
+    } catch {
+      return m.reply('❗ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐞𝐜𝐮𝐩𝐞𝐫𝐨 𝐝𝐞𝐢 𝐝𝐚𝐭𝐢 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.');
+    }
 
-  if (admins.includes(who))
-    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
+    const participants = groupMetadata.participants.map(u => ({
+      ...u,
+      id: conn.decodeJid(u.id),
+      jid: u.jid || conn.decodeJid(u.id)
+    }));
 
-  const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+    const utente = participants.find(u => u.id === decodedMention || u.jid === decodedMention);
+    if (!utente) return m.reply('❗ 𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.');
 
-  const isMod = prems.some(u => {
-    const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
-    return jid === who
-  })
+    const isOwner = utente.admin === 'superadmin';
+    const isAdmin = utente.admin === 'admin';
 
-  if (isMod)
-    return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*')
-}
+    const prems = global.db?.data?.groups?.[m.chat]?.prems || [];
+    const isMod = prems.some(u => (u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`) === decodedMention);
 
-  if (!(who in global.db.data.users)) {
-    global.db.data.users[who] = { warn: 0, warnReasons: [] };
+    if (isOwner) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*');
+        if (isAdmin) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
+        if (isMod) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*');
+
+   
+    admins = participants.filter(p => p.admin).map(p => p.id);
   }
 
-  let user = global.db.data.users[who];
+  if (!(decodedMention in global.db.data.users)) {
+    global.db.data.users[decodedMention] = { warn: 0, warnReasons: [] };
+  }
+
+  let user = global.db.data.users[decodedMention];
   if (!user.warnReasons) user.warnReasons = [];
 
   const cleanReason = text ? text.replace(/@[\w\d]+/g, '').trim() : '';
@@ -78,14 +91,14 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command }
 
     conn.reply(
       m.chat,
-      `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n${displayReason}\n\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`,
+      `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n${displayReason}\n\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`,
       prova,
-      { mentions: [who] }
+      { mentions: [decodedMention] }
     );
 
     if (user.warn >= adminWarnLimit) {
       await time(1000);
-      await conn.groupParticipantsUpdate(m.chat, [who], 'remove');
+      await conn.groupParticipantsUpdate(m.chat, [decodedMention], 'remove');
       user.warn = 0;
       user.warnReasons = [];
     }
@@ -110,9 +123,9 @@ let handler = async (m, { conn, text, args, groupMetadata, usedPrefix, command }
 
       conn.reply(
         m.chat,
-        `👤 ➤ @${who.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n\n> *${user.warn} 𝒘𝒂𝒓𝒏 𝒓𝒊𝒎𝒂𝒏𝒆𝒏𝒕𝒊.*`,
+        `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn} / ${adminWarnLimit}*\n\n> *${user.warn} 𝒘𝒂𝒓𝒏 𝒓𝒊𝒎𝒂𝒏𝒆𝒏𝒕𝒊.*`,
         prova,
-        { mentions: [who] }
+        { mentions: [decodedMention] }
       );
     } else {
       m.reply("*𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚𝐭𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐰𝐚𝐫𝐧.*");
