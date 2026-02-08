@@ -68,5 +68,6 @@ if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\
 handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar/i
 handler.command = new RegExp
 handler.admin = true
+handler.group = true
 
 export default handler
