@@ -86,12 +86,11 @@ if (m.isGroup) {
     const totale = formatNumber((userData.money || 0) + (userData.bank || 0));
     const statoCivile = userData.sposato ? "💍 Sposato/a" : "🕊️ Single";
 
-    const animaliDisponibili = ['🐶 Cane', '🐱 Gatto', '🐰 Coniglio', '🦜 Pappagallo', '🐢 Tartaruga'];
-    const animaliUtente = (userData.animali || []).filter(a => animaliDisponibili.includes(a.nome));
+    const animaliCount = (userData.animali || []).length;
 
-    const animaliInfo = animaliUtente.length > 0
-      ? `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* ${animaliUtente.length}`
-      : `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* Nessuno`;
+const animaliInfo = animaliCount > 0
+  ? `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* ${animaliCount}`
+  : `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* Nessuno`;
 
     const grado = userData.grado || "Sfavillante";
 
