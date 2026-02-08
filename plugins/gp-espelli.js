@@ -1,57 +1,53 @@
-//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
-async function handler(m, { isBotAdmin, isOwner, text, conn }) {
+async function handler(m, { isOwner, text, conn }) {
+  if (!m.isGroup) return m.reply('ⓘ Questo comando funziona solo nei gruppi.')
+
+  // FUNZIONE PER CONTROLLARE SE UN UTENTE È ADMIN O SUPERADMIN
+  async function isUserAdmin(conn, chatId, senderId) {  
+      try {  
+          const decodedSender = conn.decodeJid(senderId);  
+          const groupMeta = (conn.chats[chatId] || {}).metadata || await conn.groupMetadata(chatId).catch(_ => null) || {};  
+          return groupMeta.participants?.some(p =>  
+              (conn.decodeJid(p.id) === decodedSender || p.jid === decodedSender) &&  
+              (p.admin === 'admin' || p.admin === 'superadmin')  
+          ) || false;  
+      } catch {  
+          return false;  
+      }  
+  }
+
+  const isBotAdmin = await isUserAdmin(conn, m.chat, conn.user.jid)
   if (!isBotAdmin) return m.reply('ⓘ 𝐃𝐞𝐯𝐨 𝐞𝐬𝐬𝐞𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐩𝐞𝐫 𝐩𝐨𝐭𝐞𝐫 𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞.')
 
-  const mention = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : m.quoted
+  const mention = m.mentionedJid?.[0] || m.quoted?.sender
   if (!mention) return m.reply('ⓘ 𝐌𝐞𝐧𝐳𝐢𝐨𝐧𝐚 𝐥𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚 𝐝𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞.')
 
-  const motivo = text
-    ? text.replace(/@[\d\-]+/, '').trim() || 'non specificato'
-    : 'non specificato'
-
+  const motivo = text ? text.replace(/@[\d\-]+/, '').trim() || 'non specificato' : 'non specificato'
   const ownerBot = global.owner[0][0] + '@s.whatsapp.net'
 
-  if (mention === ownerBot) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.')
-  if (mention === conn.user.jid) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐛𝐨𝐭.')
-  if (mention === m.sender) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.')
+  if ([ownerBot, conn.user.jid, m.sender].includes(mention)) {
+      return m.reply('ⓘ Non puoi rimuovere il creator o te stesso.')
+  }
 
-  const groupMetadata = conn.chats[m.chat].metadata
-  const participants = groupMetadata.participants
-  const utente = participants.find(u => conn.decodeJid(u.id) === mention)
+  // CONTROLLA SE L'UTENTE DA KICKARE È ADMIN/SUPERADMIN
+  const isTargetAdmin = await isUserAdmin(conn, m.chat, mention)
 
-  const owner = utente?.admin == 'superadmin'
-  const admin = utente?.admin == 'admin'
-const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+  // CONTROLLA SE È UN MODERATOR CUSTOM
+  const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+  const isMod = prems.some(u => (u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`) === mention)
 
-    const mod = prems.some(u => {
-        const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
-        return jid === mention
-    })
-
-  if (owner) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
-  if (admin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐚𝐝𝐦𝐢𝐧.')
-if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.')
+  if (isTargetAdmin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ L\'utente è admin o superadmin.')
+  if (isMod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ L\'utente è un moderatore.')
 
   const fake = {
-    key: {
-      participants: "0@s.whatsapp.net",
-      fromMe: false,
-      id: "Halo"
-    },
-    message: {
-      locationMessage: {
-        name: '𝐑𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...',
-        jpegThumbnail: fs.readFileSync('./icone/kick.png'),
-      }
-    },
-    participant: "0@s.whatsapp.net"
+      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
+      message: { locationMessage: { name: '𝐑𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...', jpegThumbnail: fs.readFileSync('./icone/kick.png') } },
+      participant: "0@s.whatsapp.net"
   }
 
   const userTag = `@${mention.split`@`[0]}`
   const senderTag = `@${m.sender.split`@`[0]}`
-
   const messaggio = 
 `╭━━━[ *Rimozione utente* ]━━━╮
 ┃ 👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${userTag}
