@@ -24,9 +24,12 @@ try {
   return m.reply('ⓘ Errore nel recupero dei dati del gruppo.')
 }
 
+// Decodifica il JID della persona da rimuovere
+const decodedMention = conn.decodeJid(mention)
+
 const utente = groupMetadata.participants.find(p => {
   const jid = conn.decodeJid(p.id || p.jid)
-  return jid === mention
+  return jid === decodedMention
 })
 
 const owner = utente?.admin === 'superadmin'
