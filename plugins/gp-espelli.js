@@ -78,5 +78,6 @@ if (ownerJids.includes(decodedMention)) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩�
 handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar/i
 handler.command = new RegExp
 handler.admin = true
+handler.group = true
 
 export default handler
