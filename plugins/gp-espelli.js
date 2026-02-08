@@ -18,32 +18,34 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
   if (mention === m.sender) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.')
 
   let groupMetadata
-try {
-  groupMetadata = await conn.groupMetadata(m.chat)
-} catch {
-  return m.reply('ⓘ Errore nel recupero dei dati del gruppo.')
-}
+  try {
+    groupMetadata = await conn.groupMetadata(m.chat)
+  } catch {
+    return m.reply('ⓘ Errore nel recupero dei dati del gruppo.')
+  }
 
-// Decodifica il JID della persona da rimuovere
-const decodedMention = conn.decodeJid(mention)
+  const decodedMention = conn.decodeJid(mention)
 
-const utente = groupMetadata.participants.find(p => {
-  const jid = conn.decodeJid(p.id || p.jid)
-  return jid === decodedMention
-})
+  const utente = groupMetadata.participants.find(p => {
+    const jid = conn.decodeJid(p.id || p.jid)
+    return jid === decodedMention
+  })
 
-const owner = utente?.admin === 'superadmin'
-const admin = utente?.admin === 'admin'
-const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+  if (!utente) return m.reply('ⓘ L’utente non è presente nel gruppo.')
 
-    const mod = prems.some(u => {
-        const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
-        return jid === mention
-    })
+  const owner = utente.admin === 'superadmin'
+  const admin = utente.admin === 'admin'
 
-  if (owner) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
-  if (admin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐚𝐝𝐦𝐢𝐧.')
-if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.')
+  const prems = global.db?.data?.groups?.[m.chat]?.prems || []
+
+  const mod = prems.some(u => {
+    const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
+    return jid === decodedMention
+  })
+
+  if (owner) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
+  if (admin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐚𝐝𝐦𝐢𝐧.')
+  if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.')
 
   const fake = {
     key: {
@@ -60,7 +62,7 @@ if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\
     participant: "0@s.whatsapp.net"
   }
 
-  const userTag = `@${mention.split`@`[0]}`
+  const userTag = `@${decodedMention.split`@`[0]}`
   const senderTag = `@${m.sender.split`@`[0]}`
 
   const messaggio = 
@@ -70,8 +72,8 @@ if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\
 ┃ ❓ 𝐌𝐨𝐭𝐢𝐯𝐨: ${motivo}
 ╰━━━━━━━━━━━━━━━━━━━╯`
 
-  conn.reply(m.chat, messaggio, fake, { mentions: [mention, m.sender] })
-  conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
+  conn.reply(m.chat, messaggio, fake, { mentions: [decodedMention, m.sender] })
+  conn.groupParticipantsUpdate(m.chat, [decodedMention], 'remove')
 }
 
 handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar/i
