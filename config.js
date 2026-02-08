@@ -9,8 +9,7 @@ global.confirmCode = ""
 global.owner = [
     ['19098183891', 'Owner', true],
     ['13802054551', 'Owner', true],
-    ['393926119886', 'Vero', true],
-    ['573171519160', 'Vero voip', true],
+    ['14455444258', 'Vero voip', true],
     ['393511198848', 'Owner', true],
     ['393510240643', 'Owner', true],
     ['393512884684', 'Owner', true],
