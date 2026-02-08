@@ -1,17 +1,26 @@
-//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 import { areJidsSameUser } from '@whiskeysockets/baileys'
 
 let handler = async (m, { conn, participants, command }) => {
-  let memberIDs = participants.map(u => u.id)
+
+  const users = global.db.data.users || {}
+
+  // ID dei partecipanti del gruppo
+  let groupIDs = participants.map(p => p.id)
+
   let inattivi = []
 
-  for (let id of memberIDs) {
-    let user = global.db.data.users[id]
-    let isAdmin = participants.find(p => p.id === id)?.admin
+  for (let [id, user] of Object.entries(users)) {
+    // prende solo utenti che sono nel gruppo
+    if (!groupIDs.some(gid => areJidsSameUser(gid, id))) continue
+
+    let participant = participants.find(p => areJidsSameUser(p.id, id))
+    let isAdmin = participant?.admin
 
     if (
-      user && typeof user.messaggi === 'number' &&
-      user.messaggi >= 0 && user.messaggi <= 10 &&
+      typeof user.messaggi === 'number' &&
+      user.messaggi >= 0 &&
+      user.messaggi <= 10 &&
       !isAdmin &&
       user.whitelist !== true
     ) {
@@ -33,6 +42,7 @@ let handler = async (m, { conn, participants, command }) => {
     .join('\n')
 
   switch (command) {
+
     case "inattivi":
       return conn.sendMessage(m.chat, {
         text: `╭━━━━━━━━━━━━━━━━━━━╮
@@ -40,7 +50,7 @@ let handler = async (m, { conn, participants, command }) => {
 ╰━━━━━━━━━━━━━━━━━━━╯
 > 📋 𝐓𝐨𝐭𝐚𝐥𝐞 𝐢𝐧𝐚𝐭𝐭𝐢𝐯𝐢: ${numeroInattivi} 𝐬𝐮 ${totaleMembri} 𝐦𝐞𝐦𝐛𝐫𝐢
 ╭━━━━━━━━━━━━━━━━━━━╮
-┃          *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*          ┃
+┃      *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*      ┃
 ┣━━━━━━━━━━━━━━━━━━━┫
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
@@ -59,7 +69,11 @@ ${messaggioLista}
         mentions: inattivi.map(u => u.id)
       }, { quoted: m })
 
-      await conn.groupParticipantsUpdate(m.chat, inattivi.map(u => u.id), 'remove')
+      await conn.groupParticipantsUpdate(
+        m.chat,
+        inattivi.map(u => u.id),
+        'remove'
+      )
       break
   }
 }
