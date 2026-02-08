@@ -33,7 +33,6 @@ async function handler(m, { isOwner, text, conn }) {
   const participants = groupMetadata.participants
   const utente = participants.find(u => conn.decodeJid(u.id) === mention)
 
-  const ownerBot = global.owner[0][0] + '@s.whatsapp.net'
 const owner = mention === ownerBot
   const admin = await isUserAdmin(conn, m.chat, mention) && utente?.admin === 'admin'
   const prems = global.db?.data?.groups?.[m.chat]?.prems || []
