@@ -17,12 +17,20 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
   if (mention === conn.user.jid) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐛𝐨𝐭.')
   if (mention === m.sender) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.')
 
-  const groupMetadata = conn.chats[m.chat].metadata
-  const participants = groupMetadata.participants
-  const utente = participants.find(u => conn.decodeJid(u.id) === mention)
+  let groupMetadata
+try {
+  groupMetadata = await conn.groupMetadata(m.chat)
+} catch {
+  return m.reply('ⓘ Errore nel recupero dei dati del gruppo.')
+}
 
-  const owner = utente?.admin == 'superadmin'
-  const admin = utente?.admin == 'admin'
+const utente = groupMetadata.participants.find(p => {
+  const jid = conn.decodeJid(p.id || p.jid)
+  return jid === mention
+})
+
+const owner = utente?.admin === 'superadmin'
+const admin = utente?.admin === 'admin'
 const prems = global.db?.data?.groups?.[m.chat]?.prems || []
 
     const mod = prems.some(u => {
