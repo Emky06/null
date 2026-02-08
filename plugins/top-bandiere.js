@@ -1,14 +1,19 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, participants }) => {
     const users = global.db.data.users || {};
 
-    let classifica = Object.entries(users)
-        .filter(([key, data]) => (data.vittorieBandiera || 0) > 0)
-        .map(([key, data]) => ({ id: key, vittorie: data.vittorieBandiera }))
-        .sort((a, b) => b.vittorie - a.vittorie)
-        .slice(0, 10);
+const participantJids = participants.map(p => p.jid);
+
+let classifica = participantJids
+    .filter(jid => (users[jid]?.vittorieBandiera || 0) > 0)
+    .map(jid => ({
+        id: jid,
+        vittorie: users[jid].vittorieBandiera
+    }))
+    .sort((a, b) => b.vittorie - a.vittorie)
+    .slice(0, 10);
 
     if (classifica.length === 0) {
         return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐯𝐢𝐧𝐭𝐨 𝐮𝐧𝐚 𝐩𝐚𝐫𝐭𝐢𝐭𝐚 𝐧𝐞𝐥 𝐠𝐢𝐨𝐜𝐨 𝐝𝐞𝐥𝐥𝐞 𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞!", m);
