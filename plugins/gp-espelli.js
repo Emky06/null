@@ -1,9 +1,7 @@
 import fs from 'fs'
 
 async function handler(m, { isOwner, text, conn }) {
-  if (!m.isGroup) return m.reply('ⓘ Questo comando funziona solo nei gruppi.')
 
-  // FUNZIONE PER CONTROLLARE SE UN UTENTE È ADMIN O SUPERADMIN
   async function isUserAdmin(conn, chatId, senderId) {  
       try {  
           const decodedSender = conn.decodeJid(senderId);  
@@ -26,19 +24,26 @@ async function handler(m, { isOwner, text, conn }) {
   const motivo = text ? text.replace(/@[\d\-]+/, '').trim() || 'non specificato' : 'non specificato'
   const ownerBot = global.owner[0][0] + '@s.whatsapp.net'
 
-  if ([ownerBot, conn.user.jid, m.sender].includes(mention)) {
-      return m.reply('ⓘ Non puoi rimuovere il creator o te stesso.')
-  }
+  if (mention === ownerBot) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.')
+  if (mention === conn.user.jid) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐢𝐥 𝐛𝐨𝐭.')
+  if (mention === m.sender) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.')
 
-  // CONTROLLA SE L'UTENTE DA KICKARE È ADMIN/SUPERADMIN
-  const isTargetAdmin = await isUserAdmin(conn, m.chat, mention)
+  const groupMetadata = conn.chats[m.chat].metadata
+  const participants = groupMetadata.participants
+  const utente = participants.find(u => conn.decodeJid(u.id) === mention)
 
-  // CONTROLLA SE È UN MODERATOR CUSTOM
+  const ownerBot = global.owner[0][0] + '@s.whatsapp.net'
+const owner = mention === ownerBot
+  const admin = await isUserAdmin(conn, m.chat, mention) && utente?.admin === 'admin'
   const prems = global.db?.data?.groups?.[m.chat]?.prems || []
-  const isMod = prems.some(u => (u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`) === mention)
+  const mod = prems.some(u => {
+      const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
+      return jid === mention
+  })
 
-  if (isTargetAdmin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ L\'utente è admin o superadmin.')
-  if (isMod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ L\'utente è un moderatore.')
+  if (owner) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
+  if (admin) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐚𝐝𝐦𝐢𝐧.')
+if (mod) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.')
 
   const fake = {
       key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
