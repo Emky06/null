@@ -46,7 +46,7 @@ let handler = async (m, { conn, participants, command }) => {
 ╰━━━━━━━━━━━━━━━━━━━╯
 > 📋 𝐓𝐨𝐭𝐚𝐥𝐞 𝐢𝐧𝐚𝐭𝐭𝐢𝐯𝐢: ${numeroInattivi} 𝐬𝐮 ${totaleMembri} 𝐦𝐞𝐦𝐛𝐫𝐢
 ╭━━━━━━━━━━━━━━━━━━━╮
-┃      *𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢*      ┃
+┃          𝐓𝐫𝐚 𝟎 𝐞 𝟏𝟎 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢          ┃
 ┣━━━━━━━━━━━━━━━━━━━┫
 ${messaggioLista}
 ╰━━━━━━━━━━━━━━━━━━━╯`,
