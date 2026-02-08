@@ -12,11 +12,11 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
 
     const decodedMention = conn.decodeJid(who);
 
-    if (decodedMention === conn.user.jid) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐛𝐨𝐭.*');
+    if (decodedMention === conn.user.jid) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐥 𝐛𝐨𝐭.*');
     if (decodedMention === m.sender) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐭𝐞 𝐬𝐭𝐞𝐬𝐬𝐨.*');
 
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
-    if (ownerJids.includes(decodedMention)) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐛𝐨𝐭.*');
+    if (ownerJids.includes(decodedMention)) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐨𝐰𝐧𝐞𝐫 𝐝𝐞𝐥 𝐛𝐨𝐭.*');
 
     let groupMetadata;
     if (m.isGroup) {
@@ -41,9 +41,9 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
         const prems = global.db?.data?.groups?.[m.chat]?.prems || [];
         const isMod = prems.some(u => (u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`) === decodedMention);
 
-        if (isOwner) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*');
-        if (isAdmin) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
-        if (isMod) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*');
+        if (isOwner) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*');
+        if (isAdmin) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐚𝐝𝐦𝐢𝐧.*');
+        if (isMod) return m.reply('*🚫 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐰𝐚𝐫𝐧 𝐚𝐝 𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞.*');
     }
 
     if (command === 'warn' || command === 'ammonisci') {
@@ -69,11 +69,11 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
             user.warn += 1;
             user.warnReasons.push(cleanReason || "Nessun motivo specificato");
             let remaining = 3 - user.warn;
-            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn}/3*\n${displayReason}\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏*`, fake, { mentions: [decodedMention] });
+            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn} / 3*\n${displayReason}\n\n> *𝑨𝒏𝒄𝒐𝒓𝒂 ${remaining} 𝒘𝒂𝒓𝒏 𝒆 𝒔𝒆𝒊 𝒇𝒖𝒐𝒓𝒊 𝒅𝒂𝒍 𝒈𝒓𝒖𝒑𝒑𝒐.*`, fake, { mentions: [decodedMention] });
         } else if (user.warn === war) {
             user.warn += 1;
             user.warnReasons.push(cleanReason || "Nessun motivo specificato");
-            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *3/3*\n${displayReason}\n> *𝑼𝒍𝒕𝒊𝒎𝒐 𝒘𝒂𝒓𝒏 ricevuto, verrà rimosso.*`, fake, { mentions: [decodedMention] });
+            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *3 / 3*\n${displayReason}\n\n> *𝑼𝒍𝒕𝒊𝒎𝒐 𝒘𝒂𝒓𝒏 𝒓𝒊𝒄𝒆𝒗𝒖𝒕𝒐. 𝑨𝒅𝒅𝒊𝒐 𝒑𝒍𝒆𝒃𝒆𝒐/𝒂.*`, fake, { mentions: [decodedMention] });
             await time(1000);
             await conn.groupParticipantsUpdate(m.chat, [decodedMention], 'remove');
             user.warn = 0;
@@ -97,7 +97,7 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
                 message: { locationMessage: { name: '𝑹𝒊𝒎𝒐𝒛𝒊𝒐𝒏𝒆 𝒘𝒂𝒓𝒏 ✓', jpegThumbnail: fs.readFileSync('./icone/spunta.png') } },
                 participant: "0@s.whatsapp.net"
             };
-            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn}/3*\n> *${user.warn} 𝒘𝒂𝒓𝒏 rimaste.*`, fake, { mentions: [decodedMention] });
+            conn.reply(m.chat, `👤 ➤ @${decodedMention.split('@')[0]}\n⚠️ ➤ *${user.warn} / 3*\n\n> *${user.warn} 𝒘𝒂𝒓𝒏 𝒓𝒊𝒎𝒂𝒏𝒆𝒏𝒕𝒊.*`, fake, { mentions: [decodedMention] });
         } else {
             m.reply("*𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐡𝐚 𝐰𝐚𝐫𝐧.*");
         }
