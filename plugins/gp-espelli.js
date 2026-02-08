@@ -28,10 +28,10 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
 
   const utente = groupMetadata.participants.find(p => {
     const jid = conn.decodeJid(p.id || p.jid)
-    return jid === decodedMention
+    return jid.endsWith(decodedMention.split('@')[0])
   })
 
-  if (!utente) return m.reply('ⓘ L’utente non è presente nel gruppo.')
+  if (!utente) return m.reply('ⓘ 𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
 
   const owner = utente.admin === 'superadmin'
   const admin = utente.admin === 'admin'
@@ -40,7 +40,7 @@ async function handler(m, { isBotAdmin, isOwner, text, conn }) {
 
   const mod = prems.some(u => {
     const jid = u.includes('@s.whatsapp.net') ? u : `${u}@s.whatsapp.net`
-    return jid === decodedMention
+    return jid.endsWith(decodedMention.split('@')[0])
   })
 
   if (owner) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐢𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
