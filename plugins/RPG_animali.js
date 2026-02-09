@@ -1,4 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
+import { animaliShop, animaliDisponibili } from './animali.js';
+
 const msToTime = (ms) => {
   if (ms <= 0) return '𝐎𝐑𝐀!';
   const h = Math.floor(ms / 3600000);
@@ -6,8 +8,6 @@ const msToTime = (ms) => {
   const s = Math.floor((ms % 60000) / 1000);
   return `${h}h ${m}min ${s}s`;
 };
-
-const animaliDisponibili = ['🐴 𝐂𝐚𝐯𝐚𝐥𝐥𝐨', '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', '🐶 𝐂𝐚𝐧𝐞', '🐱 𝐆𝐚𝐭𝐭𝐨', '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚', '🐰 𝐂𝐨𝐧𝐢𝐠𝐥𝐢𝐨'];
 
 const handler = async (m, { conn }) => {
   const who = m.sender;
@@ -20,27 +20,18 @@ const handler = async (m, { conn }) => {
   if (!user.animali) user.animali = [];
   if (typeof user.cibo !== 'number') user.cibo = 0;
 
-  let text = '*🐾 𝐈 𝐓𝐔𝐎𝐈 𝐀𝐍𝐈𝐌𝐀𝐋𝐈 🐾*\n\n';
-  const animaliAttivi = [];
-  let rimossi = 0;
-
-  for (const animale of user.animali) {
-    const nonValido = !animaliDisponibili.includes(animale.nome);
-    if (nonValido) {
-      rimossi++;
-    } else {
-      animaliAttivi.push(animale);
-    }
-  }
-
+  const animaliAttivi = user.animali.filter(a => animaliDisponibili.includes(a.nome));
+  const rimossi = user.animali.length - animaliAttivi.length;
   user.animali = animaliAttivi;
   global.db.write();
 
-  if (user.animali.length === 0) {
+  let text = '*🐾 𝐈 𝐓𝐔𝐎𝐈 𝐀𝐍𝐈𝐌𝐀𝐋𝐈 🐾*\n\n';
+  const now = Date.now();
+
+  if (animaliAttivi.length === 0) {
     text += '_𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐢𝐦𝐚𝐥𝐢._\n';
   } else {
-    const now = Date.now();
-    user.animali.forEach((a, i) => {
+    animaliAttivi.forEach((a, i) => {
       const tempo = a.prossimaPoppata - now;
       const [emoji] = a.nome.split(' ');
       const nomePersonalizzato = a.nomeUtente || a.nome.split(' ').slice(1).join(' ');
