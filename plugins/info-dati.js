@@ -1,3 +1,5 @@
+//Codice di info-dati.js
+
 //Plugin fatto da Riad, mod by Axtral
 import fs from 'fs';
 import path from 'path';
@@ -16,13 +18,19 @@ const handler = async (m, { conn }) => {
     const vittorieTris = user.vittorieTris || 0;
     const vittorieImpiccato = user.vittorieImpiccato || 0;
 
+    let nomeUtente = "Utente sconosciuto";
+    try {
+      nomeUtente = await conn.getName(who);
+      if (!nomeUtente) nomeUtente = "Utente sconosciuto";
+    } catch {
+      nomeUtente = "Utente sconosciuto";
+    }
+
     let pic;
     try {
       pic = await conn.profilePictureUrl(who, 'image');
-      
       pic = await (await fetch(pic)).buffer();
     } catch {
-      
       pic = fs.readFileSync(path.join('./icone/profilo.png'));
     }
 
@@ -46,7 +54,7 @@ const handler = async (m, { conn }) => {
       contextInfo: {
         mentionedJid: [who],
         externalAdReply: {
-          title: user.name || 'Utente sconosciuto',
+          title: nomeUtente, // ora sempre preso da WhatsApp
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
           thumbnail: pic, 
         }
