@@ -1,5 +1,3 @@
-//Codice di info-dati.js
-
 //Plugin fatto da Riad, mod by Axtral
 import fs from 'fs';
 import path from 'path';
