@@ -21,10 +21,6 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
   const sender = m.key?.participant || m.participant || m.sender
 
-  if (!ownerJids.includes(sender)) {
-    return m.reply('❌ Solo gli owner possono usare questo comando.')
-  }
-
   const whitelist = readWhitelist()
   if (!whitelist[m.chat]) whitelist[m.chat] = { autorizzati: [] }
 
@@ -33,24 +29,42 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   if (m.quoted?.sender) targetJid = m.quoted.sender
   else if (m.mentionedJid?.length) targetJid = m.mentionedJid[0]
   else if (args[0]) targetJid = args[0].replace(/\D/g, '') + '@s.whatsapp.net'
-  else return m.reply(`❌ Usa: ${usedPrefix + command} @user`)
+  else return m.reply(
+`❌ 𝐔𝐬𝐚 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐢𝐧 𝐮𝐧𝐨 𝐝𝐞𝐢 𝐬𝐞𝐠𝐮𝐞𝐧𝐭𝐢 𝐦𝐨𝐝𝐢:
+
+1️⃣ 𝐑𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐧𝐝𝐨 𝐚𝐝 𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐞𝐥𝐥'𝐮𝐭𝐞𝐧𝐭𝐞:
+${usedPrefix}${command} (𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐧𝐝𝐨 𝐚𝐥 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨) 
+
+2️⃣ 𝐓𝐚𝐠𝐠𝐚𝐧𝐝𝐨 𝐥'𝐮𝐭𝐞𝐧𝐭𝐞:
+${usedPrefix}${command} @username
+
+3️⃣ 𝐈𝐧𝐬𝐞𝐫𝐞𝐧𝐝𝐨 𝐢𝐥 𝐧𝐮𝐦𝐞𝐫𝐨 𝐝𝐢𝐫𝐞𝐭𝐭𝐚𝐦𝐞𝐧𝐭𝐞:
+${usedPrefix}${command} +39 333 123 4567`
+)
 
   const metadata = await conn.groupMetadata(m.chat)
   const participants = metadata.participants.map(p => p.jid)
 
   if (!participants.includes(targetJid)) {
-    return m.reply('❌ L’utente deve essere nel gruppo.')
+    return m.reply('❌ 𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐞𝐯𝐞 𝐞𝐬𝐬𝐞𝐫𝐞 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
   }
 
   if (command === 'addwhitelist') {
     if (whitelist[m.chat].autorizzati.includes(targetJid)) {
-      return m.reply('⚠️ Utente già in whitelist.')
+      return m.reply('⚠️ 𝐔𝐭𝐞𝐧𝐭𝐞 𝐠𝐢𝐚̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐧𝐞𝐥𝐥𝐚 𝐰𝐡𝐢𝐭𝐞𝐥𝐢𝐬𝐭.')
     }
 
     whitelist[m.chat].autorizzati.push(targetJid)
     writeWhitelist(whitelist)
 
-    return m.reply(`✅ Utente aggiunto alla whitelist:\n@${targetJid.split('@')[0]}`)
+    return conn.sendMessage(
+  m.chat,
+  {
+    text: `✅ 𝐔𝐭𝐞𝐧𝐭𝐞 𝐚𝐠𝐠𝐢𝐮𝐧𝐭𝐨 𝐚𝐥𝐥𝐚 𝐰𝐡𝐢𝐭𝐞𝐥𝐢𝐬𝐭:\n@${targetJid.split('@')[0]}`,
+    mentions: [targetJid]
+  },
+  { quoted: m }
+)
   }
 
   if (command === 'delwhitelist') {
@@ -59,7 +73,14 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
     writeWhitelist(whitelist)
 
-    return m.reply(`❌ Utente rimosso dalla whitelist:\n@${targetJid.split('@')[0]}`)
+    return conn.sendMessage(
+  m.chat,
+  {
+    text: `❌ 𝐔𝐭𝐞𝐧𝐭𝐞 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥𝐥𝐚 𝐰𝐡𝐢𝐭𝐞𝐥𝐢𝐬𝐭:\n@${targetJid.split('@')[0]}`,
+    mentions: [targetJid]
+  },
+  { quoted: m }
+)
   }
 }
 
@@ -125,5 +146,6 @@ handler.onParticipantUpdate = async function (m, { participants }) {
 
 handler.command = ['addwhitelist', 'delwhitelist']
 handler.group = true
+handler.owner = true
 
 export default handler
