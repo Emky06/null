@@ -41,15 +41,16 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 const isAuthorized = jid =>
     groupWhitelist.includes(jid) || jid === botJid || jid === founderJid || ownerJids.includes(jid);
 
-    const usersToDemote = participants
-    .map(p => p.jid)
-    .filter(jid =>
-        jid &&
+    const cleanAdmins = async () => {
+        const usersToDemote = participants
+            .map(p => p.jid)
+            .filter(jid =>
+                jid &&
         jid !== botJid &&
         !ownerJids.includes(jid) &&
         !groupWhitelist.includes(jid) &&
         jid !== founderJid
-    );
+            );
 
         if (!usersToDemote.length) return;
 
