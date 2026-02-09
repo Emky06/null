@@ -90,14 +90,11 @@ ${usedPrefix}${command} +39 333 123 4567`
 handler.before = async function (m, { conn, participants, isBotAdmin }) {
   if (!m.isGroup || !isBotAdmin) return
 
-  const chat = global.db.data.chats[m.chat]
-  if (!chat?.antinuke) return
-
-  const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
-  const sender = m.key?.participant || m.participant || m.sender
-
   const whitelist = readWhitelist()
   const groupWhitelist = whitelist[m.chat]?.autorizzati || []
+  const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
+  const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
+  const sender = m.key?.participant || m.participant || m.sender
 
   let founderJid = null
   try {
@@ -105,13 +102,11 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     founderJid = metadata.owner
   } catch {}
 
-  const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
-
   const isAuthorized = jid =>
     groupWhitelist.includes(jid) ||
+    ownerJids.includes(jid) ||
     jid === botJid ||
-    jid === founderJid ||
-    ownerJids.includes(jid)
+    jid === founderJid
 
   const cleanAdmins = async () => {
     const usersToDemote = participants
@@ -119,16 +114,27 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
       .filter(jid =>
         jid &&
         jid !== botJid &&
-        jid !== founderJid &&
         !ownerJids.includes(jid) &&
-        !groupWhitelist.includes(jid)
+        !groupWhitelist.includes(jid) &&
+        jid !== founderJid
       )
-
     if (!usersToDemote.length) return
     await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote')
   }
 
-  if ([29, 30, 21].includes(m.messageStubType)) {
+  if (m.messageStubType === 29) {
+    // Promozione
+    if (!isAuthorized(sender)) await cleanAdmins()
+  } else if (m.messageStubType === 30) {
+    // Retrocessione
+    if (!isAuthorized(sender)) await cleanAdmins()
+  } else if (m.messageStubType === 28) {
+    // Rimozione membro
+    if (!isAuthorized(sender)) {
+        // await cleanAdmins()
+    }
+  } else if (m.messageStubType === 21) {
+    // Cambio nome gruppo 
     if (!isAuthorized(sender)) await cleanAdmins()
   }
 }
