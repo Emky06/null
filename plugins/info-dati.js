@@ -1,3 +1,7 @@
+//Plugin fatto da Riad, mod by Axtral
+import fs from 'fs';
+import path from 'path';
+
 const handler = async (m, { conn }) => {
   try {
     const mention = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : m.sender);
@@ -12,12 +16,15 @@ const handler = async (m, { conn }) => {
     const vittorieTris = user.vittorieTris || 0;
     const vittorieImpiccato = user.vittorieImpiccato || 0;
 
-    let pp = './icone/profilo.png';
+    let pic;
     try {
-      pp = await conn.profilePictureUrl(who, 'image');
-    } catch {}
-
-    let apii = await conn.getFile(pp);
+      pic = await conn.profilePictureUrl(who, 'image');
+      
+      pic = await (await fetch(pic)).buffer();
+    } catch {
+      
+      pic = fs.readFileSync(path.join('./icone/profilo.png'));
+    }
 
     let text = `
 𖦹━━━━━━ ☾︎•♦️•☽︎ ━━━━━━𖦹
@@ -41,7 +48,7 @@ const handler = async (m, { conn }) => {
         externalAdReply: {
           title: user.name || 'Utente sconosciuto',
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
-          thumbnail: apii.data
+          thumbnail: pic, 
         }
       }
     }, { quoted: m });
