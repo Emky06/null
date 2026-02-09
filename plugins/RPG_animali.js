@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-import { animaliShop, animaliDisponibili } from './animali.js';
+import { animaliDisponibili } from './animali.js';
 
 const msToTime = (ms) => {
   if (ms <= 0) return '𝐎𝐑𝐀!';
