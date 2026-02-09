@@ -1,6 +1,6 @@
 export const animaliShop = [
   { nome: '🐴 𝐂𝐚𝐯𝐚𝐥𝐥𝐨', prezzo: 9000 },
-
+  { nome: '🦜 𝐏𝐚𝐩𝐩𝐚𝐠𝐚𝐥𝐥𝐨', prezzo: 6000 },
   { nome: '🐶 𝐂𝐚𝐧𝐞', prezzo: 5000 },
   { nome: '🐱 𝐆𝐚𝐭𝐭𝐨', prezzo: 4500 },
   { nome: '🐢 𝐓𝐚𝐫𝐭𝐚𝐫𝐮𝐠𝐚', prezzo: 4000 },
