@@ -1,11 +1,13 @@
-// Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
-import path from 'path'
 
-const whitelistFile = path.join('./db', 'autorizzati-antinuke.json')
+const whitelistFile = './autorizzati-antinuke.json'
+
+if (!fs.existsSync(whitelistFile)) {
+  fs.writeFileSync(whitelistFile, '{}', 'utf-8')
+}
 
 const readWhitelist = () => {
-  if (!fs.existsSync(whitelistFile)) return {}
   return JSON.parse(fs.readFileSync(whitelistFile, 'utf-8'))
 }
 
@@ -19,7 +21,6 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
   const sender = m.key?.participant || m.participant || m.sender
 
-  // Solo owner globali
   if (!ownerJids.includes(sender)) {
     return m.reply('❌ Solo gli owner possono usare questo comando.')
   }
@@ -29,15 +30,10 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
   let targetJid = null
 
-  // reply
   if (m.quoted?.sender) targetJid = m.quoted.sender
-  // mention
   else if (m.mentionedJid?.length) targetJid = m.mentionedJid[0]
-  // numero
   else if (args[0]) targetJid = args[0].replace(/\D/g, '') + '@s.whatsapp.net'
-  else {
-    return m.reply(`❌ Usa: ${usedPrefix + command} @user`)
-  }
+  else return m.reply(`❌ Usa: ${usedPrefix + command} @user`)
 
   const metadata = await conn.groupMetadata(m.chat)
   const participants = metadata.participants.map(p => p.jid)
@@ -46,7 +42,6 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     return m.reply('❌ L’utente deve essere nel gruppo.')
   }
 
-  // ===== ADD WHITELIST =====
   if (command === 'addwhitelist') {
     if (whitelist[m.chat].autorizzati.includes(targetJid)) {
       return m.reply('⚠️ Utente già in whitelist.')
@@ -58,7 +53,6 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     return m.reply(`✅ Utente aggiunto alla whitelist:\n@${targetJid.split('@')[0]}`)
   }
 
-  // ===== DEL WHITELIST =====
   if (command === 'delwhitelist') {
     whitelist[m.chat].autorizzati =
       whitelist[m.chat].autorizzati.filter(jid => jid !== targetJid)
@@ -68,10 +62,6 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     return m.reply(`❌ Utente rimosso dalla whitelist:\n@${targetJid.split('@')[0]}`)
   }
 }
-
-/* =============================
-   ANTINUKE BEFORE (INVARIATO)
-============================= */
 
 handler.before = async function (m, { conn, participants, isBotAdmin }) {
   if (!m.isGroup || !isBotAdmin) return
@@ -118,10 +108,6 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     if (!isAuthorized(sender)) await cleanAdmins()
   }
 }
-
-/* =============================
-   CLEAN WHITELIST ON LEAVE
-============================= */
 
 handler.onParticipantUpdate = async function (m, { participants }) {
   const whitelist = readWhitelist()
