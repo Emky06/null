@@ -1,9 +1,10 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, command, text, args }) => {
   if (!text) throw '𝐐𝐮𝐚𝐧𝐭𝐢 𝐬𝐨𝐥𝐝𝐢 𝐯𝐮𝐨𝐢 𝐝𝐞𝐩𝐨𝐬𝐢𝐭𝐚𝐫𝐞 𝐢𝐧 𝐛𝐚𝐧𝐜𝐚?'
 
   let users = global.db.data.users
   const who = m.sender
-  const limiteGiornaliero = 15000
+  const limiteGiornaliero = 1500
   const tempoLimite = 24 * 60 * 60 * 1000 // 24 ore in millisecondi
   const oraAttuale = Date.now()
 
@@ -24,7 +25,6 @@ let handler = async (m, { conn, command, text, args }) => {
   if (text.toLowerCase() === 'tutto' || text.toLowerCase() === 'all') {
     if (users[who].money <= 0) throw '𝐍𝐨𝐧 𝐡𝐚𝐢 𝐬𝐨𝐥𝐝𝐢 𝐝𝐚 𝐝𝐞𝐩𝐨𝐬𝐢𝐭𝐚𝐫𝐞!'
 
-    // Calcola quanto rimane da depositare nel limite di 24h
     let disponibileNelLimite = limiteGiornaliero - users[who].depositiOggi.totale
     if (disponibileNelLimite <= 0) {
       let tempoRimanente = (users[who].depositiOggi.timestamp + tempoLimite) - oraAttuale
@@ -32,10 +32,10 @@ let handler = async (m, { conn, command, text, args }) => {
       let minuti = Math.floor((tempoRimanente % (1000 * 60 * 60)) / (1000 * 60))
       let secondi = Math.floor((tempoRimanente % (1000 * 60)) / 1000)
 
-      throw `🚫 Hai raggiunto il limite di deposito di 15.000 € ogni 24 ore.\n⏳ Puoi depositare di nuovo tra *${ore}h ${minuti}m ${secondi}s*`
+      throw `🚫 Hai raggiunto il limite di deposito di 1500 € ogni 24 ore.\n⏳ Puoi depositare di nuovo tra *${ore}h ${minuti}m ${secondi}s*`
     }
 
-    // L’importo che può effettivamente depositare è il minore tra il suo saldo e il limite rimanente
+   
     deposito = Math.min(users[who].money, disponibileNelLimite)
   } else {
     deposito = parseInt(text.split(' ')[0])
@@ -49,7 +49,7 @@ let handler = async (m, { conn, command, text, args }) => {
       let minuti = Math.floor((tempoRimanente % (1000 * 60 * 60)) / (1000 * 60))
       let secondi = Math.floor((tempoRimanente % (1000 * 60)) / 1000)
 
-      throw `🚫 Hai raggiunto il limite di deposito di 15.000 € ogni 24 ore.\n💰 Ti restano *${rimasto.toLocaleString('it-IT')} €* da poter depositare.\n⏳ Puoi depositare di nuovo tra *${ore}h ${minuti}m ${secondi}s*`
+      throw `🚫 Hai raggiunto il limite di deposito di 1500 € ogni 24 ore.\n💰 Ti restano *${rimasto.toLocaleString('it-IT')} €* da poter depositare.\n⏳ Puoi depositare di nuovo tra *${ore}h ${minuti}m ${secondi}s*`
     }
   }
 
