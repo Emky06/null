@@ -54,7 +54,7 @@ const handler = async (m, { conn }) => {
   const buttons = [
     { buttonId: '.daicibo', buttonText: { displayText: '𝐃𝐚𝐢 𝐝𝐚 𝐦𝐚𝐧𝐠𝐢𝐚𝐫𝐞 🥫' } },
     { buttonId: '.helpnomina', buttonText: { displayText: '𝐂𝐨𝐦𝐞 𝐫𝐢𝐧𝐨𝐦𝐢𝐧𝐚𝐫𝐞 ✏️' } },
-    { buttonId: '.petshop', buttonText: { displayText: '𝐂𝐨𝐦𝐩𝐫𝐚 𝐮𝐧 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 🐾' } },
+    { buttonId: '.petshop', buttonText: { displayText: '𝐏𝐞𝐭 𝐒𝐡𝐨𝐩 🐾' } },
     { buttonId: '.abbandonanimali', buttonText: { displayText: '⚠️ 𝐀𝐛𝐛𝐚𝐧𝐝𝐨𝐧𝐚 𝐚𝐧𝐢𝐦𝐚𝐥𝐞 ⚠️' } },
   ];
 
