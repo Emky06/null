@@ -110,6 +110,7 @@ function generateMenuText(prefix) {
 ┃😜 ${prefix}𝐞𝐦𝐨𝐣𝐢𝐦𝐢𝐱  
 ┃❓ ${prefix}𝐨𝐛𝐛𝐥𝐢𝐠𝐨/𝐯𝐞𝐫𝐢𝐭𝐚  
 ┃🍾 ${prefix}𝐛𝐨𝐭𝐭𝐢𝐠𝐥𝐢𝐚    
+┃📊 ${prefix}𝐝𝐚𝐭𝐢
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🤝 *𝐈𝐍𝐓𝐄𝐑𝐀𝐙𝐈𝐎𝐍𝐈*  
 ┃
