@@ -106,6 +106,7 @@ function generateGiochiMenuText(prefix) {
 ┃ 🎵 ${prefix}𝐢𝐜 — Indovina la canzone
 ┃ ✂️ ${prefix}𝐠𝐚𝐦𝐞 — Sasso/Carta/Forbice
 ┃ ❎ ${prefix}𝐭𝐫𝐢𝐬 — Gioco del tris
+┃ 📊 ${prefix}𝐝𝐚𝐭𝐢 — Statistiche dei giochi
 ┃ 💰 ${prefix}𝐩𝐨𝐫𝐭𝐚𝐟𝐨𝐠𝐥𝐢𝐨 — Controlla soldi
 ┃ 💼 ${prefix}𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚 — Acquista messaggi
 ┃ 📈 ${prefix}𝐛𝐢𝐥𝐚𝐧𝐜𝐢𝐨 — Bilancio soldi del gruppo
