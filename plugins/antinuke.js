@@ -36,8 +36,10 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         founderJid = null;
     }
 
-    const isAuthorized = jid =>
-        groupWhitelist.includes(jid) || jid === botJid || jid === founderJid;
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+
+const isAuthorized = jid =>
+    groupWhitelist.includes(jid) || jid === botJid || jid === founderJid || ownerJids.includes(jid);
 
     const cleanAdmins = async () => {
         const usersToDemote = participants
