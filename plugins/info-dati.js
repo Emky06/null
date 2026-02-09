@@ -19,11 +19,9 @@ const handler = async (m, { conn }) => {
     let pic;
     try {
       pic = await conn.profilePictureUrl(who, 'image');
-      
-      pic = await (await fetch(pic)).buffer();
+      pic = (await conn.getFile(pic)).data;
     } catch {
-      
-      pic = fs.readFileSync(path.join('./icone/profilo.png'));
+      pic = (await conn.getFile(path.join(__dirname, 'icone', 'profilo.png'))).data;
     }
 
     let text = `
@@ -48,7 +46,7 @@ const handler = async (m, { conn }) => {
         externalAdReply: {
           title: user.name || 'Utente sconosciuto',
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
-          thumbnail: pic, 
+          thumbnail: pic
         }
       }
     }, { quoted: m });
