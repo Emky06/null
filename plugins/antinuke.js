@@ -1,3 +1,4 @@
+// Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 import path from 'path';
 
@@ -21,6 +22,9 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     if (!m.isGroup) return;
     if (!isBotAdmin) return;
 
+    const chat = global.db.data.chats[m.chat];
+    if (!chat?.antinuke) return;
+
     const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net';
     const sender = m.key?.participant || m.participant || m.sender;
 
@@ -38,18 +42,18 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
 
-const isAuthorized = jid =>
-    groupWhitelist.includes(jid) || jid === botJid || jid === founderJid || ownerJids.includes(jid);
+    const isAuthorized = jid =>
+        groupWhitelist.includes(jid) || jid === botJid || jid === founderJid || ownerJids.includes(jid);
 
     const cleanAdmins = async () => {
         const usersToDemote = participants
             .map(p => p.jid)
             .filter(jid =>
                 jid &&
-        jid !== botJid &&
-        !ownerJids.includes(jid) &&
-        !groupWhitelist.includes(jid) &&
-        jid !== founderJid
+                jid !== botJid &&
+                !ownerJids.includes(jid) &&
+                !groupWhitelist.includes(jid) &&
+                jid !== founderJid
             );
 
         if (!usersToDemote.length) return;
@@ -67,20 +71,16 @@ const isAuthorized = jid =>
     }
 };
 
-// Comando per gestire la whitelist (add / del)
-handler.command = async function (m, { conn, text, args }) {
+// Comandi per gestire la whitelist
+handler.whitelistCommands = async (m, { conn, args, usedPrefix }) => {
     if (!m.isGroup) return;
+
     const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
     const sender = m.key?.participant || m.participant || m.sender;
 
     // Solo owner globali possono usare il comando
     if (!ownerJids.includes(sender)) return m.reply('❌ Solo gli owner possono usare questo comando.');
 
-    if (!args[0] || !['add', 'del'].includes(args[0].toLowerCase())) {
-        return m.reply('Usa il comando così:\n.addwhitelist @user | .delwhitelist @user');
-    }
-
-    const action = args[0].toLowerCase();
     const whitelist = readWhitelist();
     if (!whitelist[m.chat]) whitelist[m.chat] = { autorizzati: [] };
 
@@ -89,26 +89,26 @@ handler.command = async function (m, { conn, text, args }) {
     // Se rispondi al messaggio
     if (m.quoted) targetJid = m.quoted.sender;
     // Se tagghi @user
-    else if (args[1] && args[1].startsWith('@')) targetJid = args[1].replace('@', '') + '@s.whatsapp.net';
+    else if (args[0] && args[0].startsWith('@')) targetJid = args[0].replace('@', '') + '@s.whatsapp.net';
     // Se inserisci numero
-    else if (args[1]) targetJid = args[1].replace(/\D/g, '') + '@s.whatsapp.net';
+    else if (args[0]) targetJid = args[0].replace(/\D/g, '') + '@s.whatsapp.net';
     else return m.reply('Specifica un utente da aggiungere o rimuovere.');
 
     const participants = (await conn.groupMetadata(m.chat)).participants.map(p => p.jid);
     if (!participants.includes(targetJid)) return m.reply('L’utente deve essere nel gruppo.');
 
-    if (action === 'add') {
-        if (!whitelist[m.chat].autorizzati.includes(targetJid)) {
-            whitelist[m.chat].autorizzati.push(targetJid);
-            writeWhitelist(whitelist);
-            return m.reply(`✅ Utente aggiunto alla whitelist: ${targetJid}`);
-        } else return m.reply('Utente già nella whitelist.');
-    }
+    switch (m.command) {
+        case 'addwhitelist':
+            if (!whitelist[m.chat].autorizzati.includes(targetJid)) {
+                whitelist[m.chat].autorizzati.push(targetJid);
+                writeWhitelist(whitelist);
+                return m.reply(`✅ Utente aggiunto alla whitelist: ${targetJid}`);
+            } else return m.reply('Utente già nella whitelist.');
 
-    if (action === 'del') {
-        whitelist[m.chat].autorizzati = whitelist[m.chat].autorizzati.filter(jid => jid !== targetJid);
-        writeWhitelist(whitelist);
-        return m.reply(`❌ Utente rimosso dalla whitelist: ${targetJid}`);
+        case 'delwhitelist':
+            whitelist[m.chat].autorizzati = whitelist[m.chat].autorizzati.filter(jid => jid !== targetJid);
+            writeWhitelist(whitelist);
+            return m.reply(`❌ Utente rimosso dalla whitelist: ${targetJid}`);
     }
 };
 
@@ -124,5 +124,9 @@ handler.onParticipantUpdate = async function (m, { participants }) {
     }
     writeWhitelist(whitelist);
 };
+
+// Comandi registrati alla fine (stile tools-cur.js)
+handler.command = ['addwhitelist', 'delwhitelist'];
+handler.group = true;
 
 export default handler;
