@@ -32,37 +32,41 @@ const handler = async (m, { conn }) => {
   const args = (m.text || '').trim().split(/\s+/);
 
   if (args.length === 1) {
-    let text = '*🥫 𝐀 𝐜𝐡𝐢 𝐯𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐝𝐚 𝐦𝐚𝐧𝐠𝐢𝐚𝐫𝐞?*\n\n';
-    const buttons = [];
+  let text = '*🥫 𝐀 𝐜𝐡𝐢 𝐯𝐮𝐨𝐢 𝐝𝐚𝐫𝐞 𝐝𝐚 𝐦𝐚𝐧𝐠𝐢𝐚𝐫𝐞?*\n\n';
+  const buttons = [];
 
-    animaliAffamati.forEach(a => {
-      const index = user.animali.indexOf(a);
-      const [emoji] = a.nome.split(' ');
-      const nomePers = a.nomeUtente || a.nome.split(' ').slice(1).join(' ');
-      const nomeCompleto = `${emoji} ${nomePers}`;
+  animaliAffamati.forEach(a => {
+    const index = user.animali.indexOf(a);
+    const [emoji] = a.nome.split(' ');
+    const nomePers = a.nomeUtente || a.nome.split(' ').slice(1).join(' ');
+    const nomeCompleto = `${emoji} ${nomePers}`;
 
-      text += `• ${nomeCompleto}\n`;
-      buttons.push({
-        buttonId: `.daicibo ${index + 1}`,
-        buttonText: { displayText: `🥫 ${nomeCompleto}` },
-        type: 1
-      });
+    text += `• ${nomeCompleto}\n`;
+    buttons.push({
+      buttonId: `.daicibo ${index + 1}`,
+      buttonText: { displayText: `🥫 ${nomeCompleto}` },
+      type: 1
     });
+  });
 
-    if (user.cibo >= animaliAffamati.length) {
-      buttons.push({
-        buttonId: `.daicibo all`,
-        buttonText: { displayText: '🍽️ 𝐃𝐚𝐢 𝐜𝐢𝐛𝐨 𝐚 𝐭𝐮𝐭𝐭𝐢' },
-        type: 1
-      });
-    }
-
-    return conn.sendMessage(m.chat, {
-      text,
-      buttons,
-      headerType: 1
-    }, { quoted: m });
+  if (user.cibo >= animaliAffamati.length) {
+    buttons.push({
+      buttonId: `.daicibo all`,
+      buttonText: { displayText: '🍽️ 𝐃𝐚𝐢 𝐜𝐢𝐛𝐨 𝐚 𝐭𝐮𝐭𝐭𝐢' },
+      type: 1
+    });
   }
+
+  
+  const footer = `🥫 𝐂𝐢𝐛𝐨 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞: ${user.cibo}`;
+
+  return conn.sendMessage(m.chat, {
+    text,
+    footer,
+    buttons,
+    headerType: 1
+  }, { quoted: m });
+}
 
   if (args[1] === 'all') {
     if (user.cibo < animaliAffamati.length) {
