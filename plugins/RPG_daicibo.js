@@ -41,7 +41,7 @@ const handler = async (m, { conn }) => {
     const nomePers = a.nomeUtente || a.nome.split(' ').slice(1).join(' ');
     const nomeCompleto = `${emoji} ${nomePers}`;
 
-    text += `*• ${nomeCompleto}*\n`;
+    text += `*๏ ${nomeCompleto}*\n`;
     buttons.push({
       buttonId: `.daicibo ${index + 1}`,
       buttonText: { displayText: `🥫 ${nomeCompleto}` },
