@@ -51,7 +51,17 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 
 async function finishGame(conn, room, winner, surrender=false, quitter=null) {
   let users = global.db.data.users
-  if(winner) users[winner].money = (users[winner].money || 0) + REWARD
+
+if (winner) {
+  if (!users[winner]) users[winner] = {}
+
+  if (!users[winner].vittorieTris)
+    users[winner].vittorieTris = 0
+
+  users[winner].vittorieTris += 1
+
+  users[winner].money = (users[winner].money || 0) + REWARD
+}
   
   let grid = renderGrid(room)
   let txt
