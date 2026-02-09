@@ -28,7 +28,10 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
   if (m.quoted?.sender) targetJid = m.quoted.sender
   else if (m.mentionedJid?.length) targetJid = m.mentionedJid[0]
-  else if (args[0]) targetJid = args[0].replace(/\D/g, '') + '@s.whatsapp.net'
+  else if (args[0]) {
+  const numberInput = args.join('') 
+  targetJid = numberInput.replace(/\D/g, '') + '@s.whatsapp.net'
+}
   else return m.reply(
 `❌ 𝐔𝐬𝐚 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐢𝐧 𝐮𝐧𝐨 𝐝𝐞𝐢 𝐬𝐞𝐠𝐮𝐞𝐧𝐭𝐢 𝐦𝐨𝐝𝐢:
 
