@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 const handler = async (m, { conn }) => {
   try {
     const mention = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : m.sender);
@@ -15,7 +12,7 @@ const handler = async (m, { conn }) => {
     const vittorieTris = user.vittorieTris || 0;
     const vittorieImpiccato = user.vittorieImpiccato || 0;
 
-    let pp = path.join(__dirname, 'icone', 'profilo.png');
+    let pp = './icone/profilo.png';
     try {
       pp = await conn.profilePictureUrl(who, 'image');
     } catch {}
