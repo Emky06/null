@@ -1,4 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
+import { animaliShop } from './animali.js';
+
 const confirmationAcquistoAnimale = {};
 
 const handler = async (m, { conn }) => {
