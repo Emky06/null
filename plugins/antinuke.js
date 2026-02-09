@@ -132,7 +132,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         const sender = m.key?.participant || m.participant || m.sender;
 
         if ([29, 30].includes(m.messageStubType)) {
-            const targetUser = usersToDemote[0]; // primo utente retrocesso/promosso
+            const targetUser = m.messageStubParameters[0];
             const actionText = m.messageStubType === 29 ? '𝐡𝐚 𝐩𝐫𝐨𝐦𝐨𝐬𝐬𝐨' : '𝐡𝐚 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐨';
 
             const text = `🚨 𝐀𝐍𝐓𝐈-𝐍𝐔𝐊𝐄 𝐀𝐓𝐓𝐈𝐕𝐎
