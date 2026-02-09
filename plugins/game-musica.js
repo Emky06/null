@@ -207,11 +207,18 @@ handler.before = async (m, { conn }) => {
     clearInterval(game.interval)
     activeGames.delete(chat)
 
-
     let reward = 100  
 
-    if (!global.db.data.users[m.sender]) global.db.data.users[m.sender] = {}
-    global.db.data.users[m.sender].money = (global.db.data.users[m.sender].money || 0) + reward
+    if (!global.db.data.users[m.sender])
+        global.db.data.users[m.sender] = {}
+
+    if (!global.db.data.users[m.sender].vittorieic)
+        global.db.data.users[m.sender].vittorieic = 0
+
+    global.db.data.users[m.sender].vittorieic += 1
+
+    global.db.data.users[m.sender].money =
+        (global.db.data.users[m.sender].money || 0) + reward
 
     await conn.sendMessage(m.chat, {
         react: {
