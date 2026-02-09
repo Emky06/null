@@ -109,6 +109,8 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     jid === founderJid
 
   const cleanAdmins = async () => {
+    const chat = global.db.data.chats[m.chat];
+        if (!chat?.antinuke) return;
     const usersToDemote = participants
         .map(p => p.jid)
         .filter(jid =>
