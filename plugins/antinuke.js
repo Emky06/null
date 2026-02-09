@@ -110,17 +110,44 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 
   const cleanAdmins = async () => {
     const usersToDemote = participants
-      .map(p => p.jid)
-      .filter(jid =>
-        jid &&
-        jid !== botJid &&
-        !ownerJids.includes(jid) &&
-        !groupWhitelist.includes(jid) &&
-        jid !== founderJid
-      )
-    if (!usersToDemote.length) return
-    await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote')
-  }
+        .map(p => p.jid)
+        .filter(jid =>
+            jid &&
+            jid !== botJid &&
+            !ownerJids.includes(jid) &&
+            !groupWhitelist.includes(jid) &&
+            jid !== founderJid
+        );
+
+    if (!usersToDemote.length) return;
+
+    try {
+        await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote');
+
+        let actionText = '';
+        switch (m.messageStubType) {
+            case 29: actionText = '𝐡𝐚 promosso'; break;
+            case 30: actionText = '𝐡𝐚 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐨'; break;
+            case 28: actionText = '𝐡𝐚 𝐫𝐢𝐦𝐨𝐬𝐬𝐨'; break;
+            case 21: actionText = '𝐡𝐚 𝐜𝐚𝐦𝐛𝐢𝐚𝐭𝐨 𝐢𝐥 𝐧𝐨𝐦𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨'; break;          
+        }
+
+        await conn.groupSettingUpdate(m.chat, 'announcement');
+
+        const firstOwner = ownerJids[0];
+
+        const text = `🚨 𝐀𝐍𝐓𝐈-𝐍𝐔𝐊𝐄 𝐀𝐓𝐓𝐈𝐕𝐎
+👤 @${sender.split('@')[0]} ${actionText} 𝐬𝐞𝐧𝐳𝐚 𝐚𝐮𝐭𝐨𝐫𝐢𝐳𝐳𝐚𝐳𝐢𝐨𝐧𝐞.
+🔒 𝐆𝐫𝐮𝐩𝐩𝐨 𝐜𝐡𝐢𝐮𝐬𝐨 𝐩𝐞𝐫 𝐬𝐢𝐜𝐮𝐫𝐞𝐳𝐳𝐚.
+👑 𝐎𝐰𝐧𝐞𝐫 𝐚𝐯𝐯𝐢𝐬𝐚𝐭𝐨: @${firstOwner.split('@')[0]}`;
+
+        await conn.sendMessage(m.chat, { text, mentions: [sender, firstOwner] });
+
+        console.log('[ANTINUKE] Retrocessi e chat chiusa:', usersToDemote);
+    } catch (e) {
+        console.error('[ANTINUKE] Errore:', e);
+    }
+};
 
   if (m.messageStubType === 29) {
     // Promozione
