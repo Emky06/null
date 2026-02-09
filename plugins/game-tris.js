@@ -98,6 +98,12 @@ ${grid.split('\n').map(l => '┃ ' + l).join('\n')}
 }
 
 let handler = async (m, { conn, text, usedPrefix, command })=>{
+
+  let chatConfig = global.db.data.chats[m.chat] || {};
+if (chatConfig.antigiochi) {
+  return m.reply('> 📛 𝐀𝐍𝐓𝐈𝐆𝐈𝐎𝐂𝐇𝐈 𝐀𝐓𝐓𝐈𝐕𝐎 📛\n𝐈 𝐠𝐢𝐨𝐜𝐡𝐢 𝐬𝐨𝐧𝐨 𝐢𝐧 𝐩𝐚𝐮𝐬𝐚 𝐩𝐞𝐫 𝐢𝐥 𝐦𝐨𝐦𝐞𝐧𝐭𝐨.');
+}
+
   conn.game=conn.game||{}
   switch(command.toLowerCase()){
     case 'tris': // CREA STANZA
@@ -117,10 +123,11 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
     case 'entra': // ENTRA STANZA
       let roomEnter=Object.values(conn.game).find(r=>r.state==='WAITING'&&r.name===text)
       if(!roomEnter) return m.reply('❌ 𝐒𝐭𝐚𝐧𝐳𝐚 𝐢𝐧𝐞𝐬𝐢𝐬𝐭𝐞𝐧𝐭𝐞')
-      roomEnter.o=m.chat
-      roomEnter.game.playerO=m.sender
-      roomEnter.state='PLAYING'
-      sendBoard(conn,roomEnter,m,'𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐈𝐧𝐢𝐳𝐢𝐚𝐭𝐚')
+      roomEnter.o = m.chat
+      roomEnter.game.playerO = m.sender
+      roomEnter.game._currentTurn = Math.random() < 0.5
+      roomEnter.state = 'PLAYING'
+sendBoard(conn, roomEnter, m, '𝐏𝐚𝐫𝐭𝐢𝐭𝐚 𝐈𝐧𝐢𝐳𝐢𝐚𝐭𝐚')
       break
 
     case 'esci': // USCITA
@@ -137,6 +144,9 @@ let handler = async (m, { conn, text, usedPrefix, command })=>{
 }
 
 handler.before = async function(m) {
+  let chatConfig = global.db.data.chats[m.chat] || {};
+  if (chatConfig.antigiochi) return;
+
   let room = Object.values(this.game||{}).find(
     r => r.state === 'PLAYING' && [r.game.playerX, r.game.playerO].includes(m.sender)
   )
