@@ -1,205 +1,119 @@
+// Codice di antinuke.js
 // Plugin fatto da Axtral_WiZaRd
-import fs from 'fs';
-import path from 'path';
 
-const handler = async (m, { conn, args, usedPrefix, text, command, participants, isBotAdmin }) => {
-    // Parte 1: Gestione comandi whitelist
-    if (command === 'addwhitelist' || command === 'delwhitelist') {
-        if (!m.isGroup) return;
+import fs from 'fs'
+import path from 'path'
 
-        const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
-        const sender = m.key?.participant || m.participant || m.sender;
+const whitelistFile = path.join('./db', 'autorizzati-antinuke.json')
 
-        // Solo owner globali possono usare il comando
-        if (!ownerJids.includes(sender)) {
-            await conn.sendMessage(m.chat, { text: '❌ Solo gli owner possono usare questo comando.' }, { quoted: m });
-            return;
-        }
+// Funzioni di lettura e scrittura JSON
+const readWhitelist = () => {
+  if (!fs.existsSync(whitelistFile)) return {}
+  return JSON.parse(fs.readFileSync(whitelistFile, 'utf-8'))
+}
 
-        const whitelistFile = path.join('./db', 'autorizzati-antinuke.json');
-        
-        // Funzioni di lettura e scrittura JSON
-        const readWhitelist = () => {
-            if (!fs.existsSync(whitelistFile)) return {};
-            return JSON.parse(fs.readFileSync(whitelistFile, 'utf-8'));
-        };
+const writeWhitelist = (data) => {
+  fs.writeFileSync(whitelistFile, JSON.stringify(data, null, 2), 'utf-8')
+}
 
-        const writeWhitelist = (data) => {
-            fs.writeFileSync(whitelistFile, JSON.stringify(data, null, 2), 'utf-8');
-        };
+// --- HANDLER PRINCIPALE ---
+const handler = async (m, { conn, args, usedPrefix, participants, isBotAdmin }) => {
 
-        const whitelist = readWhitelist();
-        if (!whitelist[m.chat]) whitelist[m.chat] = { autorizzati: [] };
+  // --- ANTINUKE ---
+  if (m.isGroup && isBotAdmin) {
+    const chat = global.db.data.chats[m.chat]
+    if (chat?.antinuke) {
 
-        let targetJid;
+      const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
+      const sender = m.key?.participant || m.participant || m.sender
 
-        // Se rispondi al messaggio
-        if (m.quoted) targetJid = m.quoted.sender;
-        // Se tagghi @user
-        else if (args[0] && args[0].startsWith('@')) {
-            targetJid = args[0].replace('@', '') + '@s.whatsapp.net';
-        }
-        // Se inserisci numero
-        else if (args[0]) {
-            targetJid = args[0].replace(/\D/g, '') + '@s.whatsapp.net';
-        }
-        else {
-            await conn.sendMessage(m.chat, { text: 'Specifica un utente da aggiungere o rimuovere.\nEsempi:\n• Rispondi a un suo messaggio\n• Taggalo con @utente\n• Inserisci il numero' }, { quoted: m });
-            return;
-        }
+      const whitelist = readWhitelist()
+      const groupWhitelist = whitelist[m.chat]?.autorizzati || []
 
-        try {
-            const metadata = await conn.groupMetadata(m.chat);
-            const participants = metadata.participants.map(p => p.id);
-            
-            if (!participants.includes(targetJid)) {
-                await conn.sendMessage(m.chat, { text: '❌ L\'utente deve essere nel gruppo.' }, { quoted: m });
-                return;
-            }
+      let founderJid = null
+      try { founderJid = (await conn.groupMetadata(m.chat)).owner } catch { founderJid = null }
 
-            switch (command) {
-                case 'addwhitelist':
-                    if (!whitelist[m.chat].autorizzati.includes(targetJid)) {
-                        whitelist[m.chat].autorizzati.push(targetJid);
-                        writeWhitelist(whitelist);
-                        await conn.sendMessage(m.chat, { 
-                            text: `✅ Utente aggiunto alla whitelist:\n${targetJid}` 
-                        }, { quoted: m });
-                    } else {
-                        await conn.sendMessage(m.chat, { text: '⚠️ Utente già nella whitelist.' }, { quoted: m });
-                    }
-                    break;
+      const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
 
-                case 'delwhitelist':
-                    const index = whitelist[m.chat].autorizzati.indexOf(targetJid);
-                    if (index > -1) {
-                        whitelist[m.chat].autorizzati.splice(index, 1);
-                        writeWhitelist(whitelist);
-                        await conn.sendMessage(m.chat, { 
-                            text: `❌ Utente rimosso dalla whitelist:\n${targetJid}` 
-                        }, { quoted: m });
-                    } else {
-                        await conn.sendMessage(m.chat, { text: '⚠️ Utente non trovato nella whitelist.' }, { quoted: m });
-                    }
-                    break;
-            }
-        } catch (error) {
-            console.error('[ANTINUKE] Errore comando:', error);
-            await conn.sendMessage(m.chat, { text: '❌ Errore durante l\'esecuzione del comando.' }, { quoted: m });
-        }
-        return;
+      const isAuthorized = jid =>
+        groupWhitelist.includes(jid) ||
+        jid === botJid ||
+        jid === founderJid ||
+        ownerJids.includes(jid)
+
+      const cleanAdmins = async () => {
+        const usersToDemote = participants
+          .map(p => p.jid)
+          .filter(jid =>
+            jid &&
+            jid !== botJid &&
+            !ownerJids.includes(jid) &&
+            !groupWhitelist.includes(jid) &&
+            jid !== founderJid
+          )
+        if (!usersToDemote.length) return
+        try { 
+          await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote')
+          console.log('[ANTINUKE] Retrocessi:', usersToDemote)
+        } catch(e) { console.error('[ANTINUKE] Errore:', e) }
+      }
+
+      if ([29, 30, 21].includes(m.messageStubType)) {
+        if (!isAuthorized(sender)) await cleanAdmins()
+      }
     }
+  }
 
-    // Parte 2: Funzionalità antinuke (handler.before)
-    if (!m.isGroup) return;
-    if (!isBotAdmin) return;
+  // --- WHITELIST COMMANDS ---
+  if (m.isGroup && ['addwhitelist', 'delwhitelist'].includes(m.command)) {
 
-    const chat = global.db.data.chats[m.chat];
-    if (!chat?.antinuke) return;
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
+    const sender = m.key?.participant || m.participant || m.sender
 
-    const botJid = conn.user.id.split(':')[0] + '@s.whatsapp.net';
-    const sender = m.key?.participant || m.participant || m.sender;
+    if (!ownerJids.includes(sender)) return m.reply('❌ Solo gli owner possono usare questo comando.')
 
-    // Leggi whitelist
-    const whitelistFile = path.join('./db', 'autorizzati-antinuke.json');
-    const readWhitelist = () => {
-        if (!fs.existsSync(whitelistFile)) return {};
-        return JSON.parse(fs.readFileSync(whitelistFile, 'utf-8'));
-    };
+    const whitelist = readWhitelist()
+    if (!whitelist[m.chat]) whitelist[m.chat] = { autorizzati: [] }
 
-    const whitelist = readWhitelist();
-    const groupWhitelist = whitelist[m.chat]?.autorizzati || [];
+    let targetJid
+    if (m.quoted) targetJid = m.quoted.sender
+    else if (args[0] && args[0].startsWith('@')) targetJid = args[0].replace('@','')+'@s.whatsapp.net'
+    else if (args[0]) targetJid = args[0].replace(/\D/g,'')+'@s.whatsapp.net'
+    else return m.reply('Specifica un utente da aggiungere o rimuovere.')
 
-    let founderJid = null;
-    try {
-        const metadata = await conn.groupMetadata(m.chat);
-        founderJid = metadata.owner;
-    } catch {
-        founderJid = null;
+    const participantsList = (await conn.groupMetadata(m.chat)).participants.map(p=>p.jid)
+    if (!participantsList.includes(targetJid)) return m.reply('L’utente deve essere nel gruppo.')
+
+    switch (m.command) {
+      case 'addwhitelist':
+        if (!whitelist[m.chat].autorizzati.includes(targetJid)) {
+          whitelist[m.chat].autorizzati.push(targetJid)
+          writeWhitelist(whitelist)
+          return m.reply(`✅ Utente aggiunto alla whitelist: ${targetJid}`)
+        } else return m.reply('Utente già nella whitelist.')
+      
+      case 'delwhitelist':
+        whitelist[m.chat].autorizzati = whitelist[m.chat].autorizzati.filter(jid => jid !== targetJid)
+        writeWhitelist(whitelist)
+        return m.reply(`❌ Utente rimosso dalla whitelist: ${targetJid}`)
     }
+  }
+}
 
-    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
-
-    const isAuthorized = jid =>
-        groupWhitelist.includes(jid) || jid === botJid || jid === founderJid || ownerJids.includes(jid);
-
-    const cleanAdmins = async () => {
-        try {
-            const metadata = await conn.groupMetadata(m.chat);
-            const admins = metadata.participants
-                .filter(p => p.admin === 'admin' || p.admin === 'superadmin')
-                .map(p => p.id);
-
-            const usersToDemote = admins.filter(jid =>
-                jid &&
-                jid !== botJid &&
-                !ownerJids.includes(jid) &&
-                !groupWhitelist.includes(jid) &&
-                jid !== founderJid
-            );
-
-            if (!usersToDemote.length) return;
-
-            // Demote in batch per evitare rate limit
-            for (const jid of usersToDemote) {
-                try {
-                    await conn.groupParticipantsUpdate(m.chat, [jid], 'demote');
-                    console.log(`[ANTINUKE] Retrocesso: ${jid}`);
-                    await new Promise(resolve => setTimeout(resolve, 500)); // Delay tra le operazioni
-                } catch (e) {
-                    console.error(`[ANTINUKE] Errore retrocessione ${jid}:`, e.message);
-                }
-            }
-        } catch (e) {
-            console.error('[ANTINUKE] Errore generale:', e);
-        }
-    };
-
-    // Controlla se è un'azione di promozione/demozione
-    if ([29, 30, 21].includes(m.messageStubType)) {
-        if (!isAuthorized(sender)) {
-            console.log(`[ANTINUKE] Azione non autorizzata da: ${sender}`);
-            await cleanAdmins();
-        }
+// --- RIMOZIONE AUTOMATICA UTENTI USCITI ---
+handler.onParticipantUpdate = async function(m, { participants }) {
+  const whitelist = readWhitelist()
+  if (!whitelist[m.chat]) return
+  for (const p of participants) {
+    if (p.action==='remove') {
+      whitelist[m.chat].autorizzati = whitelist[m.chat].autorizzati.filter(jid => jid!==p.id)
     }
-};
+  }
+  writeWhitelist(whitelist)
+}
 
-// Handler per eventi onParticipantUpdate (rimozione automatica dalla whitelist)
-handler.onParticipantUpdate = async function (m, { participants }) {
-    const whitelistFile = path.join('./db', 'autorizzati-antinuke.json');
-    
-    const readWhitelist = () => {
-        if (!fs.existsSync(whitelistFile)) return {};
-        return JSON.parse(fs.readFileSync(whitelistFile, 'utf-8'));
-    };
+// --- HANDLER DEI COMANDI ALLA FINE ---
+handler.command = ['addwhitelist', 'delwhitelist']
+handler.group = true
 
-    const writeWhitelist = (data) => {
-        fs.writeFileSync(whitelistFile, JSON.stringify(data, null, 2), 'utf-8');
-    };
-
-    const whitelist = readWhitelist();
-    if (!whitelist[m.chat]) return;
-
-    let changed = false;
-    for (const p of participants) {
-        if (p.action === 'remove') {
-            const index = whitelist[m.chat].autorizzati.indexOf(p.id);
-            if (index > -1) {
-                whitelist[m.chat].autorizzati.splice(index, 1);
-                changed = true;
-                console.log(`[ANTINUKE] Rimosso ${p.id} dalla whitelist (uscito dal gruppo)`);
-            }
-        }
-    }
-    
-    if (changed) {
-        writeWhitelist(whitelist);
-    }
-};
-
-// Comandi registrati
-handler.command = ['addwhitelist', 'delwhitelist'];
-handler.group = true;
-handler.owner = true;
-
-export default handler;
+export default handler
