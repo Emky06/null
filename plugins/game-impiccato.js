@@ -82,7 +82,11 @@ handler.before = async function (m, { conn }) {
       delete global.gamesImpiccato[key];
 
       const user = global.db.data.users[m.sender] || (global.db.data.users[m.sender] = {});
-      user.money = (user.money || 0) + premio;
+
+if (!user.vittorieImpiccato) user.vittorieImpiccato = 0;
+user.vittorieImpiccato += 1;
+
+user.money = (user.money || 0) + premio;
 
       return conn.reply(m.chat, `🎉 *𝐁𝐫𝐚𝐯𝐨 @${m.sender.split('@')[0]}!* 𝐇𝐚𝐢 𝐢𝐧𝐝𝐨𝐯𝐢𝐧𝐚𝐭𝐨 𝐥𝐚 𝐩𝐚𝐫𝐨𝐥𝐚 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐚: *${game.parola}*!\n💰 +${premio}€`, m, { mentions: [m.sender] });
     }
@@ -105,7 +109,11 @@ handler.before = async function (m, { conn }) {
       delete global.gamesImpiccato[key];
 
       const user = global.db.data.users[m.sender] || (global.db.data.users[m.sender] = {});
-      user.money = (user.money || 0) + premio;
+
+if (!user.vittorieImpiccato) user.vittorieImpiccato = 0;
+user.vittorieImpiccato += 1;
+
+user.money = (user.money || 0) + premio;
 
       return conn.reply(m.chat, `🎉 *𝐁𝐫𝐚𝐯𝐨 @${m.sender.split('@')[0]}!* 𝐇𝐚𝐢 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐚𝐭𝐨 𝐥𝐚 𝐩𝐚𝐫𝐨𝐥𝐚: *${game.parola}*!\n💰 +${premio}€`, m, { mentions: [m.sender] });
     }
