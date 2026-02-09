@@ -1,4 +1,3 @@
-//Plugin fatto da Riad, mod by Axtral
 import fs from 'fs';
 import path from 'path';
 
@@ -16,13 +15,12 @@ const handler = async (m, { conn }) => {
     const vittorieTris = user.vittorieTris || 0;
     const vittorieImpiccato = user.vittorieImpiccato || 0;
 
-    let pic;
+    let pp = path.join(__dirname, 'icone', 'profilo.png');
     try {
-      pic = await conn.profilePictureUrl(who, 'image');
-      pic = (await conn.getFile(pic)).data;
-    } catch {
-      pic = (await conn.getFile(path.join(__dirname, 'icone', 'profilo.png'))).data;
-    }
+      pp = await conn.profilePictureUrl(who, 'image');
+    } catch {}
+
+    let apii = await conn.getFile(pp);
 
     let text = `
 𖦹━━━━━━ ☾︎•♦️•☽︎ ━━━━━━𖦹
@@ -46,7 +44,7 @@ const handler = async (m, { conn }) => {
         externalAdReply: {
           title: user.name || 'Utente sconosciuto',
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
-          thumbnail: pic
+          thumbnail: apii.data
         }
       }
     }, { quoted: m });
