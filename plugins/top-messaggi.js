@@ -79,4 +79,5 @@ END:VCARD`
 };
 
 handler.command = /^top$/i;
+handler.admin = true
 export default handler;
