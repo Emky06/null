@@ -144,6 +144,11 @@ function generateMenuText(prefix) {
 ┃📝 ${prefix}𝐫𝐞𝐠  
 ┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞
 ┣━━━━━━━━━━━━━━━━━━━━
+┃🏆 *𝐓𝐎𝐏𝐒*  
+┃
+┃🤬 ${prefix}𝐭𝐨𝐩𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞
+┃🏁 ${prefix}𝐭𝐨𝐩𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞
+┣━━━━━━━━━━━━━━━━━━━━
 ┃💼 *𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀*  
 ┃
 ┃👛 ${prefix}𝐩𝐨𝐫𝐭𝐚𝐟𝐨𝐠𝐥𝐢𝐨  
@@ -206,6 +211,6 @@ function generateMenuText(prefix) {
 ┃🥙 ${prefix}𝐤𝐞𝐛𝐚𝐛 @  
 ┃🍔 ${prefix}𝐡𝐚𝐦𝐛𝐮𝐫𝐠𝐞𝐫 @  
 ┃🍕 ${prefix}𝐩𝐢𝐳𝐳𝐚 @  
-┃🍣 ${prefix}𝐬𝐮𝐬𝐡𝐢 @     
+┃🍣 ${prefix}𝐬𝐮𝐬𝐡𝐢 @   
 ╰━━━━━━━━━━━━━━━━━━━╯`;
 }
