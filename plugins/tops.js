@@ -20,10 +20,10 @@ function handler(m, { groupMetadata, command }) {
     let [a,b,c,d,e,f,g,h,i,j] = shuffle([...ps]).slice(0, 10)
 
     let titoli = {
-      toplgbt: '*🌈𝐓𝐎𝐏 𝟏𝟎 𝐋𝐆𝐁𝐓🌈*',
-      topnazi: '*࿖𝐓𝐎𝐏 𝟏𝟎 𝐍𝐀𝐙𝐈࿖*',
-      topsexy: '*😏𝐓𝐨𝐩 𝟏𝟎 𝐒𝐄𝐗𝐘😏*',
-      toptroie: '*𝐓𝐨𝐩 𝟏𝟎 𝐓𝐑𝐎𝐈𝐄*'
+      toplgbt: '*🌈 𝐓𝐎𝐏 𝟏𝟎 𝐋𝐆𝐁𝐓 🌈*',
+      topnazi: '*࿖ 𝐓𝐎𝐏 𝟏𝟎 𝐍𝐀𝐙𝐈 ࿖*',
+      topsexy: '*😏 𝐓𝐨𝐩 𝟏𝟎 𝐒𝐄𝐗𝐘 😏*',
+      toptroie: '*🍑 𝐓𝐨𝐩 𝟏𝟎 𝐓𝐑𝐎𝐈𝐄 🍑*'
     }
 
     let top = `${titoli[command]}
