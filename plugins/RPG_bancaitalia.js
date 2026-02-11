@@ -10,10 +10,11 @@ const handler = async (m, { conn, participants }) => {
     return {
       id: jid,
       money: user.money || 0,
-      bank: user.bank || 0,
-      truffe: user.truffe || 0
+      bank: user.bank || 0
     };
-  });
+  }).filter(u => (u.money + u.bank) > 0);
+
+  if (!lista_utenti.length) return m.reply("Nessuno ha soldi nel gruppo.");
 
   lista_utenti.sort((a, b) => (b.money + b.bank) - (a.money + a.bank));
 
@@ -25,9 +26,9 @@ const handler = async (m, { conn, participants }) => {
     let totale = user.money + user.bank;
 
     testo += `👤 @${numero}
-💵 𝐂𝐨𝐧𝐭𝐚𝐧𝐭𝐢: ${user.money.toLocaleString('it-IT')} €
-🏦 𝐁𝐚𝐧𝐜𝐚: ${user.bank.toLocaleString('it-IT')} €
-📊 𝐓𝐨𝐭𝐚𝐥𝐞: ${totale.toLocaleString('it-IT')} €
+💵 Contanti: ${user.money.toLocaleString('it-IT')} €
+🏦 Banca: ${user.bank.toLocaleString('it-IT')} €
+📊 Totale: ${totale.toLocaleString('it-IT')} €
 ════════ ೋೋ════════
 `;
 
