@@ -25,9 +25,9 @@ const handler = async (m, { conn, participants }) => {
     let totale = user.money + user.bank;
 
     testo += `👤 @${numero}
-💵 Contanti: ${user.money.toLocaleString('it-IT')} €
-🏦 Banca: ${user.bank.toLocaleString('it-IT')} €
-📊 Totale: ${totale.toLocaleString('it-IT')} €
+💵 𝐂𝐨𝐧𝐭𝐚𝐧𝐭𝐢: ${user.money.toLocaleString('it-IT')} €
+🏦 𝐁𝐚𝐧𝐜𝐚: ${user.bank.toLocaleString('it-IT')} €
+📊 𝐓𝐨𝐭𝐚𝐥𝐞: ${totale.toLocaleString('it-IT')} €
 ════════ ೋೋ════════
 `;
 
