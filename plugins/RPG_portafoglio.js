@@ -4,7 +4,6 @@ const handler = async (m, { conn, command, text, args }) => {
   const users = global.db.data.users;
   const user = users[who];
 
-  // Formatta numeri con separatore di migliaia
   const formatNumber = (n) => n.toLocaleString('it-IT');
 
   const contanti = user.money !== undefined ? `${formatNumber(user.money)} €` : 'Sei povero';
@@ -27,9 +26,9 @@ const handler = async (m, { conn, command, text, args }) => {
   };
 
   const testo = `\n*𝐏𝐎𝐑𝐓𝐀𝐅𝐎𝐆𝐋𝐈𝐎 👛*\n═══════ ೋೋ═══════
-💵 *Contanti:* ${contanti}
-🏦 *Banca:* ${banca}
-🧾 *Totale:* ${totale} €
+💵 *𝐂𝐨𝐧𝐭𝐚𝐧𝐭𝐢:* ${contanti}
+🏦 *𝐁𝐚𝐧𝐜𝐚:* ${banca}
+🧾 *𝐓𝐨𝐭𝐚𝐥𝐞:* ${totale} €
 ═══════ ೋೋ═══════`;
 
   conn.reply(m.chat, testo, prova);
