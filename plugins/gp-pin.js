@@ -25,53 +25,79 @@ let handler = async (m, { conn, command, usedPrefix }) => {
         const quoted = pinQueue.get(m.chat);
         if (!quoted) return m.reply('❌ Nessun messaggio da fissare. Usa prima il comando pin rispondendo a un messaggio.');
 
+        const messageKey = {
+            remoteJid: m.chat,
+            fromMe: quoted.fromMe,
+            id: quoted.id,
+            participant: quoted.sender
+        };
+
+        // Calcolo durata in ms in base al comando
+        let durationMs = 0;
+        if (command === 'pin1d') durationMs = 1 * 24 * 60 * 60 * 1000;
+        else if (command === 'pin7d') durationMs = 7 * 24 * 60 * 60 * 1000;
+        else if (command === 'pin30d') durationMs = 30 * 24 * 60 * 60 * 1000;
+
         try {
-            // MODIFICA PRINCIPALE: usa chatModify invece di sendMessage per il server
-            await conn.chatModify(
-                { pin: true },
-                m.chat,
-                [quoted.id]
-            );
-
-            m.react('✅️');
+            // PROVA TUTTI I METODI POSSIBILI
+            let pinned = false;
             
-            // Conferma con il tempo
-            let durationText = '';
-            if (command === 'pin1d') durationText = '1 giorno';
-            else if (command === 'pin7d') durationText = '7 giorni';
-            else if (command === 'pin30d') durationText = '30 giorni';
-            
-            await m.reply(`✅ Messaggio fissato per ${durationText}!`);
-
-            // Pulisci la mappa per evitare confusione
-            pinQueue.delete(m.chat);
-        } catch (e) {
-            console.error(e);
-            
-            // FALLBACK: prova il metodo originale (per Termux)
+            // Metodo 1: sendMessage standard
             try {
-                const messageKey = {
-                    remoteJid: m.chat,
-                    fromMe: quoted.fromMe,
-                    id: quoted.id,
-                    participant: quoted.sender
-                };
-
-                let durationMs = 0;
-                if (command === 'pin1d') durationMs = 1 * 24 * 60 * 60 * 1000;
-                else if (command === 'pin7d') durationMs = 7 * 24 * 60 * 60 * 1000;
-                else if (command === 'pin30d') durationMs = 30 * 24 * 60 * 60 * 1000;
-
                 await conn.sendMessage(m.chat, { 
                     pin: { 
                         key: messageKey, 
                         type: 1 
                     } 
                 });
-
-                m.react('✅️');
-                pinQueue.delete(m.chat);
+                pinned = true;
+            } catch (e1) {
+                console.log('Metodo 1 fallito:', e1.message);
                 
+                // Metodo 2: sendMessage senza type
+                try {
+                    await conn.sendMessage(m.chat, { 
+                        pin: { 
+                            key: messageKey
+                        } 
+                    });
+                    pinned = true;
+                } catch (e2) {
+                    console.log('Metodo 2 fallito:', e2.message);
+                    
+                    // Metodo 3: chatModify
+                    try {
+                        await conn.chatModify(
+                            { pin: true },
+                            m.chat,
+                            [quoted.id]
+                        );
+                        pinned = true;
+                    } catch (e3) {
+                        console.log('Metodo 3 fallito:', e3.message);
+                        
+                        // Metodo 4: messageKey minimale
+                        try {
+                            await conn.sendMessage(m.chat, {
+                                pin: {
+                                    key: {
+                                        remoteJid: m.chat,
+                                        id: quoted.id
+                                    }
+                                }
+                            });
+                            pinned = true;
+                        } catch (e4) {
+                            console.log('Metodo 4 fallito:', e4.message);
+                        }
+                    }
+                }
+            }
+
+            if (pinned) {
+                m.react('✅️');
+                
+                // Conferma con il tempo in millisecondi
                 let durationText = '';
                 if (command === 'pin1d') durationText = '1 giorno';
                 else if (command === 'pin7d') durationText = '7 giorni';
@@ -79,14 +105,20 @@ let handler = async (m, { conn, command, usedPrefix }) => {
                 
                 await m.reply(`✅ Messaggio fissato per ${durationText}!`);
                 
-            } catch (e2) {
-                m.reply('❌ Errore nel fissare il messaggio.');
+                // Pulisci la mappa per evitare confusione
+                pinQueue.delete(m.chat);
+            } else {
+                m.reply('❌ Impossibile fissare il messaggio. Il bot potrebbe non avere i permessi di amministratore.');
             }
+            
+        } catch (e) {
+            console.error('Errore finale:', e);
+            m.reply('❌ Errore nel fissare il messaggio.');
         }
         return;
     }
 
-    // Comandi normali unpin, destacar, desmarcar - RIMANGONO UGUALI
+    // Comandi normali unpin, destacar, desmarcar
     if (['unpin', 'destacar', 'desmarcar'].includes(command)) {
         if (!m.quoted) return m.reply(`⚠️ Rispondi a un messaggio per ${command === 'unpin' ? 'rimuoverlo dai fissati' : 'eseguire l\'azione'}.`);
 
