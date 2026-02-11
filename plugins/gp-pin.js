@@ -1,6 +1,6 @@
 const pinQueue = new Map();
 
-let handler = async (m, { conn, command, usedPrefix, participants }) => {
+let handler = async (m, { conn, command, usedPrefix }) => {
     if (!m.isGroup) return;
 
     if (command === 'pin') {
@@ -28,17 +28,13 @@ let handler = async (m, { conn, command, usedPrefix, participants }) => {
 
         try {
             await conn.sendMessage(m.chat, {
-                pin: {
-                    key: quoted.key,
-                    type: 1
-                }
+                pin: { key: quoted.key, type: 1 }
             });
 
             m.react('✅');
             pinQueue.delete(m.chat);
-        } catch (err) {
-            console.error(err);
-            m.reply('❌ Errore nel fissare il messaggio.');
+        } catch (e) {
+            console.error(e);
         }
         return;
     }
@@ -48,25 +44,18 @@ let handler = async (m, { conn, command, usedPrefix, participants }) => {
 
         try {
             await conn.sendMessage(m.chat, {
-                pin: {
-                    key: m.quoted.key,
-                    type: 2
-                }
+                pin: { key: m.quoted.key, type: 2 }
             });
-
             m.react('✅');
-        } catch (err) {
-            console.error(err);
-            m.reply('❌ Errore nell’eseguire il comando.');
+        } catch (e) {
+            console.error(e);
         }
     }
 };
 
-handler.help = ['pin', 'unpin'];
-handler.tags = ['gruppo'];
 handler.command = ['pin', 'pin1d', 'pin7d', 'pin30d', 'unpin'];
 handler.group = true;
-handler.admin = true;
 handler.botAdmin = true;
+handler.admin = true;
 
 export default handler;
