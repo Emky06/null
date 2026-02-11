@@ -52,7 +52,7 @@ await conn.sendMessage(m.chat, {
 await delay(2500);
 await conn.sendMessage(m.chat, {
     edit: messaggio.key,
-    text: `🔫 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n🔁 𝐅𝐚𝐜𝐜𝐢𝐨 𝐠𝐢𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐚𝐦𝐛𝐮𝐫𝐨...\n😰 𝐏𝐮𝐧𝐭𝐨 𝐥𝐚 pistola 𝐚𝐥𝐥𝐚 𝐭𝐮𝐚 𝐭𝐞𝐬𝐭𝐚...`
+    text: `🔫 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n🔁 𝐅𝐚𝐜𝐜𝐢𝐨 𝐠𝐢𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐚𝐦𝐛𝐮𝐫𝐨...\n😰 𝐏𝐮𝐧𝐭𝐨 𝐥𝐚 𝐩𝐢𝐬𝐭𝐨𝐥𝐚 𝐚𝐥𝐥𝐚 𝐭𝐮𝐚 𝐭𝐞𝐬𝐭𝐚...`
 });
 
 await delay(2500);
