@@ -4,93 +4,78 @@ let handler = async (m, { conn, command, usedPrefix }) => {
     if (command === 'pin') {
         if (!m.quoted) return m.reply(`⚠️ Rispondi a un messaggio per fissarlo.`);
 
-
         pinQueue.set(m.chat, m.quoted);
 
         const buttons = [
-            { buttonId: `${usedPrefix}pin1d`, buttonText: { displayText: '⏳ 1 Giorno' }, type: 1 },
-            { buttonId: `${usedPrefix}pin7d`, buttonText: { displayText: '⏳ 7 Giorni' }, type: 1 },
-            { buttonId: `${usedPrefix}pin30d`, buttonText: { displayText: '⏳ 30 Giorni' }, type: 1 },
+            { buttonId: `${usedPrefix}pinnow`, buttonText: { displayText: '📍 Fissa Ora' }, type: 1 },
+            { buttonId: `${usedPrefix}cancelpin`, buttonText: { displayText: '❌ Annulla' }, type: 1 }
         ];
 
         await conn.sendMessage(m.chat, {
-            text: 'Scegli per quanto tempo vuoi fissare il messaggio:',
+            text: 'Vuoi fissare questo messaggio?',
             buttons,
             headerType: 1
         });
         return;
     }
 
-    if (['pin1d', 'pin7d', 'pin30d'].includes(command)) {
-        // Recupero il messaggio da pinnare salvato in pinQueue
+    if (command === 'pinnow') {
         const quoted = pinQueue.get(m.chat);
-        if (!quoted) return m.reply('❌ Nessun messaggio da fissare. Usa prima il comando pin rispondendo a un messaggio.');
-
-        const messageKey = {
-            remoteJid: m.chat,
-            fromMe: quoted.fromMe,
-            id: quoted.id,
-            participant: quoted.sender
-        };
-
-        // Calcolo durata in ms in base al comando
-        let durationMs = 0;
-        if (command === 'pin1d') durationMs = 1 * 24 * 60 * 60 * 1000;
-        else if (command === 'pin7d') durationMs = 7 * 24 * 60 * 60 * 1000;
-        else if (command === 'pin30d') durationMs = 30 * 24 * 60 * 60 * 1000;
+        if (!quoted) return m.reply('❌ Nessun messaggio da fissare.');
 
         try {
-            await conn.sendMessage(m.chat, { pin: { key: messageKey, type: 1 } });
-
-            // Conferma con il tempo in millisecondi
-
-
-            m.react('✅️');
-
-            // Pulisco la mappa per evitare confusione
+            // Metodo 1: Usa l'ID del messaggio direttamente
+            await conn.sendMessage(m.chat, {
+                pin: {
+                    key: {
+                        remoteJid: m.chat,
+                        id: quoted.id
+                    }
+                }
+            });
+            
+            // Metodo alternativo: prova con chatModify
+            // await conn.chatModify({ pin: true }, m.chat, quoted.id);
+            
+            m.reply('✅ Messaggio fissato con successo!');
             pinQueue.delete(m.chat);
         } catch (e) {
-            console.error(e);
-            m.reply('❌ Errore nel fissare il messaggio.');
+            console.error('Errore pin:', e);
+            m.reply('❌ Impossibile fissare: ' + e.message);
         }
         return;
     }
 
-    // Comandi normali unpin, destacar, desmarcar
-    if (['unpin', 'destacar', 'desmarcar'].includes(command)) {
-        if (!m.quoted) return m.reply(`⚠️ Rispondi a un messaggio per ${command === 'unpin' ? 'rimuoverlo dai fissati' : 'eseguire l\'azione'}.`);
+    if (command === 'cancelpin') {
+        pinQueue.delete(m.chat);
+        m.reply('❌ Operazione annullata.');
+        return;
+    }
 
-        const messageKey = {
-            remoteJid: m.chat,
-            fromMe: m.quoted.fromMe,
-            id: m.quoted.id,
-            participant: m.quoted.sender
-        };
+    if (command === 'unpin') {
+        if (!m.quoted) return m.reply('⚠️ Rispondi a un messaggio fissato per rimuoverlo.');
 
         try {
-            switch (command) {
-                case 'unpin':
-                    await conn.sendMessage(m.chat, { pin: { key: messageKey, type: 2 } });
-                    break;
-                case 'destacar':
-                    await conn.sendMessage(m.chat, { keep: { key: messageKey, type: 1 } });
-                    break;
-                case 'desmarcar':
-                    await conn.sendMessage(m.chat, { keep: { key: messageKey, type: 2 } });
-                    break;
-            }
-            m.react('✅️');
-        } catch (err) {
-            console.error('[ERRORE]', err);
-            m.reply('❌ Errore nell\'eseguire il comando.');
+            await conn.sendMessage(m.chat, {
+                unpin: {
+                    key: {
+                        remoteJid: m.chat,
+                        id: m.quoted.id
+                    }
+                }
+            });
+            m.reply('✅ Messaggio rimosso dai fissati.');
+        } catch (e) {
+            console.error(e);
+            m.reply('❌ Errore: ' + e.message);
         }
         return;
     }
 };
 
-handler.help = ['pin'];
+handler.help = ['pin', 'unpin'];
 handler.tags = ['gruppo'];
-handler.command = ['pin', 'unpin', 'destacar', 'desmarcar', 'pin1d', 'pin7d', 'pin30d'];
+handler.command = ['pin', 'unpin', 'pinnow', 'cancelpin'];
 handler.admin = true;
 handler.group = true;
 handler.botAdmin = true;
