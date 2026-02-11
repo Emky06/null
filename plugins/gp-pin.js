@@ -1,16 +1,15 @@
 const pinQueue = new Map();
 
 let handler = async (m, { conn, command, usedPrefix }) => {
-    if (!m.isGroup) return;
-    if (!m.quoted && command !== 'pin') return;
-
     if (command === 'pin') {
+        if (!m.quoted) return m.reply(`⚠️ Rispondi a un messaggio per fissarlo.`);
+
         pinQueue.set(m.chat, m.quoted);
 
         const buttons = [
             { buttonId: `${usedPrefix}pin1d`, buttonText: { displayText: '⏳ 1 Giorno' }, type: 1 },
             { buttonId: `${usedPrefix}pin7d`, buttonText: { displayText: '⏳ 7 Giorni' }, type: 1 },
-            { buttonId: `${usedPrefix}pin30d`, buttonText: { displayText: '⏳ 30 Giorni' }, type: 1 }
+            { buttonId: `${usedPrefix}pin30d`, buttonText: { displayText: '⏳ 30 Giorni' }, type: 1 },
         ];
 
         await conn.sendMessage(m.chat, {
@@ -23,39 +22,57 @@ let handler = async (m, { conn, command, usedPrefix }) => {
 
     if (['pin1d', 'pin7d', 'pin30d'].includes(command)) {
         const quoted = pinQueue.get(m.chat);
-        if (!quoted) return;
+        if (!quoted) return m.reply('❌ Nessun messaggio da fissare. Usa prima il comando pin rispondendo a un messaggio.');
 
-        const key = { ...quoted.key };
-        if (!key.participant && quoted.sender) key.participant = quoted.sender;
+        const messageKey = {
+            remoteJid: m.chat,
+            fromMe: quoted.fromMe,
+            id: quoted.id,
+            participant: quoted.sender
+        };
+
+        let durationMs = 0;
+        if (command === 'pin1d') durationMs = 1 * 24 * 60 * 60 * 1000;
+        else if (command === 'pin7d') durationMs = 7 * 24 * 60 * 60 * 1000;
+        else if (command === 'pin30d') durationMs = 30 * 24 * 60 * 60 * 1000;
 
         try {
-            await conn.sendMessage(m.chat, { pin: { key, type: 1 } });
-            m.react('✅');
+            await conn.sendMessage(m.chat, { pin: { key: messageKey, type: 1 } });
+            m.react('✅️');
             pinQueue.delete(m.chat);
         } catch (e) {
-            console.error('[PIN ERROR]', e);
-            m.reply('❌ Errore nel fissare il messaggio. Controlla che il bot sia admin.');
+            console.error(e);
+            m.reply('❌ Errore nel fissare il messaggio.');
         }
         return;
     }
 
     if (command === 'unpin') {
-        const key = { ...m.quoted.key };
-        if (!key.participant && m.quoted.sender) key.participant = m.quoted.sender;
+        if (!m.quoted) return m.reply(`⚠️ Rispondi a un messaggio per rimuoverlo dai fissati.`);
+
+        const messageKey = {
+            remoteJid: m.chat,
+            fromMe: m.quoted.fromMe,
+            id: m.quoted.id,
+            participant: m.quoted.sender
+        };
 
         try {
-            await conn.sendMessage(m.chat, { pin: { key, type: 2 } });
-            m.react('✅');
-        } catch (e) {
-            console.error('[UNPIN ERROR]', e);
-            m.reply('❌ Errore nell\'eseguire il comando. Controlla che il bot sia admin.');
+            await conn.sendMessage(m.chat, { pin: { key: messageKey, type: 2 } });
+            m.react('✅️');
+        } catch (err) {
+            console.error('[ERRORE]', err);
+            m.reply('❌ Errore nell\'eseguire il comando.');
         }
+        return;
     }
 };
 
+handler.help = ['pin', 'unpin'];
+handler.tags = ['gruppo'];
 handler.command = ['pin', 'pin1d', 'pin7d', 'pin30d', 'unpin'];
+handler.admin = true;
 handler.group = true;
 handler.botAdmin = true;
-handler.admin = true;
 
 export default handler;
