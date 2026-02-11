@@ -2,10 +2,9 @@ const pinQueue = new Map();
 
 let handler = async (m, { conn, command, usedPrefix }) => {
     if (!m.isGroup) return;
+    if (!m.quoted && command !== 'pin') return;
 
     if (command === 'pin') {
-        if (!m.quoted) return m.reply('⚠️ Rispondi a un messaggio per fissarlo.');
-
         pinQueue.set(m.chat, m.quoted);
 
         const buttons = [
@@ -26,29 +25,30 @@ let handler = async (m, { conn, command, usedPrefix }) => {
         const quoted = pinQueue.get(m.chat);
         if (!quoted) return;
 
-        try {
-            await conn.sendMessage(m.chat, {
-                pin: { key: quoted.key, type: 1 }
-            });
+        const key = { ...quoted.key };
+        if (!key.participant && quoted.sender) key.participant = quoted.sender;
 
+        try {
+            await conn.sendMessage(m.chat, { pin: { key, type: 1 } });
             m.react('✅');
             pinQueue.delete(m.chat);
         } catch (e) {
-            console.error(e);
+            console.error('[PIN ERROR]', e);
+            m.reply('❌ Errore nel fissare il messaggio. Controlla che il bot sia admin.');
         }
         return;
     }
 
     if (command === 'unpin') {
-        if (!m.quoted) return;
+        const key = { ...m.quoted.key };
+        if (!key.participant && m.quoted.sender) key.participant = m.quoted.sender;
 
         try {
-            await conn.sendMessage(m.chat, {
-                pin: { key: m.quoted.key, type: 2 }
-            });
+            await conn.sendMessage(m.chat, { pin: { key, type: 2 } });
             m.react('✅');
         } catch (e) {
-            console.error(e);
+            console.error('[UNPIN ERROR]', e);
+            m.reply('❌ Errore nell\'eseguire il comando. Controlla che il bot sia admin.');
         }
     }
 };
