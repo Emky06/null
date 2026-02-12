@@ -188,16 +188,10 @@ const handler = async (m, { conn }) => {
     ensureDailyReset();
     const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
-    const aggregated = {};
-    for (const uid in global.db.data.users) {
-      if (global.db.data.excluded?.users?.[uid]) continue;
-      const n = global.db.data.users[uid]?.messaggiGiornalieri || 0;
-      aggregated[uid] = n;
-    }
-
-    const ranking = Object.entries(aggregated)
-      .map(([jid, messages]) => ({ jid, messages }))
-      .sort((a, b) => b.messages - a.messages);
+    const ranking = Object.entries(global.db.data.users)
+  .filter(([jid, user]) => !global.db.data.excluded?.users?.[jid] && (user.messaggiGiornalieri || 0) > 0)
+  .map(([jid, user]) => ({ jid, messages: user.messaggiGiornalieri }))
+  .sort((a, b) => b.messages - a.messages);
 
     
 const pos = ranking.findIndex(u => u.jid === m.sender) + 1;
