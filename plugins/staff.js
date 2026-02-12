@@ -18,7 +18,6 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
     let pesan = args.join(' ');
     let message = pesan ? pesan : '❌ Nessun messaggio fornito';
 
-    const num = ['𝟏','𝟐','𝟑','𝟒','𝟓','𝟔','𝟕','𝟖','𝟗','𝟎'];
 
     let text = `╭━━━━━━━━━━━━━━━━━━━╮
          _*𝐒𝐭𝐚𝐟𝐟 𝐝𝐢  ${groupName}*_
@@ -36,7 +35,7 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
         text += `┃              *🛡️ 𝐀𝐝𝐦𝐢𝐧 🛡️*\n`;
         groupAdmins.forEach((jid, i) => {
             mentions.push(jid);
-            text += `┣➤ 🛡️ ${num[i] || i + 1} @${jid.split('@')[0]}\n`;
+            text += `┣➤ 🛡️ @${jid.split('@')[0]}\n`;
         });
     }
 
@@ -48,7 +47,7 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
                 : `${user}@s.whatsapp.net`;
 
             mentions.push(jid);
-            text += `┣➤ 👮🏻‍♂️ ${num[i] || i + 1} @${jid.split('@')[0]}\n`;
+            text += `┣➤ 👮🏻‍♂️ @${jid.split('@')[0]}\n`;
         });
     }
 
