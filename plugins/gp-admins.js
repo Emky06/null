@@ -1,6 +1,6 @@
 // Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, participants, groupMetadata, args }) => {
-    const botId = conn.user.jid || conn.user.id;
+        const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
     const groupAdmins = participants.filter(p => p.admin && p.id !== botId);
     const listAdmin = groupAdmins
