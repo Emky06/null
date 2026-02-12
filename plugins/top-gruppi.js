@@ -223,7 +223,7 @@ const text = pos
   }
 };
 
-handler.command = /^\.?(topgruppi|toputenti|rankuser)$/i;
+handler.command = /^\.?(topgruppi|toputenti|rankuser|rankgruppo)$/i;
 handler.group = true;
 handler.all = all;
 
