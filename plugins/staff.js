@@ -33,7 +33,7 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
     let mentions = [];
 
     if (groupAdmins.length) {
-        text += `┃    *🛡️ 𝐀𝐝𝐦𝐢𝐧 🛡️*\n`;
+        text += `┃     *🛡️ 𝐀𝐝𝐦𝐢𝐧 🛡️*\n`;
         groupAdmins.forEach((jid, i) => {
             mentions.push(jid);
             text += `┣➤ 🛡️ ${num[i] || i + 1} @${jid.split('@')[0]}\n`;
@@ -41,7 +41,7 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
     }
 
     if (prems.length) {
-        text += `┣━━━━━━━━━━━━━━━━━━━┫\n┃   *👮🏻‍♂️ 𝐌𝐨𝐝 👮🏻‍♂️*\n`;
+        text += `┣━━━━━━━━━━━━━━━━━━━┫\n┃      *👮🏻‍♂️ 𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 👮🏻‍♂️*\n`;
         prems.forEach((user, i) => {
             let jid = user.includes('@s.whatsapp.net')
                 ? user
