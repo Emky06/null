@@ -200,10 +200,6 @@ const handler = async (m, { conn }) => {
   return;
 }
 
-  await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
-  return;
-}
-
   if (command === '.rankuser') {
   ensureDailyReset();
   const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
@@ -240,7 +236,7 @@ const handler = async (m, { conn }) => {
 
   const text = pos
     ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer
-    : `🙋 Non hai ancora inviato messaggi oggi!` + footer;
+    : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
 
   const buttons = [
     { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
