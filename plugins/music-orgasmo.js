@@ -1,10 +1,10 @@
 //Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
   try {
-    // Percorso del file musicale
+    
     let audioPath = './storage/mp3/orgasmo.mp3';
 
-    // Invia il file audio come messaggio nel gruppo
+    
     await conn.sendMessage(m.chat, { 
   audio: { url: audioPath }, 
   mimetype: 'audio/mpeg' 
@@ -15,10 +15,10 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = /^(orgasmo)$/i;  // Comando 
-handler.group = true;  // Funziona solo nei gruppi
-handler.admin = true;  // Solo per amministratori
-handler.botAdmin = true;  // Il bot deve essere admin nel gruppo
+handler.command = /^(orgasmo)$/i;  
+handler.group = true;  
+handler.premium = true;  
+handler.botAdmin = true;  
 
 export default handler;
 
