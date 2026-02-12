@@ -21,7 +21,7 @@ let handler = async (m, { conn, participants, groupMetadata, args }) => {
     const num = ['𝟏','𝟐','𝟑','𝟒','𝟓','𝟔','𝟕','𝟖','𝟗','𝟎'];
 
     let text = `╭━━━━━━━━━━━━━━━━━━━╮
-         _*𝐒𝐭𝐚𝐟𝐟 𝐝𝐢 ${groupName}*_
+         _*𝐒𝐭𝐚𝐟𝐟 𝐝𝐢  ${groupName}*_
 ╰━━━━━━━━━━━━━━━━━━━╯
 
 ✎ *𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨:*  
