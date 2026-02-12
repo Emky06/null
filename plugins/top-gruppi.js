@@ -62,6 +62,8 @@ async function all(m, { conn }) {
 const handler = async (m, { conn, command }) => {
   ensureDailyReset();
 
+  const footer = '𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
+
   const allGroups = Object.keys(conn.chats || {})
     .filter(jid => jid.endsWith('@g.us'))
     .filter(jid => !jid.includes('@c.us'));
@@ -95,11 +97,10 @@ const handler = async (m, { conn, command }) => {
     groupsStats.sort((a, b) => b.messages - a.messages);
     const top = groupsStats.slice(0, 10);
 
-    const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
     const text = top.length
-      ? `🏆 *𝐓𝐨𝐩 𝐠𝐫𝐮𝐩𝐩𝐢* 🏆\n\n` +
-        top.map((g, i) => `*${i + 1}.* ${g.name}\n📩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: *${g.messages}*\n👥 𝐌𝐞𝐦𝐛𝐫𝐢: *${g.participants}*`).join('\n\n') + footer
-      : 'Nessun dato disponibile' + footer;
+  ? `🏆 *𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢* 🏆\n\n` +
+    top.map((g, i) => `*${i + 1}.* ${g.name}\n📩 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: *${g.messages}*\n👥 𝐌𝐞𝐦𝐛𝐫𝐢: *${g.participants}*`).join('\n\n')
+  : 'Nessun dato disponibile';
 
     const buttons = [
       { buttonId: '.toputenti', buttonText: { displayText: '𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢 🏅' }, type: 1 },
@@ -107,7 +108,7 @@ const handler = async (m, { conn, command }) => {
       { buttonId: '.rankgruppo', buttonText: { displayText: '𝐑𝐚𝐧𝐤 𝐆𝐫𝐮𝐩𝐩𝐨 📊' }, type: 1 },
     ];
 
-    await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
+    await conn.sendMessage(m.chat, { text, footer, buttons, headerType: 1 });
     return;
   }
 
@@ -124,11 +125,10 @@ const handler = async (m, { conn, command }) => {
       .sort((a, b) => b.messages - a.messages)
       .slice(0, 10);
 
-    const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
     const text = topUsers.length
-      ? `🏅 *𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢* 🏅\n\n` +
-        topUsers.map((u, i) => `*${i + 1}.* @${u.jid.split('@')[0]} ━ 𝐌𝐬𝐠: ${u.messages}`).join('\n') + footer
-      : 'Nessun dato disponibile' + footer;
+  ? `🏅 *𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢* 🏅\n\n` +
+    topUsers.map((u, i) => `*${i + 1}.* @${u.jid.split('@')[0]} ━ 𝐌𝐬𝐠: ${u.messages}`).join('\n')
+  : 'Nessun dato disponibile';
 
     const buttons = [
       { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
@@ -138,6 +138,7 @@ const handler = async (m, { conn, command }) => {
 
     await conn.sendMessage(m.chat, {
       text,
+      footer,
       buttons,
       headerType: 1,
       mentions: topUsers.map(u => u.jid)
@@ -188,18 +189,16 @@ const handler = async (m, { conn, command }) => {
   const myMessages = global.db.data.chats[m.chat]?.messaggiGiornalieri || 0;
 
   let text;
-  if (pos > 0) {
-    text =
-      `📊 *𝐑𝐚𝐧𝐤 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n` +
-      `👥 *${await conn.getName(m.chat)}*\n\n` +
-      `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
-      `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` +
-      footer;
-  } else {
-    text =
-      `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` +
-      footer;
-  }
+if (pos > 0) {
+  text =
+    `📊 *𝐑𝐚𝐧𝐤 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n` +
+    `👥 *${await conn.getName(m.chat)}*\n\n` +
+    `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
+    `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}`;
+} else {
+  text =
+    `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!`;
+}
 
   const buttons = [
     { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
@@ -209,6 +208,7 @@ const handler = async (m, { conn, command }) => {
 
   await conn.sendMessage(m.chat, {
     text,
+    footer,
     buttons,
     headerType: 1
   });
@@ -218,7 +218,6 @@ const handler = async (m, { conn, command }) => {
 
   if (command === 'rankuser') {
     ensureDailyReset();
-    const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
     const aggregated = {};
 for (const [jid, user] of Object.entries(global.db.data.users)) {
@@ -236,8 +235,11 @@ const myMessages = aggregated[m.sender] || 0;
 const totalActive = ranking.length; 
 
 const text = pos
-  ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐢: ${myMessages}` + footer
-  : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
+  ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n` +
+    `👤 @${m.sender.split('@')[0]}\n\n` +
+    `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n` +
+    `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}`
+  : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!`;
 
     const buttons = [
       { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
@@ -247,6 +249,7 @@ const text = pos
 
     await conn.sendMessage(m.chat, {
       text,
+      footer,
       buttons,
       headerType: 1,
       mentions: [m.sender]
