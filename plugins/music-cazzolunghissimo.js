@@ -15,7 +15,7 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = /^(cazzo)$/i; Comando 
+handler.command = /^(cazzo)$/i; 
 handler.group = true;  
 handler.premium = true;  
 handler.botAdmin = true;  
