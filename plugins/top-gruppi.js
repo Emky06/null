@@ -160,7 +160,7 @@ const handler = async (m, { conn }) => {
     meta.read_only
   ) {
     await conn.sendMessage(m.chat, {
-      text: "❌ Questo gruppo è escluso dalla classifica dei messaggi.",
+      text: "❌ 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐞̀ 𝐞𝐬𝐜𝐥𝐮𝐬𝐨 𝐝𝐚𝐥𝐥𝐚 𝐜𝐥𝐚𝐬𝐬𝐢𝐟𝐢𝐜𝐚 𝐝𝐞𝐢 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢.",
       headerType: 1
     });
     return;
@@ -187,7 +187,7 @@ const handler = async (m, { conn }) => {
            `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
            `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer;
   } else {
-    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 non ha ancora inviato messaggi oggi!` + footer;
+    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
   }
 
   const buttons = [
@@ -217,11 +217,11 @@ const ranking = Object.entries(aggregated)
  
 const pos = ranking.findIndex(u => u.jid === m.sender) + 1;
 const myMessages = aggregated[m.sender] || 0;
-const totalActive = ranking.length; // totale utenti che hanno scritto almeno 1 messaggio
+const totalActive = ranking.length; 
 
 const text = pos
   ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐢: ${myMessages}` + footer
-  : `🙋 Non hai ancora inviato messaggi oggi!` + footer;
+  : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
 
     const buttons = [
       { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
