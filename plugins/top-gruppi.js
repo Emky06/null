@@ -155,9 +155,9 @@ const handler = async (m, { conn }) => {
   const meta = conn.chats[m.chat]?.metadata || (await conn.groupMetadata(m.chat)) || {};
   if (
     global.db.data.excluded?.chats?.[m.chat] ||
-    meta.isCommunity ||
-    meta.announce ||
-    meta.read_only
+    meta?.isCommunity ||
+    meta?.announce ||
+    meta?.read_only
   ) {
     await conn.sendMessage(m.chat, {
       text: "❌ 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐞̀ 𝐞𝐬𝐜𝐥𝐮𝐬𝐨 𝐝𝐚𝐥𝐥𝐚 𝐜𝐥𝐚𝐬𝐬𝐢𝐟𝐢𝐜𝐚 𝐝𝐞𝐢 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢.",
@@ -166,37 +166,55 @@ const handler = async (m, { conn }) => {
     return;
   }
 
-  const allGroups = Object.keys(conn.chats || {})
-    .filter(jid => jid.endsWith('@g.us'))
-    .filter(jid => !global.db.data.excluded?.chats?.[jid]);
+  let ranking = [];
 
-  const ranking = allGroups
-    .map(jid => ({
+  for (const jid of Object.keys(conn.chats || {}).filter(j => j.endsWith('@g.us'))) {
+    const gMeta = conn.chats[jid]?.metadata || (await conn.groupMetadata(jid)) || {};
+
+    if (
+      global.db.data.excluded?.chats?.[jid] ||
+      gMeta?.isCommunity ||
+      gMeta?.announce ||
+      gMeta?.read_only
+    ) continue;
+
+    ranking.push({
       jid,
-      messages: global.db.data.chats[jid]?.messaggiGiornalieri || 0,
-    }))
-    .sort((a, b) => b.messages - a.messages);
+      messages: global.db.data.chats[jid]?.messaggiGiornalieri || 0
+    });
+  }
+
+  ranking.sort((a, b) => b.messages - a.messages);
 
   const pos = ranking.findIndex(g => g.jid === m.chat) + 1;
   const myMessages = global.db.data.chats[m.chat]?.messaggiGiornalieri || 0;
 
   let text;
-  if (pos) {
-    text = `📊 *𝐑𝐚𝐧𝐤 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n` +
-           `👥 *${await conn.getName(m.chat)}*\n\n` +
-           `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
-           `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer;
+  if (pos > 0) {
+    text =
+      `📊 *𝐑𝐚𝐧𝐤 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n` +
+      `👥 *${await conn.getName(m.chat)}*\n\n` +
+      `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
+      `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` +
+      footer;
   } else {
-    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
+    text =
+      `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` +
+      footer;
   }
 
   const buttons = [
     { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
     { buttonId: '.toputenti', buttonText: { displayText: '𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢 🏅' }, type: 1 },
-    { buttonId: '.rankuser', buttonText: { displayText: '𝐈𝐥 𝐦𝐢𝐨 𝐫𝐚𝐧𝐤 🙋' }, type: 1 },
+    { buttonId: '.rankuser', buttonText: { displayText: '𝐈𝐥 𝐦𝐢𝐨 𝐫𝐚𝐧𝐤 🙋' }, type: 1 }
   ];
 
-  await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
+  await conn.sendMessage(m.chat, {
+    text,
+    buttons,
+    headerType: 1
+  });
+
   return;
 }
 
