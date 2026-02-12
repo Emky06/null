@@ -17,7 +17,7 @@ let handler = async (m, { conn }) => {
 
 handler.command = /^(erika)$/i;  
 handler.group = true;  
-handler.premium = true;  
+handler.staff = true;
 handler.botAdmin = true;  
 
 export default handler;
