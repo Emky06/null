@@ -129,6 +129,9 @@ function generateMenuText(prefix) {
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🎵 *𝐅𝐔𝐍𝐙𝐈𝐎𝐍𝐈 𝐕𝐀𝐑𝐈𝐄*  
 ┃
+┃🛡️ ${prefix}𝐚𝐝𝐦𝐢𝐧𝐬
+┃👮🏻‍♂️ ${prefix}𝐦𝐨𝐝𝐬
+┃👥 ${prefix}𝐬𝐭𝐚𝐟𝐟
 ┃🎧 ${prefix}𝐚𝐮𝐝𝐢𝐨  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
