@@ -54,5 +54,6 @@ let handler = async (m, { conn }) => {
 };
 
 handler.command = /^rouletterussa$/i;
-handler.admin = true
+handler.staff = true;
+handler.group = true;
 export default handler;
