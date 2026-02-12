@@ -38,7 +38,7 @@ let handler = async (m, { conn, args }) => {
 
 handler.help = ['mymods <messaggio>'];
 handler.tags = ['group'];
-handler.command = /^(mymods|moderatori)$/i;
+handler.command = /^(mymods|mods)$/i;
 handler.group = true;
 
 export default handler;
