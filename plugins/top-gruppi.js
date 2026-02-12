@@ -198,9 +198,7 @@ const ranking = Object.entries(aggregated)
   .map(([jid, messages]) => ({ jid, messages }))
   .sort((a, b) => b.messages - a.messages);
 
-const myMessages = aggregated[m.sender] || 0;
-
-    
+ 
 const pos = ranking.findIndex(u => u.jid === m.sender) + 1;
 const myMessages = aggregated[m.sender] || 0;
 const totalActive = ranking.length; // totale utenti che hanno scritto almeno 1 messaggio
