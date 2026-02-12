@@ -59,16 +59,14 @@ async function all(m, { conn }) {
   user.messaggiGiornalieri = (user.messaggiGiornalieri || 0) + 1;
 }
 
-const handler = async (m, { conn }) => {
+const handler = async (m, { conn, command }) => {
   ensureDailyReset();
-
-  const command = (m.text || '').trim().toLowerCase();
 
   const allGroups = Object.keys(conn.chats || {})
     .filter(jid => jid.endsWith('@g.us'))
     .filter(jid => !jid.includes('@c.us'));
 
-  if (command === '.topgruppi') {
+  if (command === 'topgruppi') {
     let groupsStats = [];
 
     for (const jid of allGroups) {
@@ -113,7 +111,7 @@ const handler = async (m, { conn }) => {
     return;
   }
 
-  if (command === '.toputenti') {
+  if (command === 'toputenti') {
     const aggregated = {};
     for (const uid in global.db.data.users) {
       if (global.db.data.excluded?.users?.[uid]) continue;
@@ -147,7 +145,7 @@ const handler = async (m, { conn }) => {
     return;
   }
 
-  if (command === '.rankgruppo') {
+  if (command === 'rankgruppo') {
   ensureDailyReset();
 
   const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
@@ -218,7 +216,7 @@ const handler = async (m, { conn }) => {
   return;
 }
 
-  if (command === '.rankuser') {
+  if (command === 'rankuser') {
     ensureDailyReset();
     const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
@@ -257,7 +255,7 @@ const text = pos
   }
 };
 
-handler.command = /^\.?(topgruppi|toputenti|rankuser|rankgruppo)$/i;
+handler.command = ['topgruppi', 'toputenti', 'rankuser', 'rankgruppo'];
 handler.group = true;
 handler.all = all;
 
