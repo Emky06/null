@@ -32,6 +32,7 @@ let handler = async (m, { conn, args }) => {
         mentions.push(jid);
         text += `┣➤ @${jid.split('@')[0]}\n`;
     });
+text += `╰━━━━━━━━━━━━━━━━━━━╯`;
 
     await conn.sendMessage(groupId, { text, mentions });
 };
