@@ -205,17 +205,20 @@ const handler = async (m, { conn }) => {
   const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
 
   const aggregated = {};
+
   for (const [jid, user] of Object.entries(global.db.data.users)) {
     if (global.db.data.excluded?.users?.[jid]) continue;
 
     let total = 0;
     for (const chatJid of Object.keys(global.db.data.chats || {})) {
-      if (!chatJid.endsWith('@g.us')) continue; // solo gruppi
+      if (!chatJid.endsWith('@g.us')) continue; 
       if (global.db.data.excluded?.chats?.[chatJid]) continue;
 
-      const meta = conn.chats[chatJid]?.metadata || await conn.groupMetadata(chatJid);
-      if (!meta) continue;
-      if (meta.isCommunity || meta.announce || meta.read_only) continue; // esclusioni
+      let meta;
+      try {
+        meta = conn.chats[chatJid]?.metadata || await conn.groupMetadata(chatJid);
+      } catch { continue; }
+      if (!meta || meta.isCommunity || meta.announce || meta.read_only) continue;
 
       const chat = global.db.data.chats[chatJid];
       if (chat?.utenti?.[jid]?.messaggiGiornalieri) {
@@ -236,7 +239,7 @@ const handler = async (m, { conn }) => {
 
   const text = pos
     ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer
-    : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
+    : `🙋 Non hai ancora inviato messaggi oggi!` + footer;
 
   const buttons = [
     { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
