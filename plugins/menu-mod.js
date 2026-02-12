@@ -93,7 +93,7 @@ export default handler;
 
 function generateModMenuText(prefix) {
     return `
-╭━〔 𝑴𝑬𝑵𝑼 𝑴𝑶𝑫𝑬𝑹𝑨𝑻𝑶𝑹𝐈 〕━╮
+╭━〔 𝑴𝑬𝑵𝑼 𝑴𝑶𝑫𝑬𝑹𝑨𝑻𝑶𝑹𝑰 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🔇 ${prefix}𝐦𝐮𝐭𝐨/𝐬𝐦𝐮𝐭𝐨 — Muta/smuta utenti
 ┃ 📝 ${prefix}𝐦𝐮𝐭𝐚𝐭𝐢 — Lista utenti mutati
