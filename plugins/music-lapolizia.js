@@ -17,7 +17,7 @@ let handler = async (m, { conn }) => {
 
 handler.command = /^(polizia)$/i;  
 handler.group = true;  
-handler.premium = true;  
+handler.staff = true;
 handler.botAdmin = true;  
 
 export default handler;
