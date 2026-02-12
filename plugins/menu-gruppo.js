@@ -132,7 +132,8 @@ function generateMenuText(prefix) {
 ┃🛡️ ${prefix}𝐚𝐝𝐦𝐢𝐧𝐬
 ┃👮🏻‍♂️ ${prefix}𝐦𝐨𝐝𝐬
 ┃👥 ${prefix}𝐬𝐭𝐚𝐟𝐟
-┃🎧 ${prefix}𝐚𝐮𝐝𝐢𝐨  
+┃🎧 ${prefix}𝐚𝐮𝐝𝐢𝐨
+┃🎧 ${prefix}𝐜𝐮𝐫  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
 ┃⏩ ${prefix}𝐬𝐩𝐞𝐞𝐝𝐯𝐢𝐝𝐞𝐨
@@ -142,7 +143,6 @@ function generateMenuText(prefix) {
 ┃🎥 ${prefix}𝐭𝐨𝐯𝐢𝐝𝐞𝐨  
 ┃🖼️ ${prefix}𝐭𝐨𝐠𝐢𝐟  
 ┃📷 ${prefix}𝐭𝐨𝐢𝐦𝐠
-┃💻 ${prefix}𝐬𝐲𝐬𝐭𝐞𝐦  
 ┃⚙️ ${prefix}𝐬𝐞𝐭𝐢𝐠  
 ┃📝 ${prefix}𝐫𝐞𝐠  
 ┃📖 ${prefix}𝐫𝐞𝐠𝐨𝐥𝐞
