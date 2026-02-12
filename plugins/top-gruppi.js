@@ -151,7 +151,23 @@ const handler = async (m, { conn }) => {
   ensureDailyReset();
 
   const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
-  const allGroups = Object.keys(global.db.data.chats || {})
+
+  const meta = conn.chats[m.chat]?.metadata || (await conn.groupMetadata(m.chat)) || {};
+  if (
+    global.db.data.excluded?.chats?.[m.chat] ||
+    meta.isCommunity ||
+    meta.announce ||
+    meta.read_only
+  ) {
+    await conn.sendMessage(m.chat, {
+      text: "❌ Questo gruppo è escluso dalla classifica dei messaggi.",
+      headerType: 1
+    });
+    return;
+  }
+
+  const allGroups = Object.keys(conn.chats || {})
+    .filter(jid => jid.endsWith('@g.us'))
     .filter(jid => !global.db.data.excluded?.chats?.[jid]);
 
   const ranking = allGroups
@@ -171,7 +187,7 @@ const handler = async (m, { conn }) => {
            `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
            `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer;
   } else {
-    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
+    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 non ha ancora inviato messaggi oggi!` + footer;
   }
 
   const buttons = [
@@ -184,6 +200,10 @@ const handler = async (m, { conn }) => {
   return;
 }
 
+  await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
+  return;
+}
+
   if (command === '.rankuser') {
     ensureDailyReset();
     const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
@@ -191,7 +211,23 @@ const handler = async (m, { conn }) => {
     const aggregated = {};
 for (const [jid, user] of Object.entries(global.db.data.users)) {
   if (global.db.data.excluded?.users?.[jid]) continue;
-  aggregated[jid] = user.messaggiGiornalieri || 0;
+
+  let total = 0;
+  for (const chatJid of Object.keys(global.db.data.chats || {})) {
+    if (!chatJid.endsWith('@g.us')) continue; 
+    if (global.db.data.excluded?.chats?.[chatJid]) continue;
+
+    const meta = conn.chats[chatJid]?.metadata || await conn.groupMetadata(chatJid);
+    if (!meta) continue;
+    if (meta.isCommunity || meta.announce || meta.read_only) continue; 
+
+    const chat = global.db.data.chats[chatJid];
+    if (chat?.utenti?.[jid]?.messaggiGiornalieri) {
+      total += chat.utenti[jid].messaggiGiornalieri;
+    }
+  }
+
+  if (total > 0) aggregated[jid] = total;
 }
 const ranking = Object.entries(aggregated)
   .filter(([jid, messages]) => messages > 0)
@@ -201,7 +237,7 @@ const ranking = Object.entries(aggregated)
  
 const pos = ranking.findIndex(u => u.jid === m.sender) + 1;
 const myMessages = aggregated[m.sender] || 0;
-const totalActive = ranking.length; // totale utenti che hanno scritto almeno 1 messaggio
+const totalActive = ranking.length; 
 
 const text = pos
   ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalActive}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐢: ${myMessages}` + footer
