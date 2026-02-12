@@ -1,7 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-let handler = async (m, { conn, isOwner, isAdmin, isPrems }) => {
-  if (!isOwner && !isAdmin && !isPrems) 
-    return m.reply('⚠️ 𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐩𝐮𝐨̀ 𝐞𝐬𝐬𝐞𝐫𝐞 𝐞𝐬𝐞𝐠𝐮𝐢𝐭𝐨 𝐬𝐨𝐥𝐨 𝐝𝐚 𝐚𝐝𝐦𝐢𝐧 𝐞 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢.');
+let handler = async (m, { conn }) => {
 
   let groupMetadata = await conn.groupMetadata(m.chat);
   let groupMembers = groupMetadata.participants.map(u => u.jid);
@@ -27,5 +25,6 @@ let handler = async (m, { conn, isOwner, isAdmin, isPrems }) => {
 
 handler.command = /^(mutati|listamutati|mutelist)$/i;
 handler.group = true;
+handler.staff = true;
 
 export default handler;
