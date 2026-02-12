@@ -106,6 +106,7 @@ const handler = async (m, { conn }) => {
     const buttons = [
       { buttonId: '.toputenti', buttonText: { displayText: '𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢 🏅' }, type: 1 },
       { buttonId: '.rankuser', buttonText: { displayText: '𝐈𝐥 𝐦𝐢𝐨 𝐫𝐚𝐧𝐤 🙋' }, type: 1 },
+      { buttonId: '.rankgruppo', buttonText: { displayText: '𝐑𝐚𝐧𝐤 𝐆𝐫𝐮𝐩𝐩𝐨 📊' }, type: 1 },
     ];
 
     await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
@@ -133,6 +134,7 @@ const handler = async (m, { conn }) => {
 
     const buttons = [
       { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
+      { buttonId: '.rankgruppo', buttonText: { displayText: '𝐑𝐚𝐧𝐤 𝐆𝐫𝐮𝐩𝐩𝐨 📊' }, type: 1 },
       { buttonId: '.rankuser', buttonText: { displayText: '𝐈𝐥 𝐦𝐢𝐨 𝐫𝐚𝐧𝐤 🙋' }, type: 1 },
     ];
 
@@ -144,6 +146,43 @@ const handler = async (m, { conn }) => {
     });
     return;
   }
+
+  if (command === '.rankgruppo') {
+  ensureDailyReset();
+
+  const footer = '\n\n> 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
+  const allGroups = Object.keys(global.db.data.chats || {})
+    .filter(jid => !global.db.data.excluded?.chats?.[jid]);
+
+  const ranking = allGroups
+    .map(jid => ({
+      jid,
+      messages: global.db.data.chats[jid]?.messaggiGiornalieri || 0,
+    }))
+    .sort((a, b) => b.messages - a.messages);
+
+  const pos = ranking.findIndex(g => g.jid === m.chat) + 1;
+  const myMessages = global.db.data.chats[m.chat]?.messaggiGiornalieri || 0;
+
+  let text;
+  if (pos) {
+    text = `📊 *𝐑𝐚𝐧𝐤 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨* 🏆\n\n` +
+           `👥 *${await conn.getName(m.chat)}*\n\n` +
+           `𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${ranking.length}\n` +
+           `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer;
+  } else {
+    text = `📊 𝐐𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐡𝐚 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
+  }
+
+  const buttons = [
+    { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
+    { buttonId: '.toputenti', buttonText: { displayText: '𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢 🏅' }, type: 1 },
+    { buttonId: '.rankuser', buttonText: { displayText: '𝐈𝐥 𝐦𝐢𝐨 𝐫𝐚𝐧𝐤 🙋' }, type: 1 },
+  ];
+
+  await conn.sendMessage(m.chat, { text, buttons, headerType: 1 });
+  return;
+}
 
   if (command === '.rankuser') {
     ensureDailyReset();
@@ -161,15 +200,31 @@ const handler = async (m, { conn }) => {
       .sort((a, b) => b.messages - a.messages);
 
     const pos = ranking.findIndex(u => u.jid === m.sender) + 1;
-    const myMessages = aggregated[m.sender] || 0;
+const myMessages = aggregated[m.sender] || 0;
 
-    const text = pos
-      ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° 𝐬𝐮 ${ranking.length}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer
-      : `🙋 Non hai ancora inviato messaggi oggi!` + footer;
+let totalMembers = 0;
+for (const jid of Object.keys(conn.chats || {}).filter(j => j.endsWith('@g.us'))) {
+  try {
+    const meta = conn.chats[jid]?.metadata || (await conn.groupMetadata(jid)) || {};
+    if (
+      global.db.data.excluded?.chats?.[jid] ||
+      meta.isCommunity ||
+      meta.announce ||
+      meta.read_only
+    ) continue;
+
+    totalMembers += (meta.participants || []).length;
+  } catch {}
+}
+
+const text = pos
+  ? `🙋 *𝐈𝐥 𝐭𝐮𝐨 𝐫𝐚𝐧𝐤* 🏅\n\n👤 @${m.sender.split('@')[0]}\n\n𝐏𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: ${pos}° su ${totalMembers}\n𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢: ${myMessages}` + footer
+  : `🙋 𝐍𝐨𝐧 𝐡𝐚𝐢 𝐚𝐧𝐜𝐨𝐫𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!` + footer;
 
     const buttons = [
       { buttonId: '.topgruppi', buttonText: { displayText: '𝐓𝐨𝐩 𝐆𝐫𝐮𝐩𝐩𝐢 🏆' }, type: 1 },
       { buttonId: '.toputenti', buttonText: { displayText: '𝐓𝐨𝐩 𝐔𝐭𝐞𝐧𝐭𝐢 🏅' }, type: 1 },
+      { buttonId: '.rankgruppo', buttonText: { displayText: '𝐑𝐚𝐧𝐤 𝐆𝐫𝐮𝐩𝐩𝐨 📊' }, type: 1 },
     ];
 
     await conn.sendMessage(m.chat, {
