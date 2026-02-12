@@ -30,7 +30,7 @@ let handler = async (m, { conn, args }) => {
     prems.forEach(user => {
         let jid = user.includes('@s.whatsapp.net') ? user : `${user}@s.whatsapp.net`;
         mentions.push(jid);
-        text += `┣➤ @${jid.split('@')[0]}\n`;
+        text += `┣➤ 👮🏻‍♂️ @${jid.split('@')[0]}\n`;
     });
 text += `╰━━━━━━━━━━━━━━━━━━━╯`;
 
