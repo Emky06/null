@@ -55,7 +55,7 @@ const handler = async (m, { conn }) => {
       contextInfo: {
         mentionedJid: [who],
         externalAdReply: {
-          title: nomeUtente, // ora sempre preso da WhatsApp
+          title: nomeUtente, 
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
           thumbnail: pic, 
         }
