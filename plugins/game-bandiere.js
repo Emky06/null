@@ -217,7 +217,7 @@ let handler = async (m, { conn }) => {
 
   const messaggio = await conn.reply(
     m.chat,
-    `╭━━━━━━━━━━━━━━━━━━━╮\n┃🧠 Indovina il paese di questa ┃bandiera:\n┣━━━━━━━━━━━━━━━━━━━\n┃                        ${scelta.emoji}\n┣━━━━━━━━━━━━━━━━━━━\n┃💡 *Indizio iniziale:* la nazione ┃inizia con *${primaLettera}*\n╰━━━━━━━━━━━━━━━━━━━╯\n> Hai *30* secondi per rispondere a questo messaggio con il nome del paese.`,
+    `╭━━━━━━━━━━━━━━━━━━━╮\n┃🧠 Indovina il paese di questa bandiera:\n┣━━━━━━━━━━━━━━━━━━━\n┃                        ${scelta.emoji}\n┣━━━━━━━━━━━━━━━━━━━\n┃💡 *Indizio iniziale:* la nazione ┃inizia con *${primaLettera}*\n╰━━━━━━━━━━━━━━━━━━━╯\n> Hai *30* secondi per rispondere a questo messaggio con il nome del paese.`,
     m
   );
 
