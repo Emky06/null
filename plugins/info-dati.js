@@ -12,9 +12,10 @@ const handler = async (m, { conn }) => {
     const user = global.db.data.users[who];
 
     const vittorieBandiera = user.vittorieBandiera || 0;
+    const vittoriePrefissi = user.vittoriePrefissi || 0;
     const vittorieic = user.vittorieic || 0;
     const vittorieTris = user.vittorieTris || 0;
-    const vittorieImpiccato = user.vittorieImpiccato || 0;
+    const vittorieImpiccato = user.vittorieImpiccato || 0;   
 
     let nomeUtente = "Utente sconosciuto";
     try {
@@ -37,6 +38,8 @@ const handler = async (m, { conn }) => {
 ↆ   *𝐃𝐀𝐓𝐈 𝐃𝐈* @${who.split('@')[0]}   ↆ
 
 🏁 *𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞 𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞* ➪ ${vittorieBandiera}
+────
+📞 *𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞 𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐢* ➪ ${vittoriePrefissi}
 ────
 🎵 *𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞 𝐜𝐚𝐧𝐳𝐨𝐧𝐢* ➪ ${vittorieic}
 ────
