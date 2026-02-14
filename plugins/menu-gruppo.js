@@ -104,6 +104,7 @@ function generateMenuText(prefix) {
 ┃🪙 ${prefix}𝐜𝐨𝐢𝐧𝐟𝐥𝐢𝐩 (𝐜𝐨𝐧 𝐛𝐨𝐭)
 ┃✌️ ${prefix}𝐠𝐚𝐦𝐞 𝐬𝐚𝐬𝐬𝐨/𝐜𝐚𝐫𝐭𝐚/𝐟𝐨𝐫𝐛𝐢𝐜𝐞  
 ┃🇮🇹 ${prefix}𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐚
+┃📞 ${prefix}𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨
 ┃🎵 ${prefix}𝐢𝐜
 ┃⭕ ${prefix}𝐭𝐫𝐢𝐬
 ┃🎲 ${prefix}𝐝𝐚𝐝𝐨  
