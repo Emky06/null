@@ -541,7 +541,6 @@ export async function participantsUpdate({ id, participants, action }) {
 
     let chat = global.db.data.chats[id] || {}
     let text = ''
-    const nomeDelBot = global.nomebot || this.user?.name || '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕'
 
     switch (action) {
         case 'add':
@@ -572,13 +571,6 @@ export async function participantsUpdate({ id, participants, action }) {
                     text,
                     contextInfo: {
                         mentionedJid: [user],
-                        forwardingScore: 99,
-                        isForwarded: true,
-                        forwardedNewsletterMessageInfo: {
-                            newsletterJid: '',
-                            serverMessageId: '',
-                            newsletterName: nomeDelBot
-                        },
                         externalAdReply: {
                             title: action === 'add'
                                 ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
