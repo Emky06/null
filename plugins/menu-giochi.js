@@ -103,6 +103,7 @@ function generateGiochiMenuText(prefix) {
 ┃ ⚽ ${prefix}𝐜𝐚𝐥𝐜𝐢𝐨 — Scommesse di calcio
 ┃ 😵 ${prefix}𝐢𝐦𝐩𝐢𝐜𝐜𝐚𝐭𝐨 — Gioco dell'impiccato
 ┃ 🇮🇹 ${prefix}𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐚 — Indovina la bandiera
+┃ 📞 ${prefix}𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨 — Indovina il prefisso
 ┃ 🎵 ${prefix}𝐢𝐜 — Indovina la canzone
 ┃ ✂️ ${prefix}𝐠𝐚𝐦𝐞 — Sasso/Carta/Forbice
 ┃ ❎ ${prefix}𝐭𝐫𝐢𝐬 — Gioco del tris
@@ -111,7 +112,7 @@ function generateGiochiMenuText(prefix) {
 ┃ 💼 ${prefix}𝐚𝐜𝐪𝐮𝐢𝐬𝐭𝐚 — Acquista messaggi
 ┃ 📈 ${prefix}𝐛𝐢𝐥𝐚𝐧𝐜𝐢𝐨 — Bilancio soldi del gruppo
 ╰━━━━━━━━━━━━━━━━━╯
-🎮 *𝐓𝐨𝐭𝐚𝐥𝐞 𝐠𝐢𝐨𝐜𝐡𝐢: 𝟏𝟏*
+🎮 *𝐓𝐨𝐭𝐚𝐥𝐞 𝐠𝐢𝐨𝐜𝐡𝐢: 𝟏𝟐*
 *𝐁𝐲* ${nomebot}
 `.trim();
 }
