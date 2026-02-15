@@ -46,7 +46,7 @@ const handler = async (msg, { conn, command, text }) => {
     return conn.sendMessage(
       chatId,
       {
-        text: `${userTag} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨/𝐚 𝐦𝐮𝐭𝐚𝐭𝐨/𝐚 ✓ \n> 𝑺𝒐𝒍𝒐 𝒂𝒅𝒎𝒊𝒏 𝒆 𝒎𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊 𝒑𝒐𝒔𝒔𝒐𝒏𝒐 𝒔𝒎𝒖𝐭𝐚𝐫𝐭𝐢.`,
+         text: `${userTag} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨/𝐚 𝐦𝐮𝐭𝐚𝐭𝐨/𝐚 ✓ \n> 𝑺𝒐𝒍𝒐 𝒂𝒅𝒎𝒊𝒏 𝒆 𝒎𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊 𝒑𝒐𝒔𝒔𝒐𝒏𝒐 𝒔𝒎𝒖𝒕𝒂𝒓𝒕𝒊.`,
         mentions: [mentionedJid]
       },
       { quoted: fakeReply }
