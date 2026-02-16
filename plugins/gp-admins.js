@@ -2,9 +2,15 @@
 let handler = async (m, { conn, participants, groupMetadata, args }) => {
     const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
+    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
+
     const groupAdmins = participants
-        .filter(p => p.admin && p.jid !== botId)
-        .map(p => p.jid);
+    .filter(p =>
+        p.admin &&
+        p.jid !== botId &&
+        !ownerJids.includes(p.jid)
+    )
+    .map(p => p.jid);
 
     const groupName = groupMetadata?.subject || 'Gruppo senza nome';
 
