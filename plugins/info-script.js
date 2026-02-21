@@ -24,12 +24,14 @@ let handler = async (m, { conn }) => {
 
   let totalSize = files.reduce((acc, f) => acc + f.size, 0)
 
-  let last3 = files.slice(0, 3).map(f => `  - ${f.name} (${moment(f.mtime).format('DD/MM/YY')})`).join('\n')
+  let last3 = files.slice(0, 3)
+    .map(f => `  - ${f.name} (${moment(f.mtime).tz('Europe/Rome').format('DD/MM/YY')})`)
+    .join('\n')
 
   let info = '╭━━━━━━━━━━━━━━━━━━━╮\n'
   info += `✧ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐩𝐥𝐮𝐠𝐢𝐧 𝐦𝐨𝐝𝐢𝐟𝐢𝐜𝐚𝐭𝐨\n`
   info += `• 𝐍𝐨𝐦𝐞 : ${last.name}\n`
-  info += `• 𝐀𝐠𝐠𝐢𝐨𝐫𝐧𝐚𝐭𝐨 : ${moment(last.mtime).format('DD/MM/YY - HH:mm:ss')}\n`
+  info += `• 𝐀𝐠𝐠𝐢𝐨𝐫𝐧𝐚𝐭𝐨 : ${moment(last.mtime).tz('Europe/Rome').format('DD/MM/YY - HH:mm:ss')}\n`
   info += `• 𝐃𝐢𝐦𝐞𝐧𝐬𝐢𝐨𝐧𝐞 : ${(last.size / 1024).toFixed(2)} KB\n`
   info += '┣━━━━━━━━━━━━━━━━━━━\n'
   info += `📂 𝐏𝐥𝐮𝐠𝐢𝐧𝐬\n`
