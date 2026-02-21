@@ -72,7 +72,8 @@ const handler = async (m, { conn }) => {
   await conn.sendMessage(m.chat, {
     text,
     footer,
-    mentions: ranking.map(u => u.jid)
+    mentions: ranking.map(u => u.jid),
+    headerType: 1
   });
 };
 
