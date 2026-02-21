@@ -45,7 +45,7 @@ const handler = async (m, { conn, participants }) => {
     .slice(0, 10);
   if (usersData.length === 0) return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐡𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!", m);
 
-  let message = `🏆 *𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩* 🏆\n\n📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊\n\n`;
+  let message = `🏆 *𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩* 🏆\n\n📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊\n\n`;
   let mentions = [];
   let userPosition = null;
 
@@ -64,7 +64,7 @@ const handler = async (m, { conn, participants }) => {
   let userMessage = userPosition
     ? `\n\n𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
     : `\n\n𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
-  message += `\n⏰ Reset tra: ${timeLeft}`;
+  message += `\n⏰ 𝐑𝐞𝐬𝐞𝐭 𝐭𝐫𝐚: ${timeLeft}`;
 
   await conn.sendMessage(m.chat, { text: message + userMessage, mentions });
 };
