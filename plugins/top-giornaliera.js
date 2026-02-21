@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 const DB_FILE = './databaseTop.json';
 
@@ -56,7 +55,7 @@ function ensureDailyReset() {
     }
     global.processedDailyTopMessages = new Set();
     global.db.data.__dailyTopDate = today;
-    saveDB(); // salva il reset giornaliero
+    saveDB();
   }
 }
 
@@ -90,7 +89,10 @@ loadDB();
 
 let handler = async (m, { conn, participants }) => {
   ensureDailyReset();
+  if (!participants) participants = []; // <-- aggiunto per evitare undefined
+
   const chatId = m.chat;
+  if (!global.db.data.dailyTop[chatId]) global.db.data.dailyTop[chatId] = { utenti: {} };
   const chatData = global.db.data.dailyTop?.[chatId]?.utenti || {};
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
@@ -103,13 +105,14 @@ let handler = async (m, { conn, participants }) => {
 
   let message = `📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊
 ${dateBox}\n`;
+
   let mentions = [];
   let userPosition = null;
 
   const usersData = participants
     .map(p => {
       const jid = p.jid;
-      if (jid === botId) return null;
+      if (!jid || jid === botId) return null;
       if (!chatData[jid]) chatData[jid] = { messaggi: 0 };
       return { jid, messages: chatData[jid].messaggi };
     })
