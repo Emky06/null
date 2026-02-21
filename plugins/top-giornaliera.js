@@ -7,17 +7,11 @@ function dateKeyRome() {
   return `${y}-${m}-${d}`;
 }
 
-function ensureDailyReset() {
-  if (!global.db?.data) return;
+function ensureGroupDailyReset(chatId) {
+  if (!global.dailytop) global.dailytop = {};
   const today = dateKeyRome();
-
-  if (global.db.data.__dailyDate !== today) {
-    for (const jid in global.db.data.chats) {
-      if (!global.db.data.chats[jid]) global.db.data.chats[jid] = {};
-      global.db.data.chats[jid].messaggiGiornalieri = 0;
-      global.db.data.chats[jid].utenti = {};
-    }
-    global.db.data.__dailyDate = today;
+  if (!global.dailytop[chatId] || global.dailytop[chatId].__date !== today) {
+    global.dailytop[chatId] = { __date: today, utenti: {} };
   }
 }
 
@@ -31,53 +25,52 @@ function getTimeUntilReset() {
   return `${hours}h ${minutes}m`;
 }
 
-const handler = async (m, { conn }) => {
-  ensureDailyReset();
+function trackMessage(chatId, senderJid, botJid) {
+  ensureGroupDailyReset(chatId);
+  if (senderJid === botJid) return;
+  const utenti = global.dailytop[chatId].utenti;
+  if (!utenti[senderJid]) utenti[senderJid] = 0;
+  utenti[senderJid]++;
+}
 
-  const footer = '𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕';
-
-  const chatData = global.db.data.chats[m.chat];
-  if (!chatData || !chatData.utenti) {
-    return conn.sendMessage(m.chat, {
-      text: 'Nessun dato disponibile oggi!'
-    });
-  }
-
+const handler = async (m, { conn, participants }) => {
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
-
-  const ranking = Object.entries(chatData.utenti)
-    .filter(([jid]) => jid !== botId) // ← esclusione bot
-    .map(([jid, data]) => ({
-      jid,
-      messages: data.messaggiGiornalieri || 0
-    }))
-    .filter(u => u.messages > 0)
-    .sort((a, b) => b.messages - a.messages)
+  ensureGroupDailyReset(m.chat);
+  const utenti = global.dailytop[m.chat].utenti;
+  const participantJids = participants.map(p => p.jid).filter(jid => jid && jid !== botId);
+  let usersData = participantJids
+    .map(jid => ({ jid, messaggi: utenti[jid] || 0 }))
+    .filter(u => u.messaggi > 0)
+    .sort((a, b) => b.messaggi - a.messaggi)
     .slice(0, 10);
+  if (usersData.length === 0) return conn.reply(m.chat, "⚠︎ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐡𝐚 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐨𝐠𝐠𝐢!", m);
 
-  const intro = "📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊\n\n";
+  let message = `🏆 *𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩* 🏆\n\n📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊\n\n`;
+  let mentions = [];
+  let userPosition = null;
 
-  let text = ranking.length
-    ? `🏆 *𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩* 🏆\n\n${intro}` +
-      ranking.map((u, i) => {
-        let medal = "🏅";
-        if (i === 0) medal = "🥇";
-        else if (i === 1) medal = "🥈";
-        else if (i === 2) medal = "🥉";
-        return `${medal} *${i + 1}.* @${u.jid.split('@')[0]} ➠ ${u.messages} 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢`;
-      }).join('\n') +
-      `\n\n⏰ 𝐑𝐞𝐬𝐞𝐭 𝐭𝐫𝐚: ${getTimeUntilReset()}`
-    : '𝐍𝐞𝐬𝐬𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐨𝐠𝐠𝐢 𝐢𝐧 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨!';
-
-  await conn.sendMessage(m.chat, {
-    text,
-    footer,
-    mentions: ranking.map(u => u.jid),
-    headerType: 1
+  usersData.forEach((user, i) => {
+    let medal = "🏅";
+    if (i === 0) medal = "🥇";
+    else if (i === 1) medal = "🥈";
+    else if (i === 2) medal = "🥉";
+    message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messaggi} 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\n`;
+    mentions.push(user.jid);
+    if (user.jid === m.sender) userPosition = i + 1;
   });
+
+  const totalPlayers = participantJids.length;
+  const timeLeft = getTimeUntilReset();
+  let userMessage = userPosition
+    ? `\n\n𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞 𝐞̀ ${userPosition}° 𝐬𝐮 ${totalPlayers}`
+    : `\n\n𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
+  message += `\n⏰ Reset tra: ${timeLeft}`;
+
+  await conn.sendMessage(m.chat, { text: message + userMessage, mentions });
 };
 
 handler.command = ['dailytop'];
 handler.group = true;
 
+export { trackMessage };
 export default handler;
