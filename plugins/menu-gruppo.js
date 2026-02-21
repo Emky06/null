@@ -153,6 +153,8 @@ function generateMenuText(prefix) {
 ┃🤬 ${prefix}𝐭𝐨𝐩𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞
 ┃🏁 ${prefix}𝐭𝐨𝐩𝐛𝐚𝐧𝐝𝐢𝐞𝐫𝐞
 ┃👥 ${prefix}𝐭𝐨𝐩𝐠𝐫𝐮𝐩𝐩𝐢
+┃👥 ${prefix}𝐭𝐨𝐩𝐮𝐭𝐞𝐧𝐭𝐢
+┃🗓️ ${prefix}𝐝𝐚𝐢𝐥𝐲𝐭𝐨𝐩
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃💼 *𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀*  
 ┃
