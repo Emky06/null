@@ -60,7 +60,7 @@ let handler = async (m, { conn, participants }) => {
   const chatData = global.db.data.dailyTop?.[chatId]?.utenti || {};
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
-  // Prende tutti i partecipanti e inizializza messaggi a 0 se non presenti
+  // Prende tutti i partecipanti e inizializza messaggi a 0
   const usersData = participants
     .map(p => {
       const jid = p.jid;
@@ -68,12 +68,15 @@ let handler = async (m, { conn, participants }) => {
       if (!chatData[jid]) chatData[jid] = { messaggi: 0 };
       return { jid, messages: chatData[jid].messaggi };
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    // Filtra chi non ha scritto nulla
+    .filter(u => u.messages > 0);
 
   if (!usersData.length) {
     return conn.reply(m.chat, "𝐍𝐞𝐬𝐬𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐨𝐠𝐠𝐢 𝐢𝐧 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨!", m);
   }
 
+  // Ordina per messaggi decrescenti e limita a top 10
   const sortedUsers = usersData.sort((a, b) => b.messages - a.messages).slice(0, 10);
 
   let message = `📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊\n\n`;
