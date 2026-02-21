@@ -14,7 +14,7 @@ function dateKeyRome() {
   const boldMap = {'0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗'};
   const boldNumber = n => n.toString().split('').map(d => boldMap[d] || d).join('');
 
-  return `🗓️ ${giornoSettimana} ${boldNumber(giornoMese)} ${mese} ${anno}`;
+  return `🗓️ ${giornoSettimana} ${boldNumber(giornoMese)} ${mese} ${boldNumber(anno)}`;
 }
 
 function ensureDB() {
@@ -70,9 +70,9 @@ let handler = async (m, { conn, participants }) => {
 
   const today = dateKeyRome(); 
   const dateBox = `
-╭━━━━━━━━━━━━━━━━━━╮
+╭━━━━━━━━━━━━━━━━━━━╮
 ┃  ${today}  ┃
-╰━━━━━━━━━━━━━━━━━━╯
+╰━━━━━━━━━━━━━━━━━━━╯
 `;
 
   let message = `📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊
