@@ -3,10 +3,18 @@ import fs from 'fs';
 
 function dateKeyRome() {
   const nowRome = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
-  const y = nowRome.getFullYear();
-  const m = String(nowRome.getMonth() + 1).padStart(2, '0');
-  const d = String(nowRome.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  const giorni = ['𝐃𝐨𝐦𝐞𝐧𝐢𝐜𝐚','𝐋𝐮𝐧𝐞𝐝𝐢̀','𝐌𝐚𝐫𝐭𝐞𝐝𝐢̀','𝐌𝐞𝐫𝐜𝐨𝐥𝐞𝐝𝐢̀','𝐆𝐢𝐨𝐯𝐞𝐝𝐢̀','𝐕𝐞𝐧𝐞𝐫𝐝𝐢̀','𝐒𝐚𝐛𝐚𝐭𝐨'];
+  const mesi = ['𝐆𝐞𝐧𝐧𝐚𝐢𝐨','𝐅𝐞𝐛𝐛𝐫𝐚𝐢𝐨','𝐌𝐚𝐫𝐳𝐨','𝐀𝐩𝐫𝐢𝐥𝐞','𝐌𝐚𝐠𝐠𝐢𝐨','𝐆𝐢𝐮𝐠𝐧𝐨','𝐋𝐮𝐠𝐥𝐢𝐨','𝐀𝐠𝐨𝐬𝐭𝐨','𝐒𝐞𝐭𝐭𝐞𝐦𝐛𝐫𝐞','𝐎𝐭𝐭𝐨𝐛𝐫𝐞','𝐍𝐨𝐯𝐞𝐦𝐛𝐫𝐞','𝐃𝐢𝐜𝐞𝐦𝐛𝐫𝐞'];
+
+  const giornoSettimana = giorni[nowRome.getDay()]; 
+  const giornoMese = nowRome.getDate(); 
+  const mese = mesi[nowRome.getMonth()]; 
+  const anno = nowRome.getFullYear(); 
+
+  const boldMap = {'0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗'};
+  const boldNumber = n => n.toString().split('').map(d => boldMap[d] || d).join('');
+
+  return `🗓️ ${giornoSettimana} ${boldNumber(giornoMese)} ${mese} ${anno}`;
 }
 
 function ensureDB() {
@@ -63,7 +71,7 @@ let handler = async (m, { conn, participants }) => {
   const today = dateKeyRome(); 
   const dateBox = `
 ╭━━━━━━━━━━━━━━━━━━╮
-┃       ${today}       ┃
+┃  ${today}  ┃
 ╰━━━━━━━━━━━━━━━━━━╯
 `;
 
