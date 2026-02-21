@@ -9,27 +9,39 @@ function dateKeyRome() {
   return `${y}-${m}-${d}`;
 }
 
-function ensureDailyReset() {
-  if (!global.db?.data) return;
-  const today = dateKeyRome();
+function ensureDB() {
+  if (!global.db) global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
+  if (!global.db.data) global.db.data = { dailyTop: {}, __dailyTopDate: null };
+  if (!global.db.data.dailyTop) global.db.data.dailyTop = {};
+  if (!('__dailyTopDate' in global.db.data)) global.db.data.__dailyTopDate = null;
+}
 
+function ensureDailyReset() {
+  ensureDB();
+  const today = dateKeyRome();
   if (global.db.data.__dailyTopDate !== today) {
-    if (!global.db.data.dailyTop) global.db.data.dailyTop = {};
     for (const chatId in global.db.data.dailyTop) {
+      if (!global.db.data.dailyTop[chatId]) global.db.data.dailyTop[chatId] = {};
       global.db.data.dailyTop[chatId].utenti = {};
     }
+    global.processedDailyTopMessages = new Set();
     global.db.data.__dailyTopDate = today;
   }
 }
 
-export function incrementDailyTop(chatId, jid) {
-  if (!global.db?.data) return;
+export async function dailyTopMessageCounter(m, { conn }) {
+  if (!m?.chat) return;
+  if (!m.sender || m.fromMe || (conn?.user && m.sender === conn.user?.jid)) return;
 
-  if (!global.db.data.dailyTop) global.db.data.dailyTop = {};
-  if (!global.db.data.dailyTop[chatId]) global.db.data.dailyTop[chatId] = { utenti: {} };
-  if (!global.db.data.dailyTop[chatId].utenti[jid]) global.db.data.dailyTop[chatId].utenti[jid] = { messaggi: 0 };
+  ensureDailyReset();
+  if (!global.processedDailyTopMessages) global.processedDailyTopMessages = new Set();
+  if (global.processedDailyTopMessages.has(m.key.id)) return;
+  global.processedDailyTopMessages.add(m.key.id);
 
-  global.db.data.dailyTop[chatId].utenti[jid].messaggi += 1;
+  if (!global.db.data.dailyTop[m.chat]) global.db.data.dailyTop[m.chat] = { utenti: {} };
+  const chat = global.db.data.dailyTop[m.chat];
+  if (!chat.utenti[m.sender]) chat.utenti[m.sender] = { messaggi: 0 };
+  chat.utenti[m.sender].messaggi++;
 }
 
 function getTimeUntilReset() {
@@ -44,19 +56,21 @@ function getTimeUntilReset() {
 
 let handler = async (m, { conn, participants }) => {
   ensureDailyReset();
-
   const chatId = m.chat;
   const chatData = global.db.data.dailyTop?.[chatId]?.utenti || {};
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
+  // Prende tutti i partecipanti e inizializza messaggi a 0 se non presenti
   const usersData = participants
     .map(p => {
       const jid = p.jid;
-      return { jid, messages: chatData[jid]?.messaggi || 0 };
+      if (jid === botId) return null;
+      if (!chatData[jid]) chatData[jid] = { messaggi: 0 };
+      return { jid, messages: chatData[jid].messaggi };
     })
-    .filter(u => u.messages > 0 && u.jid !== botId);
+    .filter(Boolean);
 
-  if (usersData.length === 0) {
+  if (!usersData.length) {
     return conn.reply(m.chat, "𝐍𝐞𝐬𝐬𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧𝐯𝐢𝐚𝐭𝐨 𝐨𝐠𝐠𝐢 𝐢𝐧 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨!", m);
   }
 
@@ -74,7 +88,6 @@ let handler = async (m, { conn, participants }) => {
 
     message += `${medal} *${i + 1}.* @${user.jid.split('@')[0]} ➠ ${user.messages} 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢\n`;
     mentions.push(user.jid);
-
     if (user.jid === m.sender) userPosition = i + 1;
   });
 
@@ -84,15 +97,9 @@ let handler = async (m, { conn, participants }) => {
     : `𝐋𝐚 𝐭𝐮𝐚 𝐩𝐨𝐬𝐢𝐳𝐢𝐨𝐧𝐞: 𝐧𝐞𝐬𝐬𝐮𝐧𝐚`;
 
   const profileBuffer = fs.readFileSync('./icone/top.png');
-
   const quotedMessage = {
     key: { participants: "0@s.whatsapp.net", fromMe: false, id: "DailyTop" },
-    message: {
-      locationMessage: {
-        name: "𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩 🏆",
-        jpegThumbnail: profileBuffer
-      }
-    },
+    message: { locationMessage: { name: "𝐃𝐚𝐢𝐥𝐲 𝐓𝐨𝐩 🏆", jpegThumbnail: profileBuffer } },
     participant: "0@s.whatsapp.net"
   };
 
@@ -104,5 +111,6 @@ let handler = async (m, { conn, participants }) => {
 
 handler.command = ['dailytop'];
 handler.group = true;
+handler.all = dailyTopMessageCounter;
 
 export default handler;
