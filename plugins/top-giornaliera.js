@@ -1,5 +1,27 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
+const DB_FILE = './databaseTop.json';
+
+function loadDB() {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      global.db = { data: JSON.parse(fs.readFileSync(DB_FILE)) };
+    } else {
+      global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
+    }
+  } catch (e) {
+    console.error('Errore caricando il database:', e);
+    global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
+  }
+}
+
+function saveDB() {
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(global.db.data, null, 2));
+  } catch (e) {
+    console.error('Errore salvando il database:', e);
+  }
+}
 
 function dateKeyRome() {
   const nowRome = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
@@ -34,6 +56,7 @@ function ensureDailyReset() {
     }
     global.processedDailyTopMessages = new Set();
     global.db.data.__dailyTopDate = today;
+    saveDB(); // salva il reset giornaliero
   }
 }
 
@@ -50,6 +73,7 @@ export async function dailyTopMessageCounter(m, { conn }) {
   const chat = global.db.data.dailyTop[m.chat];
   if (!chat.utenti[m.sender]) chat.utenti[m.sender] = { messaggi: 0 };
   chat.utenti[m.sender].messaggi++;
+  saveDB();
 }
 
 function getTimeUntilReset() {
@@ -61,6 +85,8 @@ function getTimeUntilReset() {
   const minutes = Math.floor((diff / 1000 / 60) % 60);
   return `${hours}𝐡 ${minutes}𝐦`;
 }
+
+loadDB();
 
 let handler = async (m, { conn, participants }) => {
   ensureDailyReset();
