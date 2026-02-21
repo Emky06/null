@@ -1,26 +1,5 @@
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
-const DB_FILE = './databaseTop.json';
-
-function loadDB() {
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      global.db = { data: JSON.parse(fs.readFileSync(DB_FILE)) };
-    } else {
-      global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
-    }
-  } catch (e) {
-    console.error('Errore caricando il database:', e);
-    global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
-  }
-}
-
-function saveDB() {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(global.db.data, null, 2));
-  } catch (e) {
-    console.error('Errore salvando il database:', e);
-  }
-}
 
 function dateKeyRome() {
   const nowRome = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
@@ -55,7 +34,6 @@ function ensureDailyReset() {
     }
     global.processedDailyTopMessages = new Set();
     global.db.data.__dailyTopDate = today;
-    saveDB();
   }
 }
 
@@ -72,7 +50,6 @@ export async function dailyTopMessageCounter(m, { conn }) {
   const chat = global.db.data.dailyTop[m.chat];
   if (!chat.utenti[m.sender]) chat.utenti[m.sender] = { messaggi: 0 };
   chat.utenti[m.sender].messaggi++;
-  saveDB();
 }
 
 function getTimeUntilReset() {
@@ -85,14 +62,9 @@ function getTimeUntilReset() {
   return `${hours}𝐡 ${minutes}𝐦`;
 }
 
-loadDB();
-
 let handler = async (m, { conn, participants }) => {
   ensureDailyReset();
-  if (!participants) participants = []; // <-- aggiunto per evitare undefined
-
   const chatId = m.chat;
-  if (!global.db.data.dailyTop[chatId]) global.db.data.dailyTop[chatId] = { utenti: {} };
   const chatData = global.db.data.dailyTop?.[chatId]?.utenti || {};
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
@@ -105,14 +77,13 @@ let handler = async (m, { conn, participants }) => {
 
   let message = `📊 *𝐓𝐨𝐩 𝐠𝐢𝐨𝐫𝐧𝐚𝐥𝐢𝐞𝐫𝐚 𝐝𝐞𝐠𝐥𝐢 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐩𝐢𝐮̀ 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢* 📊
 ${dateBox}\n`;
-
   let mentions = [];
   let userPosition = null;
 
   const usersData = participants
     .map(p => {
       const jid = p.jid;
-      if (!jid || jid === botId) return null;
+      if (jid === botId) return null;
       if (!chatData[jid]) chatData[jid] = { messaggi: 0 };
       return { jid, messages: chatData[jid].messaggi };
     })
