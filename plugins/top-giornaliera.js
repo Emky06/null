@@ -1,6 +1,20 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
+const DB_FILE = './databaseTop.json';
+
+function loadDB() {
+  if (fs.existsSync(DB_FILE)) {
+    return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+  } else {
+    return { dailyTop: {}, __dailyTopDate: null };
+  }
+}
+
+function saveDB(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
 function dateKeyRome() {
   const nowRome = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }));
   const giorni = ['𝐃𝐨𝐦𝐞𝐧𝐢𝐜𝐚','𝐋𝐮𝐧𝐞𝐝𝐢̀','𝐌𝐚𝐫𝐭𝐞𝐝𝐢̀','𝐌𝐞𝐫𝐜𝐨𝐥𝐞𝐝𝐢̀','𝐆𝐢𝐨𝐯𝐞𝐝𝐢̀','𝐕𝐞𝐧𝐞𝐫𝐝𝐢̀','𝐒𝐚𝐛𝐚𝐭𝐨'];
@@ -17,39 +31,35 @@ function dateKeyRome() {
   return `🗓️ ${giornoSettimana} ${boldNumber(giornoMese)} ${mese} ${boldNumber(anno)}`;
 }
 
-function ensureDB() {
-  if (!global.db) global.db = { data: { dailyTop: {}, __dailyTopDate: null } };
-  if (!global.db.data) global.db.data = { dailyTop: {}, __dailyTopDate: null };
-  if (!global.db.data.dailyTop) global.db.data.dailyTop = {};
-  if (!('__dailyTopDate' in global.db.data)) global.db.data.__dailyTopDate = null;
-}
-
 function ensureDailyReset() {
-  ensureDB();
+  const db = loadDB();
   const today = dateKeyRome();
-  if (global.db.data.__dailyTopDate !== today) {
-    for (const chatId in global.db.data.dailyTop) {
-      if (!global.db.data.dailyTop[chatId]) global.db.data.dailyTop[chatId] = {};
-      global.db.data.dailyTop[chatId].utenti = {};
+  if (db.__dailyTopDate !== today) {
+    for (const chatId in db.dailyTop) {
+      if (!db.dailyTop[chatId]) db.dailyTop[chatId] = {};
+      db.dailyTop[chatId].utenti = {};
     }
-    global.processedDailyTopMessages = new Set();
-    global.db.data.__dailyTopDate = today;
+    db.__dailyTopDate = today;
+    saveDB(db);
   }
+  return db;
 }
 
 export async function dailyTopMessageCounter(m, { conn }) {
   if (!m?.chat) return;
   if (!m.sender || m.fromMe || (conn?.user && m.sender === conn.user?.jid)) return;
 
-  ensureDailyReset();
+  const db = ensureDailyReset();
   if (!global.processedDailyTopMessages) global.processedDailyTopMessages = new Set();
   if (global.processedDailyTopMessages.has(m.key.id)) return;
   global.processedDailyTopMessages.add(m.key.id);
 
-  if (!global.db.data.dailyTop[m.chat]) global.db.data.dailyTop[m.chat] = { utenti: {} };
-  const chat = global.db.data.dailyTop[m.chat];
+  if (!db.dailyTop[m.chat]) db.dailyTop[m.chat] = { utenti: {} };
+  const chat = db.dailyTop[m.chat];
   if (!chat.utenti[m.sender]) chat.utenti[m.sender] = { messaggi: 0 };
   chat.utenti[m.sender].messaggi++;
+
+  saveDB(db);
 }
 
 function getTimeUntilReset() {
@@ -63,9 +73,9 @@ function getTimeUntilReset() {
 }
 
 let handler = async (m, { conn, participants }) => {
-  ensureDailyReset();
+  const db = ensureDailyReset();
   const chatId = m.chat;
-  const chatData = global.db.data.dailyTop?.[chatId]?.utenti || {};
+  const chatData = db.dailyTop?.[chatId]?.utenti || {};
   const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
 
   const today = dateKeyRome(); 
