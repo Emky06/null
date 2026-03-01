@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-import { CATEGORIE } from "./lista_categorie.js";
+import { CATEGORIE } from "./categorie.js";
 
 const handler = async (m, { conn, args }) => {
   const mention = m.mentionedJid?.[0] || m.quoted?.sender;
