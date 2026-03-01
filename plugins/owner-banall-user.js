@@ -1,66 +1,63 @@
-function ensureDB() {
-  if (!global.db) global.db = { data: { chats: {} } };
-  if (!global.db.data.chats) global.db.data.chats = {};
-}
-
 let handler = async (m, { conn }) => {
 
-  ensureDB()
-
-  let target = m.mentionedJid[0] 
+  let target = m.mentionedJid?.[0] 
     ? m.mentionedJid[0] 
-    : m.quoted 
-      ? m.quoted.sender 
-      : null;
+    : m.quoted?.sender || null;
 
   if (!target) {
-    return conn.reply(
-      m.chat, 
-      '⚠️ 𝐃𝐞𝐯𝐢 𝐭𝐚𝐠𝐠𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞 𝐚 𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐚 𝐫𝐢𝐦𝐨𝐯𝐞𝐫𝐞!\n\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: .banall @user 𝐨𝐩𝐩𝐮𝐫𝐞 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐜𝐨𝐧 .banall', 
-      m
-    );
+    return m.reply('⚠️ Devi taggare o rispondere a un utente da rimuovere.');
   }
 
-  const allGroups = await conn.groupFetchAllParticipating().catch(() => ({}));
+  const groupsObj = await conn.groupFetchAllParticipating().catch(() => ({}));
+  const groupIds = Object.keys(groupsObj).filter(id => id.endsWith('@g.us'));
 
-  const groupsRaw = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
-
-  const groups = groupsRaw.filter(g => {
-    const meta = g.metadata || {};
-    return !(meta.isCommunity || meta.announce || meta.read_only);
-  });
-
-  if (!groups.length) {
-    return m.reply('Non sono presente in nessun gruppo valido.');
+  if (!groupIds.length) {
+    return m.reply('Non sono presente in nessun gruppo.');
   }
 
-  let removedGroups = [];
+  let removed = [];
+  let checked = 0;
 
-  for (const g of groups) {
+  for (let jid of groupIds) {
 
-    const jid = g.id;
-    const participants = g.participants?.map(p => p.id) || [];
+    try {
 
-    if (participants.includes(target)) {
+      const metadata = await conn.groupMetadata(jid);
+      checked++;
 
-      try {
+      const participants = metadata.participants || [];
 
-        await conn.groupParticipantsUpdate(jid, [target], 'remove');
+      const isTargetInside = participants.some(p => p.id === target);
+      if (!isTargetInside) continue;
 
-        removedGroups.push(g.subject || 'Nome non disponibile');
+      const botData = participants.find(p => p.id === conn.user.jid);
+      const isBotAdmin = botData?.admin === 'admin' || botData?.admin === 'superadmin';
 
-      } catch (e) {}
+      if (!isBotAdmin) continue;
 
+      await conn.groupParticipantsUpdate(jid, [target], 'remove');
+
+      removed.push(metadata.subject);
+
+    } catch (err) {
+      console.log('Errore gruppo:', jid, err.message);
     }
   }
 
-  let message = `🛑 *𝐑𝐞𝐩𝐨𝐫𝐭*:\n𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 @${target.split('@')[0]} 𝐝𝐚 ${removedGroups.length} 𝐠𝐫𝐮𝐩𝐩𝐢.\n\n📋 𝐄𝐥𝐞𝐧𝐜𝐨 𝐠𝐫𝐮𝐩𝐩𝐢:\n- ${removedGroups.join('\n- ') || '*𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨*'}`;
+  let msg = `🛑 *REPORT BANALL*
 
-  await conn.reply(m.chat, message, null, { mentions: [target] });
+👤 Utente: @${target.split('@')[0]}
+📦 Gruppi controllati: ${checked}
+✅ Rimosso da: ${removed.length}
+
+📋 Elenco:
+- ${removed.join('\n- ') || 'Nessun gruppo'}`;
+
+  await conn.reply(m.chat, msg, null, { mentions: [target] });
 };
 
 handler.command = /^(banall|takeover)$/i;
-handler.group = true;
 handler.owner = true;
+handler.group = true;
 
 export default handler;
