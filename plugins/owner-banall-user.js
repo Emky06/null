@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 function ensureDB() {
   if (!global.db) global.db = { data: { chats: {} } };
   if (!global.db.data.chats) global.db.data.chats = {};
