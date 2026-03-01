@@ -13,8 +13,10 @@ const handler = async (m, { conn, args }) => {
     );
 
   const categoriaObj = CATEGORIE.find(
-    (c) => c.key === inputCategoria
-  );
+  (c) =>
+    c.variants &&
+    c.variants.some(v => v.toLowerCase() === inputCategoria)
+);
 
   if (!categoriaObj)
     return conn.sendMessage(
