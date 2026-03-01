@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-import { ROLE_IMPORTANCE } from "./lista_categorie.js";
+import { ROLE_IMPORTANCE } from "./categorie.js";
 
 const handler = async (m, { conn }) => {
   if (!m.isGroup)
