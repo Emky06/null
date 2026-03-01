@@ -1,26 +1,11 @@
+import { ROLE_IMPORTANCE } from "../lib/categorie.js";
+
 const handler = async (m, { conn }) => {
   if (!m.isGroup)
-    return conn.sendMessage(m.chat, { text: "❌ Questo comando può essere usato solo nei gruppi." }, { quoted: m });
+    return conn.sendMessage(m.chat, { text: "❌ 𝐒𝐨𝐥𝐨 𝐧𝐞𝐢 𝐠𝐫𝐮𝐩𝐩𝐢." }, { quoted: m });
 
   const groupMetadata = await conn.groupMetadata(m.chat);
   const participants = groupMetadata.participants;
-
-  const roleImportance = {
-    '𝐨𝐰𝐧𝐞𝐫 👑': 13,
-    '𝐜𝐨-𝐨𝐰𝐧𝐞𝐫 ⚔️': 12,
-    '𝐜𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐨𝐫𝐞 🤝🏻': 11,
-    '𝐯𝐢𝐩 💎': 10,
-    '𝐯𝐞𝐭𝐞𝐫𝐚𝐧𝐨 🎖️': 9,
-    '𝐯𝐞𝐭𝐞𝐫𝐚𝐧𝐚 🎖️': 8,
-    '𝐝𝐢𝐬𝐚𝐛𝐢𝐥𝐞 ♿': 7,
-    '𝐜𝐚𝐠𝐚𝐜𝐚𝐳𝐳𝐨 🙄': 6,
-    '𝐥𝐮𝐝𝐨𝐩𝐭𝐢𝐜𝐨 🎰': 5,
-    '𝐥𝐮𝐝𝐨𝐩𝐚𝐭𝐢𝐜𝐚 🎰': 4,
-    '𝐦𝐨𝐫𝐭𝐨 𝐝𝐢 𝐟𝐢𝐠𝐚 🤤': 3,
-    '𝐏𝐢𝐜𝐤 𝐦𝐞 💅🏻': 2,
-    '𝐛𝐨𝐭 🤖': 1,
-    'nessuna categoria': 0
-  };
 
   const sortedParticipants = participants.sort((a, b) => {
     const userA = global.db.data.users[a.id] || {};
@@ -29,19 +14,18 @@ const handler = async (m, { conn }) => {
     const roleA = (userA.categoria || "nessuna categoria").toLowerCase();
     const roleB = (userB.categoria || "nessuna categoria").toLowerCase();
 
-    const importanceA = roleImportance[roleA] || 0;
-    const importanceB = roleImportance[roleB] || 0;
+    const importanceA = ROLE_IMPORTANCE[roleA] || 0;
+    const importanceB = ROLE_IMPORTANCE[roleB] || 0;
 
     return importanceB - importanceA;
   });
 
-  let messageText = "*📋 Lista utenti con categoria:*\n\n";
+  let messageText = "*📋 𝐋𝐢𝐬𝐭𝐚 𝐮𝐭𝐞𝐧𝐭𝐢 𝐜𝐨𝐧 𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚:*\n\n";
 
   sortedParticipants.forEach((p) => {
-    const userId = p.id;
-    const userData = global.db.data.users[userId] || {};
+    const userData = global.db.data.users[p.id] || {};
     const categoria = userData.categoria || "Nessuna categoria";
-    messageText += `@${userId.split("@")[0]} - ${categoria}\n`;
+    messageText += `@${p.id.split("@")[0]} - ${categoria}\n`;
   });
 
   await conn.sendMessage(
@@ -52,5 +36,6 @@ const handler = async (m, { conn }) => {
 };
 
 handler.command = /^(listacategorie)$/i;
-handler.owner = true;  // <-- solo owner può usarlo
+handler.owner = true;
+
 export default handler;
