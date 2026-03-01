@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 function ensureDB() {
   if (!global.db) global.db = { data: { chats: {} } };
   if (!global.db.data.chats) global.db.data.chats = {};
@@ -27,7 +26,7 @@ let handler = async (m, { conn }) => {
   const groupsRaw = Object.values(allGroups || {}).filter(g => g.id.endsWith('@g.us'));
 
   const groups = groupsRaw.filter(g => {
-    const meta = conn.chats[g.id]?.metadata || g.metadata || {};
+    const meta = g.metadata || {};
     return !(meta.isCommunity || meta.announce || meta.read_only);
   });
 
@@ -40,27 +39,18 @@ let handler = async (m, { conn }) => {
   for (const g of groups) {
 
     const jid = g.id;
-    const metadata = conn.chats[jid]?.metadata || g.metadata || {};
-    const participants = metadata.participants?.map(p => p.id) || [];
+    const participants = g.participants?.map(p => p.id) || [];
 
-    if (participants.includes(conn.user.jid) && participants.includes(target)) {
+    if (participants.includes(target)) {
 
       try {
 
         await conn.groupParticipantsUpdate(jid, [target], 'remove');
 
-        removedGroups.push(metadata.subject || 'Nome non disponibile');
+        removedGroups.push(g.subject || 'Nome non disponibile');
 
-      } catch (e) {
+      } catch (e) {}
 
-        await conn.reply(
-          jid,
-          `❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 @${target.split('@')[0]} 𝐝𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨.`,
-          m,
-          { mentions: [target] }
-        );
-
-      }
     }
   }
 
