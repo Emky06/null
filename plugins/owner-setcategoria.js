@@ -1,40 +1,44 @@
+//Plugin fatto da Axtral_WiZaRd
+import { CATEGORIE } from "../lib/categorie.js";
+
 const handler = async (m, { conn, args }) => {
   const mention = m.mentionedJid?.[0] || m.quoted?.sender;
-  const newCategoria = args.slice(1).join(" ").toLowerCase();
+  const inputCategoria = args.slice(1).join(" ").toLowerCase();
 
-  const CATEGORIE = {
-    "veterano": "𝐕𝐞𝐭𝐞𝐫𝐚𝐧𝐨 🎖️",
-    "veterana": "𝐕𝐞𝐭𝐞𝐫𝐚𝐧𝐚 🎖️",
-    "vip": "𝐕𝐢𝐩 💎",
-    "owner": "𝐎𝐰𝐧𝐞𝐫 👑",
-    "disabile": "𝐃𝐢𝐬𝐚𝐛𝐢𝐥𝐞 ♿",
-    "cagacazzo": "𝐂𝐚𝐠𝐚𝐜𝐚𝐳𝐳𝐨 🙄",
-    "ludopatico": "𝐋𝐮𝐝𝐨𝐩𝐚𝐭𝐢𝐜𝐨 🎰",
-    "ludopatica": "𝐋𝐮𝐝𝐨𝐩𝐚𝐭𝐢𝐜𝐚 🎰",
-    "morto di figa": "𝐌𝐨𝐫𝐭𝐨 𝐝𝐢 𝐟𝐢𝐠𝐚 🤤",
-    "pick me": "𝐏𝐢𝐜𝐤 𝐦𝐞 💅🏻",
-    "co-owner": "𝐂𝐨-𝐎𝐰𝐧𝐞𝐫 ⚔️",
-    "collaboratore": "𝐂𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐨𝐫𝐞 🤝🏻",
-    "bot": "𝐁𝐨𝐭 🤖"
-  };
+  if (!mention)
+    return conn.sendMessage(
+      m.chat,
+      { text: "❌ 𝐔𝐬𝐚: .setcategoria @utente categoria" },
+      { quoted: m }
+    );
 
-  if (!mention) {
-    return conn.sendMessage(m.chat, { text: `❌ Usa: .setcategoria @utente nome categoria` }, { quoted: m });
-  }
+  const categoriaObj = CATEGORIE.find(
+    (c) => c.key === inputCategoria
+  );
 
-  if (!CATEGORIE[newCategoria]) {
-    return conn.sendMessage(m.chat, { text: `❌ Categoria non valida.\nUsa il comando .categorie per vedere quelle disponibili.` }, { quoted: m });
-  }
+  if (!categoriaObj)
+    return conn.sendMessage(
+      m.chat,
+      { text: "❌ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐧𝐨𝐧 𝐯𝐚𝐥𝐢𝐝𝐚. 𝐔𝐬𝐚 .categorie 𝐩𝐞𝐫 𝐯𝐞𝐝𝐞𝐫𝐞 𝐪𝐮𝐞𝐥𝐥𝐞 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐢." },
+      { quoted: m }
+    );
 
-  if (!global.db.data.users[mention]) {
+  if (!global.db.data.users[mention])
     global.db.data.users[mention] = {};
-  }
 
-  global.db.data.users[mention].categoria = CATEGORIE[newCategoria];
+  global.db.data.users[mention].categoria = categoriaObj.label;
 
-  await conn.sendMessage(m.chat, { text: `✅ Categoria di @${mention.split("@")[0]} impostata su *${CATEGORIE[newCategoria]}*.`, mentions: [mention] }, { quoted: m });
+  await conn.sendMessage(
+    m.chat,
+    {
+      text: `✅ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐝𝐢 @${mention.split("@")[0]} 𝐢𝐦𝐩𝐨𝐬𝐭𝐚𝐭𝐚 𝐬𝐮 *${categoriaObj.label}*`,
+      mentions: [mention]
+    },
+    { quoted: m }
+  );
 };
 
 handler.command = /^(setcategoria)$/i;
-handler.owner = true;  // solo owner può usarlo
+handler.owner = true;
+
 export default handler;
