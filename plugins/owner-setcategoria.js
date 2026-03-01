@@ -13,10 +13,10 @@ const handler = async (m, { conn, args }) => {
     );
 
   const categoriaObj = CATEGORIE.find(
-  (c) =>
-    c.variants &&
-    c.variants.some(v => v.toLowerCase() === inputCategoria)
-);
+    (c) =>
+      c.variants &&
+      c.variants.some(v => v.toLowerCase() === inputCategoria)
+  );
 
   if (!categoriaObj)
     return conn.sendMessage(
@@ -28,12 +28,12 @@ const handler = async (m, { conn, args }) => {
   if (!global.db.data.users[mention])
     global.db.data.users[mention] = {};
 
-  global.db.data.users[mention].categoria = categoriaObj.label;
+  global.db.data.users[mention].categoria = categoriaObj.display;
 
   await conn.sendMessage(
     m.chat,
     {
-      text: `✅ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐝𝐢 @${mention.split("@")[0]} 𝐢𝐦𝐩𝐨𝐬𝐭𝐚𝐭𝐚 𝐬𝐮 *${categoriaObj.label}*`,
+      text: `✅ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 di @${mention.split("@")[0]} impostata su *${categoriaObj.display}*`,
       mentions: [mention]
     },
     { quoted: m }
