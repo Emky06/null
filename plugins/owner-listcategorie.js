@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { ROLE_IMPORTANCE } from "../lib/categorie.js";
 
 const handler = async (m, { conn }) => {
