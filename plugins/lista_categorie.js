@@ -41,11 +41,11 @@ export const CATEGORIE = [
     variants: ["troia"]
   },
   { 
-    display: "Puttaniere 😎",
+    display: "𝐏𝐮𝐭𝐭𝐚𝐧𝐢𝐞𝐫𝐞 😎",
     variants: ["puttaniere"]
   },
   { 
-    display: "Nerd 🤓",
+    display: "𝐍𝐞𝐫𝐝 🤓",
     variants: ["nerd"]
   },
 ];
@@ -68,7 +68,7 @@ export const ROLE_IMPORTANCE = (() => {
 
 const handler = async (m, { conn }) => {
 
-  const testo = `📂 *Categorie disponibili:*\n\n${CATEGORIE
+  const testo = `📂 *𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐞 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐢:*\n\n${CATEGORIE
     .map((c, i) => `${i + 1}. ${c.display}`)
     .join("\n")}`;
 
