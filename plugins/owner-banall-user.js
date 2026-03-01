@@ -1,50 +1,64 @@
-let handler = async (m, { conn }) => {
+import fs from 'fs'
 
-    let target = m.mentionedJid?.[0] 
-        || (m.quoted ? m.quoted.sender : null);
+async function handler(m, { conn, isOwner, text, isBotAdmin }) {
+if (!isOwner) return m.reply('ⓘ Solo il owner può usare questo comando.')
 
-    if (!target) {
-        return conn.reply(
-            m.chat,
-            '⚠️ 𝐃𝐞𝐯𝐢 𝐭𝐚𝐠𝐠𝐚𝐫𝐞 𝐨𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐞𝐫𝐞 𝐚 𝐮𝐧 𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞!\n\n𝐄𝐬𝐞𝐦𝐩𝐢𝐨: .banall @user',
-            m
-        );
-    }
+const mention = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : null) || text?.trim()
+if (!mention) return m.reply('ⓘ Tagga o scrivi l’utente da bannare.')
 
-    let groups = await conn.groupFetchAllParticipating();
+const target = conn.decodeJid(mention)
 
-    let removedGroups = [];
+// Ottieni tutte le chat partecipanti
+let groups
+try {
+groups = await conn.groupFetchAllParticipating()
+} catch {
+return m.reply('ⓘ Errore nel recupero dei gruppi.')
+}
 
-    for (let id in groups) {
-        let group = groups[id];
+let report = []
 
-        try {
-            let participants = group.participants.map(p => p.id);
+for (let [jid, group] of Object.entries(groups)) {
+try {
+if (!jid.endsWith('@g.us')) continue
 
-            if (
-                participants.includes(conn.user.jid) &&
-                participants.includes(target)
-            ) {
-                await conn.groupParticipantsUpdate(id, [target], 'remove');
-                removedGroups.push(group.subject);
-            }
+// Controlla se il bot è admin nel gruppo
+const botIsAdmin = group.participants?.some(p =>
+conn.user.jid === conn.decodeJid(p.id) &&
+(p.admin === 'admin' || p.admin === 'superadmin')
+)
 
-        } catch (e) {
-            console.log(e);
-        }
-    }
+if (!botIsAdmin) continue
 
-    let report = `🛑 𝐑𝐞𝐩𝐨𝐫𝐭 𝐁𝐚𝐧𝐚𝐥𝐥\n\n` +
-        `👤 𝐔𝐭𝐞𝐧𝐭𝐞: @${target.split('@')[0]}\n` +
-        `📋 𝐑𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚 ${removedGroups.length} 𝐠𝐫𝐮𝐩𝐩𝐢\n\n` +
-        `📌 𝐄𝐥𝐞𝐧𝐜𝐨 𝐠𝐫𝐮𝐩𝐩𝐢:\n` +
-        `- ${removedGroups.join('\n- ') || '𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨'}`;
+// Controlla se l’utente è nel gruppo
+const participant = group.participants?.find(p =>
+conn.decodeJid(p.id) === target
+)
 
-    await conn.reply(m.chat, report, m, { mentions: [target] });
-};
+if (!participant) continue
 
-handler.command = /^(banall|takeover)$/i;
-handler.owner = true;
-handler.group = true;
+await conn.groupParticipantsUpdate(jid, [target], 'remove')
 
-export default handler;
+report.push(`• ${group.subject || 'Gruppo senza nome'}`)
+} catch {}
+}
+
+if (report.length === 0) {
+return m.reply('ⓘ Nessun gruppo trovato o utente non presente nei gruppi gestiti.')
+}
+
+const reportText = `╭━━━[ *BANALL REPORT* ]━━━╮\n` +
+`┃ 👤 Utente: ${target}\n` +
+`┃ 📊 Gruppi colpiti: ${report.length}\n\n` +
+report.join('\n') +
+`\n╰━━━━━━━━━━━━━━━━━━━╯`
+
+await m.reply(reportText)
+}
+
+handler.command = /^banall$/i
+handler.group = false
+handler.admin = false
+handler.botAdmin = true
+
+export default handler
