@@ -1,17 +1,12 @@
-let handler = async (m, { conn, participants, isBotAdmin }) => {
+// Plugin fatto da Axtral_WiZaRd + Elixir
+let handler = async (m, { conn, args, command, participants, isBotAdmin }) => {
 
-    if (!m.isGroup) return;
-
-    const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net');
-    if (!ownerJids.includes(m.sender)) return;
-
-    if (!isBotAdmin) return m.reply("❌ 𝐈𝐥 𝐛𝐨𝐭 𝐝𝐞𝐯𝐞 𝐞𝐬𝐬𝐞𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐩𝐞𝐫 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐮𝐭𝐞𝐧𝐭𝐢.");
-
+    // Prendi il target dal mention o quoted message
     let target = m.mentionedJid[0] 
-        ? m.mentionedJid[0] 
-        : m.quoted 
-            ? m.quoted.sender 
-            : null;
+    ? m.mentionedJid[0] 
+    : m.quoted 
+        ? m.quoted.sender 
+        : null;
 
     if (!target) {
         return conn.reply(
@@ -21,34 +16,48 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
         );
     }
 
-    let groups = await conn.groupFetchAllParticipating();
+    // Assicurati che l'ID target abbia il formato completo
+    if (!target.includes('@s.whatsapp.net')) {
+        target = target.split('@')[0] + '@s.whatsapp.net';
+    }
 
+    let groups = await conn.groupFetchAllParticipating();
     let removedGroups = [];
 
     for (let id in groups) {
+        let group = groups[id];
+        
+        // Verifica che il bot sia nel gruppo
+        if (!group.participants.some(p => p.id === conn.user.jid)) {
+            continue;
+        }
 
-        let groupParticipants = groups[id].participants.map(p => p.id);
+        // Verifica se il target è nel gruppo (come nel secondo codice)
+        let isTargetInGroup = group.participants.some(p => p.id === target);
 
-        if (groupParticipants.includes(conn.user.jid) && groupParticipants.includes(target)) {
-
+        if (isTargetInGroup) {
             try {
                 await conn.groupParticipantsUpdate(id, [target], 'remove');
-                removedGroups.push(groups[id].subject);
+                removedGroups.push(group.subject || id);
+                
+                // Piccolo delay per evitare rate limiting
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
             } catch (e) {
-                await conn.reply(
-                    id,
-                    `❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 @${target.split('@')[0]} 𝐝𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨.`,
-                    m,
+                console.error(`Errore nel gruppo ${id}:`, e);
+                await conn.reply(m.chat, 
+                    `❌ Errore nel rimuovere @${target.split('@')[0]} dal gruppo ${group.subject || id}`, 
+                    m, 
                     { mentions: [target] }
                 );
             }
         }
     }
 
-    let message = `🛑 *𝐑𝐞𝐩𝐨𝐫𝐭*:\n𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 @${target.split("@")[0]} 𝐝𝐚 ${removedGroups.length} 𝐠𝐫𝐮𝐩𝐩𝐢.\n\n📋 𝐄𝐥𝐞𝐧𝐜𝐨 𝐠𝐫𝐮𝐩𝐩𝐢:\n- ${removedGroups.join('\n- ') || '*𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨*'}`;
+    let message = `🛑 *𝐑𝐞𝐩𝐨𝐫𝐭*:\n𝐇𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 @${target.split('@')[0]} 𝐝𝐚 ${removedGroups.length} 𝐠𝐫𝐮𝐩𝐩𝐢.\n\n📋 𝐄𝐥𝐞𝐧𝐜𝐨 𝐠𝐫𝐮𝐩𝐩𝐢:\n- ${removedGroups.join('\n- ') || '*𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨*'}`;
 
     await conn.reply(m.chat, message, null, { mentions: [target] });
-};
+}
 
 handler.command = /^(banall|takeover)$/i;
 handler.group = true;
