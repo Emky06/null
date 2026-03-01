@@ -80,5 +80,6 @@ const handler = async (m, { conn }) => {
 };
 
 handler.command = /^categorie$/i;
+handler.group = true
 
 export default handler;
