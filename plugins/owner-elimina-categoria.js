@@ -16,7 +16,7 @@ const handler = async (m, { conn, args }) => {
 
   delete global.db.data.users[mention].categoria;
 
-  await conn.sendMessage(m.chat, { text: `✅ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐝𝐢 @${mention.split("@")[0]} rimossa 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.`, mentions: [mention] }, { quoted: m });
+  await conn.sendMessage(m.chat, { text: `✅ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐝𝐢 @${mention.split("@")[0]} 𝐫𝐢𝐦𝐨𝐬𝐬𝐚 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨.`, mentions: [mention] }, { quoted: m });
 };
 
 handler.command = /^(eliminacategoria|delcategoria)$/i;
