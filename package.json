@@ -20,7 +20,7 @@
 "@shineiichijo/marika": "^2.0.6",
 "@vitalets/google-translate-api": "^8.0.0",
 "node-shazam": "*",
-"@whiskeysockets/baileys": "npm:@realvare/based",
+"@whiskeysockets/baileys": "npm:@realvare/baileys",
 "@xct007/frieren-scraper": "github:xct007/frieren-scraper",
 "acrcloud": "^1.4.0",
 "aptoide-scraper": "^1.0.1",
