@@ -18,6 +18,10 @@ function getGrado(messaggi) {
 }
 
 export async function before(m, { conn }) {
+
+  const botId = conn.user.id.split(':')[0] + '@s.whatsapp.net';
+  if (m.sender === botId) return;
+
   const user = global.db.data.users[m.sender];
   const chat = global.db.data.chats[m.chat] || {};
 
