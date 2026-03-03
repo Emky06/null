@@ -94,7 +94,7 @@ let handler = async (m, { conn, __dirname, usedPrefix, command }) => {
   }
 }
 
-handler.command = /^(bass|deep|reverse|slow|fast)$/i
+handler.command = ['bass','deep','reverse','slow','fast']
 handler.tags = ['audio']
 handler.help = ['bass','deep','reverse','slow','fast'].map(v => v + ' [reply audio]')
 handler.limit = true
