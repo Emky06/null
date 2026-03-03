@@ -35,4 +35,4 @@ let handler = async (m, { conn }) => {
 
 handler.command = ["cane"];
 
-export.default handler:
+export default handler:
