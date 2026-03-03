@@ -1,4 +1,4 @@
-import { unlinkSync, readFileSync } from 'fs';
+import { unlinkSync } from 'fs';
 import { join } from 'path';
 import { exec } from 'child_process';
 
@@ -46,44 +46,34 @@ let handler = async (message, { conn, args, __dirname, usedPrefix, command }) =>
         }
 
         if (/audio/.test(mimeType)) {
-            let fileName = getRandom('.opus');
+            let fileName = getRandom('.mp3');
             let outputPath = join(__dirname, '../tmp/' + fileName);
             let inputPath = await quotedMessage.download(true);
             
-            // Aggiungiamo -y per sovrascrivere e -acodec libopus per il formato corretto
-            let ffmpegCommand = `ffmpeg -y -i ${inputPath} ${filterOption} -acodec libopus -b:a 64k -vbr on -compression_level 10 ${outputPath}`;
-            
-            exec(ffmpegCommand, async (error, stdout, stderr) => {
+            exec('ffmpeg -i ' + inputPath + ' ' + filterOption + ' ' + outputPath, async (error, stdout, stderr) => {
                 unlinkSync(inputPath);
                 
                 if (error) {
-                    console.error('FFmpeg error:', error);
                     await message.reply('_*Error during audio processing!*_');
                     return;
                 }
                 
-                try {
-                    let audioBuffer = readFileSync(outputPath);
-                    
-                    await conn.sendMessage(message.chat, { 
-                        audio: audioBuffer,
-                        mimetype: 'audio/ogg; codecs=opus',
-                        ptt: true
-                    });
-                    
+                await conn.sendMessage(message.chat, { 
+                    audio: { url: outputPath }, 
+                    mimetype: 'audio/mpeg',
+                    ptt: true
+                });
+                
+                setTimeout(() => {
                     try {
                         unlinkSync(outputPath);
                     } catch (e) {}
-                } catch (readError) {
-                    console.error('Read file error:', readError);
-                    await message.reply('_*Error reading processed audio!*_');
-                }
+                }, 5000);
             });
         } else {
             await message.reply('*[INFO] Reply to an audio or voice note to modify it. Use command: ' + (usedPrefix + command) + '*');
         }
     } catch (error) {
-        console.error('Handler error:', error);
         await message.reply('Error: ' + error.toString());
     }
 };
