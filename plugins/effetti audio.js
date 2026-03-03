@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { unlinkSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { exec } from 'child_process';
