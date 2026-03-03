@@ -1,23 +1,36 @@
-let handler = async (m, { conn, command, text }) => {
-    // Calcolo in base alla volontà di Youns
+//Plugin fatto da Axtral_WiZaRd
+let handler = async (m, { conn }) => {
+
+    let mentionedJid = m.mentionedJid || [];
+    let target;
+
+    if (mentionedJid.length > 0) {
+        target = mentionedJid[0];
+    } else if (m.quoted) {
+        target = m.quoted.sender;
+    } else {
+        return m.reply(`Devi taggare una persona o rispondere ad un messaggio!\nEsempio: *.alcolizzato @utente*`);
+    }
+
     let width = Math.floor(Math.random() * 31);
 
-    // Frase finale basata sulla misura
     let finalPhrase = width >= 8 
-        ?"👮 *il ragazzo/a è astemio/a*"
-        : "😅 *il bro è calato in depressione*";
+        ? "👮 *Il soggetto sembra mantenere un comportamento sobrio*"
+        : "😅 *Il bro sta scivolando verso la tristezza alcolica*";
 
-    // Messaggio 🥵
     let message = `
 ━━━━━━━━━━━━━━━━━━━━━
-*MOMENTO DEL TEST DELL'ALCOL!🍷* 
+*MOMENTO DEL TEST DELL'ALCOL!🍷*
 ━━━━━━━━━━━━━━━━━━━━━
- *${text} è alcolizzato del *${width}%🍷!* 
+🍷 *Alcolicità di @${target.split("@")[0]}*: ${width}%
 ━━━━━━━━━━━━━━━━━━━━━
 ${finalPhrase}
 `.trim();
 
-    m.reply(message, null, { mentions: conn.parseMention(message) });
+    await conn.sendMessage(m.chat, {
+        text: message,
+        mentions: [target]
+    }, { quoted: m });
 };
 
 handler.command = /^(alcolizzato)$/i;
