@@ -1,6 +1,7 @@
-import { unlinkSync, readFileSync, existsSync } from 'fs'
+import { unlinkSync, readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { execFile } from 'child_process'
+import { downloadContentFromMessage } from '@whiskeysockets/baileys'
 
 let handler = async (m, { conn, __dirname, usedPrefix, command }) => {
   try {
@@ -13,76 +14,49 @@ let handler = async (m, { conn, __dirname, usedPrefix, command }) => {
       throw `*[INFO] Rispondi a un audio o vocale usando il comando ${usedPrefix + command}*`
     }
 
+    // -------- EFFETTI --------
     let filterArgs
 
     switch (command) {
       case 'bass':
         filterArgs = ['-af', 'equalizer=f=94:width_type=o:width=2:g=30']
         break
-
-      case 'blown':
-        filterArgs = ['-af', 'acrusher=.1:1:64:0:log']
-        break
-
       case 'deep':
         filterArgs = ['-af', 'atempo=1,asetrate=44500*2/3']
         break
-
-      case 'earrape':
-        filterArgs = ['-af', 'volume=12']
-        break
-
-      case 'fast':
-        filterArgs = ['-filter:a', 'atempo=1.63,asetrate=44100']
-        break
-
-      case 'fat':
-        filterArgs = ['-filter:a', 'atempo=1.6,asetrate=22100']
-        break
-
-      case 'nightcore':
-        filterArgs = ['-filter:a', 'atempo=1.06,asetrate=44100*1.25']
-        break
-
       case 'reverse':
         filterArgs = ['-filter_complex', 'areverse']
         break
-
-      case 'robot':
-        filterArgs = [
-          '-filter_complex',
-          "afftfilt=real='hypot(re,im)*sin(0)':imag='hypot(re,im)*cos(0)':win_size=512:overlap=0.75"
-        ]
-        break
-
       case 'slow':
         filterArgs = ['-filter:a', 'atempo=0.7,asetrate=44100']
         break
-
-      case 'smooth':
-        filterArgs = [
-          '-filter:v',
-          "minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120'"
-        ]
+      case 'fast':
+        filterArgs = ['-filter:a', 'atempo=1.6,asetrate=44100']
         break
-
-      case 'tupai':
-      case 'squirrel':
-      case 'chipmunk':
-        filterArgs = ['-filter:a', 'atempo=0.5,asetrate=65100']
-        break
-
       default:
         throw '*Effetto non valido*'
     }
 
-    let inputPath = await quoted.download()
-    if (!inputPath || !existsSync(inputPath)) {
-      throw '*Errore nel download dell’audio*'
+    // -------- DOWNLOAD CORRETTO --------
+    const stream = await downloadContentFromMessage(
+      quoted.msg || quoted,
+      'audio'
+    )
+
+    let buffer = Buffer.from([])
+
+    for await (const chunk of stream) {
+      buffer = Buffer.concat([buffer, chunk])
     }
 
+    if (!buffer.length) throw '*Errore nel download dell’audio*'
+
+    let inputPath = join(__dirname, '../tmp/' + getRandom('.mp3'))
     let outputPath = join(__dirname, '../tmp/' + getRandom('.mp3'))
 
+    writeFileSync(inputPath, buffer)
+
+    // -------- FFMPEG --------
     execFile(
       'ffmpeg',
       ['-i', inputPath, ...filterArgs, outputPath],
@@ -120,16 +94,9 @@ let handler = async (m, { conn, __dirname, usedPrefix, command }) => {
   }
 }
 
-handler.help = [
-  'bass','blown','deep','earrape','fast',
-  'fat','nightcore','reverse','robot',
-  'slow','smooth','tupai','squirrel','chipmunk'
-].map(v => v + ' [reply audio]')
-
+handler.command = /^(bass|deep|reverse|slow|fast)$/i
 handler.tags = ['audio']
-
-handler.command = /^(bass|blown|deep|earrape|fast|fat|nightcore|reverse|robot|slow|smooth|tupai|squirrel|chipmunk)$/i
-
+handler.help = ['bass','deep','reverse','slow','fast'].map(v => v + ' [reply audio]')
 handler.limit = true
 
 export default handler
