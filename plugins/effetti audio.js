@@ -51,47 +51,34 @@ let handler = async (message, { conn, args, __dirname, usedPrefix, command }) =>
             let inputPath = await quotedMessage.download(true);
             
             exec('ffmpeg -i ' + inputPath + ' ' + filterOption + ' ' + outputPath, async (error, stdout, stderr) => {
-                await unlinkSync(inputPath);
+                unlinkSync(inputPath);
                 
-                if (error) throw '_*Error!*_';
+                if (error) {
+                    await message.reply('_*Error during audio processing!*_');
+                    return;
+                }
+                
+                let audioBuffer = readFileSync(outputPath);
                 
                 await conn.sendMessage(message.chat, { 
-                    audio: { url: outputPath }, 
+                    audio: audioBuffer,
                     mimetype: 'audio/mpeg',
                     ptt: true
                 });
                 
-                setTimeout(() => {
-                    try {
-                        unlinkSync(outputPath);
-                    } catch (e) {
-                        console.log('Errore nella cancellazione del file:', e);
-                    }
-                }, 5000);
+                try {
+                    unlinkSync(outputPath);
+                } catch (e) {}
             });
         } else {
-            throw '*[INFO] rispondi a un audio o nota vocale che verrà modificato, usa il comando ' + (usedPrefix + command) + '*';
+            await message.reply('*[INFO] Reply to an audio or voice note to modify it. Use command: ' + (usedPrefix + command) + '*');
         }
     } catch (error) {
-        throw error;
+        await message.reply('Error: ' + error.toString());
     }
 };
 
-handler.help = [
-    'bass-filter:a "atempo=1.63,asetrate=44100"',
-    'blown-filter:a "atempo=1.6,asetrate=22100"',
-    'deep',
-    'earrape',
-    'fast',
-    'fat',
-    'nightcore',
-    'reverse',
-    'robot',
-    'slow',
-    'smooth',
-    'tupai'
-].map(cmd => cmd + ' [vn]');
-
+handler.help = ['bass', 'blown', 'deep', 'earrape', 'fast', 'fat', 'nightcore', 'reverse', 'robot', 'slow', 'smooth', 'tupai'].map(cmd => cmd + ' [vn]');
 handler.tags = ['audio'];
 handler.command = /^(bass|blown|deep|earrape|fas?t|nightcore|reverse|robot|slow|smooth|tupai|squirrel|chipmunk)$/i;
 handler.limit = true;
@@ -99,5 +86,5 @@ handler.limit = true;
 export default handler;
 
 const getRandom = (extension) => {
-    return '' + Math.floor(Math.random() * 10000) + extension;
+    return Math.floor(Math.random() * 10000) + extension;
 };
