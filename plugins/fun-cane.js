@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn }) => {
     let mentionedJid = m.mentionedJid || [];
     let target;
