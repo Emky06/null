@@ -58,7 +58,7 @@ let handler = async (message, { conn, args, __dirname, usedPrefix, command }) =>
                 await conn.sendMessage(message.chat, { 
                     audio: { url: outputPath }, 
                     mimetype: 'audio/mpeg',
-                    ptt: true
+                    ptt: false
                 });
                 
                 setTimeout(() => {
