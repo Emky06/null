@@ -24,7 +24,7 @@ async function handler(m, { conn, isBotAdmin, isOwner, text }) {
   const decodedMention = conn.decodeJid(mention)
 
 const ownerJids = global.owner.map(o => o[0] + '@s.whatsapp.net')
-if (ownerJids.includes(decodedMention)) return m.reply('ⓘ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐮𝐧 𝐨𝐰𝐧𝐞𝐫 𝐝𝐞𝐥 𝐛𝐨𝐭.')
+if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭𝐢-𝐊𝐢𝐜𝐤\n> ⓘ 𝐋\'𝐮𝐭𝐞𝐧𝐭𝐞 𝐜𝐡𝐞 𝐡𝐚𝐢 𝐩𝐫𝐨𝐯𝐚𝐭𝐨 𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞 𝐞̀ 𝐮𝐧 𝐨𝐰𝐧𝐞𝐫 𝐝𝐞𝐥 𝐛𝐨𝐭.')
 
   const participants = groupMetadata.participants || []
   const normalizedParticipants = participants.map(u => {
