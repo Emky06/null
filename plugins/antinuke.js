@@ -45,13 +45,6 @@ ${usedPrefix}${command} @username
 ${usedPrefix}${command} +39 333 123 4567`
 )
 
-  const metadata = await conn.groupMetadata(m.chat)
-  const participants = metadata.participants.map(p => p.jid)
-
-  if (!participants.includes(targetJid)) {
-    return m.reply('❌ 𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐝𝐞𝐯𝐞 𝐞𝐬𝐬𝐞𝐫𝐞 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.')
-  }
-
   if (command === 'addwhitelist') {
     if (whitelist[m.chat].autorizzati.includes(targetJid)) {
       return m.reply('⚠️ 𝐔𝐭𝐞𝐧𝐭𝐞 𝐠𝐢𝐚̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐧𝐞𝐥𝐥𝐚 𝐰𝐡𝐢𝐭𝐞𝐥𝐢𝐬𝐭.')
@@ -173,20 +166,6 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     // Cambio nome gruppo 
     if (!isAuthorized(sender)) await cleanAdmins()
   }
-}
-
-handler.onParticipantUpdate = async function (m, { participants }) {
-  const whitelist = readWhitelist()
-  if (!whitelist[m.chat]) return
-
-  for (const p of participants) {
-    if (p.action === 'remove') {
-      whitelist[m.chat].autorizzati =
-        whitelist[m.chat].autorizzati.filter(jid => jid !== p.id)
-    }
-  }
-
-  writeWhitelist(whitelist)
 }
 
 handler.command = ['addwhitelist', 'delwhitelist']
