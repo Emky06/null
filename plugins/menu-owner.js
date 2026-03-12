@@ -102,11 +102,6 @@ function generateMenuText(prefix) {
 ┣━ ♻️ .resettanome ┃ Resetta nome
 ┣━ 🖼️ .setpp ┃ Cambia immagine profilo
 
-👥 *Gestione Gruppi*
-┣━ ➕ .setgruppi ┃ Gruppi autorizzati
-┣━ ➕ .aggiungigruppi @
-┣━ ➖ .resetgruppi @
-
 🙎 *Gestione Utenti*
 ┣━ ⛔ .banuser @ / .unbanuser @
 ┣━ 🚫 .blockuser @ / .unblockuser @
