@@ -74,7 +74,7 @@ let handler = async (m, { conn, command, args }) => {
       .join('\n');
 
     return await conn.sendMessage(m.chat, {
-      text: `⏰ Timer attivo:\n\n${timerText}\n\nDurante questi intervalli *soloadmin sarà disattivato automaticamente* e *riattivato fuori orario*.`,
+      text: `⏰ Timer attivo:\n\n${timerText}\n\nDurante questi intervalli *solostaff sarà disattivato automaticamente* e *riattivato fuori orario*.`,
       footer: '🔴 Solo il proprietario può disattivare il timer.',
       buttons: [
         { buttonId: '.timer off', buttonText: { displayText: '🔴 Disattiva Timer' }, type: 1 }
@@ -109,17 +109,17 @@ setInterval(() => {
     let insideAnyInterval = chat.timer.some(({ start, end }) => currentMinutes >= start && currentMinutes < end);
 
     if (insideAnyInterval) {
-      if (chat.soloadmin !== false) {
-        chat.soloadmin = false;
+      if (chat.solostaff !== false) {
+        chat.solostaff = false;
         global.conn.sendMessage(chatId, {
-          text: '🔴 *soloadmin disattivato.* I membri ora possono usare i comandi. \n> Vietato spam di comandi🚫',
+          text: '🔴 *solostaff disattivato.* I membri ora possono usare i comandi. \n> Vietato spam di comandi🚫',
         });
       }
     } else {
-      if (chat.soloadmin !== true) {
-        chat.soloadmin = true;
+      if (chat.solostaff !== true) {
+        chat.solostaff = true;
         global.conn.sendMessage(chatId, {
-          text: '🟢 *soloadmin attivato.* Solo gli admin possono usare i comandi.',
+          text: '🟢 *solostaff attivato.* Solo gli admin possono usare i comandi.',
         });
       }
     }
