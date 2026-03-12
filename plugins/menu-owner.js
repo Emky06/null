@@ -126,7 +126,7 @@ function generateMenuText(prefix) {
 ┣━ 👮🏻‍♂️ .delmod @ ┃ Rimuovi moderatori
 
 🛠️ *Strumenti Avanzati*
-┣━ 🕒 .timer ┃ Timer automatico per attivare/disattivare soloadmin
+┣━ 🕒 .timer ┃ Timer automatico per attivare/disattivare solostaff
 ┣━ 🔴 .timeroff ┃ Disattiva il timer
 ┣━ 🚪 .byebye ┃ Il bot esce dal gruppo
 ┣━ ⚙️ .prefisso / .resettaprefisso
