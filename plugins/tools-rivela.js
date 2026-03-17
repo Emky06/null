@@ -69,7 +69,10 @@ try {
         } else if (/image/g.test(mime)) {
             await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.jpg', caption || '', m);
         } else if (/audio/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.mp3', '', m, { asDocument: false, mimetype: 'audio/mpeg', ptt: false });
+            await conn.sendMessage(m.chat, {
+  audio: buffer,
+  mimetype: mime
+}, { quoted: m });
         }
 
     } catch (e) {
