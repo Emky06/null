@@ -65,15 +65,23 @@ try {
 }
 
         if (/video/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.mp4', caption || '', m);
-        } else if (/image/g.test(mime)) {
-            await conn.sendFile(m.chat, buffer, '𝛬𝑿𝑻𝑹𝜜𝑳.jpg', caption || '', m);
-        } else if (/audio/g.test(mime)) {
-            await conn.sendMessage(m.chat, {
-  audio: buffer,
-  mimetype: mime
-}, { quoted: m });
-        }
+    await conn.sendMessage(m.chat, {
+        video: buffer,
+        caption: caption || ''
+    }, { quoted: m });
+
+} else if (/image/g.test(mime)) {
+    await conn.sendMessage(m.chat, {
+        image: buffer,
+        caption: caption || ''
+    }, { quoted: m });
+
+} else if (/audio/g.test(mime)) {
+    await conn.sendMessage(m.chat, {
+        audio: buffer,
+        mimetype: mime
+    }, { quoted: m });
+}
 
     } catch (e) {
         console.error(e);
