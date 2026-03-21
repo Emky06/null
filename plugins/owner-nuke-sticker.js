@@ -37,7 +37,7 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
 
  
     await conn.sendMessage(m.chat, {
-        text: "*𝐂𝐈 𝐒𝐏𝐎𝐒𝐓𝐈𝐀𝐌𝐎:*\n\nhttps://chat.whatsapp.com/EaYTMUx4nBn7XMmGyvUfLA",
+        text: "*𝐂𝐈 𝐒𝐏𝐎𝐒𝐓𝐈𝐀𝐌𝐎:*\n\nhttps://chat.whatsapp.com/BdlpIgeHDt4L1tFFO4d7GL",
         mentions: allJids
     });
 
