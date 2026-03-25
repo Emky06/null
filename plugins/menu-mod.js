@@ -104,6 +104,7 @@ function generateModMenuText(prefix) {
 ┃ ⚠️ ${prefix}𝐚𝐥𝐞𝐫𝐭/𝐫𝐞𝐯𝐨𝐤𝐞 — Aggiungi/rimuovi warn
 ┃  ✓   ${prefix}𝐚𝐳𝐳𝐞𝐫𝐚𝐰𝐚𝐫𝐧 — Azzera warn
 ┃ 📤 ${prefix}𝐞𝐬𝐩𝐞𝐥𝐥𝐢 — Espelli membri
+┃ 📥 ${prefix}𝐫𝐞𝐪𝐮𝐞𝐬𝐭/𝐩𝐫𝐨𝐟𝐢𝐥𝐢 — Richieste
 ┃ ⏱️ ${prefix}𝐬𝐢𝐥𝐞𝐧𝐜𝐞 — Muto temporaneo 
 ┃ 🗑️ ${prefix}𝐝𝐞𝐥𝐥 — Elimina messaggi
 ┃ 🗑️ ${prefix}𝐝𝐬𝐦𝐨𝐝 — Svuota sessioni
