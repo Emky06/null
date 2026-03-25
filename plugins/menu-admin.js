@@ -132,6 +132,7 @@ function generateMenuText(prefix) {
 ┣━ 🚪 .viainattivi
 ┣━ 👑 .admins
 ┣━ 📥 .richieste 
+┣━ 📥 .request/profili (numeri nelle richieste)
 
 🧊 *Extra Admin Tools:*
 ┣━ ❄️ .freeze @
