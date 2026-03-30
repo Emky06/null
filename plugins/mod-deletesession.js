@@ -63,7 +63,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 
 handler.help = ['del_reg_in_session_owner'];
 handler.tags = ["owner"];
-handler.command = /^(dsmod)$/i;
+handler.command = /^(dsmodisisi)$/i;
 handler.premium = true;
 
 export default handler;
