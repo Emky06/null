@@ -1,7 +1,7 @@
 import jimp from 'jimp'
 
 let handler = async (m, { conn, text }) => {
-        let img = await jimp.read('./icone/bonk.jpg'),
+        let img = await jimp.read('./icone/bonk.png'),
                 who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender,
                 avatar = await jimp.read(await conn.profilePictureUrl(who, 'image')),
                 bonk = await img.composite(avatar.resize(128, 128), 120, 90, {
