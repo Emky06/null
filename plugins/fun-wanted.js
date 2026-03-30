@@ -21,7 +21,7 @@ let handler = async (m, { conn }) => {
     const avatarWidth = 260;   // larghezza avatar
     const avatarHeight = 260;  // altezza avatar
     const avatarX = (img.bitmap.width - avatarWidth) / 2;   // centrato orizzontalmente
-    const avatarY = 200; // posizionato in verticale
+    const avatarY = 160; // posizionato in verticale
 
     avatar = avatar.resize(avatarWidth, avatarHeight);
 
