@@ -18,8 +18,8 @@ let handler = async (m, { conn }) => {
     let avatar = await jimp.read(avatarUrl);
 
  
-    const avatarWidth = 210;   // larghezza avatar
-    const avatarHeight = 210;  // altezza avatar
+    const avatarWidth = 240;   // larghezza avatar
+    const avatarHeight = 240;  // altezza avatar
     const avatarX = (img.bitmap.width - avatarWidth) / 2;   // centrato orizzontalmente
     const avatarY = 190; // posizionato in verticale
 
