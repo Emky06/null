@@ -107,6 +107,7 @@ function generateModMenuText(prefix) {
 ┃ 📥 ${prefix}𝐫𝐞𝐪𝐮𝐞𝐬𝐭/𝐩𝐫𝐨𝐟𝐢𝐥𝐢 — Richieste
 ┃ ⏱️ ${prefix}𝐬𝐢𝐥𝐞𝐧𝐜𝐞 — Muto temporaneo 
 ┃ 🗑️ ${prefix}𝐝𝐞𝐥𝐥 — Elimina messaggi
+┃ 📌 ${prefix}𝐩𝐢𝐧/𝐮𝐧𝐩𝐢𝐧 — Fissa/rimuovi messaggi
 ┃ 🗑️ ${prefix}𝐝𝐬𝐦𝐨𝐝 — Svuota sessioni
 ┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐠𝐩 — Link gruppo
 ┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐪 — QR del gruppo 
