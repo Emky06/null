@@ -71,7 +71,7 @@ let handler = async (m, { conn, command, usedPrefix }) => {
 handler.help = ['pin', 'unpin'];
 handler.tags = ['gruppo'];
 handler.command = ['pin', 'pin1d', 'pin7d', 'pin30d', 'unpin'];
-handler.admin = true;
+handler.staff = true;
 handler.group = true;
 handler.botAdmin = true;
 
