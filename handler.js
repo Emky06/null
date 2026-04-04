@@ -308,7 +308,7 @@ chat.rules = ''
                 let adminMode = global.db.data.chats[m.chat].solostaff
 let mystica = `${plugin.botAdmin || plugin.admin || plugin.group || plugin || noPrefix || hl ||  m.text.slice(0, 1) == hl || plugin.command}`
 
-const allowedCommands = ['fire'] // comandi che saltano solostaff 
+const allowedCommands = ['fire', 'cur', 'setuser'] // comandi che saltano solostaff 
 
 if (adminMode && !isOwner && !isROwner && m.isGroup && !isAdmin && !isPrems && mystica && !allowedCommands.includes(command)) return
 
