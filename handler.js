@@ -301,7 +301,7 @@ chat.rules = ''
                     let user = global.db.data.users[m.sender]
                     if (name != 'owner-unbanchat.js' && chat?.isBanned)
                         return // Except this
-                    if (name != 'OWNER_unbanuser.js' && user?.banned)
+                    if (name != 'owner-unbanuser.js' && user?.banned)
                         return
                 }
           let hl = _prefix 
