@@ -121,7 +121,6 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote');
         await conn.groupSettingUpdate(m.chat, 'announcement');
 
-        const firstOwner = ownerJids[0];
         const sender = m.key?.participant || m.participant || m.sender;
 
         if ([29, 30].includes(m.messageStubType)) {
@@ -130,19 +129,17 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 
             const text = `🚨 𝐀𝐍𝐓𝐈-𝐍𝐔𝐊𝐄 𝐀𝐓𝐓𝐈𝐕𝐎
 👤 @${sender.split('@')[0]} ${actionText} @${targetUser.split('@')[0]} 𝐬𝐞𝐧𝐳𝐚 𝐚𝐮𝐭𝐨𝐫𝐢𝐳𝐳𝐚𝐳𝐢𝐨𝐧𝐞.
-🔒 𝐆𝐫𝐮𝐩𝐩𝐨 𝐜𝐡𝐢𝐮𝐬𝐨 𝐩𝐞𝐫 𝐬𝐢𝐜𝐮𝐫𝐞𝐳𝐳𝐚.
-👑 𝐎𝐰𝐧𝐞𝐫 𝐚𝐯𝐯𝐢𝐬𝐚𝐭𝐨: @${firstOwner.split('@')[0]}`;
+🔒 𝐆𝐫𝐮𝐩𝐩𝐨 𝐜𝐡𝐢𝐮𝐬𝐨 𝐩𝐞𝐫 𝐬𝐢𝐜𝐮𝐫𝐞𝐳𝐳𝐚.`;
 
-            await conn.sendMessage(m.chat, { text, mentions: [sender, targetUser, firstOwner] });
+            await conn.sendMessage(m.chat, { text, mentions: [sender, targetUser] });
         } else {
             const actionText = m.messageStubType === 28 ? '𝐡𝐚 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐮𝐧 𝐦𝐞𝐦𝐛𝐫𝐨' : '𝐡𝐚 𝐜𝐚𝐦𝐛𝐢𝐚𝐭𝐨 𝐢𝐥 𝐧𝐨𝐦𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨';
 
             const text = `🚨 𝐀𝐍𝐓𝐈-𝐍𝐔𝐊𝐄 𝐀𝐓𝐓𝐈𝐕𝐎
 👤 @${sender.split('@')[0]} ${actionText} 𝐬𝐞𝐧𝐳𝐚 𝐚𝐮𝐭𝐨𝐫𝐢𝐳𝐳𝐚𝐳𝐢𝐨𝐧𝐞.
-🔒 𝐆𝐫𝐮𝐩𝐩𝐨 𝐜𝐡𝐢𝐮𝐬𝐨 𝐩𝐞𝐫 𝐬𝐢𝐜𝐮𝐫𝐞𝐳𝐳𝐚.
-👑 𝐎𝐰𝐧𝐞𝐫 𝐚𝐯𝐯𝐢𝐬𝐚𝐭𝐨: @${firstOwner.split('@')[0]}`;
+🔒 𝐆𝐫𝐮𝐩𝐩𝐨 𝐜𝐡𝐢𝐮𝐬𝐨 𝐩𝐞𝐫 𝐬𝐢𝐜𝐮𝐫𝐞𝐳𝐳𝐚.`;
 
-            await conn.sendMessage(m.chat, { text, mentions: [sender, firstOwner] });
+            await conn.sendMessage(m.chat, { text, mentions: [sender] });
         }
 
         console.log('[ANTINUKE] Retrocessi e chat chiusa:', usersToDemote);
