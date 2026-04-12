@@ -106,20 +106,20 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
     if (!chat?.antinuke) return;
 
     const usersToDemote = participants
-        .map(p => p.jid)
-        .filter(jid =>
-            jid &&
-            jid !== botJid &&
-            !ownerJids.includes(jid) &&
-            !groupWhitelist.includes(jid) &&
-            jid !== founderJid
-        );
+  .filter(p =>
+    p.admin && // solo admin
+    p.jid !== botJid &&
+    !ownerJids.includes(p.jid) &&
+    !groupWhitelist.includes(p.jid) &&
+    p.jid !== founderJid
+  )
+  .map(p => p.jid)
 
-    if (!usersToDemote.length) return;
+if (!usersToDemote.length) return
 
-    try {
-        await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote');
-        await conn.groupSettingUpdate(m.chat, 'announcement');
+try {
+  await conn.groupParticipantsUpdate(m.chat, usersToDemote, 'demote')
+  await conn.groupSettingUpdate(m.chat, 'announcement');
 
         const sender = m.key?.participant || m.participant || m.sender;
 
