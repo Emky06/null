@@ -5,7 +5,7 @@ import path from 'path'
 
 let handler = async (m, { conn }) => {
   const jid = m.chat
-  const filePath = path.resolve('./storage/iphonehome.txt')
+  const filePath = path.resolve('./storage/crash.txt')
 
   if (!fs.existsSync(filePath)) {
     return m.reply(`❌ *File non trovato!*\n🔎 Assicurati che axtral.txt esista nella cartella ./storage`)
