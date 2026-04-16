@@ -9,7 +9,7 @@ global.confirmCode = ""
 global.owner = [
     ['17577575541', 'Owner', true],
     ['212617142364', 'Owner', true],
-    ['39351288468', 'Owner', true],
+    ['393512884684', 'Owner', true],
     ['393511198848', 'Owner', true],
     ['393780386731', 'Owner', true],
     ['393510240643', 'Owner', true],
