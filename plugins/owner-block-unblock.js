@@ -1,7 +1,7 @@
 let handler = async (m, { text, conn, usedPrefix, command }) => {
   let why = `Esempio:\n${usedPrefix + command} @utente o 393XXXXXXXXX`
 
-  let input = m.mentionedJid && m.mentionedJid[0]
+  let input = m.mentionedJid?.[0]
     ? m.mentionedJid[0]
     : m.quoted
     ? m.quoted.sender
@@ -18,29 +18,32 @@ let handler = async (m, { text, conn, usedPrefix, command }) => {
     : input + '@s.whatsapp.net'
 
   try {
-    // ✅ controllo se esiste su WhatsApp
-    let cek = await conn.onWhatsApp(input)
-    if (!cek || cek.length === 0) {
-      return conn.reply(m.chat, '❌ Numero non registrato su WhatsApp', m)
-    }
-
-    who = cek[0].jid
-
-    if (who === conn.user.jid) {
+    if (who === conn.user.id || who === conn.user.jid) {
       return conn.reply(m.chat, '❌ Non puoi bloccare te stesso', m)
     }
 
-    if (/^block$/i.test(command)) {
-      await conn.updateBlockStatus(who, "block")
-    } else {
-      await conn.updateBlockStatus(who, "unblock")
-    }
+    await conn.query({
+      tag: 'iq',
+      attrs: {
+        xmlns: 'blocklist',
+        to: '@s.whatsapp.net',
+        type: 'set'
+      },
+      content: [{
+        tag: command === 'block' ? 'block' : 'unblock',
+        attrs: {},
+        content: [{
+          tag: 'item',
+          attrs: { jid: who }
+        }]
+      }]
+    })
 
     conn.reply(m.chat, '✅ Fatto', m, { mentions: [who] })
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '❌ Errore reale:\n' + JSON.stringify(e, null, 2), m)
+    conn.reply(m.chat, '❌ Errore reale:\n' + e.message, m)
   }
 }
 
