@@ -51,19 +51,12 @@ export async function dailyTopMessageCounter(m, { conn }) {
 
   const db = ensureDailyReset();
   if (!global.processedDailyTopMessages) global.processedDailyTopMessages = new Set();
-
-  const msgId = m?.key?.id;
-  if (!msgId) return;
-
-  if (global.processedDailyTopMessages.has(msgId)) return;
-  global.processedDailyTopMessages.add(msgId);
+  if (global.processedDailyTopMessages.has(m.key.id)) return;
+  global.processedDailyTopMessages.add(m.key.id);
 
   if (!db.dailyTop[m.chat]) db.dailyTop[m.chat] = { utenti: {} };
   const chat = db.dailyTop[m.chat];
-
-  if (!chat.utenti) chat.utenti = {};
   if (!chat.utenti[m.sender]) chat.utenti[m.sender] = { messaggi: 0 };
-
   chat.utenti[m.sender].messaggi++;
 
   saveDB(db);
