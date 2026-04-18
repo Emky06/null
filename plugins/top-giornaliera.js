@@ -1,3 +1,4 @@
+
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
@@ -5,7 +6,13 @@ const DB_FILE = './databaseTop.json';
 
 function loadDB() {
   if (fs.existsSync(DB_FILE)) {
-    return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    try {
+      const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+      if (!data.dailyTop) data.dailyTop = {};
+      return data;
+    } catch {
+      return { dailyTop: {}, __dailyTopDate: null };
+    }
   } else {
     return { dailyTop: {}, __dailyTopDate: null };
   }
@@ -33,6 +40,7 @@ function dateKeyRome() {
 
 function ensureDailyReset() {
   const db = loadDB();
+  if (!db.dailyTop) db.dailyTop = {};
   const today = dateKeyRome();
   if (db.__dailyTopDate !== today) {
     for (const chatId in db.dailyTop) {
@@ -58,7 +66,9 @@ export async function dailyTopMessageCounter(m, { conn }) {
   if (global.processedDailyTopMessages.has(msgId)) return;
   global.processedDailyTopMessages.add(msgId);
 
+  if (!db.dailyTop) db.dailyTop = {};
   if (!db.dailyTop[m.chat]) db.dailyTop[m.chat] = { utenti: {} };
+
   const chat = db.dailyTop[m.chat];
 
   if (!chat.utenti) chat.utenti = {};
