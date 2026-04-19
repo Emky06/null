@@ -107,7 +107,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
 
     const usersToDemote = participants
   .filter(p =>
-    p.admin && // solo admin
+    p.admin && 
     p.jid !== botJid &&
     !ownerJids.includes(p.jid) &&
     !groupWhitelist.includes(p.jid) &&
