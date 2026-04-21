@@ -15,7 +15,7 @@ export async function before(m, { conn, isOwner, isROwner }) {
   if (settings.antiprivato && !isOwner && !isROwner) {
  
     // Blocca l'utente
-    await conn.updateBlockStatus(m.chat, 'block');
+    await conn.updateBlockStatus(m.sender, 'block');
   }
 
   return false;
