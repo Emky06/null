@@ -1,22 +1,27 @@
 export async function before(m, { conn, isOwner, isROwner }) {
-  // Ignora messaggi del bot stesso
-  if (m.isBaileys && m.fromMe) return true;
+    // Ignora messaggi del bot stesso
+    if (m.isBaileys && m.fromMe) return true;
 
-  // Ignora i gruppi
-  if (m.isGroup) return false;
+    // Ignora gruppi
+    if (m.isGroup) return false;
 
-  // Ignora se il messaggio è vuoto
-  if (!m.message) return true;
+    // Ignora messaggi vuoti
+    if (!m.message) return true;
 
-  // Recupera impostazioni del bot
-  const settings = global.db.data.settings[conn.user.jid] || {};
+    // Recupera impostazioni del bot dal database
+    const settings = global.db.data.settings[conn.user.jid] || {};
 
-  // Se antiprivato è attivo e l'utente non è owner o real owner
-  if (settings.antiprivato && !isOwner && !isROwner) {
- 
-    // Blocca l'utente
-    await conn.updateBlockStatus(m.chat, 'block');
-  }
+    // Antiprivato attivo + utente non autorizzato
+    if (settings.antiprivato && !(isOwner || isROwner)) {
+        try {
+            // Controllo extra per evitare errore 400 (bad-request)
+            if (typeof m.chat === 'string' && m.chat.includes('@s.whatsapp.net')) {
+                await conn.updateBlockStatus(m.chat, 'block');
+            }
+        } catch (err) {
+            console.log('Errore antiprivato (block):', err);
+        }
+    }
 
-  return false;
+    return false;
 }
