@@ -1,13 +1,22 @@
 export async function before(m, { conn, isOwner, isROwner }) {
-    if (m.isBaileys && m.fromMe) return true;
-    if (m.isGroup) return false;
-    if (!m.message) return true;
+  // Ignora messaggi del bot stesso
+  if (m.isBaileys && m.fromMe) return true;
 
-    const settings = global.db.data.settings[conn.user.jid] || {};
+  // Ignora i gruppi
+  if (m.isGroup) return false;
 
-    if (settings.antiprivato && !isOwner && !isROwner) {
-        await conn.updateBlockStatus(m.sender, 'block');
-    }
+  // Ignora se il messaggio è vuoto
+  if (!m.message) return true;
 
-    return false;
+  // Recupera impostazioni del bot
+  const settings = global.db.data.settings[conn.user.jid] || {};
+
+  // Se antiprivato è attivo e l'utente non è owner o real owner
+  if (settings.antiprivato && !isOwner && !isROwner) {
+ 
+    // Blocca l'utente
+    await conn.updateBlockStatus(m.chat, 'block');
+  }
+
+  return false;
 }
