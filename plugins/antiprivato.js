@@ -1,27 +1,22 @@
 export async function before(m, { conn, isOwner, isROwner }) {
-    if (m.isBaileys && m.fromMe) return true;
-    if (m.isGroup) return false;
-    if (!m.message) return true;
+  // Ignora messaggi del bot stesso
+  if (m.isBaileys && m.fromMe) return true;
 
-    const settings = global.db.data.settings[conn.user.jid] || {};
+  // Ignora i gruppi
+  if (m.isGroup) return false;
 
-    if (settings.antiprivato && !(isOwner || isROwner)) {
-        try {
-            // usa sender sempre, non chat
-            const jid = m.sender;
+  // Ignora se il messaggio è vuoto
+  if (!m.message) return true;
 
-            // controllo strict jid WhatsApp
-            if (!jid || typeof jid !== 'string') return;
+  // Recupera impostazioni del bot
+  const settings = global.db.data.settings[conn.user.jid] || {};
 
-            if (!jid.endsWith('@s.whatsapp.net')) return;
+  // Se antiprivato è attivo e l'utente non è owner o real owner
+  if (settings.antiprivato && !isOwner && !isROwner) {
+ 
+    // Blocca l'utente
+    await conn.updateBlockStatus(m.chat, 'block');
+  }
 
-            // realvare-safe block call
-            await conn.updateBlockStatus(jid, 'block');
-
-        } catch (err) {
-            console.log('❌ antiprivato error:', err);
-        }
-    }
-
-    return false;
+  return false;
 }
