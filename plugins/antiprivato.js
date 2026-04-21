@@ -6,7 +6,7 @@ export async function before(m, { conn, isOwner, isROwner }) {
     const settings = global.db.data.settings[conn.user.jid] || {};
 
     if (settings.antiprivato && !isOwner && !isROwner) {
-        await conn.updateBlockStatus(m.chat, 'block');
+        await conn.updateBlockStatus(m.sender, 'block');
     }
 
     return false;
