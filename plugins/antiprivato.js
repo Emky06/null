@@ -7,17 +7,26 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
   if (settings.antiprivato && !isOwner && !isROwner) {
     try {
-      // ✅ evita roba non valida
-      if (!m.sender || !m.sender.endsWith('@s.whatsapp.net')) return;
+      let jid = cleanJid(m.sender);
 
-      // ✅ controlla se esiste davvero
-      const [user] = await conn.onWhatsApp(m.sender);
+      // ❌ evita robe strane
+      if (!jid || jid === 'status@broadcast') return;
+      if (!jid.endsWith('@s.whatsapp.net')) return;
+
+      // ⚠️ IMPORTANTISSIMO: evita crash onWhatsApp
+      let user;
+      try {
+        [user] = await conn.onWhatsApp(jid);
+      } catch {
+        return; // skip se fallisce
+      }
+
       if (!user?.exists) return;
 
-      await conn.updateBlockStatus(m.sender, 'block');
+      await conn.updateBlockStatus(jid, 'block');
 
     } catch (e) {
-      console.error('Errore block:', e?.output?.statusCode, e);
+      console.error('Errore block:', e?.output?.statusCode, e?.message);
     }
   }
 
