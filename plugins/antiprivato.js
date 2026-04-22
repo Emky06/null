@@ -20,15 +20,20 @@ export async function before(m, { conn, isOwner, isROwner }) {
     try {
       let jid = cleanJid(m.key.remoteJid);
 
-      console.log('BLOCK DEBUG:', jid);
-
       if (!jid || jid === 'status@broadcast') return;
       if (!jid.endsWith('@s.whatsapp.net')) return;
 
+      console.log('BLOCK DEBUG:', jid);
+
+      // ✅ delay fondamentale
+      await new Promise(r => setTimeout(r, 2000));
+
       await conn.updateBlockStatus(jid, 'block');
 
+      console.log('UTENTE BLOCCATO');
+
     } catch (e) {
-      console.error('Errore block:', e?.message);
+      console.error('Errore block:', e?.output?.statusCode, e?.message);
     }
   }
 
