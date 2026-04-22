@@ -1,10 +1,7 @@
 function cleanJid(jid) {
   if (!jid) return null;
-
-  // rimuove eventuali ":xxx"
   jid = jid.split(':')[0];
 
-  // se è solo numero → trasformalo in jid whatsapp
   if (!jid.includes('@')) {
     jid = jid.replace(/\D/g, '') + '@s.whatsapp.net';
   }
@@ -21,12 +18,14 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
   if (settings.antiprivato && !isOwner && !isROwner) {
     try {
-      let jid = cleanJid(m.sender);
+      let jid = cleanJid(m.key.remoteJid);
+
+      console.log('BLOCK DEBUG:', jid);
 
       if (!jid || jid === 'status@broadcast') return;
       if (!jid.endsWith('@s.whatsapp.net')) return;
 
-      await conn.updateBlockStatus(jid, 'block').catch(() => {});
+      await conn.updateBlockStatus(jid, 'block');
 
     } catch (e) {
       console.error('Errore block:', e?.message);
