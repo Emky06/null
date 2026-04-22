@@ -1,3 +1,17 @@
+function cleanJid(jid) {
+  if (!jid) return null;
+
+  // rimuove eventuali ":xxx"
+  jid = jid.split(':')[0];
+
+  // se è solo numero → trasformalo in jid whatsapp
+  if (!jid.includes('@')) {
+    jid = jid.replace(/\D/g, '') + '@s.whatsapp.net';
+  }
+
+  return jid;
+}
+
 export async function before(m, { conn, isOwner, isROwner }) {
   if (m.isBaileys && m.fromMe) return true;
   if (m.isGroup) return false;
@@ -9,24 +23,13 @@ export async function before(m, { conn, isOwner, isROwner }) {
     try {
       let jid = cleanJid(m.sender);
 
-      // ❌ evita robe strane
       if (!jid || jid === 'status@broadcast') return;
       if (!jid.endsWith('@s.whatsapp.net')) return;
 
-      // ⚠️ IMPORTANTISSIMO: evita crash onWhatsApp
-      let user;
-      try {
-        [user] = await conn.onWhatsApp(jid);
-      } catch {
-        return; // skip se fallisce
-      }
-
-      if (!user?.exists) return;
-
-      await conn.updateBlockStatus(jid, 'block');
+      await conn.updateBlockStatus(jid, 'block').catch(() => {});
 
     } catch (e) {
-      console.error('Errore block:', e?.output?.statusCode, e?.message);
+      console.error('Errore block:', e?.message);
     }
   }
 
