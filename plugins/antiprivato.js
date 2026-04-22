@@ -25,12 +25,9 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
       console.log('BLOCK DEBUG:', jid);
 
-      // ✅ delay fondamentale
-      await new Promise(r => setTimeout(r, 2000));
+      await conn.reportAndBlockUser(jid);
 
-      await conn.updateBlockStatus(jid, 'block');
-
-      console.log('UTENTE BLOCCATO');
+      console.log('UTENTE BLOCCATO (REPORT)');
 
     } catch (e) {
       console.error('Errore block:', e?.output?.statusCode, e?.message);
