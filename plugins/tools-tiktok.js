@@ -46,5 +46,6 @@ const handler = async (m, { conn, text, command }) => {
 handler.command = ["dldtiktok"];
 handler.tags = ["downloader"];
 handler.help = ["dldtiktok <url>"];
+handler.group = true
 
 export default handler;
