@@ -8,7 +8,7 @@
 "start": "node index.js"
 },
 "dependencies": {
-"@vitalets/google-translate-api": "^9.2.1"
+"@vitalets/google-translate-api": "^9.2.1",
 "@whiskeysockets/baileys": "npm:@realvare/baileys",
 "archiver": "^7.0.1",
 "awesome-phonenumber": "^2.68.0",
