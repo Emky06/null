@@ -58,6 +58,8 @@ const handler = async (m, { conn }) => {
           title: nomeUtente, 
           body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
           thumbnail: pic, 
+          mediaType: 1,
+          renderLargerThumbnail: false
         }
       }
     }, { quoted: m });
