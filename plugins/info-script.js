@@ -1,5 +1,4 @@
 //Plugin fatto da Axtral_WiZaRd
-
 import moment from 'moment-timezone'
 import fs from 'fs'
 import path from 'path'
@@ -49,7 +48,9 @@ let handler = async (m, { conn }) => {
       externalAdReply: {
         title: `𝐈𝐧𝐟𝐨 𝐩𝐥𝐮𝐠𝐢𝐧𝐬`,
         body: `𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕`,
-        thumbnail
+        thumbnail,
+        mediaType: 1,
+        
       }
     } : undefined
   })
