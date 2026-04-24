@@ -50,7 +50,7 @@ let handler = async (m, { conn }) => {
         body: `𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕`,
         thumbnail,
         mediaType: 1,
-        
+        renderLargerThumbnail: false     
       }
     } : undefined
   })
