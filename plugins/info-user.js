@@ -120,7 +120,8 @@ const animaliInfo = animaliCount > 0
           title: nomeUtente,
           body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
           mediaType: 1,
-          thumbnail: thumbnailBuffer
+          thumbnail: thumbnailBuffer,
+          renderLargerThumbnail: false
         }
       }
     }, { quoted: m });
