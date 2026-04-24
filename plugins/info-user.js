@@ -119,7 +119,7 @@ const animaliInfo = animaliCount > 0
         externalAdReply: {
           title: nomeUtente,
           body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
-          mediaType: ,
+          mediaType,
           thumbnail: thumbnailBuffer
         }
       }
