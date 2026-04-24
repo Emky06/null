@@ -38,6 +38,8 @@ handler.before = async function (message, { conn }) {
                 externalAdReply: {
                     title: '𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐩𝐫𝐨𝐦𝐨𝐳𝐢𝐨𝐧𝐞 👑',
                     thumbnail: await fetchBuffer(profilePicture || imageFallback),
+                    mediaType: 1,
+                    renderLargerThumbnail: false
                 },
             },
         }, { quoted: null });
@@ -64,6 +66,8 @@ handler.before = async function (message, { conn }) {
                 externalAdReply: {
                     title: '𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞 🙇🏻‍♂️',
                     thumbnail: await fetchBuffer(profilePicture || imageFallback),
+                    mediaType: 1,
+                    renderLargerThumbnail: false
                 },
             },
         }, { quoted: null });
