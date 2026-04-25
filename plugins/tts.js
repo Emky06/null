@@ -1,7 +1,8 @@
 import gtts from 'node-gtts'
-import { unlinkSync } from 'fs'
+import { writeFileSync, unlinkSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
+import { exec } from 'child_process'
 
 const defaultLang = 'la'
 
@@ -17,25 +18,41 @@ let handler = async (m, { conn, args }) => {
     text = args.join(' ')
   }
 
-  let filePath = join(tmpdir(), `${Date.now()}.wav`)
+  let mp3 = join(tmpdir(), `${Date.now()}.mp3`)
+  let ogg = join(tmpdir(), `${Date.now()}.ogg`)
+
   let tts = gtts(lang)
 
   try {
+    // 1. genera audio base
     await new Promise((resolve, reject) => {
-      tts.save(filePath, text, (err) => {
+      tts.save(mp3, text, (err) => {
         if (err) reject(err)
         else resolve()
       })
     })
 
+    // 2. converti in opus (WhatsApp friendly)
+    await new Promise((resolve, reject) => {
+      exec(`ffmpeg -y -i ${mp3} -ar 48000 -ac 1 -c:a libopus ${ogg}`, (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
+
+    // 3. invia come voice note
     await conn.sendMessage(m.chat, {
-      audio: { url: filePath },
+      audio: { url: ogg },
       mimetype: 'audio/ogg; codecs=opus',
       ptt: true
     }, { quoted: m })
 
+    // 4. cleanup
     setTimeout(() => {
-      try { unlinkSync(filePath) } catch {}
+      try {
+        unlinkSync(mp3)
+        unlinkSync(ogg)
+      } catch {}
     }, 5000)
 
   } catch (e) {
@@ -45,7 +62,4 @@ let handler = async (m, { conn, args }) => {
 }
 
 handler.command = /^g?tts$/i
-handler.tags = ['tools']
-handler.help = ['tts <lang> <testo>']
-
 export default handler
