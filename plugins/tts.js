@@ -45,7 +45,6 @@ let handler = async (m, { conn, args }) => {
       ptt: true
     }, { quoted: m })
 
-    // 4. cleanup
     setTimeout(() => {
       try {
         unlinkSync(mp3)
