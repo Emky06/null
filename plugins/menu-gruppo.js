@@ -139,6 +139,8 @@ function generateMenuText(prefix) {
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
 ┃⏩ ${prefix}𝐬𝐩𝐞𝐞𝐝𝐯𝐢𝐝𝐞𝐨
 ┃🎶 ${prefix}𝐩𝐥𝐚𝐲  
+┃🎶 ${prefix}𝐲𝐭𝐬𝐞𝐚𝐫𝐜𝐡
+┃🔈 ${prefix}𝐭𝐭𝐬
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐭𝐢𝐤𝐭𝐨𝐤
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐢𝐠
 ┃ⓘ  ${prefix}𝐢𝐧𝐟𝐨  
