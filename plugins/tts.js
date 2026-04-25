@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import gtts from 'node-gtts'
 import { writeFileSync, unlinkSync } from 'fs'
 import { join } from 'path'
@@ -11,7 +12,7 @@ let handler = async (m, { conn, args }) => {
   let text = args.slice(1).join(' ')
 
   if (!text && m.quoted?.text) text = m.quoted.text
-  if (!text) return m.reply('❌ Inserisci il testo')
+  if (!text) return m.reply('❌ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐭𝐞𝐬𝐭𝐨')
 
   if (!lang || lang.length !== 2) {
     lang = defaultLang
@@ -24,7 +25,6 @@ let handler = async (m, { conn, args }) => {
   let tts = gtts(lang)
 
   try {
-    // 1. genera audio base
     await new Promise((resolve, reject) => {
       tts.save(mp3, text, (err) => {
         if (err) reject(err)
@@ -32,7 +32,6 @@ let handler = async (m, { conn, args }) => {
       })
     })
 
-    // 2. converti in opus (WhatsApp friendly)
     await new Promise((resolve, reject) => {
       exec(`ffmpeg -y -i ${mp3} -ar 48000 -ac 1 -c:a libopus ${ogg}`, (err) => {
         if (err) reject(err)
@@ -40,7 +39,6 @@ let handler = async (m, { conn, args }) => {
       })
     })
 
-    // 3. invia come voice note
     await conn.sendMessage(m.chat, {
       audio: { url: ogg },
       mimetype: 'audio/ogg; codecs=opus',
@@ -57,9 +55,11 @@ let handler = async (m, { conn, args }) => {
 
   } catch (e) {
     console.error(e)
-    m.reply('⚠️ Errore TTS')
+    m.reply('⚠️ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐓𝐓𝐒')
   }
 }
 
 handler.command = /^g?tts$/i
+handler.group = true
+
 export default handler
