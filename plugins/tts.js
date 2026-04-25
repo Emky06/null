@@ -18,7 +18,7 @@ text = args.join(' ')
 if (!text) throw `inserisci il testo`
 res = await tts(text, defaultLang)
 } finally {
-if (res) conn.sendFile(m.chat, res, 'tts.opus', null, m, true)    
+if (res) conn.sendFile(m.chat, res, 'tts.wav', null, m, true)
 }}
 handler.help = ['tts <lang> <teks>']
 handler.tags = ['tools']
