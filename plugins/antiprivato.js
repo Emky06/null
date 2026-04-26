@@ -5,8 +5,9 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
   const settings = global.db.data.settings[conn.user.jid] || {};
 
-  if (settings.antiprivato && !isOwner && !isROwner) {
+  if (!m.isGroup && settings.antiprivato && !isOwner && !isROwner) {
+    return false;
+  }
 
-  return false;
- }
+  return true;
 }
