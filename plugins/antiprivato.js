@@ -8,4 +8,5 @@ export async function before(m, { conn, isOwner, isROwner }) {
   if (settings.antiprivato && !isOwner && !isROwner) {
 
   return false;
+ }
 }
