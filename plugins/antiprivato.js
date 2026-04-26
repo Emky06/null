@@ -7,8 +7,5 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
   if (settings.antiprivato && !isOwner && !isROwner) {
 
-    await conn.updateBlockStatus(m.chat, 'block');
-  }
-
   return false;
 }
