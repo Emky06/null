@@ -274,6 +274,11 @@ chat.rules = ''
             }
             if (typeof plugin !== 'function')
                 continue
+ 
+            if (!m.isGroup && global.db.data.settings[this.user.jid]?.antiprivato && !isOwner && !isROwner) {
+    return;
+}
+
             if ((usedPrefix = (match[0] || '')[0])) {
                 let noPrefix = m.text.replace(usedPrefix, '')
                 let [command, ...args] = noPrefix.trim().split` `.filter(v => v)
