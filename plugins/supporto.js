@@ -6,9 +6,8 @@ let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
 console.log(_0x4955de);
 
     let owners = global.owner.filter(([id]) => id).map(([id]) => id);
-    let ownerNumber = owners[0]; // prende solo il primo owner
+    let ownerNumber = owners[0]; 
 
-    
     let ownerJid = ownerNumber.replace(/\D/g, '') + "@s.whatsapp.net";
 
     let _0x414c2d = {
