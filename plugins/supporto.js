@@ -2,8 +2,6 @@ import fs from 'fs';
 
 let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
   try {
-    
-console.log(_0x4955de);
 
     let owners = global.owner.filter(([id]) => id).map(([id]) => id);
     let ownerNumber = owners[0]; 
