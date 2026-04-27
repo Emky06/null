@@ -2,11 +2,13 @@ import fs from 'fs';
 
 let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
   try {
-    // Prendi il primo owner dal config globale
+    
+console.log(_0x4955de);
+
     let owners = global.owner.filter(([id]) => id).map(([id]) => id);
     let ownerNumber = owners[0]; // prende solo il primo owner
 
-    // Trasforma in JID WhatsApp valido
+    
     let ownerJid = ownerNumber.replace(/\D/g, '') + "@s.whatsapp.net";
 
     let _0x414c2d = {
@@ -25,7 +27,7 @@ let handler = async (_0x4955de, { conn: _0x4b9a49, usedPrefix: _0xeb2cc9 }) => {
       participant: "0@s.whatsapp.net"
     };
 
-    // Messaggio con numero trasformato in link wa.me
+    
     let _0x259d4e = `
 ═════════════════════
 👑 *𝑺𝒖𝒑𝒑𝒐𝒓𝒕𝒐 𝑩𝒐𝒕* 👑
