@@ -6,30 +6,39 @@ const handler = async (m, { conn, text }) => {
   const chats = Object.entries(conn.chats)
     .filter(([jid, chat]) => jid.endsWith('@g.us') && chat.isChats);
 
-  if (!chats.length)
-    return m.reply('⚠️ 𝐈𝐥 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐢𝐧 𝐧𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨.');
-
-  m.reply(`📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${chats.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...`);
+  let validGroups = [];
 
   for (let [jid] of chats) {
     try {
-    
       const metadata = await conn.groupMetadata(jid);
+      validGroups.push([jid, metadata]);
+    } catch (e) {
+      // gruppo non valido / bot non dentro
+    }
+  }
+
+  if (!validGroups.length)
+    return m.reply('⚠️ 𝐈𝐥 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐢𝐧 𝐧𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨.');
+
+  m.reply(`📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${validGroups.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...`);
+
+  for (let [jid, metadata] of validGroups) {
+    try {
+
       const participants = metadata.participants.map(p => p.id);
 
       const prefix = `╭━━━━━━━━━━━━━━━━━━━━━╮
 ┃ 📢 𝐂𝐨𝐦𝐮𝐧𝐢𝐜𝐚𝐳𝐢𝐨𝐧𝐞 𝐝𝐚 𝐀𝐱𝐭𝐫𝐚𝐥 📢 ┃
 ╰━━━━━━━━━━━━━━━━━━━━━╯\n\n➠ `;
-const finalMessage = prefix + text;
+      const finalMessage = prefix + text;
 
-await conn.sendMessage(
-  jid,
-  {
-    text: finalMessage,
-    mentions: participants 
-  }
-);
-
+      await conn.sendMessage(
+        jid,
+        {
+          text: finalMessage,
+          mentions: participants 
+        }
+      );
 
       await new Promise(res => setTimeout(res, 1500));
 
