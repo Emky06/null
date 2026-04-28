@@ -3,27 +3,31 @@ const handler = async (m, { conn, text }) => {
   if (!text)
     return m.reply('⚠️ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨.\n\nEsempio:\n.tuttigp Ciao a tutti!');
 
-  const chats = Object.entries(conn.chats)
-    .filter(([jid, chat]) => jid.endsWith('@g.us') && chat.isChats);
+  const allGroups = Object.keys(conn.chats || {})
+    .filter(jid => jid.endsWith('@g.us'))
+    .filter(jid => !jid.includes('@c.us'));
 
   let validGroups = [];
 
-  for (let [jid] of chats) {
+  for (const jid of allGroups) {
     try {
-      const metadata = await conn.groupMetadata(jid);
-      validGroups.push([jid, metadata]);
+      const meta = conn.chats[jid]?.metadata || await conn.groupMetadata(jid);
+
+      if (
+        meta?.isCommunity ||
+        meta?.announce ||
+        meta?.read_only
+      ) continue;
+
+      validGroups.push([jid, meta]);
+
     } catch (e) {
-      // gruppo non valido
+      // gruppo non valido o bot non dentro
     }
   }
 
   if (!validGroups.length)
     return m.reply('⚠️ 𝐈𝐥 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐢𝐧 𝐧𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨.');
-
-  // 👇 DEBUG NOMI GRUPPI
-  for (let [jid, metadata] of validGroups) {
-    console.log(`Gruppo: ${metadata.subject} | ID: ${jid}`);
-  }
 
   m.reply(`📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${validGroups.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...`);
 
@@ -37,13 +41,10 @@ const handler = async (m, { conn, text }) => {
 ╰━━━━━━━━━━━━━━━━━━━━━╯\n\n➠ `;
       const finalMessage = prefix + text;
 
-      await conn.sendMessage(
-        jid,
-        {
-          text: finalMessage,
-          mentions: participants 
-        }
-      );
+      await conn.sendMessage(jid, {
+        text: finalMessage,
+        mentions: participants
+      });
 
       await new Promise(res => setTimeout(res, 1500));
 
