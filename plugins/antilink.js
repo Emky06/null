@@ -16,7 +16,7 @@ let warnLinks = [
     { name: '𝐎𝐍𝐋𝐘𝐅𝐀𝐍𝐒', regex: /(?:https?:\/\/)?(?:www.)?(onlyfans.com)/i },
     { name: '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊', regex: /(?:https?:\/\/)?(?:www\.)?(bit\.ly|tinyurl\.com|is\.gd|soo\.gd|cutt\.ly|rebrand\.ly|t\.co|short-link\.me|s2r\.co|shorturl\.at|tiny\.cc|lc\.cx|urlzs\.com|v\.gd|clck\.ru)\/[^\s]+/i 
 },
-    { name: '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄', regex: /(?:https?:\/\/)?(?:www\.)?(imgur\.com|i\.imgur\.com|imgbb\.com|ibb\.co|postimg\.cc|prnt\.sc|imgbox\.com|pixhost\.to|im\.ge|lensdump\.com)\/\S+/i 
+    { name: '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄', regex: /(?:https?:\/\/)?(?:www\.)?(imgur\.com|i\.imgur\.com|imgbb\.com|ibb\.co|postimg\.cc|prnt\.sc|imgbox\.com|pixhost\.to|im\.ge|lensdump\.com|freeimage\.host|imgpile\.com|imagebam\.com|imagevenue\.com|turboimagehost\.com|imgshare\.io)\/\S+/i 
 },
 ]
 
