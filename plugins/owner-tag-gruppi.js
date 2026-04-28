@@ -13,12 +13,17 @@ const handler = async (m, { conn, text }) => {
       const metadata = await conn.groupMetadata(jid);
       validGroups.push([jid, metadata]);
     } catch (e) {
-      // gruppo non valido / bot non dentro
+      // gruppo non valido
     }
   }
 
   if (!validGroups.length)
     return m.reply('⚠️ 𝐈𝐥 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐢𝐧 𝐧𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨.');
+
+  // 👇 DEBUG NOMI GRUPPI
+  for (let [jid, metadata] of validGroups) {
+    console.log(`Gruppo: ${metadata.subject} | ID: ${jid}`);
+  }
 
   m.reply(`📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${validGroups.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...`);
 
