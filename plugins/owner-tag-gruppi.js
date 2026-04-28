@@ -1,4 +1,4 @@
-//by blood
+//Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, text }) => {
   if (!text)
     return m.reply('⚠️ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐮𝐧 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨.\n\nEsempio:\n.tuttigp Ciao a tutti!');
