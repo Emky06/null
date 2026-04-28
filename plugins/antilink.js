@@ -12,11 +12,12 @@ let allowedChannels = [
 let warnLinks = [
     { name: '𝐆𝐑𝐔𝐏𝐏𝐎 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏', regex: /chat.whatsapp.com\/[0-9A-Za-z]{20,24}/i },
     { name: '𝐂𝐀𝐍𝐀𝐋𝐄 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏', regex: /(?:www.)?whatsapp.com\/channel\/[0-9A-Za-z]+/i },
-    { name: '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊', regex: /(?:https?:\/\/)?(?:www.)?short-link.me\/[^\s]+/i },
     { name: '𝐏𝐎𝐑𝐍𝐇𝐔𝐁', regex: /(?:https?:\/\/)?(?:www.)?(pornhub.com)/i },
     { name: '𝐎𝐍𝐋𝐘𝐅𝐀𝐍𝐒', regex: /(?:https?:\/\/)?(?:www.)?(onlyfans.com)/i },
-
-    { name: '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄', regex: /(?:https?:\/\/)?(?:www\.)?(imgur\.com|i\.imgur\.com|imgbb\.com|ibb\.co|postimg\.cc|prnt\.sc)\/[^\s]+/i },
+    { name: '𝐒𝐇𝐎𝐑𝐓-𝐋𝐈𝐍𝐊', regex: /(?:https?:\/\/)?(?:www\.)?(bit\.ly|tinyurl\.com|is\.gd|soo\.gd|cutt\.ly|rebrand\.ly|t\.co|short-link\.me|s2r\.co|shorturl\.at|tiny\.cc|lc\.cx|urlzs\.com|v\.gd|clck\.ru)\/[^\s]+/i 
+},
+    { name: '𝐈𝐌𝐌𝐀𝐆𝐈𝐍𝐄', regex: /(?:https?:\/\/)?(?:www\.)?(imgur\.com|i\.imgur\.com|imgbb\.com|ibb\.co|postimg\.cc|prnt\.sc|imageshack\.com|freeimage\.host|freeimage\.hosting|imgbox\.com|pixhost\.to|imgpile\.com|im.ge|ibb\.io|lensdump\.com)\/[^\s]+/i 
+},
 ]
 
 const linkRegex = /\bchat[\s.\u200B\u200C\u200D\uFEFF]*whatsapp[\s.\u200B\u200C\u200D\uFEFF]*com\/([0-9A-Za-z]{20,24})/i
