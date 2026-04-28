@@ -22,14 +22,21 @@ const handler = async (m, { conn, text }) => {
       validGroups.push([jid, meta]);
 
     } catch (e) {
-      // gruppo non valido o bot non dentro
+      
     }
   }
 
   if (!validGroups.length)
     return m.reply('⚠️ 𝐈𝐥 𝐛𝐨𝐭 𝐧𝐨𝐧 𝐞̀ 𝐩𝐫𝐞𝐬𝐞𝐧𝐭𝐞 𝐢𝐧 𝐧𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨.');
 
-  m.reply(`📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${validGroups.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...`);
+  const groupNames = validGroups
+  .map(([jid, meta]) => meta?.subject || 'Nome non disponibile')
+  .join('\n➤ ');
+
+m.reply(
+  `📢 𝐈𝐧𝐯𝐢𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐢𝐧 *${validGroups.length}* 𝐠𝐫𝐮𝐩𝐩𝐢...\n\n` +
+  `📋 𝐆𝐫𝐮𝐩𝐩𝐢:\n➤ ${groupNames}`
+);
 
   for (let [jid, metadata] of validGroups) {
     try {
