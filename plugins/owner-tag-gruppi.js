@@ -17,13 +17,16 @@ const handler = async (m, { conn, text }) => {
       const metadata = await conn.groupMetadata(jid);
       const participants = metadata.participants.map(p => p.id);
 
-      await conn.sendMessage(
-        jid,
-        {
-          text: text,
-          mentions: participants 
-        }
-      );
+      const prefix = '📢 𝐂𝐨𝐦𝐮𝐧𝐢𝐜𝐚𝐳𝐢𝐨𝐧𝐞 𝐝𝐚 𝐀𝐱𝐭𝐫𝐚𝐥 📢\n\n';
+const finalMessage = prefix + text;
+
+await conn.sendMessage(
+  jid,
+  {
+    text: finalMessage,
+    mentions: participants 
+  }
+);
 
 
       await new Promise(res => setTimeout(res, 1500));
