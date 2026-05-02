@@ -379,7 +379,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         }
 
         const buffer = await retryScreenshot(html, viewport.w, viewport.h);
-        await conn.sendMessage(m.chat, { image: buffer, caption: caption, footer: '𝐯𝐚𝐫𝐞 ✧ 𝐛𝐨𝐭' }, { quoted: m });
+        await conn.sendMessage(m.chat, { image: buffer, caption: caption, footer: 'Origin' }, { quoted: m });
 
     } catch (e) {
         console.error(e);
