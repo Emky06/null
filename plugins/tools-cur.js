@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const USERS_FILE = path.join(__dirname, '..', 'lastfm_users.json')
+const USERS_FILE = path.join(__dirname, 'storage', 'file-json', 'lastfm_users.json');
 
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}')
 
