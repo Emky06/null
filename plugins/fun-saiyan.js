@@ -45,7 +45,7 @@ let handler = async (m, { conn }) => {
       { quoted: m }
     );
 
-    const steps = [𝟑𝟎, 𝟓𝟎, 𝟕𝟎, 𝟏𝟎𝟎];
+    const steps = [30, 50, 70, 100];
 
     for (const p of steps) {
       await wait(800);
