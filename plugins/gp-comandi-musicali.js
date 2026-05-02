@@ -67,6 +67,16 @@ const getHtmlWrapper = (bodyContent, customCss = "") => `
     ${customCss}
 </style></head><body>${bodyContent}</body></html>`;
 
+async function getGroupMembers(conn, groupJid) {
+    try {
+        const groupMetadata = await conn.groupMetadata(groupJid);
+        return groupMetadata.participants.map(p => p.id);
+    } catch (e) {
+        console.error("Errore nel recupero membri del gruppo:", e);
+        return [];
+    }
+}
+
 const handler = async (m, { conn, usedPrefix, command, text }) => {
     let db = getDB();
     const user = db[m.sender];
@@ -81,7 +91,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         switch (command) {
             case 'comuni': {
                 if (!m.mentionedJid || m.mentionedJid.length === 0) return m.reply(`❌ Uso: *${usedPrefix}comuni @utente*`);
-                
+
                 const user2Jid = m.mentionedJid[0];
                 const user2 = db[user2Jid];
                 if (!user2) return m.reply("⚠️ L'utente taggato non ha registrato il suo account Last.fm nel bot.");
@@ -127,7 +137,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'crown': {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: 'overall' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Nessun artista trovato nelle tue statistiche.");
-                
+
                 const topArtistName = topArt.topartists.artist[0].name;
                 const playcount = parseInt(topArt.topartists.artist[0].playcount) || 0;
 
@@ -136,9 +146,9 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
                 const artistData = artistInfo.artist;
                 const isGold = playcount >= 1000;
-                
+
                 const cover = await fetchCover(artistData.image, artistData.name, true);
-                
+
                 html = getHtmlWrapper(`
                     <div class="background-blur" style="background-image: url('${cover}')"></div>
                     <div class="color-overlay"></div>
@@ -167,7 +177,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'aura': {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 10, period: '1month' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore recupero artisti.");
-                
+
                 const colors = ['#8A2BE2', '#FF4500', '#1E90FF', '#FF1493', '#00FA9A'];
                 let tagsStr = `<div style="z-index: 10; text-align: center;">
                     <h2 style="font-size: 24px; opacity:0.9; letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">La tua Aura Musicale</h2>
@@ -191,11 +201,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
             case 'vs': {
                 if (!m.mentionedJid || m.mentionedJid.length === 0) return m.reply(`❌ Uso: *${usedPrefix}vs @utente <artista>*`);
-                
+
                 const user2Jid = m.mentionedJid[0];
                 const user2 = db[user2Jid];
                 if (!user2) return m.reply("⚠️ L'utente taggato non ha registrato il suo account Last.fm nel bot.");
-                
+
                 const artistName = text.replace(/@\d+/g, '').trim();
                 if (!artistName) return m.reply(`❌ Devi specificare un artista! Esempio: *${usedPrefix}vs @utente The Weeknd*`);
 
@@ -252,7 +262,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 viewport = { w: 900, h: 900 }; 
                 const albums = await apiCall('user.gettopalbums', { user, limit: 9, period: '1month' });
                 if (albums.error) throw new Error("Errore recupero album.");
-                
+
                 const top9 = albums.topalbums.album.slice(0, 9);
                 let gridHtml = '';
                 let listText = `🧩 *Music Mosaic (Top 9 del Mese)*\nUtente: @${user}\n\n`;
@@ -281,7 +291,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'goal': {
                 const info = await apiCall('user.getinfo', { user });
                 if (info.error) throw new Error("Impossibile recuperare info utente.");
-                
+
                 const total = parseInt(info.user.playcount);
                 const milestone = Math.ceil((total + 1) / 10000) * 10000;
                 const remaining = milestone - total;
@@ -322,11 +332,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'receipt': {
                 const topTracksRes = await apiCall('user.gettoptracks', { user, limit: 10, period: '1month' });
                 if (topTracksRes.error || !topTracksRes.toptracks?.track?.length) throw new Error("Errore recupero brani.");
-                
+
                 const tracks = topTracksRes.toptracks.track;
                 let totalScrobbles = 0;
                 let itemsHtml = '';
-                
+
                 tracks.forEach((t, i) => {
                     const playcount = parseInt(t.playcount);
                     totalScrobbles += playcount;
@@ -413,7 +423,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
                 const tracks = res.recenttracks?.track;
                 if (!tracks || tracks.length === 0) return m.reply("🕰️ Esattamente un anno fa non stavi ascoltando nulla (o non usavi Last.fm)!");
-                
+
                 const track = Array.isArray(tracks) ? tracks[0] : tracks;
                 const cover = await fetchCover(track.image, `${track.artist['#text']} ${track.name}`);
                 const dateStr = new Date((oneYearAgoUnix) * 1000).toLocaleDateString('it-IT');
@@ -443,12 +453,14 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'leaderboard': {
-                const jids = Object.keys(db);
-                if (jids.length < 2) return m.reply("❌ Non ci sono abbastanza utenti registrati per una classifica.");
-                
-                await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
-                
-                const targetJids = jids.slice(0, 15);
+                const groupMembers = await getGroupMembers(conn, m.chat);
+const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
+
+if (validJids.length < 2) return m.reply("❌ Non ci sono abbastanza utenti registrati in questo gruppo per una classifica.");
+
+await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
+
+const targetJids = validJids.slice(0, 15);
                 const promises = targetJids.map(async (jid) => {
                     const lfUser = db[jid];
                     const info = await apiCall('user.getinfo', { user: lfUser });
@@ -507,7 +519,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
                 break;
             }
-            
+
             case 'artistmap': {
                 const artistName = text.trim();
                 if (!artistName) return m.reply(`❌ Uso: *${usedPrefix}artistmap <nome artista>*`);
@@ -590,12 +602,12 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Non hai abbastanza ascolti questo mese.");
                 const artist = topArt.topartists.artist[0];
                 const artistInfo = await apiCall('artist.getinfo', { artist: artist.name, username: user });
-                
+
                 const topTrack = await apiCall('user.gettoptracks', { user, limit: 1, period: '1month' });
                 const trackName = topTrack.toptracks?.track?.[0]?.name || 'Musica e Segreti';
-                
+
                 const cover = await fetchCover(artistInfo.artist?.image, artist.name, true);
-                
+
                 viewport = { w: 800, h: 1050 };
                 html = getHtmlWrapper(`
                     <div class="magazine-bg" style="background-image: url('${cover}')"></div>
@@ -651,12 +663,12 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 const res = await apiCall('user.getrecenttracks', { user, limit: 1 });
                 const track = res.recenttracks?.track?.[0];
                 if (!track) throw new Error("Non hai nessun ascolto recente.");
-                
+
                 const artistName = track.artist['#text'];
                 const trackName = track.name;
                 const albumName = track.album['#text'] || 'Exclusive Tour';
                 const cover = await fetchCover(track.image, `${artistName} ${trackName}`);
-                
+
                 const date = new Date();
                 const dateStr = date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
                 const timeStr = date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
@@ -723,11 +735,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 const userInfo = await apiCall('user.getinfo', { user });
                 if (userInfo.error) throw new Error("Impossibile recuperare i dati utente.");
                 const uData = userInfo.user;
-                
+
                 const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: 'overall' });
                 const topArtist = topArt.topartists?.artist?.[0];
                 const artistName = topArtist ? topArtist.name : 'Sconosciuto';
-                
+
                 let cover = DEFAULT_COVER;
                 if (topArtist) {
                     const artistInfo = await apiCall('artist.getinfo', { artist: artistName, username: user });
@@ -797,11 +809,13 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'whosplaying': {
-                const users = Object.keys(db);
-                let playingUsers = [];
-                let seenLastFmUsers = new Set();
-                const checkLimit = users.slice(0, 20); 
-                
+                const groupMembers = await getGroupMembers(conn, m.chat);
+const users = Object.keys(db).filter(jid => groupMembers.includes(jid));
+
+let playingUsers = [];
+let seenLastFmUsers = new Set();
+const checkLimit = users.slice(0, 20);
+
                 for (let u of checkLimit) {
                     const lfUser = db[u];
 
@@ -811,7 +825,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                     try {
                         const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
                         const track = rt.recenttracks?.track?.[0];
-                        
+
                         if (track && track['@attr']?.nowplaying) {
                             playingUsers.push({ 
                                 wpId: u, 
@@ -860,7 +874,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 caption = `📻 *Radio di Gruppo*\nCi sono ${playingUsers.length} persone in ascolto adesso!`;
                 break;
             }
-            
+
             default:
                 return m.reply("Comando non riconosciuto nel visual hub.");
         }
