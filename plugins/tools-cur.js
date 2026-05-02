@@ -50,25 +50,14 @@ async function generateTrackImage(track) {
   const width = 600
   const height = 600
 
-  let imageUrl =
-    track.image?.find(i => i.size === 'extralarge')?.['#text'] ||
-    track.image?.find(i => i.size === 'large')?.['#text'] ||
-    track.image?.find(i => i.size === 'medium')?.['#text']
+  const imageUrl =
+    track.image?.find(img => img.size === 'extralarge')?.['#text'] ||
+    path.join(__dirname, '../icone/cur.jpg')
 
-  if (!imageUrl || imageUrl.trim() === '') {
-    imageUrl = path.join(__dirname, '../icone/cur.jpg')
-  }
+  const img = await Jimp.read(imageUrl)
+  img.cover(width, height)
 
-  try {
-    const img = await Jimp.read(imageUrl)
-    img.cover(width, height)
-    return await img.getBufferAsync(Jimp.MIME_JPEG)
-  } catch (e) {
-    
-    const fallback = await Jimp.read(path.join(__dirname, '../icone/cur.jpg'))
-    fallback.cover(width, height)
-    return await fallback.getBufferAsync(Jimp.MIME_JPEG)
-  }
+  return await img.getBufferAsync(Jimp.MIME_JPEG)
 }
 
 function normalizeJid(input) {
