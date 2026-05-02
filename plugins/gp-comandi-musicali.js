@@ -70,7 +70,11 @@ const getHtmlWrapper = (bodyContent, customCss = "") => `
 async function getGroupMembers(conn, groupJid) {
     try {
         const groupMetadata = await conn.groupMetadata(groupJid);
-        return groupMetadata.participants.map(p => p.id.split(':')[0].split('@')[0] + '@s.whatsapp.net');
+        console.log("🔍 [DEBUG] Participants raw:", JSON.stringify(groupMetadata.participants[0], null, 2));
+        return groupMetadata.participants.map(p => {
+            const jid = p.id || p.lid;
+            return jid.split(':')[0].split('@')[0] + '@s.whatsapp.net';
+        });
     } catch (e) {
         console.error("Errore nel recupero membri del gruppo:", e);
         return [];
