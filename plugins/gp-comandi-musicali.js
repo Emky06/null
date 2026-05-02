@@ -843,7 +843,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         seenLastFmUsers.add(lfUser);
 
         try {
-            const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
+            const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1, extended: 1 });
             const track = rt.recenttracks?.track?.[0];
             console.log(`📡 Risposta API per ${lfUser}:`, track ? (track['@attr']?.nowplaying ? "IN ASCOLTO" : "NON in ascolto") : "nessun track");
 
