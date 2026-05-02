@@ -1,5 +1,6 @@
 //Plugin fatto da Axtral_WiZaRd
-import fs from 'fs'
+import fs from 'fs';
+import path from 'path';
 
 const whitelistFile = path.join(process.cwd(), 'storage', 'file-json', 'autorizzati-antinuke.json');
 
