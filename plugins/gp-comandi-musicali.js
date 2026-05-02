@@ -464,11 +464,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     const groupMembers = await getGroupMembers(conn, m.chat);
     console.log("📋 Membri del gruppo:", groupMembers);
     
-    const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
-        const isValid = groupMembers.includes(normalizedDbJid);
-        if (isValid) console.log("✅ Trovato match:", normalizedDbJid, "->", db[jid]);
-        return isValid;
-    });
+    const validJids = Object.keys(db).filter(jid => {
+    const isValid = groupMembers.includes(jid);
+    if (isValid) console.log("✅ Trovato match:", jid, "->", db[jid]);
+    return isValid;
+});
     
     console.log("📊 Utenti validi trovati:", validJids.length);
     console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
