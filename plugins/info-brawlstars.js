@@ -1,34 +1,33 @@
-import axios from 'axios';
+import fetch from 'node-fetch';
 import fs from 'fs';
 
-const DB_PATH = './storage/file-json/tag-brawlstars.json';
+const API_BASE = 'https://api.brawlstars.com/v1';
+const API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY1NWU3ZTk5LWRhZWMtNDVmMC1iYTY5LTBmZTM5NDRkN2EzZCIsImlhdCI6MTc3NzY4MjQ5NCwic3ViIjoiZGV2ZWxvcGVyLzE1YzBiZTMxLWFmMmEtND czNi1lZjA3LWVjMGI0MWY5ZDc2MCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0c yI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsi Y2lkcnMiOlsiOTQuMzMuODQuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.f-ibcd-XSJqRFZg-Sm-Md4XS0WMJSfC7SIM4idBT3Z5nb1MYjasaD06lU81UcKpR9bd-Wb7xCQ_9DRC1hn1b3A';
+
+const DB_FILE = './storage/file-json/tag-brawlstars.json';
 
 function loadDB() {
-  if (!fs.existsSync(DB_PATH)) return {};
-  return JSON.parse(fs.readFileSync(DB_PATH));
+  if (!fs.existsSync(DB_FILE)) return {};
+  return JSON.parse(fs.readFileSync(DB_FILE));
 }
 
 function saveDB(data) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
 let handler = async (m, { conn, command, args }) => {
-  let db = loadDB();
-
-  if (command.toLowerCase() === 'setbrawl') {
-    if (!args[0]) {
-      return await conn.reply(
-        m.chat,
-        '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl`',
-        m
-      );
-    }
+  if (command && command.toLowerCase() === 'setbrawl') {
+    if (!args[0]) return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche', m);
 
     let tag = args[0].toUpperCase();
     if (!tag.startsWith('#')) tag = '#' + tag;
 
-    if (!db[m.sender]) db[m.sender] = {};
-    db[m.sender].tag = tag;
+    const db = loadDB();
+
+    if (!db[m.chat]) db[m.chat] = {};
+    if (!db[m.chat][m.sender]) db[m.chat][m.sender] = {};
+
+    db[m.chat][m.sender].tag = tag;
 
     saveDB(db);
 
@@ -39,37 +38,48 @@ let handler = async (m, { conn, command, args }) => {
     );
   }
 
-  if (command.toLowerCase() === 'brawl') {
+  if (command && command.toLowerCase() === 'brawl') {
+    const db = loadDB();
+
     let target = m.sender;
 
     if (m.quoted && m.quoted.sender) target = m.quoted.sender;
     if (m.mentionedJid && m.mentionedJid[0]) target = m.mentionedJid[0];
 
-    let tag = args[0] || db[target]?.tag;
+    let tag = args[0];
 
     if (!tag) {
-      return await conn.reply(m.chat, '❗ Nessun tag salvato', m);
+      tag = db[m.chat]?.[target]?.tag;
+    }
+
+    if (!tag) {
+      return await conn.reply(m.chat, '❗ Nessun tag salvato per questo gruppo.\nUsa .setbrawl #TAG', m);
     }
 
     tag = tag.toUpperCase();
     if (!tag.startsWith('#')) tag = '#' + tag;
 
+    const encodedTag = encodeURIComponent(tag);
+
     try {
-      const res = await axios.get(
-        `https://api.brawlstars.com/v1/players/${encodeURIComponent(tag)}`,
-        {
-          headers: {
-            Authorization: `Bearer TUO_TOKEN`
-          }
+      const res = await fetch(`${API_BASE}/players/${encodedTag}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${API_TOKEN}`
         }
-      );
+      });
 
-      const p = res.data;
+      if (!res.ok) {
+        return await conn.reply(m.chat, `❌ Errore API`, m);
+      }
 
-      const wins =
-        (p['3vs3Victories'] || 0) +
-        (p.soloVictories || 0) +
-        (p.duoVictories || 0);
+      const data = await res.json();
+
+      const victories3v3 = data['3vs3Victories'] || 0;
+      const victoriesSolo = data['soloVictories'] || 0;
+      const victoriesDuo = data['duoVictories'] || 0;
+      const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo;
+      const totalBrawlers = data.brawlers?.length || 0;
 
       const name = await conn.getName(target);
 
@@ -81,88 +91,31 @@ let handler = async (m, { conn, command, args }) => {
       const msg = `
 ${header}
 
-👤 𝐆𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞: *${p.name}*
-🏷️ 𝐓𝐚𝐠 𝐩𝐫𝐨𝐟𝐢𝐥𝐨: *${p.tag}*
-🏆 𝐓𝐫𝐨𝐟𝐞𝐢 𝐚𝐭𝐭𝐮𝐚𝐥𝐢: *${p.trophies || 0}*
-⭐ 𝐑𝐞𝐜𝐨𝐫𝐝 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐭𝐫𝐨𝐟𝐞𝐢: *${p.highestTrophies || 0}*
-💥 𝐏𝐮𝐧𝐭𝐢 𝐞𝐬𝐩𝐞𝐫𝐢𝐞𝐧𝐳𝐚: *${p.expLevel || 0}*
+👤 𝐆𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞: *${data.name}*
+🏷️ 𝐓𝐚𝐠 𝐩𝐫𝐨𝐟𝐢𝐥𝐨: *${data.tag}*
+🏆 𝐓𝐫𝐨𝐟𝐞𝐢 𝐚𝐭𝐭𝐮𝐚𝐥𝐢: *${data.trophies || 0}*
+⭐ 𝐑𝐞𝐜𝐨𝐫𝐝 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐭𝐫𝐨𝐟𝐞𝐢: *${data.highestTrophies || 0}*
+💥 𝐏𝐮𝐧𝐭𝐢 𝐞𝐬𝐩𝐞𝐫𝐢𝐞𝐧𝐳𝐚: *${data.expLevel || 0}*
 
-🎯 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${wins}*
+🎯 𝟑𝐯𝟑 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victories3v3}*
+🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
+🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
 
-🏅 𝐂𝐥𝐮𝐛: ${p.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
+🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${totalBrawlers}*
+🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
+
+🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
 `.trim();
 
       return await conn.reply(m.chat, msg, m);
-    } catch (e) {
-      return await conn.reply(m.chat, '⚠️ Errore API', m);
+    } catch (err) {
+      return await conn.reply(m.chat, '⚠️ Si è verificato un errore durante la richiesta (API o connessione).', m);
     }
-  }
-
-  if (command.toLowerCase() === 'topbrawl') {
-    let ranking = [];
-
-    let groupMetadata = await conn.groupMetadata(m.chat);
-    let participants = groupMetadata.participants.map(p => p.id);
-
-    for (let jid of participants) {
-      let user = db[jid];
-      if (!user || !user.tag) continue;
-
-      try {
-        const res = await axios.get(
-          `https://api.brawlstars.com/v1/players/${encodeURIComponent(user.tag)}`,
-          {
-            headers: {
-              Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY1NWU3ZTk5LWRhZWMtNDVmMC1iYTY5LTBmZTM5NDRkN2EzZCIsImlhdCI6MTc3NzY4MjQ5NCwic3ViIjoiZGV2ZWxvcGVyLzE1YzBiZTMxLWFmMmEtND czNi1lZjA3LWVjMGI0MWY5ZDc2MCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0c yI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsi Y2lkcnMiOlsiOTQuMzMuODQuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.f-ibcd-XSJqRFZg-Sm-Md4XS0WMJSfC7SIM4idBT3Z5nb1MYjasaD06lU81UcKpR9bd-Wb7xCQ_9DRC1hn1b3A`
-            }
-          }
-        );
-
-        const p = res.data;
-
-        const wins =
-          (p['3vs3Victories'] || 0) +
-          (p.soloVictories || 0) +
-          (p.duoVictories || 0);
-
-        ranking.push({
-          jid,
-          nome: p.name,
-          trofei: p.trophies,
-          vittorie: wins
-        });
-
-        await new Promise(r => setTimeout(r, 200));
-      } catch (e) {}
-    }
-
-    ranking.sort((a, b) => b.vittorie - a.vittorie);
-
-    if (!ranking.length) {
-      return m.reply('Nessun utente registrato con tag.');
-    }
-
-    let text = `🏆 *TOP BRAWL - VITTORIE TOTALI* 🏆\n\n`;
-
-    ranking.forEach((p, i) => {
-      text += `${i + 1}. @${p.jid.split('@')[0]}
-👤 ${p.nome}
-🏆 Trofei: ${p.trofei}
-🎮 Vittorie: ${p.vittorie}
-
-`;
-    });
-
-    await conn.sendMessage(m.chat, {
-      text,
-      mentions: ranking.map(p => p.jid)
-    });
   }
 };
 
-handler.help = ['setbrawl', 'brawl', 'topbrawl'];
-handler.tags = ['game'];
-handler.command = /^(setbrawl|brawl|topbrawl)$/i;
-handler.group = true;
+handler.help = ['setbrawl <tag>', 'brawl [tag]'];
+handler.tags = ['info'];
+handler.command = /^(setbrawl|brawl)$/i;
 
 export default handler;
