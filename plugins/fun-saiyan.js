@@ -13,19 +13,14 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let handler = async (m, { conn, text }) => {
+let handler = async (m, { conn }) => {
   try {
-
     let mention;
-    if (m.quoted) {
+
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+      mention = m.mentionedJid[0];
+    } else if (m.quoted) {
       mention = m.quoted.sender;
-    } else if (text) {
-      const rawMentions = text.match(/@(\d+|\w+)/g);
-      if (rawMentions && rawMentions.length > 0) {
-        mention = rawMentions[0].replace('@', '') + '@s.whatsapp.net';
-      } else {
-        mention = m.sender;
-      }
     } else {
       mention = m.sender;
     }
@@ -41,7 +36,6 @@ let handler = async (m, { conn, text }) => {
       await m.reply(`🔍 *Progresso:* ${p}`, null, { mentions });
     }
 
-  
     const delay = Math.floor(Math.random() * 7000) + 1000;
     const start = performance.now();
     await wait(delay);
@@ -108,8 +102,6 @@ let handler = async (m, { conn, text }) => {
 };
 
 handler.command = /^(saiyan)$/i;
-handler.group = false;
-handler.admin = false;
-handler.botAdmin = false;
+handler.group = true;
 
 export default handler;
