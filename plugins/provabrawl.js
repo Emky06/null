@@ -1,9 +1,18 @@
 import axios from 'axios';
+import fs from 'fs';
+
+const DB_PATH = './storage/file-json/tag-brawlstars.json';
+
+// 🔹 leggi database JSON
+function loadDB() {
+  if (!fs.existsSync(DB_PATH)) return {};
+  return JSON.parse(fs.readFileSync(DB_PATH));
+}
 
 let handler = async (m, { conn }) => {
   const chatId = m.chat;
 
-  let db = global.db.data.users;
+  let db = loadDB();
   let ranking = [];
 
   let groupMetadata = await conn.groupMetadata(chatId);
@@ -18,14 +27,13 @@ let handler = async (m, { conn }) => {
         `https://api.brawlstars.com/v1/players/%23${user.tag.replace('#', '')}`,
         {
           headers: {
-            Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY1NWU3ZTk5LWRhZWMtNDVmMC1iYTY5LTBmZTM5NDRkN2EzZCIsImlhdCI6MTc3NzY4MjQ5NCwic3ViIjoiZGV2ZWxvcGVyLzE1YzBiZTMxLWFmMmEtND czNi1lZjA3LWVjMGI0MWY5ZDc2MCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0c yI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsi Y2lkcnMiOlsiOTQuMzMuODQuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.f-ibcd-XSJqRFZg-Sm-Md4XS0WMJSfC7SIM4idBT3Z5nb1MYjasaD06lU81UcKpR9bd-Wb7xCQ_9DRC1hn1b3A`
+            Authorization: `Bearer TUO_TOKEN`
           }
         }
       );
 
       const p = res.data;
 
-      // 🔥 somma vittorie totali
       const totalWins =
         (p['3vs3Victories'] || 0) +
         (p.soloVictories || 0) +
@@ -45,7 +53,6 @@ let handler = async (m, { conn }) => {
     }
   }
 
-  // 🔥 ordina per vittorie totali
   ranking.sort((a, b) => b.vittorie - a.vittorie);
 
   if (!ranking.length) {
