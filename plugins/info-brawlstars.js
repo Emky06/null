@@ -25,7 +25,13 @@ let handler = async (m, { conn, command, args }) => {
   const db = loadDB()
 
   if (command === 'setbrawl') {
-    if (!args[0]) return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche', m)
+    if (!args[0]) {
+      return await conn.reply(
+        m.chat,
+        '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche',
+        m
+      )
+    }
 
     let tag = args[0].toUpperCase()
     if (!tag.startsWith('#')) tag = '#' + tag
@@ -43,12 +49,14 @@ let handler = async (m, { conn, command, args }) => {
   }
 
   if (command === 'brawl') {
-    const db = loadDB()
 
     let target = m.sender
 
-    if (m.mentionedJid && m.mentionedJid[0]) target = m.mentionedJid[0]
-    else if (m.quoted && m.quoted.sender) target = m.quoted.sender
+    if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
+      target = m.mentionedJid[0]
+    } else if (m.quoted?.sender) {
+      target = m.quoted.sender
+    }
 
     let tag = args[0]
 
@@ -56,7 +64,7 @@ let handler = async (m, { conn, command, args }) => {
       tag = db[target]?.tag
     }
 
-    if (!tag || typeof tag !== 'string') {
+    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
       return await conn.reply(
         m.chat,
         '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
@@ -64,7 +72,7 @@ let handler = async (m, { conn, command, args }) => {
       )
     }
 
-    tag = tag.toUpperCase()
+    tag = String(tag).toUpperCase().replace(/[^A-Z0-9#]/g, '')
     if (!tag.startsWith('#')) tag = '#' + tag
 
     const encodedTag = encodeURIComponent(tag)
@@ -78,7 +86,7 @@ let handler = async (m, { conn, command, args }) => {
       })
 
       if (!res.ok) {
-        return await conn.reply(m.chat, `❌ Errore API`, m)
+        return await conn.reply(m.chat, '❌ Errore API', m)
       }
 
       const data = await res.json()
@@ -88,12 +96,10 @@ let handler = async (m, { conn, command, args }) => {
       const victoriesDuo = data['duoVictories'] || 0
       const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo
 
-      const name = await conn.getName(target)
-
       const header =
         target === m.sender
           ? '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐭𝐮𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬:'
-          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${name}:`
+          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${target.split('@')[0]}:`
 
       const msg = `
 ${header}
