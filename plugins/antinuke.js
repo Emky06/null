@@ -1,7 +1,7 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
-const whitelistFile = './autorizzati-antinuke.json'
+const whitelistFile = path.join(process.cwd(), 'storage', 'file-json', 'autorizzati-antinuke.json');
 
 if (!fs.existsSync(whitelistFile)) {
   fs.writeFileSync(whitelistFile, '{}', 'utf-8')
