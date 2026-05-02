@@ -242,16 +242,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 `, `
                     .battle-title { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); font-size: 45px; font-weight: 800; z-index: 30; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.2); }
                     .side { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: center; overflow: hidden; transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-                    
-                    /* Gradienti dinamici e ombre interne */
                     .left { background: linear-gradient(135deg, rgba(0, 30, 100, 0.95), rgba(0, 180, 255, 0.85)); align-items: flex-start; padding-left: 60px; border-right: 6px solid rgba(255,255,255,0.9); box-shadow: inset -30px 0 60px rgba(0,0,0,0.6); }
                     .right { background: linear-gradient(135deg, rgba(130, 0, 0, 0.95), rgba(255, 70, 0, 0.85)); align-items: flex-end; padding-right: 60px; box-shadow: inset 30px 0 60px rgba(0,0,0,0.6); }
-                    
                     .bg-img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; mix-blend-mode: overlay; filter: grayscale(50%); }
                     .content { z-index: 10; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
                     .score { font-size: 90px; font-weight: 800; margin: 0; line-height: 1; text-shadow: 0 5px 25px rgba(0,0,0,0.7); }
-                    
-                    /* Badge VS super hype */
                     .vs-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; font-style: italic; font-weight: 800; box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 -5px 15px rgba(0,0,0,0.2); z-index: 20; border: 4px solid #111; }
                 `);
                 caption = `⚔️ *ARTIST BATTLE*\n${user} [${score1}] VS ${user2} [${score2}]\nArtista: ${info1.artist.name}`;
@@ -453,83 +448,72 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'leaderboard': {
-    console.log("🔍 [DEBUG] Inizio leaderboard");
-    const groupMembers = await getGroupMembers(conn, m.chat);
-    console.log("📋 Membri del gruppo:", groupMembers);
-    
-    const validJids = Object.keys(db).filter(jid => {
-    const isValid = groupMembers.includes(jid);
-    if (isValid) console.log("✅ Trovato match:", jid, "->", db[jid]);
-    return isValid;
-});
-    
-    console.log("📊 Utenti validi trovati:", validJids.length);
-    console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
-    
-    if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}\n\n📌 Utenti nel db: ${Object.keys(db).length}\n📌 Membri nel gruppo: ${groupMembers.length}\n📌 Match trovati: ${validJids.length}`);
+                const groupMembers = await getGroupMembers(conn, m.chat);
+                const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
+                
+                if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}`);
 
-    await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
+                await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
 
-    const targetJids = validJids.slice(0, 15);
-    const promises = targetJids.map(async (jid) => {
-        const lfUser = db[jid];
-        const info = await apiCall('user.getinfo', { user: lfUser });
-console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Playcount:", info.user?.playcount);
-        if (info.error) return null;
-        return { user: lfUser, plays: parseInt(info.user.playcount) };
-    });
+                const targetJids = validJids.slice(0, 15);
+                const promises = targetJids.map(async (jid) => {
+                    const lfUser = db[jid];
+                    const info = await apiCall('user.getinfo', { user: lfUser });
+                    if (info.error) return null;
+                    return { user: lfUser, plays: parseInt(info.user.playcount) };
+                });
 
-    let results = (await Promise.all(promises)).filter(r => r !== null);
-    results.sort((a, b) => b.plays - a.plays);
+                let results = (await Promise.all(promises)).filter(r => r !== null);
+                results.sort((a, b) => b.plays - a.plays);
 
-    if (results.length === 0) throw new Error("Impossibile generare la classifica.");
+                if (results.length === 0) throw new Error("Impossibile generare la classifica.");
 
-    const top3 = results.slice(0, 3);
-    const others = results.slice(3, 8);
-    let podiumHtml = `
-        <div class="podium-container">
-            ${top3[1] ? `<div class="podium p2"><div class="rank">2</div><div class="p-user">@${top3[1].user}</div><div class="p-score">${top3[1].plays}</div></div>` : ''}
-            <div class="podium p1"><div class="crown">👑</div><div class="rank">1</div><div class="p-user">@${top3[0].user}</div><div class="p-score">${top3[0].plays}</div></div>
-            ${top3[2] ? `<div class="podium p3"><div class="rank">3</div><div class="p-user">@${top3[2].user}</div><div class="p-score">${top3[2].plays}</div></div>` : ''}
-        </div>
-    `;
+                const top3 = results.slice(0, 3);
+                const others = results.slice(3, 8);
+                let podiumHtml = `
+                    <div class="podium-container">
+                        ${top3[1] ? `<div class="podium p2"><div class="rank">2</div><div class="p-user">@${top3[1].user}</div><div class="p-score">${top3[1].plays}</div></div>` : ''}
+                        <div class="podium p1"><div class="crown">👑</div><div class="rank">1</div><div class="p-user">@${top3[0].user}</div><div class="p-score">${top3[0].plays}</div></div>
+                        ${top3[2] ? `<div class="podium p3"><div class="rank">3</div><div class="p-user">@${top3[2].user}</div><div class="p-score">${top3[2].plays}</div></div>` : ''}
+                    </div>
+                `;
 
-    let listHtml = others.map((u, i) => `
-        <div class="list-item">
-            <span class="l-rank">${i+4}</span>
-            <span class="l-user">@${u.user}</span>
-            <span class="l-score">${u.plays.toLocaleString()}</span>
-        </div>
-    `).join('');
+                let listHtml = others.map((u, i) => `
+                    <div class="list-item">
+                        <span class="l-rank">${i+4}</span>
+                        <span class="l-user">@${u.user}</span>
+                        <span class="l-score">${u.plays.toLocaleString()}</span>
+                    </div>
+                `).join('');
 
-    viewport = { w: 800, h: listHtml ? 900 : 600 };
-    html = getHtmlWrapper(`
-        <div class="lb-wrapper">
-            <h1 class="lb-title">GLOBAL LEADERBOARD</h1>
-            ${podiumHtml}
-            <div class="lb-list">${listHtml}</div>
-        </div>
-    `, `
-        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
-        .lb-wrapper { width: 700px; padding: 40px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .lb-title { text-align: center; font-size: 35px; letter-spacing: 4px; margin-bottom: 50px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 20px; height: 250px; margin-bottom: 40px; }
-        .podium { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 140px; border-radius: 20px 20px 0 0; position: relative; padding-bottom: 20px; box-shadow: inset 0 5px 15px rgba(255,255,255,0.2); }
-        .p1 { height: 100%; background: linear-gradient(to top, #ffd700, #ffb300); color: #000; z-index: 10; }
-        .p2 { height: 75%; background: linear-gradient(to top, #e0e0e0, #9e9e9e); color: #000; }
-        .p3 { height: 60%; background: linear-gradient(to top, #cd7f32, #a0522d); color: #fff; }
-        .crown { position: absolute; top: -50px; font-size: 40px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
-        .rank { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
-        .p-user { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-        .p-score { font-size: 14px; font-weight: bold; opacity: 0.8; }
-        .list-item { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 15px; margin-bottom: 10px; font-size: 20px; }
-        .l-rank { font-weight: 800; width: 50px; color: #888; }
-        .l-user { flex: 1; font-weight: 600; }
-        .l-score { font-weight: 800; color: #0a84ff; }
-    `);
-    caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
-    break;
-}
+                viewport = { w: 800, h: listHtml ? 900 : 600 };
+                html = getHtmlWrapper(`
+                    <div class="lb-wrapper">
+                        <h1 class="lb-title">GLOBAL LEADERBOARD</h1>
+                        ${podiumHtml}
+                        <div class="lb-list">${listHtml}</div>
+                    </div>
+                `, `
+                    body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
+                    .lb-wrapper { width: 700px; padding: 40px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+                    .lb-title { text-align: center; font-size: 35px; letter-spacing: 4px; margin-bottom: 50px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                    .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 20px; height: 250px; margin-bottom: 40px; }
+                    .podium { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 140px; border-radius: 20px 20px 0 0; position: relative; padding-bottom: 20px; box-shadow: inset 0 5px 15px rgba(255,255,255,0.2); }
+                    .p1 { height: 100%; background: linear-gradient(to top, #ffd700, #ffb300); color: #000; z-index: 10; }
+                    .p2 { height: 75%; background: linear-gradient(to top, #e0e0e0, #9e9e9e); color: #000; }
+                    .p3 { height: 60%; background: linear-gradient(to top, #cd7f32, #a0522d); color: #fff; }
+                    .crown { position: absolute; top: -50px; font-size: 40px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+                    .rank { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+                    .p-user { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+                    .p-score { font-size: 14px; font-weight: bold; opacity: 0.8; }
+                    .list-item { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 15px; margin-bottom: 10px; font-size: 20px; }
+                    .l-rank { font-weight: 800; width: 50px; color: #888; }
+                    .l-user { flex: 1; font-weight: 600; }
+                    .l-score { font-weight: 800; color: #0a84ff; }
+                `);
+                caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
+                break;
+            }
             case 'artistmap': {
                 const artistName = text.trim();
                 if (!artistName) return m.reply(`❌ Uso: *${usedPrefix}artistmap <nome artista>*`);
@@ -658,7 +642,7 @@ console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Pl
                     .hl-tag { background: #ff3b30; color: #fff; padding: 5px 10px; font-weight: 900; font-size: 14px; letter-spacing: 2px; }
                     .headline-left h2 { font-size: 65px; margin: 10px 0; font-weight: 900; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
                     .headline-left p { font-size: 20px; font-weight: 700; color: #ddd; }
-                    .headline-right { text-align: right; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+                    .                    .headline-right { text-align: right; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
                     .headline-right h3 { font-size: 20px; color: #ff3b30; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
                     .headline-right p { font-size: 26px; margin: 0 0 15px 0; font-weight: 700; }
                     .headline-right hr { border-color: rgba(255,255,255,0.3); margin: 15px 0; }
@@ -819,18 +803,8 @@ console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Pl
             }
 
             case 'whosplaying': {
-    console.log("🔍 [DEBUG] Inizio whosplaying");
     const groupMembers = await getGroupMembers(conn, m.chat);
-    console.log("📋 Membri del gruppo:", groupMembers);
-    
-    const users = Object.keys(db).filter(jid => {
-    const isValid = groupMembers.includes(jid);
-    if (isValid) console.log("✅ Utente valido:", jid, "->", db[jid]);
-    return isValid;
-});
-    
-    console.log("📊 Utenti nel gruppo con Last.fm:", users.length);
-    console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
+    const users = Object.keys(db).filter(jid => groupMembers.includes(jid));
     
     let playingUsers = [];
     let seenLastFmUsers = new Set();
@@ -838,7 +812,6 @@ console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Pl
 
     for (let u of checkLimit) {
         const lfUser = db[u];
-        console.log(`🔎 Controllo utente: ${lfUser} (${u})`);
         
         if (seenLastFmUsers.has(lfUser)) continue;
         seenLastFmUsers.add(lfUser);
@@ -846,31 +819,38 @@ console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Pl
         try {
             const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1, extended: 1 });
             const track = rt.recenttracks?.track?.[0];
-            console.log(`📡 Risposta API per ${lfUser}:`, track ? (track['@attr']?.nowplaying ? "IN ASCOLTO" : "NON in ascolto") : "nessun track");
+            
+            const isNowPlaying = track && track['@attr']?.nowplaying === 'true';
+            
+            if (isNowPlaying) {
 
-            if (track && track['@attr']?.nowplaying) {
+                let cover = DEFAULT_COVER;
+                if (track.image && track.image.length > 0) {
+                    const largeImage = track.image.find(img => img.size === 'large' || img.size === 'extralarge');
+                    cover = largeImage?.['#text'] || track.image[2]?.['#text'] || DEFAULT_COVER;
+                } else if (track.album?.image) {
+                    const albumImage = track.album.image.find(img => img.size === 'large');
+                    cover = albumImage?.['#text'] || DEFAULT_COVER;
+                }
+                
                 playingUsers.push({ 
                     wpId: u, 
                     lfId: lfUser, 
-                    track: track.name, 
-                    artist: track.artist['#text'], 
-                    cover: track.image[2]['#text'] 
+                    track: track.name || 'Sconosciuto', 
+                    artist: track.artist?.['#text'] || track.artist?.name || 'Sconosciuto', 
+                    cover: cover
                 });
-                console.log(`🎵 Trovato in ascolto: ${lfUser} -> ${track.name}`);
             }
         } catch (e) { 
-            console.error(`❌ Errore per ${lfUser}:`, e.message);
             continue; 
         }
     }
 
-    console.log(`📻 Totale in ascolto: ${playingUsers.length}`);
-    
-    if (playingUsers.length === 0) return m.reply(`📻 Nessuno sta ascoltando musica in questo momento.\n\n[DEBUG] Utenti controllati: ${users.length}\nUtenti registrati nel gruppo: ${users.join(', ')}`);
+    if (playingUsers.length === 0) return m.reply("📻 Nessuno sta ascoltando musica in questo momento.");
 
     let cardsHtml = playingUsers.map(pu => `
         <div class="user-card glass">
-            <img src="${pu.cover || DEFAULT_COVER}">
+            <img src="${pu.cover}">
             <div class="meta">
                 <div class="user-name">@${pu.lfId}</div>
                 <div class="track-name">${pu.track}</div>
@@ -891,7 +871,7 @@ console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Pl
         .container { width: 900px; height: auto; min-height: 550px; padding: 40px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
         .user-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
-        .user-card img { width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .user-card img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .meta { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .track-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
