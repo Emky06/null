@@ -392,6 +392,5 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
 handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
 handler.group = true; 
-handler.register = true;
 
 export default handler;
