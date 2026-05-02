@@ -344,8 +344,8 @@ for (let u of groupUsers) {
             });
         }
     } catch (e) {
-        continue;
-    }
+   
+}
 }
                     try {
                         const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
