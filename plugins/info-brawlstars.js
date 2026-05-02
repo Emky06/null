@@ -1,74 +1,73 @@
-import fetch from 'node-fetch';
-import fs from 'fs';
+import fetch from 'node-fetch'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const API_BASE = 'https://api.brawlstars.com/v1';
-const API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY1NWU3ZTk5LWRhZWMtNDVmMC1iYTY5LTBmZTM5NDRkN2EzZCIsImlhdCI6MTc3NzY4MjQ5NCwic3ViIjoiZGV2ZWxvcGVyLzE1YzBiZTMxLWFmMmEtND czNi1lZjA3LWVjMGI0MWY5ZDc2MCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0c yI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsi Y2lkcnMiOlsiOTQuMzMuODQuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.f-ibcd-XSJqRFZg-Sm-Md4XS0WMJSfC7SIM4idBT3Z5nb1MYjasaD06lU81UcKpR9bd-Wb7xCQ_9DRC1hn1b3A';
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-const DB_FILE = './storage/file-json/tag-brawlstars.json';
+const API_BASE = 'https://api.brawlstars.com/v1'
+const API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY1NWU3ZTk5LWRhZWMtNDVmMC1iYTY5LTBmZTM5NDRkN2EzZCIsImlhdCI6MTc3NzY4MjQ5NCwic3ViIjoiZGV2ZWxvcGVyLzE1YzBiZTMxLWFmMmEtNDczNi1lZjA3LWVjMGI0MWY5ZDc2MCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOlsiOTQuMzMuODQuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.f-ibcd-XSJqRFZg-Sm-Md4XS0WMJSfC7SIM4idBT3Z5nb1MYjasaD06lU81UcKpR9bd-Wb7xCQ_9DRC1hn1b3A'
+
+const DB_FILE = path.join(__dirname, '..', 'brawl_users.json')
+
+if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, '{}')
 
 function loadDB() {
-  if (!fs.existsSync(DB_FILE)) return {};
-  return JSON.parse(fs.readFileSync(DB_FILE));
+  return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'))
 }
 
 function saveDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2))
 }
 
 let handler = async (m, { conn, command, args }) => {
-  if (command && command.toLowerCase() === 'setbrawl') {
-    if (!args[0]) return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche', m);
+  const db = loadDB()
 
-    let tag = args[0].toUpperCase();
-    if (!tag) {
-  return conn.reply(
-    m.chat,
-    '❗ Questo utente non ha un tag salvato.\nUsa .setbrawl #TAG',
-    m
-  );
-}
+  if (command === 'setbrawl') {
+    if (!args[0]) return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche', m)
 
-tag = tag.toString().toUpperCase().replace(/[^A-Z0-9#]/g, '');
+    let tag = args[0].toUpperCase()
+    if (!tag.startsWith('#')) tag = '#' + tag
 
-if (!tag.startsWith('#')) tag = '#' + tag;
+    if (!db[m.sender]) db[m.sender] = {}
+    db[m.sender].tag = tag
 
-    const db = loadDB();
-
-    if (!db[m.sender]) db[m.sender] = {};
-
-db[m.sender].tag = tag;
-
-    saveDB(db);
+    saveDB(db)
 
     return await conn.reply(
       m.chat,
       `✅ Tag salvato: ${tag}\nUsa .brawl per vedere il tuo profilo.`,
       m
-    );
+    )
   }
 
-  if (command && command.toLowerCase() === 'brawl') {
-    const db = loadDB();
+  if (command === 'brawl') {
+    const db = loadDB()
 
-    let target =
-  m.mentionedJid?.[0] ||
-  m.quoted?.sender ||
-  m.sender;
+    let target = m.sender
 
-    let tag = args[0];
+    if (m.mentionedJid && m.mentionedJid[0]) target = m.mentionedJid[0]
+    else if (m.quoted && m.quoted.sender) target = m.quoted.sender
 
-    if (!tag) {
-      tag = db[target]?.tag;
-    }
+    let tag = args[0]
 
     if (!tag) {
-      return await conn.reply(m.chat, '❗ Nessun tag salvato per questo gruppo.\nUsa .setbrawl #TAG', m);
+      tag = db[target]?.tag
     }
 
-    tag = tag.toUpperCase();
-    if (!tag.startsWith('#')) tag = '#' + tag;
+    if (!tag || typeof tag !== 'string') {
+      return await conn.reply(
+        m.chat,
+        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
+        m
+      )
+    }
 
-    const encodedTag = encodeURIComponent(tag);
+    tag = tag.toUpperCase()
+    if (!tag.startsWith('#')) tag = '#' + tag
+
+    const encodedTag = encodeURIComponent(tag)
 
     try {
       const res = await fetch(`${API_BASE}/players/${encodedTag}`, {
@@ -76,26 +75,25 @@ db[m.sender].tag = tag;
           Accept: 'application/json',
           Authorization: `Bearer ${API_TOKEN}`
         }
-      });
+      })
 
       if (!res.ok) {
-        return await conn.reply(m.chat, `❌ Errore API`, m);
+        return await conn.reply(m.chat, `❌ Errore API`, m)
       }
 
-      const data = await res.json();
+      const data = await res.json()
 
-      const victories3v3 = data['3vs3Victories'] || 0;
-      const victoriesSolo = data['soloVictories'] || 0;
-      const victoriesDuo = data['duoVictories'] || 0;
-      const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo;
-      const totalBrawlers = data.brawlers?.length || 0;
+      const victories3v3 = data['3vs3Victories'] || 0
+      const victoriesSolo = data['soloVictories'] || 0
+      const victoriesDuo = data['duoVictories'] || 0
+      const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo
 
-      const name = await conn.getName(target);
+      const name = await conn.getName(target)
 
       const header =
         target === m.sender
           ? '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐭𝐮𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬:'
-          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${target.split('@')[0]}:`;
+          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${name}:`
 
       const msg = `
 ${header}
@@ -110,28 +108,33 @@ ${header}
 🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
 🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
 
-🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${totalBrawlers}*
+🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${data.brawlers?.length || 0}*
 🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
 
 🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
-`.trim();
+`.trim()
 
       return await conn.sendMessage(
-  m.chat,
-  {
-    text: msg,
-    mentions: [target]
-  },
-  { quoted: m }
-);
+        m.chat,
+        {
+          text: msg,
+          mentions: [target]
+        },
+        { quoted: m }
+      )
+
     } catch (err) {
-      return await conn.reply(m.chat, '⚠️ Si è verificato un errore durante la richiesta (API o connessione).', m);
+      return await conn.reply(
+        m.chat,
+        '⚠️ Si è verificato un errore durante la richiesta (API o connessione).',
+        m
+      )
     }
   }
-};
+}
 
-handler.help = ['setbrawl <tag>', 'brawl [tag]'];
-handler.tags = ['info'];
-handler.command = /^(setbrawl|brawl)$/i;
+handler.help = ['setbrawl <tag>', 'brawl [tag]']
+handler.tags = ['info']
+handler.command = /^(setbrawl|brawl)$/i
 
-export default handler;
+export default handler
