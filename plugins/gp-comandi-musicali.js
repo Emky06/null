@@ -321,13 +321,32 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'whosplaying': {
-                const users = Object.keys(db);
-                let playingUsers = [];
-                
-                const checkLimit = users.slice(0, 20); 
-                
-                for (let u of checkLimit) {
-                    const lfUser = db[u];
+                const groupMetadata = await conn.groupMetadata(m.chat);
+const groupUsers = groupMetadata.participants.map(p => p.id);
+
+let playingUsers = [];
+
+for (let u of groupUsers) {
+    const lfUser = db[u];
+    if (!lfUser) continue;
+
+    try {
+        const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
+        const track = rt.recenttracks?.track?.[0];
+
+        if (track && track['@attr']?.nowplaying) {
+            playingUsers.push({
+                wpId: u,
+                lfId: lfUser,
+                track: track.name,
+                artist: track.artist['#text'],
+                cover: track.image?.[2]?.['#text'] || DEFAULT_COVER
+            });
+        }
+    } catch (e) {
+        continue;
+    }
+}
                     try {
                         const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
                         const track = rt.recenttracks?.track?.[0];
