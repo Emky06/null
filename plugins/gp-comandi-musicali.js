@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const databasePath = path.join(__dirname, '../lastfm_users.json');
+const databasePath = path.join(__dirname, '../media/database/lastfm_users.json');
 const getDB = () => fs.existsSync(databasePath) ? JSON.parse(fs.readFileSync(databasePath, 'utf-8')) : {};
 
 const LASTFM_API_KEY = 'fa91d71e5ea7dbcda31875481d02596f';
@@ -319,20 +319,507 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 caption = `📅 *Traguardo in avvicinamento per @${user}*`;
                 break;
             }
+            case 'receipt': {
+                const topTracksRes = await apiCall('user.gettoptracks', { user, limit: 10, period: '1month' });
+                if (topTracksRes.error || !topTracksRes.toptracks?.track?.length) throw new Error("Errore recupero brani.");
+                
+                const tracks = topTracksRes.toptracks.track;
+                let totalScrobbles = 0;
+                let itemsHtml = '';
+                
+                tracks.forEach((t, i) => {
+                    const playcount = parseInt(t.playcount);
+                    totalScrobbles += playcount;
+                    let title = t.name.length > 20 ? t.name.substring(0, 18) + '..' : t.name;
+                    let artist = t.artist.name.length > 15 ? t.artist.name.substring(0, 13) + '..' : t.artist.name;
+                    itemsHtml += `
+                        <div class="receipt-item">
+                            <span>${(i+1).toString().padStart(2, '0')}. ${title} - ${artist}</span>
+                            <span>${playcount}</span>
+                        </div>
+                    `;
+                });
+
+                const today = new Date().toLocaleDateString('it-IT');
+                const orderNum = Math.floor(Math.random() * 90000) + 10000;
+
+                let barcodeHtml = '';
+                for(let j=0; j<35; j++) {
+                    let w = Math.floor(Math.random() * 4) + 1; 
+                    let mR = Math.floor(Math.random() * 2);    
+                    barcodeHtml += `<div style="width: ${w}px; height: 50px; background: #000; margin-right: ${mR}px;"></div>`;
+                }
+
+                viewport = { w: 500, h: 800 };
+                html = getHtmlWrapper(`
+                    <div class="receipt-container">
+                        <div class="receipt">
+                            <div class="receipt-header">
+                                <h2>LAST.FM RECORDS</h2>
+                                <p>SCONTRINO MUSICALE</p>
+                                <p>-------------------------</p>
+                                <p>CLIENTE: @${user.toUpperCase()}</p>
+                                <p>DATA: ${today}</p>
+                                <p>ORDINE: #${orderNum}</p>
+                                <p>-------------------------</p>
+                            </div>
+                            <div class="receipt-body">
+                                <div class="receipt-item" style="font-weight: bold; margin-bottom: 10px;">
+                                    <span>BRANO</span>
+                                    <span>SCROBBLE</span>
+                                </div>
+                                ${itemsHtml}
+                            </div>
+                            <div class="receipt-footer">
+                                <p>-------------------------</p>
+                                <div class="receipt-item" style="font-size: 20px; font-weight: bold;">
+                                    <span>TOTALE MESE:</span>
+                                    <span>${totalScrobbles}</span>
+                                </div>
+                                <p>-------------------------</p>
+                                <p>GRAZIE E ARRIVEDERCI</p>
+                                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                                    ${barcodeHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+                    body { background: #1a1a1a; font-family: 'Space Mono', monospace; color: #000; }
+                    .receipt-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; }
+                    .receipt { background: #f4f4f0; width: 400px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative; filter: drop-shadow(0px 5px 15px rgba(0,0,0,0.5)); }
+                    .receipt::before, .receipt::after { content: ''; position: absolute; left: 0; right: 0; height: 10px; background-size: 20px 20px; }
+                    .receipt::before { top: -10px; background-image: linear-gradient(-45deg, transparent 33.33%, #f4f4f0 33.33%, #f4f4f0 66.66%, transparent 66.66%), linear-gradient(45deg, transparent 33.33%, #f4f4f0 33.33%, #f4f4f0 66.66%, transparent 66.66%); }
+                    .receipt::after { bottom: -10px; background-image: linear-gradient(-45deg, #f4f4f0 33.33%, transparent 33.33%, transparent 66.66%, #f4f4f0 66.66%), linear-gradient(45deg, #f4f4f0 33.33%, transparent 33.33%, transparent 66.66%, #f4f4f0 66.66%); }
+                    .receipt-header, .receipt-footer { text-align: center; }
+                    .receipt-header h2 { margin: 0; font-size: 28px; letter-spacing: -1px; }
+                    .receipt-header p, .receipt-footer p { margin: 5px 0; font-size: 14px; }
+                    .receipt-body { margin: 20px 0; }
+                    .receipt-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+                `);
+                caption = `🧾 *Il tuo scontrino musicale dell'ultimo mese*\nUtente: @${user}`;
+                break;
+            }
+
+            case 'throwback': {
+                const oneYearAgoUnix = Math.floor(Date.now() / 1000) - 31536000;
+                const res = await apiCall('user.getrecenttracks', { 
+                    user, 
+                    from: oneYearAgoUnix - 43200, 
+                    to: oneYearAgoUnix + 43200,   
+                    limit: 1 
+                });
+
+                const tracks = res.recenttracks?.track;
+                if (!tracks || tracks.length === 0) return m.reply("🕰️ Esattamente un anno fa non stavi ascoltando nulla (o non usavi Last.fm)!");
+                
+                const track = Array.isArray(tracks) ? tracks[0] : tracks;
+                const cover = await fetchCover(track.image, `${track.artist['#text']} ${track.name}`);
+                const dateStr = new Date((oneYearAgoUnix) * 1000).toLocaleDateString('it-IT');
+
+                viewport = { w: 600, h: 750 };
+                html = getHtmlWrapper(`
+                    <div class="polaroid">
+                        <img src="${cover}" class="photo">
+                        <div class="caption">
+                            <p class="track-name">${track.name}</p>
+                            <p class="artist-name">${track.artist['#text']}</p>
+                            <p class="date">${dateStr}</p>
+                        </div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+                    body { background: url('https://www.transparenttextures.com/patterns/cork-board.png') #4a3b32; }
+                    .polaroid { background: #fff; width: 450px; padding: 25px 25px 60px 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.1); transform: rotate(-3deg); position: relative; }
+                    .photo { width: 100%; height: 400px; object-fit: cover; background: #000; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); filter: contrast(1.1) sepia(0.2); }
+                    .caption { text-align: center; color: #111; font-family: 'Caveat', cursive; margin-top: 25px; line-height: 1.2; }
+                    .track-name { font-size: 40px; margin: 0; font-weight: bold; }
+                    .artist-name { font-size: 30px; margin: 5px 0 15px 0; color: #555; }
+                    .date { font-size: 24px; position: absolute; bottom: 20px; right: 30px; color: #888; transform: rotate(2deg); }
+                `);
+                caption = `🕰️ *Un anno fa...*\nEsattamente un anno fa eri in fissa con questo pezzo. Ricordi?`;
+                break;
+            }
+
+            case 'leaderboard': {
+                const jids = Object.keys(db);
+                if (jids.length < 2) return m.reply("❌ Non ci sono abbastanza utenti registrati per una classifica.");
+                
+                await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
+                
+                const targetJids = jids.slice(0, 15);
+                const promises = targetJids.map(async (jid) => {
+                    const lfUser = db[jid];
+                    const info = await apiCall('user.getinfo', { user: lfUser });
+                    if (info.error) return null;
+                    return { user: lfUser, plays: parseInt(info.user.playcount) };
+                });
+
+                let results = (await Promise.all(promises)).filter(r => r !== null);
+                results.sort((a, b) => b.plays - a.plays);
+
+                if (results.length === 0) throw new Error("Impossibile generare la classifica.");
+
+                const top3 = results.slice(0, 3);
+                const others = results.slice(3, 8);
+                let podiumHtml = `
+                    <div class="podium-container">
+                        ${top3[1] ? `<div class="podium p2"><div class="rank">2</div><div class="p-user">@${top3[1].user}</div><div class="p-score">${top3[1].plays}</div></div>` : ''}
+                        <div class="podium p1"><div class="crown">👑</div><div class="rank">1</div><div class="p-user">@${top3[0].user}</div><div class="p-score">${top3[0].plays}</div></div>
+                        ${top3[2] ? `<div class="podium p3"><div class="rank">3</div><div class="p-user">@${top3[2].user}</div><div class="p-score">${top3[2].plays}</div></div>` : ''}
+                    </div>
+                `;
+
+                let listHtml = others.map((u, i) => `
+                    <div class="list-item">
+                        <span class="l-rank">${i+4}</span>
+                        <span class="l-user">@${u.user}</span>
+                        <span class="l-score">${u.plays.toLocaleString()}</span>
+                    </div>
+                `).join('');
+
+                viewport = { w: 800, h: listHtml ? 900 : 600 };
+                html = getHtmlWrapper(`
+                    <div class="lb-wrapper">
+                        <h1 class="lb-title">GLOBAL LEADERBOARD</h1>
+                        ${podiumHtml}
+                        <div class="lb-list">${listHtml}</div>
+                    </div>
+                `, `
+                    body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
+                    .lb-wrapper { width: 700px; padding: 40px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+                    .lb-title { text-align: center; font-size: 35px; letter-spacing: 4px; margin-bottom: 50px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                    .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 20px; height: 250px; margin-bottom: 40px; }
+                    .podium { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 140px; border-radius: 20px 20px 0 0; position: relative; padding-bottom: 20px; box-shadow: inset 0 5px 15px rgba(255,255,255,0.2); }
+                    .p1 { height: 100%; background: linear-gradient(to top, #ffd700, #ffb300); color: #000; z-index: 10; }
+                    .p2 { height: 75%; background: linear-gradient(to top, #e0e0e0, #9e9e9e); color: #000; }
+                    .p3 { height: 60%; background: linear-gradient(to top, #cd7f32, #a0522d); color: #fff; }
+                    .crown { position: absolute; top: -50px; font-size: 40px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+                    .rank { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+                    .p-user { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+                    .p-score { font-size: 14px; font-weight: bold; opacity: 0.8; }
+                    .list-item { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 15px; margin-bottom: 10px; font-size: 20px; }
+                    .l-rank { font-weight: 800; width: 50px; color: #888; }
+                    .l-user { flex: 1; font-weight: 600; }
+                    .l-score { font-weight: 800; color: #0a84ff; }
+                `);
+                caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
+                break;
+            }
+            
+            case 'artistmap': {
+                const artistName = text.trim();
+                if (!artistName) return m.reply(`❌ Uso: *${usedPrefix}artistmap <nome artista>*`);
+
+                const simRes = await apiCall('artist.getsimilar', { artist: artistName, limit: 4 });
+                if (simRes.error || !simRes.similarartists?.artist?.length) throw new Error("Artista non trovato o nessun artista simile.");
+
+                const mainArtist = simRes.similarartists['@attr'].artist;
+                const similars = simRes.similarartists.artist;
+
+                const promises = [
+                    apiCall('artist.getinfo', { artist: mainArtist, username: user }).then(info => 
+                        fetchCover(info.artist?.image, mainArtist, true)
+                    )
+                ];
+
+                similars.forEach(s => {
+                    promises.push(
+                        apiCall('artist.getinfo', { artist: s.name, username: user }).then(info => 
+                            fetchCover(info.artist?.image, s.name, true)
+                        )
+                    );
+                });
+
+                const covers = await Promise.all(promises);
+
+                const positions = [
+                    { top: '10%', left: '50%', name: similars[0].name },
+                    { top: '50%', left: '90%', name: similars[1].name },
+                    { top: '90%', left: '50%', name: similars[2]?.name || '' },
+                    { top: '50%', left: '10%', name: similars[3]?.name || '' }
+                ];
+
+                let nodesHtml = '';
+                let linesHtml = `
+                    <div class="line" style="top: 30%; left: 50%; height: 20%; width: 2px;"></div>
+                    <div class="line" style="top: 50%; left: 70%; height: 2px; width: 20%;"></div>
+                    <div class="line" style="top: 70%; left: 50%; height: 20%; width: 2px;"></div>
+                    <div class="line" style="top: 50%; left: 10%; height: 2px; width: 20%;"></div>
+                `;
+
+                for(let i=0; i<4; i++) {
+                    if(!similars[i]) continue;
+                    nodesHtml += `
+                        <div class="node sim-node" style="top: ${positions[i].top}; left: ${positions[i].left};">
+                            <img src="${covers[i+1]}">
+                            <p>${positions[i].name}</p>
+                        </div>
+                    `;
+                }
+
+                viewport = { w: 900, h: 900 };
+                html = getHtmlWrapper(`
+                    <div class="map-container">
+                        ${linesHtml}
+                        <div class="node main-node" style="top: 50%; left: 50%;">
+                            <img src="${covers[0]}">
+                            <p>${mainArtist}</p>
+                        </div>
+                        ${nodesHtml}
+                    </div>
+                `, `
+                    body { background: #080a10; }
+                    .map-container { width: 100%; height: 100%; position: relative; }
+                    .node { position: absolute; transform: translate(-50%, -50%); text-align: center; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+                    .node img { object-fit: cover; border-radius: 50%; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); border: 3px solid rgba(255,255,255,0.2); }
+                    .node p { background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+                    .main-node img { width: 220px; height: 220px; border-color: #00ffff; box-shadow: 0 0 50px rgba(0, 255, 255, 0.6); }
+                    .main-node p { font-size: 22px; color: #00ffff; }
+                    .sim-node img { width: 140px; height: 140px; }
+                    .sim-node p { font-size: 16px; }
+                    .line { position: absolute; background: linear-gradient(90deg, transparent, #00ffff, transparent); box-shadow: 0 0 10px #00ffff; opacity: 0.5; z-index: 1; }
+                    .line[style*="width: 2px"] { background: linear-gradient(180deg, transparent, #00ffff, transparent); }
+                `);
+                caption = `🗺️ *Mappa delle Connessioni per ${mainArtist}*`;
+                break;
+            }
+            case 'magazine': {
+                const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: '1month' });
+                if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Non hai abbastanza ascolti questo mese.");
+                const artist = topArt.topartists.artist[0];
+                const artistInfo = await apiCall('artist.getinfo', { artist: artist.name, username: user });
+                
+                const topTrack = await apiCall('user.gettoptracks', { user, limit: 1, period: '1month' });
+                const trackName = topTrack.toptracks?.track?.[0]?.name || 'Musica e Segreti';
+                
+                const cover = await fetchCover(artistInfo.artist?.image, artist.name, true);
+                
+                viewport = { w: 800, h: 1050 };
+                html = getHtmlWrapper(`
+                    <div class="magazine-bg" style="background-image: url('${cover}')"></div>
+                    <div class="magazine-overlay"></div>
+                    <div class="magazine-container">
+                        <h1 class="magazine-title">SOUND</h1>
+                        
+                        <div class="headlines">
+                            <div class="headline-left">
+                                <span class="hl-tag">ESCLUSIVA</span>
+                                <h2>Il fenomeno<br><span style="color:#ff3b30">${artist.name}</span></h2>
+                                <p>Perché @${user} non riesce a smettere di ascoltarlo?</p>
+                            </div>
+                            
+                            <div class="headline-right">
+                                <h3>Hit del Mese</h3>
+                                <p>"${trackName}"</p>
+                                <hr>
+                                <h3>Scrobble totali</h3>
+                                <p style="font-size: 24px; font-weight: 800;">${artist.playcount}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="barcode-area">
+                            <div class="barcode">||| | || ||| || | || |</div>
+                            <p>ISSUE #01 • ${new Date().toLocaleDateString('it-IT').toUpperCase()}</p>
+                        </div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap');
+                    body { font-family: 'Inter', sans-serif; }
+                    .magazine-bg { position: absolute; top:0; left:0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: -2; filter: contrast(1.1) saturate(1.2); }
+                    .magazine-overlay { position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: -1; }
+                    .magazine-container { width: 100%; height: 100%; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+                    .magazine-title { font-family: 'Anton', sans-serif; font-size: 180px; margin: 0; color: #fff; text-align: center; letter-spacing: -2px; line-height: 0.8; text-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
+                    .headlines { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-bottom: 40px; }
+                    .headline-left { max-width: 400px; }
+                    .hl-tag { background: #ff3b30; color: #fff; padding: 5px 10px; font-weight: 900; font-size: 14px; letter-spacing: 2px; }
+                    .headline-left h2 { font-size: 65px; margin: 10px 0; font-weight: 900; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+                    .headline-left p { font-size: 20px; font-weight: 700; color: #ddd; }
+                    .headline-right { text-align: right; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+                    .headline-right h3 { font-size: 20px; color: #ff3b30; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
+                    .headline-right p { font-size: 26px; margin: 0 0 15px 0; font-weight: 700; }
+                    .headline-right hr { border-color: rgba(255,255,255,0.3); margin: 15px 0; }
+                    .barcode-area { display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #fff; padding-top: 15px; }
+                    .barcode { font-family: 'Courier New', Courier, monospace; font-size: 30px; letter-spacing: -2px; font-weight: 900; }
+                    .barcode-area p { font-size: 14px; font-weight: 700; letter-spacing: 1px; margin: 0; }
+                `);
+                caption = `📸 *Sulla copertina di questo mese c'è @${user}!*\nArtista in evidenza: ${artist.name}`;
+                break;
+            }
+            case 'ticket': {
+                const res = await apiCall('user.getrecenttracks', { user, limit: 1 });
+                const track = res.recenttracks?.track?.[0];
+                if (!track) throw new Error("Non hai nessun ascolto recente.");
+                
+                const artistName = track.artist['#text'];
+                const trackName = track.name;
+                const albumName = track.album['#text'] || 'Exclusive Tour';
+                const cover = await fetchCover(track.image, `${artistName} ${trackName}`);
+                
+                const date = new Date();
+                const dateStr = date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+                const timeStr = date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                const randomSeat = `SEC ${Math.floor(Math.random() * 9) + 1} • FILA ${String.fromCharCode(65 + Math.floor(Math.random() * 10))} • POSTO ${Math.floor(Math.random() * 50) + 1}`;
+
+                viewport = { w: 900, h: 400 };
+                html = getHtmlWrapper(`
+                    <div class="ticket-wrapper">
+                        <div class="ticket-main">
+                            <img src="${cover}" class="bg-blur">
+                            <div class="ticket-content">
+                                <p class="tour-name">${albumName} WORLD TOUR</p>
+                                <h1 class="artist">${artistName}</h1>
+                                <h2 class="song">🎵 ${trackName}</h2>
+                                <div class="details">
+                                    <div>
+                                        <p class="label">DATA</p>
+                                        <p class="val">${dateStr}</p>
+                                    </div>
+                                    <div>
+                                        <p class="label">ORA</p>
+                                        <p class="val">${timeStr}</p>
+                                    </div>
+                                    <div>
+                                        <p class="label">VIP GUEST</p>
+                                        <p class="val">@${user.toUpperCase()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ticket-stub">
+                            <div class="stub-content">
+                                <h3>${artistName.substring(0, 15)}</h3>
+                                <p class="seat">${randomSeat}</p>
+                                <div class="barcode-vertical"></div>
+                            </div>
+                        </div>
+                    </div>
+                `, `
+                    body { background: #111; }
+                    .ticket-wrapper { display: flex; width: 800px; height: 300px; background: #fff; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); overflow: hidden; color: #000; position: relative; }
+                    .ticket-main { flex: 1; position: relative; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+                    .bg-blur { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; z-index: 0; filter: grayscale(50%); }
+                    .ticket-content { position: relative; z-index: 1; }
+                    .tour-name { font-size: 14px; font-weight: 800; letter-spacing: 3px; color: #ff3b30; margin: 0 0 10px 0; }
+                    .artist { font-size: 55px; font-weight: 900; margin: 0; text-transform: uppercase; line-height: 1; letter-spacing: -1px; }
+                    .song { font-size: 22px; font-weight: 700; color: #444; margin: 10px 0 30px 0; }
+                    .details { display: flex; gap: 40px; }
+                    .label { font-size: 12px; color: #888; margin: 0 0 5px 0; font-weight: 700; letter-spacing: 1px; }
+                    .val { font-size: 18px; font-weight: 900; margin: 0; text-transform: uppercase; }
+                    .ticket-stub { width: 200px; background: #f4f4f4; border-left: 4px dashed #ccc; padding: 30px; position: relative; display: flex; align-items: center; justify-content: center; }
+                    .ticket-stub::before, .ticket-stub::after { content: ''; position: absolute; left: -20px; width: 40px; height: 40px; background: #111; border-radius: 50%; }
+                    .ticket-stub::before { top: -20px; }
+                    .ticket-stub::after { bottom: -20px; }
+                    .stub-content { text-align: center; transform: rotate(90deg); white-space: nowrap; width: 250px; }
+                    .stub-content h3 { font-size: 24px; margin: 0 0 5px 0; text-transform: uppercase; }
+                    .seat { font-size: 16px; font-weight: bold; color: #666; margin: 0 0 15px 0; }
+                    .barcode-vertical { height: 40px; width: 100%; background: repeating-linear-gradient(90deg, #000, #000 3px, transparent 3px, transparent 6px, #000 6px, #000 8px, transparent 8px, transparent 12px); }
+                `);
+                caption = `🎫 *Il tuo Pass VIP*\nIn riproduzione: ${trackName} di ${artistName}`;
+                break;
+            }
+            case 'identity': {
+                const userInfo = await apiCall('user.getinfo', { user });
+                if (userInfo.error) throw new Error("Impossibile recuperare i dati utente.");
+                const uData = userInfo.user;
+                
+                const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: 'overall' });
+                const topArtist = topArt.topartists?.artist?.[0];
+                const artistName = topArtist ? topArtist.name : 'Sconosciuto';
+                
+                let cover = DEFAULT_COVER;
+                if (topArtist) {
+                    const artistInfo = await apiCall('artist.getinfo', { artist: artistName, username: user });
+                    cover = await fetchCover(artistInfo.artist?.image, artistName, true);
+                }
+
+                const registeredYear = new Date(uData.registered.unixtime * 1000).getFullYear();
+                const totalPlays = parseInt(uData.playcount).toLocaleString();
+
+                viewport = { w: 700, h: 450 };
+                html = getHtmlWrapper(`
+                    <div class="id-card">
+                        <div class="id-header">
+                            <div class="logo">LAST.FM <span>ID</span></div>
+                            <div class="country">REPUBLIC OF MUSIC</div>
+                        </div>
+                        <div class="id-body">
+                            <div class="photo-area">
+                                <img src="${cover}" class="profile-pic">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/NFC_logo.svg/1200px-NFC_logo.svg.png" class="chip">
+                            </div>
+                            <div class="info-area">
+                                <div class="field">
+                                    <span class="label">USERNAME / NOME</span>
+                                    <span class="value">@${user.toUpperCase()}</span>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <span class="label">SCROBBLES TOTALI</span>
+                                        <span class="value">${totalPlays}</span>
+                                    </div>
+                                    <div class="field">
+                                        <span class="label">REGISTRATO DAL</span>
+                                        <span class="value">${registeredYear}</span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <span class="label">ARTISTA PRINCIPALE</span>
+                                    <span class="value" style="color: #0a84ff;">${artistName.toUpperCase()}</span>
+                                </div>
+                                <div class="mrz">P&lt;LFM${user.substring(0,10).toUpperCase()}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${totalPlays}M${registeredYear}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;02</div>
+                            </div>
+                        </div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+                    body { background: transparent; display: flex; justify-content: center; align-items: center; }
+                    .id-card { width: 600px; height: 380px; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.5); padding: 25px; box-sizing: border-box; color: #102a43; position: relative; overflow: hidden; }
+                    .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 20px); z-index: 0; pointer-events: none; opacity: 0.5; }
+                    .id-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #9fb3c8; padding-bottom: 10px; margin-bottom: 20px; position: relative; z-index: 1; }
+                    .logo { font-size: 24px; font-weight: 900; color: #d64541; letter-spacing: -1px; }
+                    .logo span { color: #102a43; font-weight: 400; }
+                    .country { font-size: 12px; font-weight: 700; letter-spacing: 2px; color: #486581; }
+                    .id-body { display: flex; gap: 25px; position: relative; z-index: 1; }
+                    .photo-area { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+                    .profile-pic { width: 140px; height: 180px; object-fit: cover; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); filter: contrast(1.1) grayscale(20%); border: 3px solid #fff; }
+                    .chip { width: 40px; opacity: 0.8; }
+                    .info-area { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+                    .field { display: flex; flex-direction: column; margin-bottom: 15px; }
+                    .field-row { display: flex; gap: 30px; }
+                    .label { font-size: 11px; color: #627d98; font-weight: 700; margin-bottom: 2px; }
+                    .value { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+                    .mrz { font-family: 'Share Tech Mono', monospace; font-size: 14px; letter-spacing: 2px; line-height: 1.5; color: #334e68; margin-top: auto; }
+                `);
+                caption = `🪪 *Carta d'Identità Musicale*\nRichiesta da: @${user}`;
+                break;
+            }
 
             case 'whosplaying': {
                 const users = Object.keys(db);
                 let playingUsers = [];
-                
+                let seenLastFmUsers = new Set();
                 const checkLimit = users.slice(0, 20); 
                 
                 for (let u of checkLimit) {
                     const lfUser = db[u];
+
+                    if (seenLastFmUsers.has(lfUser)) continue;
+                    seenLastFmUsers.add(lfUser);
+
                     try {
                         const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
                         const track = rt.recenttracks?.track?.[0];
+                        
                         if (track && track['@attr']?.nowplaying) {
-                            playingUsers.push({ wpId: u, lfId: lfUser, track: track.name, artist: track.artist['#text'], cover: track.image[2]['#text'] });
+                            playingUsers.push({ 
+                                wpId: u, 
+                                lfId: lfUser, 
+                                track: track.name, 
+                                artist: track.artist['#text'], 
+                                cover: track.image[2]['#text'] 
+                            });
                         }
                     } catch (e) { continue; }
                 }
@@ -373,7 +860,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 caption = `📻 *Radio di Gruppo*\nCi sono ${playingUsers.length} persone in ascolto adesso!`;
                 break;
             }
-
+            
             default:
                 return m.reply("Comando non riconosciuto nel visual hub.");
         }
@@ -389,8 +876,9 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     }
 };
 
-handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
-handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
+handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
+handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
 handler.group = true; 
+handler.register = true;
 
 export default handler;
