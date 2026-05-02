@@ -1,6 +1,6 @@
-
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
+import path from 'path';
 
 const DB_FILE = path.join(process.cwd(), 'storage', 'file-json', 'databaseTop.json');
 
