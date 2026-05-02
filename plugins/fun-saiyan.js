@@ -40,12 +40,12 @@ let handler = async (m, { conn }) => {
     let { key } = await conn.sendMessage(
       m.chat,
       {
-        text: `⏳ *TRASFORMAZIONE IN CORSO...*\n\n${progressBar(percent)} ${percent}%`
+        text: `⏳ *𝐓𝐑𝐀𝐒𝐅𝐎𝐑𝐌𝐀𝐙𝐈𝐎𝐍𝐄 𝐈𝐍 𝐂𝐎𝐑𝐒𝐎...*\n\n${progressBar(percent)} ${percent}%`
       },
       { quoted: m }
     );
 
-    const steps = [30, 50, 70, 100];
+    const steps = [𝟑𝟎, 𝟓𝟎, 𝟕𝟎, 𝟏𝟎𝟎];
 
     for (const p of steps) {
       await wait(800);
@@ -54,7 +54,7 @@ let handler = async (m, { conn }) => {
       await conn.sendMessage(
         m.chat,
         {
-          text: `⏳ *TRASFORMAZIONE IN CORSO...*\n\n${progressBar(percent)} ${percent}%`,
+          text: `⏳ *𝐓𝐑𝐀𝐒𝐅𝐎𝐑𝐌𝐀𝐙𝐈𝐎𝐍𝐄 𝐈𝐍 𝐂𝐎𝐑𝐒𝐎...*\n\n${progressBar(percent)} ${percent}%`,
           edit: key,
           mentions
         },
@@ -97,17 +97,17 @@ let handler = async (m, { conn }) => {
     if (!fs.existsSync(videoPath)) {
       await conn.sendMessage(
         m.chat,
-        { text: `⚠️ Video non trovato: ${videoFile}`, edit: key, mentions },
+        { text: `⚠️ 𝐕𝐢𝐝𝐞𝐨 𝐧𝐨𝐧 𝐭𝐫𝐨𝐯𝐚𝐭𝐨: ${videoFile}`, edit: key, mentions },
         { quoted: m }
       );
       return;
     }
 
-    const finalMsg = `*✔️ TRASFORMAZIONE COMPLETATA*  
+    const finalMsg = `*✔️ 𝐓𝐑𝐀𝐒𝐅𝐎𝐑𝐌𝐀𝐙𝐈𝐎𝐍𝐄 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐀𝐓𝐀*  
 ━━━━━━━━━━━━━━━━━━━━━  
-👤 *Persona:* @${userId}  
-🪐 *Trasformazione:* ${chosen}  
-🕒 *Tempo:* ${timeTaken}s  
+👤 *𝐏𝐞𝐫𝐬𝐨𝐧𝐚:* @${userId}  
+🪐 *𝐓𝐫𝐚𝐬𝐟𝐨𝐫𝐦𝐚𝐳𝐢𝐨𝐧𝐞:* ${chosen}  
+🕒 *𝐓𝐞𝐦𝐩𝐨:* ${timeTaken}s  
 ━━━━━━━━━━━━━━━━━━━━━`;
 
     await conn.sendMessage(
@@ -123,13 +123,11 @@ let handler = async (m, { conn }) => {
 
   } catch (err) {
     console.error('Errore nel comando:', err);
-    await m.reply('⚠️ Errore durante l\'invio della trasformazione.');
+    await m.reply('⚠️ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐝𝐮𝐫𝐚𝐧𝐭𝐞 𝐥\'𝐢𝐧𝐯𝐢𝐨 𝐝𝐞𝐥𝐥𝐚 𝐭𝐫𝐚𝐬𝐟𝐨𝐫𝐦𝐚𝐳𝐢𝐨𝐧𝐞.');
   }
 };
 
 handler.command = /^(saiyan)$/i;
-handler.group = false;
-handler.admin = false;
-handler.botAdmin = false;
+handler.group = true;
 
 export default handler;
