@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
@@ -50,54 +51,30 @@ let handler = async (m, { conn, command, args }) => {
 
   if (command === 'brawl') {
 
-    let target = m.mentionedJid?.[0] || m.quoted?.sender
+    let target = m.sender
 
-    if (!target && args?.length) {
-      const text = args.join(' ').trim()
-
-      if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
-        target = text
-      } else {
-        const number = text.replace(/[^0-9]/g, '')
-
-        if (number.length >= 8 && number.length <= 15) {
-          target = number + '@s.whatsapp.net'
-        }
-      }
+    if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
+      target = m.mentionedJid[0]
+    } else if (m.quoted?.sender) {
+      target = m.quoted.sender
     }
 
-    if (!target) target = m.sender
+    let tag = args[0]
 
-    const db = loadDB()
-
-    let realTarget = target
-    if (!db[realTarget]) realTarget = m.sender
-
-    const userData = db[realTarget] || {}
-
-    let input = args.join(' ').trim()
-    let tag = null
-
-    if (!input) {
-      tag = userData.tag
-    } else {
-      input = input.replace(/\s/g, '')
-
-      if (/^\d+$/.test(input)) {
-        tag = `#${input}`
-      } else {
-        tag = input.toUpperCase()
-        if (!tag.startsWith('#')) tag = '#' + tag
-      }
+    if (!tag) {
+      tag = db[target]?.tag
     }
 
-    if (!tag || typeof tag !== 'string' || !tag.startsWith('#')) {
+    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
       return await conn.reply(
         m.chat,
-        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG o inserisci un tag valido',
+        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
         m
       )
     }
+
+    tag = String(tag).toUpperCase().replace(/[^A-Z0-9#]/g, '')
+    if (!tag.startsWith('#')) tag = '#' + tag
 
     const encodedTag = encodeURIComponent(tag)
 
@@ -166,5 +143,6 @@ ${header}
 handler.help = ['setbrawl <tag>', 'brawl [tag]']
 handler.tags = ['info']
 handler.command = /^(setbrawl|brawl)$/i
+handler.group = true
 
 export default handler
