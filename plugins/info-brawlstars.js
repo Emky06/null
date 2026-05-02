@@ -20,7 +20,17 @@ let handler = async (m, { conn, command, args }) => {
     if (!args[0]) return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche', m);
 
     let tag = args[0].toUpperCase();
-    if (!tag.startsWith('#')) tag = '#' + tag;
+    if (!tag) {
+  return conn.reply(
+    m.chat,
+    '❗ Questo utente non ha un tag salvato.\nUsa .setbrawl #TAG',
+    m
+  );
+}
+
+tag = tag.toString().toUpperCase().replace(/[^A-Z0-9#]/g, '');
+
+if (!tag.startsWith('#')) tag = '#' + tag;
 
     const db = loadDB();
 
@@ -40,10 +50,10 @@ db[m.sender].tag = tag;
   if (command && command.toLowerCase() === 'brawl') {
     const db = loadDB();
 
-    let target = m.sender;
-
-    if (m.quoted && m.quoted.sender) target = m.quoted.sender;
-    if (m.mentionedJid && m.mentionedJid[0]) target = m.mentionedJid[0];
+    let target =
+  m.mentionedJid?.[0] ||
+  m.quoted?.sender ||
+  m.sender;
 
     let tag = args[0];
 
