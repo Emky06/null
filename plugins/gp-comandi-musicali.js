@@ -81,7 +81,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         switch (command) {
             case 'comuni': {
                 if (!m.mentionedJid || m.mentionedJid.length === 0) return m.reply(`❌ Uso: *${usedPrefix}comuni @utente*`);
-                
+
                 const user2Jid = m.mentionedJid[0];
                 const user2 = db[user2Jid];
                 if (!user2) return m.reply("⚠️ L'utente taggato non ha registrato il suo account Last.fm nel bot.");
@@ -127,7 +127,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'crown': {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: 'overall' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Nessun artista trovato nelle tue statistiche.");
-                
+
                 const topArtistName = topArt.topartists.artist[0].name;
                 const playcount = parseInt(topArt.topartists.artist[0].playcount) || 0;
 
@@ -136,9 +136,9 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
                 const artistData = artistInfo.artist;
                 const isGold = playcount >= 1000;
-                
+
                 const cover = await fetchCover(artistData.image, artistData.name, true);
-                
+
                 html = getHtmlWrapper(`
                     <div class="background-blur" style="background-image: url('${cover}')"></div>
                     <div class="color-overlay"></div>
@@ -167,7 +167,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'aura': {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 10, period: '1month' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore recupero artisti.");
-                
+
                 const colors = ['#8A2BE2', '#FF4500', '#1E90FF', '#FF1493', '#00FA9A'];
                 let tagsStr = `<div style="z-index: 10; text-align: center;">
                     <h2 style="font-size: 24px; opacity:0.9; letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">La tua Aura Musicale</h2>
@@ -191,132 +191,61 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
             case 'vs': {
                 if (!m.mentionedJid || m.mentionedJid.length === 0) return m.reply(`❌ Uso: *${usedPrefix}vs @utente <artista>*`);
-                
+
                 const user2Jid = m.mentionedJid[0];
                 const user2 = db[user2Jid];
                 if (!user2) return m.reply("⚠️ L'utente taggato non ha registrato il suo account Last.fm nel bot.");
-                
+
                 const artistName = text.replace(/@\d+/g, '').trim();
-                if (!artistName) return m.reply(`❌ Devi specificare un artista! Esempio: *${usedPrefix}vs @utente The Weeknd*`);
+                if (!artistName) return m.reply(`❌ Devi specificare un artista!`);
 
                 const info1 = await apiCall('artist.getinfo', { artist: artistName, username: user });
                 const info2 = await apiCall('artist.getinfo', { artist: artistName, username: user2 });
-                if (info1.error || info2.error) throw new Error("Errore API. Sicuro che l'artista esista su Last.fm?");
 
                 const score1 = parseInt(info1.artist?.stats?.userplaycount) || 0;
                 const score2 = parseInt(info2.artist?.stats?.userplaycount) || 0;
+
                 const total = score1 + score2 || 1;
                 const w1 = (score1 / total) * 100;
                 const w2 = (score2 / total) * 100;
+
                 const cover = await fetchCover(info1.artist?.image, info1.artist?.name, true);
 
                 html = getHtmlWrapper(`
-                    <div class="battle-title">BATTLE: ${info1.artist.name}</div>
-                    <div class="side left" style="width: ${w1}%">
-                        <img src="${cover}" class="bg-img">
-                        <div class="overlay"></div>
-                        <div class="content">
-                            <h2 style="font-size: 35px; color: #fff; margin-bottom: 5px;">@${user}</h2>
-                            <p class="score">${score1}</p>
-                        </div>
-                    </div>
-                    <div class="side right" style="width: ${w2}%">
-                        <img src="${cover}" class="bg-img">
-                        <div class="overlay"></div>
-                        <div class="content">
-                            <h2 style="font-size: 35px; color: #fff; margin-bottom: 5px;">@${user2}</h2>
-                            <p class="score">${score2}</p>
-                        </div>
-                    </div>
+                    <div class="battle-title">${info1.artist.name}</div>
+                    <div class="side left" style="width:${w1}%"></div>
+                    <div class="side right" style="width:${w2}%"></div>
                     <div class="vs-badge">VS</div>
                 `, `
-                    .battle-title { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); font-size: 45px; font-weight: 800; z-index: 30; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.2); }
-                    .side { height: 100%; position: relative; display: flex; flex-direction: column; justify-content: center; overflow: hidden; transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-                    
-                    /* Gradienti dinamici e ombre interne */
-                    .left { background: linear-gradient(135deg, rgba(0, 30, 100, 0.95), rgba(0, 180, 255, 0.85)); align-items: flex-start; padding-left: 60px; border-right: 6px solid rgba(255,255,255,0.9); box-shadow: inset -30px 0 60px rgba(0,0,0,0.6); }
-                    .right { background: linear-gradient(135deg, rgba(130, 0, 0, 0.95), rgba(255, 70, 0, 0.85)); align-items: flex-end; padding-right: 60px; box-shadow: inset 30px 0 60px rgba(0,0,0,0.6); }
-                    
-                    .bg-img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; mix-blend-mode: overlay; filter: grayscale(50%); }
-                    .content { z-index: 10; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
-                    .score { font-size: 90px; font-weight: 800; margin: 0; line-height: 1; text-shadow: 0 5px 25px rgba(0,0,0,0.7); }
-                    
-                    /* Badge VS super hype */
-                    .vs-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; font-style: italic; font-weight: 800; box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 -5px 15px rgba(0,0,0,0.2); z-index: 20; border: 4px solid #111; }
+                    body { background:#000; }
                 `);
-                caption = `⚔️ *ARTIST BATTLE*\n${user} [${score1}] VS ${user2} [${score2}]\nArtista: ${info1.artist.name}`;
+
+                caption = `⚔️ ${user} VS ${user2}`;
                 break;
             }
 
             case 'mosaic': {
-                viewport = { w: 900, h: 900 }; 
+                viewport = { w: 900, h: 900 };
                 const albums = await apiCall('user.gettopalbums', { user, limit: 9, period: '1month' });
-                if (albums.error) throw new Error("Errore recupero album.");
-                
                 const top9 = albums.topalbums.album.slice(0, 9);
-                let gridHtml = '';
-                let listText = `🧩 *Music Mosaic (Top 9 del Mese)*\nUtente: @${user}\n\n`;
 
-                for (let i = 0; i < top9.length; i++) {
-                    const al = top9[i];
+                let gridHtml = '';
+                for (let al of top9) {
                     const cover = await fetchCover(al.image, `${al.artist.name} ${al.name}`);
-                    gridHtml += `<div class="album" style="background-image: url('${cover}')"></div>`;
-                    listText += `${i + 1}. ${al.artist.name} - ${al.name}\n`;
+                    gridHtml += `<div style="background-image:url('${cover}')"></div>`;
                 }
 
-                html = getHtmlWrapper(`
-                    <div class="mesh-bg"></div>
-                    <div class="grid">${gridHtml}</div>
-                    <div class="watermark">@${user} - Top 9 Mese</div>
-                `, `
-                    .mesh-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(at 20% 20%, rgba(40,40,40,1) 0px, transparent 50%), radial-gradient(at 80% 80%, rgba(20,20,20,1) 0px, transparent 50%); background-color: #050505; z-index: -1; }
-                    .grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 840px; height: 840px; gap: 15px; padding: 30px; box-sizing: border-box; }
-                    .album { background-size: cover; background-position: center; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); transition: transform 0.3s; }
-                    .watermark { position: absolute; bottom: 35px; right: 35px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); padding: 12px 25px; border-radius: 25px; font-weight: 800; font-size: 18px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
-                `);
-                caption = listText.trim();
+                html = getHtmlWrapper(`<div>${gridHtml}</div>`, ``);
+                caption = `🎧 Mosaic`;
                 break;
             }
 
             case 'goal': {
                 const info = await apiCall('user.getinfo', { user });
-                if (info.error) throw new Error("Impossibile recuperare info utente.");
-                
                 const total = parseInt(info.user.playcount);
-                const milestone = Math.ceil((total + 1) / 10000) * 10000;
-                const remaining = milestone - total;
-                const percentage = ((total % 10000) / 10000) * 100;
 
-                const topArtRes = await apiCall('user.gettopartists', { user, limit: 1, period: 'overall' });
-                let bgCover = DEFAULT_COVER;
-                if (!topArtRes.error && topArtRes.topartists?.artist?.length > 0) {
-                    bgCover = await fetchCover(topArtRes.topartists.artist[0].image, topArtRes.topartists.artist[0].name, true);
-                }
-
-                html = getHtmlWrapper(`
-                    <div class="background-blur" style="background-image: url('${bgCover}')"></div>
-                    <div class="color-overlay"></div>
-                    <div class="card glass">
-                        <h2 style="font-size: 24px; color: rgba(255,255,255,0.7); margin-top:0; letter-spacing: 2px;">MILESTONE TRACKER</h2>
-                        <h1 style="font-size: 48px; margin: 10px 0;">Mancano <span style="color:#0a84ff">${remaining.toLocaleString()}</span> ascolti</h1>
-                        <p style="font-size: 20px; margin-bottom: 40px; color: rgba(255,255,255,0.9);">al traguardo dei ${milestone.toLocaleString()} scrobble totali!</p>
-                        
-                        <div class="progress-bg">
-                            <div class="progress-bar" style="width: ${percentage}%"></div>
-                        </div>
-                        <div style="display:flex; justify-content: space-between; margin-top:15px; font-weight: 600; font-size: 18px; color: rgba(255,255,255,0.6);">
-                            <span>${(milestone - 10000).toLocaleString()}</span>
-                            <span>${milestone.toLocaleString()}</span>
-                        </div>
-                    </div>
-                `, `
-                    .background-blur { position: absolute; top: -50px; left: -50px; right: -50px; bottom: -50px; background-size: cover; background-position: center; filter: blur(40px) brightness(0.5); z-index: -2; }
-                    .color-overlay { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at top right, rgba(10,132,255,0.3), transparent 50%), radial-gradient(circle at bottom left, rgba(255,59,48,0.2), transparent 50%); z-index: -1; }
-                    .card { width: 800px; padding: 50px; border-radius: 30px; text-align: center; background: rgba(0, 0, 0, 0.4); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-                    .progress-bg { width: 100%; height: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-                    .progress-bar { height: 100%; background: linear-gradient(90deg, #0a84ff, #00d2ff); border-radius: 15px; box-shadow: 0 0 20px rgba(10,132,255,0.5); }
-                `);
-                caption = `📅 *Traguardo in avvicinamento per @${user}*`;
+                html = getHtmlWrapper(`<div>${total}</div>`, ``);
+                caption = `Goal`;
                 break;
             }
 
@@ -344,7 +273,7 @@ for (let u of groupUsers) {
             });
         }
     } catch (e) {
-   
+
 }
 }
                     try {
@@ -370,46 +299,26 @@ for (let u of groupUsers) {
                     </div>
                 `).join('');
 
-                html = getHtmlWrapper(`
-                    <div class="mesh-bg"></div>
-                    <div class="container">
-                        <h1 style="text-align:center; font-size: 45px; margin-bottom: 40px; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">📻 In Onda Ora</h1>
-                        <div class="grid">${cardsHtml}</div>
-                    </div>
-                `, `
-                    .mesh-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(at 10% 10%, rgba(30, 20, 80, 0.7) 0px, transparent 50%), radial-gradient(at 90% 90%, rgba(80, 20, 40, 0.7) 0px, transparent 50%); background-color: #0a0a0a; z-index: -1; }
-                    .container { width: 900px; height: auto; min-height: 550px; padding: 40px; box-sizing: border-box; }
-                    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
-                    .user-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
-                    .user-card img { width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-                    .meta { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-                    .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-                    .track-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                    .artist-name { font-size: 15px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                    .live-dot { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; background: #ff3b30; border-radius: 50%; box-shadow: 0 0 12px #ff3b30; animation: pulse 1.5s infinite; }
-                    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-                `);
-                caption = `📻 *Radio di Gruppo*\nCi sono ${playingUsers.length} persone in ascolto adesso!`;
+                html = getHtmlWrapper(`<div>${cardsHtml}</div>`, ``);
+                caption = `Radio`;
                 break;
             }
 
             default:
-                return m.reply("Comando non riconosciuto nel visual hub.");
+                return m.reply("Comando non riconosciuto.");
         }
 
         const buffer = await retryScreenshot(html, viewport.w, viewport.h);
-        await conn.sendMessage(m.chat, { image: buffer, caption: caption, footer: '𝐯𝐚𝐫𝐞 ✧ 𝐛𝐨𝐭' }, { quoted: m });
+        await conn.sendMessage(m.chat, { image: buffer, caption }, { quoted: m });
 
     } catch (e) {
         console.error(e);
-        m.reply(`❌ Si è verificato un errore: ${e.message}`);
-    } finally {
-        await conn.sendPresenceUpdate('paused', m.chat);
+        m.reply(`❌ Errore: ${e.message}`);
     }
 };
 
-handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
-handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni'];
-handler.group = true; 
+handler.help = ['crown','aura','vs','mosaic','goal','whosplaying','comuni'];
+handler.command = ['crown','aura','vs','mosaic','goal','whosplaying','comuni'];
+handler.group = true;
 
 export default handler;
