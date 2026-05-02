@@ -453,10 +453,21 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'leaderboard': {
+    console.log("🔍 [DEBUG] Inizio leaderboard");
     const groupMembers = await getGroupMembers(conn, m.chat);
-    const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid.split(':')[0].split('@')[0] + '@s.whatsapp.net'));
+    console.log("📋 Membri del gruppo:", groupMembers);
     
-    if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}`);
+    const validJids = Object.keys(db).filter(jid => {
+        const normalizedDbJid = jid.split(':')[0].split('@')[0] + '@s.whatsapp.net';
+        const isValid = groupMembers.includes(normalizedDbJid);
+        if (isValid) console.log("✅ Trovato match:", normalizedDbJid, "->", db[jid]);
+        return isValid;
+    });
+    
+    console.log("📊 Utenti validi trovati:", validJids.length);
+    console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
+    
+    if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}\n\n📌 Utenti nel db: ${Object.keys(db).length}\n📌 Membri nel gruppo: ${groupMembers.length}\n📌 Match trovati: ${validJids.length}`);
 
     await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
 
@@ -808,8 +819,19 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'whosplaying': {
+    console.log("🔍 [DEBUG] Inizio whosplaying");
     const groupMembers = await getGroupMembers(conn, m.chat);
-    const users = Object.keys(db).filter(jid => groupMembers.includes(jid.split(':')[0].split('@')[0] + '@s.whatsapp.net'));
+    console.log("📋 Membri del gruppo:", groupMembers);
+    
+    const users = Object.keys(db).filter(jid => {
+        const normalizedDbJid = jid.split(':')[0].split('@')[0] + '@s.whatsapp.net';
+        const isValid = groupMembers.includes(normalizedDbJid);
+        if (isValid) console.log("✅ Utente valido:", normalizedDbJid, "->", db[jid]);
+        return isValid;
+    });
+    
+    console.log("📊 Utenti nel gruppo con Last.fm:", users.length);
+    console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
     
     let playingUsers = [];
     let seenLastFmUsers = new Set();
@@ -817,13 +839,15 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
     for (let u of checkLimit) {
         const lfUser = db[u];
-
+        console.log(`🔎 Controllo utente: ${lfUser} (${u})`);
+        
         if (seenLastFmUsers.has(lfUser)) continue;
         seenLastFmUsers.add(lfUser);
 
         try {
             const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
             const track = rt.recenttracks?.track?.[0];
+            console.log(`📡 Risposta API per ${lfUser}:`, track ? (track['@attr']?.nowplaying ? "IN ASCOLTO" : "NON in ascolto") : "nessun track");
 
             if (track && track['@attr']?.nowplaying) {
                 playingUsers.push({ 
@@ -833,11 +857,17 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                     artist: track.artist['#text'], 
                     cover: track.image[2]['#text'] 
                 });
+                console.log(`🎵 Trovato in ascolto: ${lfUser} -> ${track.name}`);
             }
-        } catch (e) { continue; }
+        } catch (e) { 
+            console.error(`❌ Errore per ${lfUser}:`, e.message);
+            continue; 
+        }
     }
 
-    if (playingUsers.length === 0) return m.reply("📻 Nessuno sta ascoltando musica in questo momento.");
+    console.log(`📻 Totale in ascolto: ${playingUsers.length}`);
+    
+    if (playingUsers.length === 0) return m.reply(`📻 Nessuno sta ascoltando musica in questo momento.\n\n[DEBUG] Utenti controllati: ${users.length}\nUtenti registrati nel gruppo: ${users.join(', ')}`);
 
     let cardsHtml = playingUsers.map(pu => `
         <div class="user-card glass">
