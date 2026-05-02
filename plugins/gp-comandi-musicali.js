@@ -70,7 +70,14 @@ const getHtmlWrapper = (bodyContent, customCss = "") => `
 async function getGroupMembers(conn, groupJid) {
     try {
         const groupMetadata = await conn.groupMetadata(groupJid);
-        return groupMetadata.participants.map(p => p.id).filter(Boolean);
+        return groupMetadata.participants.map(p => {
+            // Prendi l'id originale (che può essere JID o LID)
+            const rawId = p.id || p.lid;
+            // Pulisci il suffisso (togli @lid, :0, :1, ecc)
+            let cleanId = rawId.split(':')[0].split('@')[0];
+            // Aggiungi @s.whatsapp.net per uniformare
+            return cleanId + '@s.whatsapp.net';
+        });
     } catch (e) {
         console.error("Errore nel recupero membri del gruppo:", e);
         return [];
@@ -457,8 +464,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     const groupMembers = await getGroupMembers(conn, m.chat);
     console.log("📋 Membri del gruppo:", groupMembers);
     
-    const validJids = Object.keys(db).filter(jid => {
-        const normalizedDbJid = jid.split(':')[0].split('@')[0] + '@s.whatsapp.net';
+    const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
         const isValid = groupMembers.includes(normalizedDbJid);
         if (isValid) console.log("✅ Trovato match:", normalizedDbJid, "->", db[jid]);
         return isValid;
@@ -824,11 +830,10 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     console.log("📋 Membri del gruppo:", groupMembers);
     
     const users = Object.keys(db).filter(jid => {
-        const normalizedDbJid = jid.split(':')[0].split('@')[0] + '@s.whatsapp.net';
-        const isValid = groupMembers.includes(normalizedDbJid);
-        if (isValid) console.log("✅ Utente valido:", normalizedDbJid, "->", db[jid]);
-        return isValid;
-    });
+    const isValid = groupMembers.includes(jid);
+    if (isValid) console.log("✅ Utente valido:", jid, "->", db[jid]);
+    return isValid;
+});
     
     console.log("📊 Utenti nel gruppo con Last.fm:", users.length);
     console.log("💾 Database completo:", Object.keys(db).map(j => ({ jid: j, user: db[j] })));
