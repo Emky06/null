@@ -2,7 +2,7 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
-const DB_FILE = './databaseTop.json';
+const DB_FILE = path.join(process.cwd(), 'storage', 'file-json', 'databaseTop.json');
 
 function loadDB() {
   if (fs.existsSync(DB_FILE)) {
