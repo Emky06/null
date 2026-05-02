@@ -21,6 +21,32 @@ function saveDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2))
 }
 
+function extractTarget(m, args) {
+  let target = m.sender
+
+  if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
+    target = m.mentionedJid[0]
+  } else if (m.quoted?.sender) {
+    target = m.quoted.sender
+  } else if (args?.length) {
+    const num = args.join(' ').replace(/[^0-9]/g, '')
+    if (num) target = num + '@s.whatsapp.net'
+  }
+
+  return target
+}
+
+function formatTag(input) {
+  if (!input) return null
+
+  input = String(input).trim().toUpperCase().replace(/\s/g, '')
+
+  if (/^\d+$/.test(input)) return `#${input}`
+  if (!input.startsWith('#')) return `#${input}`
+
+  return input
+}
+
 let handler = async (m, { conn, command, args }) => {
   const db = loadDB()
 
@@ -33,8 +59,7 @@ let handler = async (m, { conn, command, args }) => {
       )
     }
 
-    let tag = args[0].toUpperCase()
-    if (!tag.startsWith('#')) tag = '#' + tag
+    let tag = formatTag(args[0])
 
     if (!db[m.sender]) db[m.sender] = {}
     db[m.sender].tag = tag
@@ -50,30 +75,27 @@ let handler = async (m, { conn, command, args }) => {
 
   if (command === 'brawl') {
 
-    let target = m.sender
+    const target = extractTarget(m, args)
+    const db = loadDB()
 
-    if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
-      target = m.mentionedJid[0]
-    } else if (m.quoted?.sender) {
-      target = m.quoted.sender
-    }
+    let input = args.join(' ').trim()
 
-    let tag = args[0]
+    let tag = null
 
-    if (!tag) {
+    if (!input) {
       tag = db[target]?.tag
+    } else {
+      input = input.replace(/\s/g, '')
+      tag = formatTag(input)
     }
 
-    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
+    if (!tag || typeof tag !== 'string' || !tag.startsWith('#')) {
       return await conn.reply(
         m.chat,
-        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
+        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG o inserisci un tag valido',
         m
       )
     }
-
-    tag = String(tag).toUpperCase().replace(/[^A-Z0-9#]/g, '')
-    if (!tag.startsWith('#')) tag = '#' + tag
 
     const encodedTag = encodeURIComponent(tag)
 
