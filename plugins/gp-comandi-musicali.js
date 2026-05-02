@@ -282,7 +282,9 @@ for (let u of groupUsers) {
                         if (track && track['@attr']?.nowplaying) {
                             playingUsers.push({ wpId: u, lfId: lfUser, track: track.name, artist: track.artist['#text'], cover: track.image[2]['#text'] });
                         }
-                    } catch (e) { continue; }
+                    } catch (e) {
+    
+}
                 }
 
                 if (playingUsers.length === 0) return m.reply("📻 Nessuno sta ascoltando musica in questo momento.");
