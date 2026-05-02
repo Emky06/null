@@ -98,6 +98,7 @@ let handler = async (m, { conn, text }) => {
         video: { url: videoPath },
         caption: `👤 Trasformazione di @${userId} in ${chosen}`,
         mentions,
+        gifPlayback: true
       },
       { quoted: m }
     );
