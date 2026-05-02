@@ -29,7 +29,8 @@ function extractTarget(m, args) {
   } else if (m.quoted?.sender) {
     target = m.quoted.sender
   } else if (args?.length) {
-    const num = args.join(' ').replace(/[^0-9]/g, '')
+    const raw = args.join(' ')
+    const num = raw.replace(/[^0-9]/g, '')
     if (num) target = num + '@s.whatsapp.net'
   }
 
@@ -74,9 +75,9 @@ let handler = async (m, { conn, command, args }) => {
   }
 
   if (command === 'brawl') {
+    const db = loadDB()
 
     const target = extractTarget(m, args)
-    const db = loadDB()
 
     let input = args.join(' ').trim()
 
@@ -89,10 +90,18 @@ let handler = async (m, { conn, command, args }) => {
       tag = formatTag(input)
     }
 
-    if (!tag || typeof tag !== 'string' || !tag.startsWith('#')) {
+    if (!tag || typeof tag !== 'string') {
       return await conn.reply(
         m.chat,
         '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG o inserisci un tag valido',
+        m
+      )
+    }
+
+    if (!tag.startsWith('#')) {
+      return await conn.reply(
+        m.chat,
+        '❗ Tag non valido.\nUsa .setbrawl #TAG',
         m
       )
     }
