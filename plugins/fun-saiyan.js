@@ -13,6 +13,13 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function progressBar(percent) {
+  const total = 10;
+  const filled = Math.floor((percent / 100) * total);
+  const empty = total - filled;
+  return '█'.repeat(filled) + '░'.repeat(empty);
+}
+
 let handler = async (m, { conn }) => {
   try {
     let mention;
@@ -28,20 +35,26 @@ let handler = async (m, { conn }) => {
     const mentions = [mention];
     const userId = mention.split('@')[0];
 
+    let percent = 0;
+
     let { key } = await conn.sendMessage(
       m.chat,
-      { text: '⏳ *Inizio processo di TRASFORMAZIONE...*\n🔍 *Progresso:* 0%' },
+      {
+        text: `⏳ *TRASFORMAZIONE IN CORSO...*\n\n${progressBar(percent)} ${percent}%`
+      },
       { quoted: m }
     );
 
-    const progresses = ['30%', '50%', '70%', '100%'];
+    const steps = [30, 50, 70, 100];
 
-    for (const p of progresses) {
+    for (const p of steps) {
       await wait(800);
+      percent = p;
+
       await conn.sendMessage(
         m.chat,
         {
-          text: `⏳ *Inizio processo di TRASFORMAZIONE...*\n🔍 *Progresso:* ${p}`,
+          text: `⏳ *TRASFORMAZIONE IN CORSO...*\n\n${progressBar(percent)} ${percent}%`,
           edit: key,
           mentions
         },
@@ -90,27 +103,18 @@ let handler = async (m, { conn }) => {
       return;
     }
 
-    const finalMsg = `*✔️ TRASFORMAZIONE COMPLETATA CON SUCCESSO*  
+    const finalMsg = `*✔️ TRASFORMAZIONE COMPLETATA*  
 ━━━━━━━━━━━━━━━━━━━━━  
 👤 *Persona:* @${userId}  
 🪐 *Trasformazione:* ${chosen}  
-🕒 *Tempo di esecuzione:* ${timeTaken} secondi  
-━━━━━━━━━━━━━━━━━━━━━  
-╔═══════════════════╗  
-║       ☄️𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕☄️      ║  
-╚═══════════════════╝`;
-
-    await conn.sendMessage(
-      m.chat,
-      { text: finalMsg, edit: key, mentions },
-      { quoted: m }
-    );
+🕒 *Tempo:* ${timeTaken}s  
+━━━━━━━━━━━━━━━━━━━━━`;
 
     await conn.sendMessage(
       m.chat,
       {
         video: { url: videoPath },
-        caption: `👤 Trasformazione di @${userId} in ${chosen}`,
+        caption: finalMsg,
         mentions,
         gifPlayback: true
       },
@@ -124,6 +128,8 @@ let handler = async (m, { conn }) => {
 };
 
 handler.command = /^(saiyan)$/i;
-handler.group = true;
+handler.group = false;
+handler.admin = false;
+handler.botAdmin = false;
 
 export default handler;
