@@ -3,7 +3,6 @@ import fs from 'fs';
 
 const DB_PATH = './storage/file-json/tag-brawlstars.json';
 
-// 🔹 leggi database JSON
 function loadDB() {
   if (!fs.existsSync(DB_PATH)) return {};
   return JSON.parse(fs.readFileSync(DB_PATH));
@@ -15,16 +14,19 @@ let handler = async (m, { conn }) => {
   let db = loadDB();
   let ranking = [];
 
+  if (!db[chatId]) db[chatId] = {};
+  let groupData = db[chatId];
+
   let groupMetadata = await conn.groupMetadata(chatId);
   let participants = groupMetadata.participants.map(p => p.id);
 
   for (let jid of participants) {
-    let user = db[jid];
+    let user = groupData[jid];
     if (!user || !user.tag) continue;
 
     try {
       const res = await axios.get(
-        `https://api.brawlstars.com/v1/players/%23${user.tag.replace('#', '')}`,
+        `https://api.brawlstars.com/v1/players/${encodeURIComponent(user.tag)}`,
         {
           headers: {
             Authorization: `Bearer TUO_TOKEN`
@@ -47,7 +49,6 @@ let handler = async (m, { conn }) => {
       });
 
       await new Promise(r => setTimeout(r, 200));
-
     } catch (e) {
       console.log('Errore con:', jid);
     }
