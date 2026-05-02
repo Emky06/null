@@ -70,21 +70,7 @@ const getHtmlWrapper = (bodyContent, customCss = "") => `
 async function getGroupMembers(conn, groupJid) {
     try {
         const groupMetadata = await conn.groupMetadata(groupJid);
-        return groupMetadata.participants.map(p => {
-            // Se ha lid, lo convertiamo in jid standard
-            if (p.lid) {
-                // Il lid di solito è formato da numeri, lo convertiamo in jid
-                const numbers = p.lid.match(/\d+/g);
-                if (numbers) {
-                    return numbers.join('') + '@s.whatsapp.net';
-                }
-            }
-            // Se ha id diretto
-            if (p.id) {
-                return p.id.split(':')[0].split('@')[0] + '@s.whatsapp.net';
-            }
-            return null;
-        }).filter(Boolean);
+        return groupMetadata.participants.map(p => p.id).filter(Boolean);
     } catch (e) {
         console.error("Errore nel recupero membri del gruppo:", e);
         return [];
