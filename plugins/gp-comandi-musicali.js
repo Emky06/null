@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const databasePath = path.join(__dirname, 'storage', 'file-json', 'lastfm_users.json');
+const databasePath = path.join(process.cwd(), 'storage', 'file-json', 'lastfm_users.json');
 const getDB = () => fs.existsSync(databasePath) ? JSON.parse(fs.readFileSync(databasePath, 'utf-8')) : {};
 
 const LASTFM_API_KEY = 'fa91d71e5ea7dbcda31875481d02596f';
