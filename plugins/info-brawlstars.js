@@ -69,7 +69,11 @@ let handler = async (m, { conn, command, args }) => {
     if (!target) target = m.sender
 
     const db = loadDB()
-    const userData = db[target] || {}
+
+    let realTarget = target
+    if (!db[realTarget]) realTarget = m.sender
+
+    const userData = db[realTarget] || {}
 
     let input = args.join(' ').trim()
     let tag = null
@@ -78,6 +82,7 @@ let handler = async (m, { conn, command, args }) => {
       tag = userData.tag
     } else {
       input = input.replace(/\s/g, '')
+
       if (/^\d+$/.test(input)) {
         tag = `#${input}`
       } else {
