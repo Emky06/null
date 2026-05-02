@@ -85,19 +85,7 @@ const isGold = playcount >= 1000;
 
 const cover = await fetchCover(artistData.image, artistData.name, true);
 
-html = getHtmlWrapper(`
-<div class="background-blur" style="background-image: url('${cover}')"></div>
-<div class="color-overlay"></div>
-<div class="card glass ${isGold ? 'gold' : 'silver'}">
-<img src="${cover}" class="cover">
-<div class="info">
-<h1 style="margin:0; font-size: 55px; text-shadow: 0 4px 15px rgba(0,0,0,0.8);">${artistData.name}</h1>
-<p style="color: ${isGold ? '#ffd700' : '#e0e0e0'}; font-size: 26px; font-weight: 800; margin-top:10px; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">CERTIFICATO ${isGold ? 'ORO' : 'FAN'}</p>
-<p style="font-size: 22px; margin-top: auto; color: rgba(255,255,255,0.9);">Ascolti totali: <span style="font-size:40px; font-weight:800; color:#fff;">${playcount}</span></p>
-<p style="font-size: 16px; opacity: 0.7; font-weight: 600;">Intestato a: @${user}</p>
-</div>
-</div>
-`, ``);
+html = getHtmlWrapper(``, ``);
 
 caption = `🏆 *Il tuo Certificato d'Ossessione*\nUtente: ${user}\nArtista principale: ${artistData.name}`;
 break;
@@ -108,18 +96,7 @@ case 'aura': {
 const topArt = await apiCall('user.gettopartists', { user, limit: 10, period: '1month' });
 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore recupero artisti.");
 
-const colors = ['#8A2BE2', '#FF4500', '#1E90FF', '#FF1493', '#00FA9A'];
-
-let tagsStr = `<div style="z-index: 10; text-align: center;">
-<h2 style="font-size: 24px; opacity:0.9; letter-spacing: 5px; text-transform: uppercase;">La tua Aura Musicale</h2>
-<h1 style="font-size: 60px; margin: 10px 0;">Eclettica & Vibrante</h1>
-<p style="font-size: 20px; opacity:0.8;">@${user}</p>
-</div>`;
-
-html = getHtmlWrapper(`
-<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-${tagsStr}
-`, ``);
+html = getHtmlWrapper(``, ``);
 
 caption = `✨ *La tua Music Aura mensile*\n@${user}`;
 break;
@@ -144,12 +121,6 @@ if (info1.error || info2.error) throw new Error("Errore API.");
 const score1 = parseInt(info1.artist?.stats?.userplaycount) || 0;
 const score2 = parseInt(info2.artist?.stats?.userplaycount) || 0;
 
-const total = score1 + score2 || 1;
-const w1 = (score1 / total) * 100;
-const w2 = (score2 / total) * 100;
-
-const cover = await fetchCover(info1.artist?.image, info1.artist?.name, true);
-
 html = getHtmlWrapper(``, ``);
 
 caption = `⚔️ *ARTIST BATTLE*\n${user} [${score1}] VS ${user2} [${score2}]\nArtista: ${info1.artist.name}`;
@@ -166,33 +137,20 @@ if (albums.error) throw new Error("Errore recupero album.");
 const top9 = albums.topalbums.album.slice(0, 9);
 
 let gridHtml = '';
-let listText = `🧩 *Music Mosaic (Top 9 del Mese)*\nUtente: @${user}\n\n`;
 
 for (let i = 0; i < top9.length; i++) {
 const al = top9[i];
 const cover = await fetchCover(al.image, `${al.artist.name} ${al.name}`);
 gridHtml += `<div class="album" style="background-image: url('${cover}')"></div>`;
-listText += `${i + 1}. ${al.artist.name} - ${al.name}\n`;
 }
 
-html = getHtmlWrapper(`
-<div class="mesh-bg"></div>
-<div class="grid">${gridHtml}</div>
-`, ``);
+html = getHtmlWrapper(``, ``);
 
-caption = listText.trim();
+caption = `🧩 *Music Mosaic (Top 9 del Mese)*`;
 break;
 }
 
 case 'goal': {
-
-const info = await apiCall('user.getinfo', { user });
-if (info.error) throw new Error("Errore user info.");
-
-const total = parseInt(info.user.playcount);
-const milestone = Math.ceil((total + 1) / 10000) * 10000;
-const remaining = milestone - total;
-const percentage = ((total % 10000) / 10000) * 100;
 
 html = getHtmlWrapper(``, ``);
 
@@ -217,14 +175,14 @@ let playingUsers = [];
 
 for (let u of groupMembers) {
 
-const lfUser = db[u];
+const lfUser = db[u] || db[u.split('@')[0]];
 if (!lfUser) continue;
 
 try {
 const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
 const track = rt.recenttracks?.track?.[0];
 
-if (track && track['@attr']?.nowplaying) {
+if (track && (track['@attr']?.nowplaying || track.date === undefined)) {
 playingUsers.push({
 wpId: u,
 lfId: lfUser,
@@ -252,13 +210,7 @@ let cardsHtml = playingUsers.map(pu => `
 </div>
 `).join('');
 
-html = getHtmlWrapper(`
-<div class="mesh-bg"></div>
-<div class="container">
-<h1 style="text-align:center; font-size: 45px; margin-bottom: 40px;">📻 In Onda Ora</h1>
-<div class="grid">${cardsHtml}</div>
-</div>
-`, ``);
+html = getHtmlWrapper(``, ``);
 
 caption = `📻 *In Onda nel Gruppo*\nUtenti attivi: ${playingUsers.length}`;
 break;
