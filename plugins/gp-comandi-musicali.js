@@ -474,6 +474,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     const promises = targetJids.map(async (jid) => {
         const lfUser = db[jid];
         const info = await apiCall('user.getinfo', { user: lfUser });
+console.log(`📡 API getinfo per ${lfUser}:`, info.error ? "ERRORE" : "OK", "Playcount:", info.user?.playcount);
         if (info.error) return null;
         return { user: lfUser, plays: parseInt(info.user.playcount) };
     });
