@@ -15,7 +15,7 @@ function wait(ms) {
 
 let handler = async (m, { conn, text }) => {
   try {
-    // Prendi la persona taggata, oppure quella citata nella risposta, oppure il mittente
+
     let mention;
     if (m.quoted) {
       mention = m.quoted.sender;
@@ -35,15 +35,14 @@ let handler = async (m, { conn, text }) => {
 
     await m.reply('⏳ *Inizio processo di TRASFORMAZIONE...*', null, { mentions });
 
-    // Percentuali con pausa
     const progresses = ['30%', '50%', '70%', '100%'];
     for (const p of progresses) {
       await wait(800);
       await m.reply(`🔍 *Progresso:* ${p}`, null, { mentions });
     }
 
-    // Delay casuale
-    const delay = Math.floor(Math.random() * 9000) + 1000;
+  
+    const delay = Math.floor(Math.random() * 7000) + 1000;
     const start = performance.now();
     await wait(delay);
     const end = performance.now();
