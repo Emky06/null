@@ -70,7 +70,7 @@ const getHtmlWrapper = (bodyContent, customCss = "") => `
 async function getGroupMembers(conn, groupJid) {
     try {
         const groupMetadata = await conn.groupMetadata(groupJid);
-        return groupMetadata.participants.map(p => p.id);
+        return groupMetadata.participants.map(p => p.id.split(':')[0].split('@')[0] + '@s.whatsapp.net');
     } catch (e) {
         console.error("Errore nel recupero membri del gruppo:", e);
         return [];
@@ -453,73 +453,72 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             }
 
             case 'leaderboard': {
-                const groupMembers = await getGroupMembers(conn, m.chat);
-const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
+    const groupMembers = await getGroupMembers(conn, m.chat);
+    const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid.split(':')[0].split('@')[0] + '@s.whatsapp.net'));
+    
+    if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}`);
 
-if (validJids.length < 2) return m.reply("❌ Non ci sono abbastanza utenti registrati in questo gruppo per una classifica.");
+    await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
 
-await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
+    const targetJids = validJids.slice(0, 15);
+    const promises = targetJids.map(async (jid) => {
+        const lfUser = db[jid];
+        const info = await apiCall('user.getinfo', { user: lfUser });
+        if (info.error) return null;
+        return { user: lfUser, plays: parseInt(info.user.playcount) };
+    });
 
-const targetJids = validJids.slice(0, 15);
-                const promises = targetJids.map(async (jid) => {
-                    const lfUser = db[jid];
-                    const info = await apiCall('user.getinfo', { user: lfUser });
-                    if (info.error) return null;
-                    return { user: lfUser, plays: parseInt(info.user.playcount) };
-                });
+    let results = (await Promise.all(promises)).filter(r => r !== null);
+    results.sort((a, b) => b.plays - a.plays);
 
-                let results = (await Promise.all(promises)).filter(r => r !== null);
-                results.sort((a, b) => b.plays - a.plays);
+    if (results.length === 0) throw new Error("Impossibile generare la classifica.");
 
-                if (results.length === 0) throw new Error("Impossibile generare la classifica.");
+    const top3 = results.slice(0, 3);
+    const others = results.slice(3, 8);
+    let podiumHtml = `
+        <div class="podium-container">
+            ${top3[1] ? `<div class="podium p2"><div class="rank">2</div><div class="p-user">@${top3[1].user}</div><div class="p-score">${top3[1].plays}</div></div>` : ''}
+            <div class="podium p1"><div class="crown">👑</div><div class="rank">1</div><div class="p-user">@${top3[0].user}</div><div class="p-score">${top3[0].plays}</div></div>
+            ${top3[2] ? `<div class="podium p3"><div class="rank">3</div><div class="p-user">@${top3[2].user}</div><div class="p-score">${top3[2].plays}</div></div>` : ''}
+        </div>
+    `;
 
-                const top3 = results.slice(0, 3);
-                const others = results.slice(3, 8);
-                let podiumHtml = `
-                    <div class="podium-container">
-                        ${top3[1] ? `<div class="podium p2"><div class="rank">2</div><div class="p-user">@${top3[1].user}</div><div class="p-score">${top3[1].plays}</div></div>` : ''}
-                        <div class="podium p1"><div class="crown">👑</div><div class="rank">1</div><div class="p-user">@${top3[0].user}</div><div class="p-score">${top3[0].plays}</div></div>
-                        ${top3[2] ? `<div class="podium p3"><div class="rank">3</div><div class="p-user">@${top3[2].user}</div><div class="p-score">${top3[2].plays}</div></div>` : ''}
-                    </div>
-                `;
+    let listHtml = others.map((u, i) => `
+        <div class="list-item">
+            <span class="l-rank">${i+4}</span>
+            <span class="l-user">@${u.user}</span>
+            <span class="l-score">${u.plays.toLocaleString()}</span>
+        </div>
+    `).join('');
 
-                let listHtml = others.map((u, i) => `
-                    <div class="list-item">
-                        <span class="l-rank">${i+4}</span>
-                        <span class="l-user">@${u.user}</span>
-                        <span class="l-score">${u.plays.toLocaleString()}</span>
-                    </div>
-                `).join('');
-
-                viewport = { w: 800, h: listHtml ? 900 : 600 };
-                html = getHtmlWrapper(`
-                    <div class="lb-wrapper">
-                        <h1 class="lb-title">GLOBAL LEADERBOARD</h1>
-                        ${podiumHtml}
-                        <div class="lb-list">${listHtml}</div>
-                    </div>
-                `, `
-                    body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
-                    .lb-wrapper { width: 700px; padding: 40px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-                    .lb-title { text-align: center; font-size: 35px; letter-spacing: 4px; margin-bottom: 50px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-                    .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 20px; height: 250px; margin-bottom: 40px; }
-                    .podium { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 140px; border-radius: 20px 20px 0 0; position: relative; padding-bottom: 20px; box-shadow: inset 0 5px 15px rgba(255,255,255,0.2); }
-                    .p1 { height: 100%; background: linear-gradient(to top, #ffd700, #ffb300); color: #000; z-index: 10; }
-                    .p2 { height: 75%; background: linear-gradient(to top, #e0e0e0, #9e9e9e); color: #000; }
-                    .p3 { height: 60%; background: linear-gradient(to top, #cd7f32, #a0522d); color: #fff; }
-                    .crown { position: absolute; top: -50px; font-size: 40px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
-                    .rank { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
-                    .p-user { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-                    .p-score { font-size: 14px; font-weight: bold; opacity: 0.8; }
-                    .list-item { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 15px; margin-bottom: 10px; font-size: 20px; }
-                    .l-rank { font-weight: 800; width: 50px; color: #888; }
-                    .l-user { flex: 1; font-weight: 600; }
-                    .l-score { font-weight: 800; color: #0a84ff; }
-                `);
-                caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
-                break;
-            }
-
+    viewport = { w: 800, h: listHtml ? 900 : 600 };
+    html = getHtmlWrapper(`
+        <div class="lb-wrapper">
+            <h1 class="lb-title">GLOBAL LEADERBOARD</h1>
+            ${podiumHtml}
+            <div class="lb-list">${listHtml}</div>
+        </div>
+    `, `
+        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
+        .lb-wrapper { width: 700px; padding: 40px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .lb-title { text-align: center; font-size: 35px; letter-spacing: 4px; margin-bottom: 50px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 20px; height: 250px; margin-bottom: 40px; }
+        .podium { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 140px; border-radius: 20px 20px 0 0; position: relative; padding-bottom: 20px; box-shadow: inset 0 5px 15px rgba(255,255,255,0.2); }
+        .p1 { height: 100%; background: linear-gradient(to top, #ffd700, #ffb300); color: #000; z-index: 10; }
+        .p2 { height: 75%; background: linear-gradient(to top, #e0e0e0, #9e9e9e); color: #000; }
+        .p3 { height: 60%; background: linear-gradient(to top, #cd7f32, #a0522d); color: #fff; }
+        .crown { position: absolute; top: -50px; font-size: 40px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+        .rank { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+        .p-user { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .p-score { font-size: 14px; font-weight: bold; opacity: 0.8; }
+        .list-item { display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 15px; margin-bottom: 10px; font-size: 20px; }
+        .l-rank { font-weight: 800; width: 50px; color: #888; }
+        .l-user { flex: 1; font-weight: 600; }
+        .l-score { font-weight: 800; color: #0a84ff; }
+    `);
+    caption = `📈 *LA CLASSIFICA DEL GRUPPO*\nIl malato di musica numero uno è *${top3[0].user}*!`;
+    break;
+}
             case 'artistmap': {
                 const artistName = text.trim();
                 if (!artistName) return m.reply(`❌ Uso: *${usedPrefix}artistmap <nome artista>*`);
@@ -809,71 +808,71 @@ const targetJids = validJids.slice(0, 15);
             }
 
             case 'whosplaying': {
-                const groupMembers = await getGroupMembers(conn, m.chat);
-const users = Object.keys(db).filter(jid => groupMembers.includes(jid));
+    const groupMembers = await getGroupMembers(conn, m.chat);
+    const users = Object.keys(db).filter(jid => groupMembers.includes(jid.split(':')[0].split('@')[0] + '@s.whatsapp.net'));
+    
+    let playingUsers = [];
+    let seenLastFmUsers = new Set();
+    const checkLimit = users.slice(0, 20); 
 
-let playingUsers = [];
-let seenLastFmUsers = new Set();
-const checkLimit = users.slice(0, 20);
+    for (let u of checkLimit) {
+        const lfUser = db[u];
 
-                for (let u of checkLimit) {
-                    const lfUser = db[u];
+        if (seenLastFmUsers.has(lfUser)) continue;
+        seenLastFmUsers.add(lfUser);
 
-                    if (seenLastFmUsers.has(lfUser)) continue;
-                    seenLastFmUsers.add(lfUser);
+        try {
+            const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
+            const track = rt.recenttracks?.track?.[0];
 
-                    try {
-                        const rt = await apiCall('user.getrecenttracks', { user: lfUser, limit: 1 });
-                        const track = rt.recenttracks?.track?.[0];
-
-                        if (track && track['@attr']?.nowplaying) {
-                            playingUsers.push({ 
-                                wpId: u, 
-                                lfId: lfUser, 
-                                track: track.name, 
-                                artist: track.artist['#text'], 
-                                cover: track.image[2]['#text'] 
-                            });
-                        }
-                    } catch (e) { continue; }
-                }
-
-                if (playingUsers.length === 0) return m.reply("📻 Nessuno sta ascoltando musica in questo momento.");
-
-                let cardsHtml = playingUsers.map(pu => `
-                    <div class="user-card glass">
-                        <img src="${pu.cover || DEFAULT_COVER}">
-                        <div class="meta">
-                            <div class="user-name">@${pu.lfId}</div>
-                            <div class="track-name">${pu.track}</div>
-                            <div class="artist-name">${pu.artist}</div>
-                        </div>
-                        <div class="live-dot"></div>
-                    </div>
-                `).join('');
-
-                html = getHtmlWrapper(`
-                    <div class="mesh-bg"></div>
-                    <div class="container">
-                        <h1 style="text-align:center; font-size: 45px; margin-bottom: 40px; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">📻 In Onda Ora</h1>
-                        <div class="grid">${cardsHtml}</div>
-                    </div>
-                `, `
-                    .mesh-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(at 10% 10%, rgba(30, 20, 80, 0.7) 0px, transparent 50%), radial-gradient(at 90% 90%, rgba(80, 20, 40, 0.7) 0px, transparent 50%); background-color: #0a0a0a; z-index: -1; }
-                    .container { width: 900px; height: auto; min-height: 550px; padding: 40px; box-sizing: border-box; }
-                    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
-                    .user-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
-                    .user-card img { width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-                    .meta { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-                    .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-                    .track-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                    .artist-name { font-size: 15px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                    .live-dot { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; background: #ff3b30; border-radius: 50%; box-shadow: 0 0 12px #ff3b30; animation: pulse 1.5s infinite; }
-                    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-                `);
-                caption = `📻 *Radio di Gruppo*\nCi sono ${playingUsers.length} persone in ascolto adesso!`;
-                break;
+            if (track && track['@attr']?.nowplaying) {
+                playingUsers.push({ 
+                    wpId: u, 
+                    lfId: lfUser, 
+                    track: track.name, 
+                    artist: track.artist['#text'], 
+                    cover: track.image[2]['#text'] 
+                });
             }
+        } catch (e) { continue; }
+    }
+
+    if (playingUsers.length === 0) return m.reply("📻 Nessuno sta ascoltando musica in questo momento.");
+
+    let cardsHtml = playingUsers.map(pu => `
+        <div class="user-card glass">
+            <img src="${pu.cover || DEFAULT_COVER}">
+            <div class="meta">
+                <div class="user-name">@${pu.lfId}</div>
+                <div class="track-name">${pu.track}</div>
+                <div class="artist-name">${pu.artist}</div>
+            </div>
+            <div class="live-dot"></div>
+        </div>
+    `).join('');
+
+    html = getHtmlWrapper(`
+        <div class="mesh-bg"></div>
+        <div class="container">
+            <h1 style="text-align:center; font-size: 45px; margin-bottom: 40px; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">📻 In Onda Ora</h1>
+            <div class="grid">${cardsHtml}</div>
+        </div>
+    `, `
+        .mesh-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(at 10% 10%, rgba(30, 20, 80, 0.7) 0px, transparent 50%), radial-gradient(at 90% 90%, rgba(80, 20, 40, 0.7) 0px, transparent 50%); background-color: #0a0a0a; z-index: -1; }
+        .container { width: 900px; height: auto; min-height: 550px; padding: 40px; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        .user-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
+        .user-card img { width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .meta { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .track-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .artist-name { font-size: 15px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .live-dot { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; background: #ff3b30; border-radius: 50%; box-shadow: 0 0 12px #ff3b30; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    `);
+    caption = `📻 *Radio di Gruppo*\nCi sono ${playingUsers.length} persone in ascolto adesso!`;
+    break;
+}
 
             default:
                 return m.reply("Comando non riconosciuto nel visual hub.");
