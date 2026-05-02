@@ -24,10 +24,9 @@ let handler = async (m, { conn, command, args }) => {
 
     const db = loadDB();
 
-    if (!db[m.chat]) db[m.chat] = {};
-    if (!db[m.chat][m.sender]) db[m.chat][m.sender] = {};
+    if (!db[m.sender]) db[m.sender] = {};
 
-    db[m.chat][m.sender].tag = tag;
+db[m.sender].tag = tag;
 
     saveDB(db);
 
@@ -49,7 +48,7 @@ let handler = async (m, { conn, command, args }) => {
     let tag = args[0];
 
     if (!tag) {
-      tag = db[m.chat]?.[target]?.tag;
+      tag = db[target]?.tag;
     }
 
     if (!tag) {
