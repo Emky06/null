@@ -28,12 +28,25 @@ let handler = async (m, { conn }) => {
     const mentions = [mention];
     const userId = mention.split('@')[0];
 
-    await m.reply('⏳ *Inizio processo di TRASFORMAZIONE...*', null, { mentions });
+    let { key } = await conn.sendMessage(
+      m.chat,
+      { text: '⏳ *Inizio processo di TRASFORMAZIONE...*\n🔍 *Progresso:* 0%' },
+      { quoted: m }
+    );
 
     const progresses = ['30%', '50%', '70%', '100%'];
+
     for (const p of progresses) {
       await wait(800);
-      await m.reply(`🔍 *Progresso:* ${p}`, null, { mentions });
+      await conn.sendMessage(
+        m.chat,
+        {
+          text: `⏳ *Inizio processo di TRASFORMAZIONE...*\n🔍 *Progresso:* ${p}`,
+          edit: key,
+          mentions
+        },
+        { quoted: m }
+      );
     }
 
     const delay = Math.floor(Math.random() * 7000) + 1000;
@@ -69,7 +82,11 @@ let handler = async (m, { conn }) => {
     const videoPath = path.join(BASE_PATH, videoFile);
 
     if (!fs.existsSync(videoPath)) {
-      await m.reply(`⚠️ Video non trovato: ${videoFile}`, null, { mentions });
+      await conn.sendMessage(
+        m.chat,
+        { text: `⚠️ Video non trovato: ${videoFile}`, edit: key, mentions },
+        { quoted: m }
+      );
       return;
     }
 
@@ -83,7 +100,11 @@ let handler = async (m, { conn }) => {
 ║       ☄️𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕☄️      ║  
 ╚═══════════════════╝`;
 
-    await m.reply(finalMsg, null, { mentions });
+    await conn.sendMessage(
+      m.chat,
+      { text: finalMsg, edit: key, mentions },
+      { quoted: m }
+    );
 
     await conn.sendMessage(
       m.chat,
@@ -95,6 +116,7 @@ let handler = async (m, { conn }) => {
       },
       { quoted: m }
     );
+
   } catch (err) {
     console.error('Errore nel comando:', err);
     await m.reply('⚠️ Errore durante l\'invio della trasformazione.');
