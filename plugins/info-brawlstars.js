@@ -106,7 +106,14 @@ ${header}
 🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
 `.trim();
 
-      return await conn.reply(m.chat, msg, m);
+      return await conn.sendMessage(
+  m.chat,
+  {
+    text: msg,
+    mentions: [target]
+  },
+  { quoted: m }
+);
     } catch (err) {
       return await conn.reply(m.chat, '⚠️ Si è verificato un errore durante la richiesta (API o connessione).', m);
     }
