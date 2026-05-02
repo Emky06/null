@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 
-const dbPath = path.join(process.cwd(), 'nukeGroups.json');
+const dbPath = path.join(process.cwd(), 'storage', 'file-json', 'nukeGroups.json');
 
 function loadDB() {
   try {
