@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const databasePath = path.join(__dirname, '../media/database/lastfm_users.json');
+const databasePath = path.join(__dirname, '../lastfm_users.json');
 const getDB = () => fs.existsSync(databasePath) ? JSON.parse(fs.readFileSync(databasePath, 'utf-8')) : {};
 
 const LASTFM_API_KEY = 'fa91d71e5ea7dbcda31875481d02596f';
@@ -879,6 +879,5 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
 handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
 handler.group = true; 
-handler.register = true;
 
 export default handler;
