@@ -21,33 +21,6 @@ function saveDB(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2))
 }
 
-function extractTarget(m, args) {
-  let target = m.sender
-
-  if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
-    target = m.mentionedJid[0]
-  } else if (m.quoted?.sender) {
-    target = m.quoted.sender
-  } else if (args?.length) {
-    const raw = args.join(' ')
-    const num = raw.replace(/[^0-9]/g, '')
-    if (num) target = num + '@s.whatsapp.net'
-  }
-
-  return target
-}
-
-function formatTag(input) {
-  if (!input) return null
-
-  input = String(input).trim().toUpperCase().replace(/\s/g, '')
-
-  if (/^\d+$/.test(input)) return `#${input}`
-  if (!input.startsWith('#')) return `#${input}`
-
-  return input
-}
-
 let handler = async (m, { conn, command, args }) => {
   const db = loadDB()
 
@@ -60,7 +33,8 @@ let handler = async (m, { conn, command, args }) => {
       )
     }
 
-    let tag = formatTag(args[0])
+    let tag = args[0].toUpperCase()
+    if (!tag.startsWith('#')) tag = '#' + tag
 
     if (!db[m.sender]) db[m.sender] = {}
     db[m.sender].tag = tag
@@ -75,33 +49,47 @@ let handler = async (m, { conn, command, args }) => {
   }
 
   if (command === 'brawl') {
-    const db = loadDB()
 
-    const target = extractTarget(m, args)
+    let target = m.mentionedJid?.[0] || m.quoted?.sender
+
+    if (!target && args?.length) {
+      const text = args.join(' ').trim()
+
+      if (text.endsWith('@s.whatsapp.net') || text.endsWith('@c.us')) {
+        target = text
+      } else {
+        const number = text.replace(/[^0-9]/g, '')
+
+        if (number.length >= 8 && number.length <= 15) {
+          target = number + '@s.whatsapp.net'
+        }
+      }
+    }
+
+    if (!target) target = m.sender
+
+    const db = loadDB()
+    const userData = db[target] || {}
 
     let input = args.join(' ').trim()
-
     let tag = null
 
     if (!input) {
-      tag = db[target]?.tag
+      tag = userData.tag
     } else {
       input = input.replace(/\s/g, '')
-      tag = formatTag(input)
+      if (/^\d+$/.test(input)) {
+        tag = `#${input}`
+      } else {
+        tag = input.toUpperCase()
+        if (!tag.startsWith('#')) tag = '#' + tag
+      }
     }
 
-    if (!tag || typeof tag !== 'string') {
+    if (!tag || typeof tag !== 'string' || !tag.startsWith('#')) {
       return await conn.reply(
         m.chat,
         '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG o inserisci un tag valido',
-        m
-      )
-    }
-
-    if (!tag.startsWith('#')) {
-      return await conn.reply(
-        m.chat,
-        '❗ Tag non valido.\nUsa .setbrawl #TAG',
         m
       )
     }
