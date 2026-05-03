@@ -101,7 +101,7 @@ let handler = async (m, { conn, command, args }) => {
               .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               .left-panel { width: 32%; background: rgba(0,0,0,0.35); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255,255,255,0.1); }
               .player-icon { width: 140px; height: 140px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); border: 5px solid #fff; border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 80px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-              .player-name { font-size: 40px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.8px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
+              .player-name { font-size: 30px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.8px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
               .player-tag { font-size: 20px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
               .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
