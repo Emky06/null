@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import axios from 'axios';
 
 const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d';
