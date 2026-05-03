@@ -105,7 +105,6 @@ async function generateTrackImageBrowserless(track) {
   }
 }
 
-// Fallback originale con Jimp
 async function generateTrackImageJimp(track) {
   const width = 600
   const height = 600
@@ -215,7 +214,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     const globalListeners = parseInt(detailedTrack?.listeners) || 0
 
     let buffer
-    // Prova con browserless, se fallisce usa Jimp
+   
     try {
       if (BROWSERLESS_KEY && BROWSERLESS_KEY !== '2TdsfCQhO6hHvc062aa52ef9f252d478cde399ff9c1cb557c') {
         buffer = await generateTrackImageBrowserless(current)
