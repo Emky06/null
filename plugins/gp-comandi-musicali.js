@@ -868,7 +868,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         </div>
     `, `
         .mesh-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(at 10% 10%, rgba(30, 20, 80, 0.7) 0px, transparent 50%), radial-gradient(at 90% 90%, rgba(80, 20, 40, 0.7) 0px, transparent 50%); background-color: #0a0a0a; z-index: -1; }
-        .container { width: 900px; height: auto; min-height: 550px; padding: 0 20px; box-sizing: border-box; }
+        .container { width: 900px; height: auto; min-height: 550px; padding: 60px; box-sizing: border-box; }
         .grid { 
     display: grid; 
     grid-template-columns: repeat(2, minmax(0, 1fr)); 
