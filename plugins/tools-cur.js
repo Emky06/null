@@ -216,7 +216,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     let buffer
    
     try {
-      if (BROWSERLESS_KEY && BROWSERLESS_KEY !== '2TdsfCQhO6hHvc062aa52ef9f252d478cde399ff9c1cb557c') {
+      if (BROWSERLESS_KEY) {
         buffer = await generateTrackImageBrowserless(current)
       } else {
         throw new Error('Browserless key non configurata')
