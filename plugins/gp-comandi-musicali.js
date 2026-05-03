@@ -879,6 +879,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     flex: 1; 
     min-width: 0;
 }
+        .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
         .track-name { 
     font-size: 18px; 
     font-weight: 800; 
