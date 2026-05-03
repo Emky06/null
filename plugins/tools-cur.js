@@ -115,7 +115,9 @@ async function generateTrackImageJimp(track) {
     track.image?.find(i => i.size === 'medium')?.['#text']
 
   if (!imageUrl || imageUrl.trim() === '') {
-  imageUrl = path.join(process.cwd(), 'icone', 'cur.jpg')
+  const fallbackPath = path.join(process.cwd(), 'icone', 'cur.jpg')
+  const imgBuffer = fs.readFileSync(fallbackPath)
+  imageUrl = `data:image/jpeg;base64,${imgBuffer.toString('base64')}`
 }
 
   try {
