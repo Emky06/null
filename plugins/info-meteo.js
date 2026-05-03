@@ -53,9 +53,8 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
         const weatherDesc = weather[0].description.charAt(0).toUpperCase() + weather[0].description.slice(1);
         const icon = weather[0].icon; 
-        const mainCondition = weather[0].main.toLowerCase(); // Serve per la logica degli effetti meteo
-        
-        
+        const mainCondition = weather[0].main.toLowerCase(); 
+               
         let effectOverlay = '';
         if (mainCondition.includes('rain') || mainCondition.includes('drizzle')) {
             effectOverlay = `
