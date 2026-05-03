@@ -87,7 +87,7 @@ let handler = async (m, { conn }) => {
       'Drakul Mihawk': 'mihawk.mp4',
       'Crocodile': 'crocodile.mp4',
       'Boa Hancock': 'hancock.mp4',
-      'Edward Newgate (Barbabianca)': 'barba_bianca.mp4',
+      'Edward Newgate (Barbabianca)': 'barbabianca.mp4',
       'Gol D. Roger': 'roger.mp4',
     };
 
