@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
@@ -31,7 +30,7 @@ async function retryScreenshot(html, retries = 5, delay = 2000) {
                 html,
                 options: { type: 'jpeg', quality: 90 },
                 viewport: { width: 1000, height: 600 },
-                gotoOptions: { waitUntil: 'networkidle2' } // Aspetta il caricamento di font e immagini
+                gotoOptions: { waitUntil: 'networkidle2' }
             }, { responseType: 'arraybuffer', timeout: 20000 });
             return Buffer.from(response.data);
         } catch (e) {
@@ -85,9 +84,7 @@ let handler = async (m, { conn, command, args }) => {
       const victoriesSolo = data['soloVictories'] || 0
       const victoriesDuo = data['duoVictories'] || 0
       const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo
-      
-      // Icona profilo ufficiale
-      const iconUrl = `https://cdn.brawlstats.com/player-icons/${data.icon.id}.png`
+      const iconUrl = `https://game-assets.brawlstars.com/player_icons/${data.icon.id}.png`
 
       const html = `
       <!DOCTYPE html>
@@ -104,11 +101,8 @@ let handler = async (m, { conn, command, args }) => {
               .header h1 { font-size: 50px; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0 #000; text-transform: uppercase; letter-spacing: 2px; }
               .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               .left-panel { width: 32%; background: rgba(0,0,0,0.35); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255,255,255,0.1); }
-              
-              /* BOX ICONA ACCOUNT */
-              .player-icon { width: 150px; height: 150px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); border: 5px solid #fff; border-radius: 30px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+              .player-icon { width: 150px; height: 150px; background: #2a475e; border: 5px solid #fff; border-radius: 35px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); overflow: hidden; display: flex; align-items: center; justify-content: center; }
               .player-icon img { width: 100%; height: 100%; object-fit: cover; }
-              
               .player-name { font-size: 30px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
               .player-tag { font-size: 18px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
@@ -134,11 +128,10 @@ let handler = async (m, { conn, command, args }) => {
               <div class="content">
                   <div class="left-panel">
                       <div class="player-icon">
-                          <img src="${iconUrl}" alt="icon">
+                          <img src="${iconUrl}" onerror="this.src='https://game-assets.brawlstars.com/player_icons/28000000.png'">
                       </div>
                       <div class="player-name">${data.name || 'Unknown'}</div>
                       <div class="player-tag">${data.tag || tag}</div>
-                      
                       <div class="club-card">
                           <div class="v-label" style="color: #FF2E63; font-size: 18px;">CLUB</div>
                           <div class="club-name">${data.club?.name ? data.club.name : 'NESSUNO'}</div>
@@ -194,7 +187,7 @@ ${headerText}
 🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
 🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
 
-🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${data.brawlers?.length || 0}*
+🧩 𝐁𝐫𝐚𝐰𝐥 e𝐫𝐬: *${data.brawlers?.length || 0}*
 🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
 
 🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}`.trim()
