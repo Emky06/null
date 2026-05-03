@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
@@ -84,8 +85,8 @@ let handler = async (m, { conn, command, args }) => {
       const victoriesDuo = data['duoVictories'] || 0
       const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo
       
-      // URL Ufficiale Supercell
-      const iconUrl = `https://game-assets.brawlstars.com/player_icons/${data.icon.id}.png`
+      // Icona profilo dinamica da Brawlify (molto stabile per i bot)
+      const iconUrl = `https://cdn.brawlify.com/profile-low/${data.icon.id}.png`
 
       const html = `
       <!DOCTYPE html>
@@ -102,8 +103,19 @@ let handler = async (m, { conn, command, args }) => {
               .header h1 { font-size: 50px; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0 #000; text-transform: uppercase; letter-spacing: 2px; }
               .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               .left-panel { width: 32%; background: rgba(0,0,0,0.35); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255,255,255,0.1); }
-              .player-icon { width: 150px; height: 150px; background: #2a475e; border: 5px solid #fff; border-radius: 35px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); overflow: hidden; display: flex; align-items: center; justify-content: center; }
-              .player-icon img { width: 100%; height: 100%; object-fit: cover; }
+              
+              .player-icon { 
+                  width: 150px; height: 150px; 
+                  background: #1a2a47; 
+                  border: 5px solid #fff; 
+                  border-radius: 35px; 
+                  margin-bottom: 15px; 
+                  box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+                  overflow: hidden; 
+                  display: flex; align-items: center; justify-content: center;
+              }
+              .player-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+              
               .player-name { font-size: 30px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.8px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
               .player-tag { font-size: 20px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
@@ -113,9 +125,7 @@ let handler = async (m, { conn, command, args }) => {
               .stat-value { font-size: 38px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2.5px 2.5px 0 #000; }
               .victories-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
               .v-box { padding: 15px 10px; border-radius: 18px; text-align: center; border: 3px solid rgba(0,0,0,0.3); }
-              .v-3v3 { background: #3c6efd; }
-              .v-solo { background: #2ecc71; }
-              .v-duo { background: #f39c12; }
+              .v-3v3 { background: #3c6efd; } .v-solo { background: #2ecc71; } .v-duo { background: #f39c12; }
               .v-label { font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 5px; text-transform: uppercase; }
               .v-val { font-size: 30px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
               .bottom-stats { display: flex; gap: 15px; }
@@ -131,7 +141,7 @@ let handler = async (m, { conn, command, args }) => {
               <div class="content">
                   <div class="left-panel">
                       <div class="player-icon">
-                          <img src="${iconUrl}" onerror="this.src='https://game-assets.brawlstars.com/player_icons/28000000.png'">
+                          <img src="${iconUrl}" onerror="this.src='https://cdn.brawlify.com/profile-low/28000000.png'">
                       </div>
                       <div class="player-name">${data.name || 'Unknown'}</div>
                       <div class="player-tag">${data.tag || tag}</div>
