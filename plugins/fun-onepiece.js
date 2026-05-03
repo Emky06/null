@@ -25,20 +25,18 @@ let handler = async (m, { conn }) => {
 
     let { key } = await conn.sendMessage(
       m.chat,
-      {
-        text: `🏴‍☠️ *ANALISI PIRATA IN CORSO...*\n\n${progressBar(percent)} ${percent}%`
-      },
+      { text: `🏴‍☠️ *SCANSIONE PIRATA...*\n\n${progressBar(percent)} ${percent}%` },
       { quoted: m }
     );
 
-    for (const p of [25, 50, 75, 100]) {
+    for (const p of [30, 60, 100]) {
       await wait(700);
       percent = p;
 
       await conn.sendMessage(
         m.chat,
         {
-          text: `🏴‍☠️ *ANALISI PIRATA IN CORSO...*\n\n${progressBar(percent)} ${percent}%`,
+          text: `🏴‍☠️ *SCANSIONE PIRATA...*\n\n${progressBar(percent)} ${percent}%`,
           edit: key,
           mentions
         },
@@ -46,124 +44,88 @@ let handler = async (m, { conn }) => {
       );
     }
 
-    // 🎯 PERSONAGGI CON RARITÀ
     const pool = [
-      // 🟢 COMUNI
       {
-        name: 'Usopp',
-        rarity: 'Comune',
-        url: 'https://i.imgur.com/1X4Z1Zq.gif'
+        name: 'Monkey D. Luffy',
+        rarity: 'Leggendario',
+        url: 'https://files.catbox.moe/7k3p9m.mp4'
       },
       {
-        name: 'Nami',
-        rarity: 'Comune',
-        url: 'https://i.imgur.com/0mKXcgK.gif'
+        name: 'Roronoa Zoro',
+        rarity: 'Epico',
+        url: 'https://files.catbox.moe/2x9kqv.mp4'
       },
-      {
-        name: 'Chopper',
-        rarity: 'Comune',
-        url: 'https://i.imgur.com/jkW6F6R.gif'
-      },
-
-      // 🔵 RARI
       {
         name: 'Sanji',
         rarity: 'Raro',
-        url: 'https://i.imgur.com/8R0pYwM.gif'
+        url: 'https://files.catbox.moe/9m1zla.mp4'
       },
       {
         name: 'Trafalgar Law',
         rarity: 'Raro',
-        url: 'https://i.imgur.com/yvZ6FQk.gif'
+        url: 'https://files.catbox.moe/0q8wjd.mp4'
       },
-      {
-        name: 'Portgas D. Ace',
-        rarity: 'Raro',
-        url: 'https://i.imgur.com/5K3sK0G.gif'
-      },
-
-      // 🟣 EPICI
-      {
-        name: 'Roronoa Zoro',
-        rarity: 'Epico',
-        url: 'https://i.imgur.com/Ye7gS5G.gif'
-      },
-      {
-        name: 'Monkey D. Luffy',
-        rarity: 'Epico',
-        url: 'https://i.imgur.com/3k9ZK7F.gif'
-      },
-
-      // 🔴 LEGGENDARI
       {
         name: 'Shanks',
         rarity: 'Leggendario',
-        url: 'https://i.imgur.com/Dh1ZK8G.gif'
+        url: 'https://files.catbox.moe/5v7n2c.mp4'
       },
       {
         name: 'Kaido',
         rarity: 'Leggendario',
-        url: 'https://i.imgur.com/V6X9YpL.gif'
+        url: 'https://files.catbox.moe/8d1xpp.mp4'
       },
       {
-        name: 'Gear 5 Luffy',
-        rarity: 'Leggendario',
-        url: 'https://i.imgur.com/6o7KQpR.gif'
+        name: 'Portgas D. Ace',
+        rarity: 'Epico',
+        url: 'https://files.catbox.moe/3l9zrt.mp4'
       }
     ];
 
-    // 🎲 SISTEMA RARITÀ
-    function getCharacter() {
+    const getCharacter = () => {
       const roll = Math.random() * 100;
 
-      if (roll < 50) {
-        return pickRandom(pool.filter(c => c.rarity === 'Comune'));
-      } else if (roll < 80) {
-        return pickRandom(pool.filter(c => c.rarity === 'Raro'));
-      } else if (roll < 95) {
-        return pickRandom(pool.filter(c => c.rarity === 'Epico'));
-      } else {
-        return pickRandom(pool.filter(c => c.rarity === 'Leggendario'));
-      }
-    }
+      if (roll < 50) return pickRandom(pool.filter(x => x.rarity === 'Raro'));
+      if (roll < 80) return pickRandom(pool.filter(x => x.rarity === 'Epico'));
+      return pickRandom(pool.filter(x => x.rarity === 'Leggendario'));
+    };
 
     const chosen = getCharacter();
 
     const start = performance.now();
-    await wait(Math.random() * 2000 + 1000);
+    await wait(1200);
     const end = performance.now();
+
     const timeTaken = ((end - start) / 1000).toFixed(2);
 
-    // 🎨 ICONA RARITÀ
     const rarityIcon = {
-      Comune: '🟢',
       Raro: '🔵',
       Epico: '🟣',
       Leggendario: '🔴'
     };
 
-    const finalMsg = `*🏴‍☠️ IDENTITÀ PIRATA*  
-━━━━━━━━━━━━━━━━━━━━━  
+    const caption = `*🏴‍☠️ IDENTITÀ RIVELATA*  
+━━━━━━━━━━━━━━━━━━━  
 👤 @${userId}  
-⚔️ *Sei:* ${chosen.name}  
-${rarityIcon[chosen.rarity]} *Rarità:* ${chosen.rarity}  
+⚔️ Sei: *${chosen.name}*  
+${rarityIcon[chosen.rarity]} Rarità: *${chosen.rarity}*  
 🕒 Tempo: ${timeTaken}s  
-━━━━━━━━━━━━━━━━━━━━━`;
+━━━━━━━━━━━━━━━━━━━`;
 
     await conn.sendMessage(
       m.chat,
       {
         video: { url: chosen.url },
-        caption: finalMsg,
+        caption,
         mentions,
         gifPlayback: true
       },
       { quoted: m }
     );
 
-  } catch (err) {
-    console.error(err);
-    await m.reply('⚠️ Errore durante la trasformazione.');
+  } catch (e) {
+    console.error(e);
+    m.reply('⚠️ Errore durante la trasformazione.');
   }
 };
 
