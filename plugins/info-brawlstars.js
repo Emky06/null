@@ -39,9 +39,6 @@ async function retryScreenshot(html, retries = 5, delay = 2000) {
                 console.warn(`Rate limit hit, retrying after ${delay}ms...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
-            } else if (e.response?.status === 400) {
-                console.error('Bad request to Browserless API. HTML may be invalid.');
-                throw e;
             } else {
                 throw e;
             }
@@ -55,71 +52,35 @@ let handler = async (m, { conn, command, args }) => {
 
   if (command === 'setbrawl') {
     if (!args[0]) {
-      return await conn.reply(
-        m.chat,
-        '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche',
-        m
-      )
+      return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`', m)
     }
-
     let tag = args[0].toUpperCase()
     if (!tag.startsWith('#')) tag = '#' + tag
-
     if (!db[m.sender]) db[m.sender] = {}
     db[m.sender].tag = tag
-
     saveDB(db)
-
-    return await conn.reply(
-      m.chat,
-      `✅ Tag salvato: ${tag}\nUsa .brawl per vedere il tuo profilo.`,
-      m
-    )
+    return await conn.reply(m.chat, `✅ Tag salvato: ${tag}`, m)
   }
 
   if (command === 'brawl') {
+    let target = m.mentionedJid?.[0] || m.quoted?.sender || m.sender
+    let tag = args[0] || db[target]?.tag
 
-    let target = m.sender
-
-    if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
-      target = m.mentionedJid[0]
-    } else if (m.quoted?.sender) {
-      target = m.quoted.sender
+    if (!tag || !tag.includes('#')) {
+      return await conn.reply(m.chat, '❗ Nessun tag salvato. Usa .setbrawl #TAG', m)
     }
 
-    let tag = args[0]
-
-    if (!tag) {
-      tag = db[target]?.tag
-    }
-
-    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
-      return await conn.reply(
-        m.chat,
-        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
-        m
-      )
-    }
-
-    tag = String(tag).toUpperCase().replace(/[^A-Z0-9#]/g, '')
-    if (!tag.startsWith('#')) tag = '#' + tag
-
+    tag = tag.toUpperCase().replace(/[^A-Z0-9#]/g, '')
     const encodedTag = encodeURIComponent(tag)
 
     try {
       const res = await fetch(`${API_BASE}/players/${encodedTag}`, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${API_TOKEN}`
-        }
+        headers: { Accept: 'application/json', Authorization: `Bearer ${API_TOKEN}` }
       })
 
-      if (!res.ok) {
-        return await conn.reply(m.chat, '❌ Errore API', m)
-      }
+      if (!res.ok) return await conn.reply(m.chat, '❌ Errore API: Tag non trovato.', m)
 
       const data = await res.json()
-
       const victories3v3 = data['3vs3Victories'] || 0
       const victoriesSolo = data['soloVictories'] || 0
       const victoriesDuo = data['duoVictories'] || 0
@@ -131,310 +92,171 @@ let handler = async (m, { conn, command, args }) => {
       <head>
           <meta charset="UTF-8">
           <style>
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              
-              @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap');
+              @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+              * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lilita One', cursive; }
               
               body {
-                  width: 1000px;
-                  height: 600px;
-                  margin: 0;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  position: relative;
-                  overflow: hidden;
-                  background-color: #0d1323;
+                  width: 1000px; height: 600px;
+                  display: flex; align-items: center; justify-content: center;
+                  background-color: #0d1323; overflow: hidden;
               }
               
-              .bg-image {
-                  position: absolute;
-                  top: -20px; left: -20px; right: -20px; bottom: -20px;
-                  background-image: url('https://wallpapercave.com/wp/wp4263657.jpg');
-                  background-size: cover;
-                  background-position: center;
-                  filter: blur(10px) brightness(0.5);
-                  z-index: 0;
+              .bg-blur {
+                  position: absolute; width: 110%; height: 110%;
+                  background: url('https://wallpapercave.com/wp/wp4263657.jpg') center/cover;
+                  filter: blur(12px) brightness(0.4); z-index: 0;
               }
               
               .card {
-                  z-index: 1;
-                  width: 900px;
-                  height: 520px;
-                  background: rgba(20, 28, 48, 0.85);
-                  border: 4px solid #4a80ff;
-                  border-radius: 20px;
-                  box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 25px rgba(74, 128, 255, 0.15);
-                  display: flex;
-                  flex-direction: column;
-                  backdrop-filter: blur(8px);
+                  z-index: 1; width: 940px; height: 540px;
+                  background: rgba(18, 25, 46, 0.92);
+                  border: 5px solid #3c6efd; border-radius: 30px;
+                  display: flex; flex-direction: column;
+                  box-shadow: 0 0 40px rgba(0,0,0,0.8);
               }
               
               .header {
-                  background: linear-gradient(180deg, #ffdf00 0%, #ff8c00 100%);
-                  padding: 12px;
-                  text-align: center;
-                  border-bottom: 4px solid #000;
-                  border-top-left-radius: 16px;
-                  border-top-right-radius: 16px;
-                  box-shadow: inset 0 -4px 0 rgba(255,255,255,0.2);
+                  background: linear-gradient(180deg, #FFD700 0%, #FF8C00 100%);
+                  padding: 15px; text-align: center;
+                  border-bottom: 5px solid #000;
+                  border-radius: 25px 25px 0 0;
               }
               
               .header h1 {
-                  font-family: 'Lilita One', cursive;
-                  font-size: 38px;
-                  color: #fff;
-                  margin: 0;
-                  -webkit-text-stroke: 1.5px #000;
-                  text-shadow: 2px 2px 0px #000, 0px 4px 6px rgba(0,0,0,0.5);
-                  letter-spacing: 2px;
+                  font-size: 45px; color: #fff;
+                  -webkit-text-stroke: 2px #000;
+                  text-shadow: 3px 3px 0 #000;
+                  text-transform: uppercase; letter-spacing: 2px;
               }
               
-              .content {
-                  display: flex;
-                  flex: 1;
-                  padding: 20px;
-                  gap: 20px;
-              }
+              .main-content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               
-              .left-panel {
-                  width: 33%;
-                  background: rgba(0, 0, 0, 0.35);
-                  border-radius: 16px;
-                  border: 2px solid rgba(255,255,255,0.08);
-                  padding: 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-              }
-              
-              .player-icon {
-                  width: 130px;
-                  height: 130px;
-                  background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-                  border: 4px solid #fff;
-                  border-radius: 20px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 70px;
-                  box-shadow: 0 8px 15px rgba(0,0,0,0.6);
-                  margin-bottom: 20px;
-                  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
-              }
-              
-              .player-name {
-                  font-family: 'Lilita One', cursive;
-                  font-size: 34px;
-                  color: #ffdf00;
-                  text-align: center;
-                  -webkit-text-stroke: 1.2px #000;
-                  text-shadow: 2px 2px 0px #000;
-                  margin-bottom: 6px;
-                  line-height: 1.1;
-              }
-              
-              .player-tag {
-                  font-family: 'Nunito', sans-serif;
-                  font-size: 16px;
-                  font-weight: 800;
-                  color: #b0c4de;
-                  background: rgba(0,0,0,0.6);
-                  padding: 4px 14px;
-                  border-radius: 12px;
-                  margin-bottom: 25px;
-                  border: 1px solid rgba(255,255,255,0.1);
-              }
-              
-              .club-badge {
-                  font-family: 'Nunito', sans-serif;
-                  font-weight: 900;
-                  width: 100%;
-                  background: linear-gradient(90deg, #ff3366, #cc0033);
-                  color: #fff;
-                  text-align: center;
-                  padding: 12px;
-                  border: 2px solid #fff;
-                  border-radius: 12px;
-                  font-size: 18px;
-                  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-                  text-transform: uppercase;
-              }
-              
-              .right-panel {
-                  width: 67%;
-                  display: flex;
-                  flex-direction: column;
-                  gap: 15px;
-              }
-              
-              .stats-grid {
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 15px;
-              }
-              
-              .stat-box {
-                  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+              .profile-panel {
+                  width: 32%; background: rgba(0,0,0,0.4);
+                  border-radius: 20px; padding: 20px;
+                  display: flex; flex-direction: column; align-items: center;
                   border: 2px solid rgba(255,255,255,0.1);
-                  border-radius: 16px;
-                  padding: 12px 20px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 4px 6px rgba(0,0,0,0.3);
               }
               
-              .stat-icon { 
-                  font-size: 38px; 
-                  filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.6)); 
+              .icon-box {
+                  width: 150px; height: 150px;
+                  background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+                  border: 5px solid #fff; border-radius: 25px;
+                  display: flex; align-items: center; justify-content: center;
+                  font-size: 80px; margin-bottom: 20px;
+                  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
               }
               
-              .stat-info { text-align: right; }
-              
-              .stat-title {
-                  font-family: 'Nunito', sans-serif;
-                  font-size: 13px;
-                  font-weight: 900;
-                  color: #9ab4d6;
-                  text-transform: uppercase;
-                  letter-spacing: 1px;
-                  margin-bottom: 2px;
+              .name {
+                  font-size: 38px; color: #FFD700; text-align: center;
+                  -webkit-text-stroke: 1.5px #000; text-shadow: 3px 3px 0 #000;
+                  margin-bottom: 5px;
               }
               
-              .stat-value {
-                  font-family: 'Lilita One', cursive;
-                  font-size: 32px;
-                  color: #fff;
-                  -webkit-text-stroke: 1px #000;
-                  text-shadow: 2px 2px 0px #000;
+              .tag {
+                  font-size: 18px; color: #aab; background: rgba(0,0,0,0.6);
+                  padding: 5px 15px; border-radius: 10px; margin-bottom: 25px;
               }
               
-              .val-yellow { color: #ffdf00; }
-              .val-purple { color: #d633ff; }
-              .val-blue { color: #33ccff; }
-              
-              .victories-row {
-                  display: flex;
-                  gap: 15px;
+              .club-tag {
+                  width: 100%; background: #FF2E63; color: #fff;
+                  padding: 12px; border-radius: 15px; text-align: center;
+                  font-size: 20px; border: 3px solid #fff;
+                  box-shadow: 0 5px 15px rgba(255,46,99,0.3);
               }
               
-              .victory-box {
-                  flex: 1;
-                  background: linear-gradient(180deg, rgba(30,45,75,0.7), rgba(15,25,45,0.8));
-                  border: 2px solid rgba(255,255,255,0.08);
-                  border-radius: 16px;
-                  padding: 14px 10px;
-                  text-align: center;
-                  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+              .stats-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
+              
+              .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+              
+              .stat-item {
+                  background: rgba(255,255,255,0.05); border: 3px solid rgba(255,255,255,0.1);
+                  border-radius: 18px; padding: 12px 20px;
+                  display: flex; align-items: center; justify-content: space-between;
               }
               
-              .victory-title {
-                  font-family: 'Nunito', sans-serif;
-                  color: #9ab4d6;
-                  font-size: 12px;
-                  font-weight: 900;
-                  margin-bottom: 6px;
-                  text-transform: uppercase;
+              .stat-label { font-size: 14px; color: #8899aa; text-transform: uppercase; }
+              .stat-val { 
+                  font-size: 34px; color: #fff; 
+                  -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000;
               }
               
-              .victory-value {
-                  font-family: 'Lilita One', cursive;
-                  font-size: 32px;
-                  color: #fff;
-                  -webkit-text-stroke: 1.2px #000;
-                  text-shadow: 2px 2px 0px #000;
+              .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+              
+              .v-box {
+                  padding: 15px 10px; border-radius: 18px; text-align: center;
+                  border: 3px solid rgba(0,0,0,0.3); box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
               }
               
-              .bottom-stats {
-                  display: flex;
-                  gap: 15px;
+              .v-3v3 { background: #3c6efd; }
+              .v-solo { background: #2ecc71; }
+              .v-duo { background: #f39c12; }
+              
+              .v-label { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 5px; }
+              .v-val { font-size: 28px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
+              
+              .footer-stats {
+                  display: flex; gap: 15px;
               }
               
-              .bottom-box {
-                  flex: 1;
-                  background: rgba(0,0,0,0.3);
-                  border: 2px solid rgba(255,255,255,0.08);
-                  border-radius: 16px;
-                  padding: 12px;
-                  text-align: center;
-                  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+              .footer-box {
+                  flex: 1; background: rgba(0,0,0,0.3); padding: 15px;
+                  border-radius: 18px; text-align: center; border: 2px solid rgba(255,255,255,0.05);
               }
           </style>
       </head>
       <body>
-          <div class="bg-image"></div>
+          <div class="bg-blur"></div>
           <div class="card">
-              <div class="header">
-                  <h1>BRAWL STARS PROFILE</h1>
-              </div>
-              <div class="content">
-                  <div class="left-panel">
-                      <div class="player-icon">🌟</div>
-                      <div class="player-name">${data.name || 'Unknown'}</div>
-                      <div class="player-tag">${data.tag || tag}</div>
-                      <div class="club-badge">
-                          ${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}
-                      </div>
+              <div class="header"><h1>BRAWL STARS PROFILE</h1></div>
+              <div class="main-content">
+                  <div class="profile-panel">
+                      <div class="icon-box">⭐</div>
+                      <div class="name">${data.name}</div>
+                      <div class="tag">${data.tag}</div>
+                      <div class="club-tag">${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}</div>
                   </div>
-                  
-                  <div class="right-panel">
-                      <div class="stats-grid">
-                          <div class="stat-box">
-                              <div class="stat-icon">🏆</div>
-                              <div class="stat-info">
-                                  <div class="stat-title">TROFEI</div>
-                                  <div class="stat-value val-yellow">${(data.trophies || 0).toLocaleString()}</div>
-                              </div>
+                  <div class="stats-panel">
+                      <div class="grid-2">
+                          <div class="stat-item">
+                              <span class="stat-label">🏆 Trofei</span>
+                              <span class="stat-val" style="color: #FFD700;">${data.trophies.toLocaleString()}</span>
                           </div>
-                          <div class="stat-box">
-                              <div class="stat-icon">⭐</div>
-                              <div class="stat-info">
-                                  <div class="stat-title">RECORD</div>
-                                  <div class="stat-value val-yellow">${(data.highestTrophies || 0).toLocaleString()}</div>
-                              </div>
+                          <div class="stat-item">
+                              <span class="stat-label">⭐ Record</span>
+                              <span class="stat-val" style="color: #FFD700;">${data.highestTrophies.toLocaleString()}</span>
                           </div>
-                          <div class="stat-box">
-                              <div class="stat-icon">💥</div>
-                              <div class="stat-info">
-                                  <div class="stat-title">LIV. ESP.</div>
-                                  <div class="stat-value val-purple">${data.expLevel || 0}</div>
-                              </div>
+                          <div class="stat-item">
+                              <span class="stat-label">💥 Livello</span>
+                              <span class="stat-val" style="color: #CD7F32;">${data.expLevel}</span>
                           </div>
-                          <div class="stat-box">
-                              <div class="stat-icon">🎮</div>
-                              <div class="stat-info">
-                                  <div class="stat-title">BRAWLERS</div>
-                                  <div class="stat-value val-blue">${data.brawlers?.length || 0}</div>
-                              </div>
+                          <div class="stat-item">
+                              <span class="stat-label">🎮 Brawlers</span>
+                              <span class="stat-val" style="color: #3c6efd;">${data.brawlers?.length || 0}</span>
                           </div>
                       </div>
-                      
-                      <div class="victories-row">
-                          <div class="victory-box">
-                              <div class="victory-title">3v3 VITTORIE</div>
-                              <div class="victory-value val-blue">${victories3v3.toLocaleString()}</div>
+                      <div class="grid-3">
+                          <div class="v-box v-3v3">
+                              <div class="v-label">3V3 VITTORIE</div>
+                              <div class="v-val">${victories3v3.toLocaleString()}</div>
                           </div>
-                          <div class="victory-box">
-                              <div class="victory-title">SOLO VITTORIE</div>
-                              <div class="victory-value" style="color: #00e600;">${victoriesSolo.toLocaleString()}</div>
+                          <div class="v-box v-solo">
+                              <div class="v-label">SOLO VITTORIE</div>
+                              <div class="v-val">${victoriesSolo.toLocaleString()}</div>
                           </div>
-                          <div class="victory-box">
-                              <div class="victory-title">DUO VITTORIE</div>
-                              <div class="victory-value" style="color: #ffaa00;">${victoriesDuo.toLocaleString()}</div>
+                          <div class="v-box v-duo">
+                              <div class="v-label">DUO VITTORIE</div>
+                              <div class="v-val">${victoriesDuo.toLocaleString()}</div>
                           </div>
                       </div>
-                      
-                      <div class="bottom-stats">
-                           <div class="bottom-box">
-                              <div class="stat-title">PARTITE TOTALI</div>
-                              <div class="victory-value val-blue">${totalPlayed.toLocaleString()}</div>
+                      <div class="footer-stats">
+                          <div class="footer-box">
+                              <div class="v-label">PARTITE TOTALI</div>
+                              <div class="v-val" style="font-size: 32px;">${totalPlayed.toLocaleString()}</div>
                           </div>
-                          <div class="bottom-box">
-                              <div class="stat-title">BRAWLERS SBLOCCATI</div>
-                              <div class="victory-value val-yellow">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
+                          <div class="footer-box">
+                              <div class="v-label">BRAWLERS SBLOCCATI</div>
+                              <div class="v-val" style="font-size: 32px; color: #FFD700;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
                           </div>
                       </div>
                   </div>
@@ -444,44 +266,13 @@ let handler = async (m, { conn, command, args }) => {
       </html>`
 
       const imageBuffer = await retryScreenshot(html)
+      const caption = `📊 *BRAWL STARS PROFILE*\n\n👤 *Giocatore:* ${data.name}\n🏆 *Trofei:* ${data.trophies}\n⭐ *Massimi:* ${data.highestTrophies}\n🎮 *Brawlers:* ${data.brawlers?.length}\n\n🎯 *3v3:* ${victories3v3} | *Solo:* ${victoriesSolo} | *Duo:* ${victoriesDuo}`
 
-      const header =
-        target === m.sender
-          ? '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐭𝐮𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬:'
-          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${target.split('@')[0]}:`
-
-      const msg = `
-${header}
-
-👤 𝐆𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞: *${data.name}*
-🏷️ 𝐓𝐚𝐠 𝐩𝐫𝐨𝐟𝐢𝐥𝐨: *${data.tag}*
-🏆 𝐓𝐫𝐨𝐟𝐞𝐢 𝐚𝐭𝐭𝐮𝐚𝐥𝐢: *${data.trophies || 0}*
-⭐ 𝐑𝐞𝐜𝐨𝐫𝐝 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐭𝐫𝐨𝐟𝐞𝐢: *${data.highestTrophies || 0}*
-💥 𝐏𝐮𝐧𝐭𝐢 𝐞𝐬𝐩𝐞𝐫𝐢𝐞𝐧𝐳𝐚: *${data.expLevel || 0}*
-
-🎯 𝟑𝐯𝟑 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victories3v3}*
-🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
-🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
-
-🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${data.brawlers?.length || 0}*
-🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
-
-🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
-`.trim()
-
-      await conn.sendMessage(m.chat, {
-        image: imageBuffer,
-        caption: msg,
-        mentions: [target]
-      }, { quoted: m })
+      await conn.sendMessage(m.chat, { image: imageBuffer, caption, mentions: [target] }, { quoted: m })
 
     } catch (err) {
       console.error(err)
-      return await conn.reply(
-        m.chat,
-        '⚠️ Si è verificato un errore durante la richiesta (API o connessione).',
-        m
-      )
+      await conn.reply(m.chat, '⚠️ Errore durante il recupero dei dati.', m)
     }
   }
 }
