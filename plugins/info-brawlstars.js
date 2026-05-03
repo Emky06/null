@@ -1,3 +1,4 @@
+
 //Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
@@ -39,6 +40,9 @@ async function retryScreenshot(html, retries = 5, delay = 2000) {
                 console.warn(`Rate limit hit, retrying after ${delay}ms...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
+            } else if (e.response?.status === 400) {
+                console.error('Bad request to Browserless API. HTML may be invalid.');
+                throw e;
             } else {
                 throw e;
             }
@@ -52,40 +56,71 @@ let handler = async (m, { conn, command, args }) => {
 
   if (command === 'setbrawl') {
     if (!args[0]) {
-      return await conn.reply(m.chat, '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`', m)
+      return await conn.reply(
+        m.chat,
+        '🎮 Salva il tuo tag con\n`.setbrawl #ILTUOTAG`\nPoi potrai usare `.brawl` per vedere le statistiche',
+        m
+      )
     }
+
     let tag = args[0].toUpperCase()
     if (!tag.startsWith('#')) tag = '#' + tag
+
     if (!db[m.sender]) db[m.sender] = {}
     db[m.sender].tag = tag
+
     saveDB(db)
-    return await conn.reply(m.chat, `✅ Tag salvato: ${tag}`, m)
+
+    return await conn.reply(
+      m.chat,
+      `✅ Tag salvato: ${tag}\nUsa .brawl per vedere il tuo profilo.`,
+      m
+    )
   }
 
   if (command === 'brawl') {
+
     let target = m.sender
+
     if (Array.isArray(m.mentionedJid) && m.mentionedJid.length > 0) {
       target = m.mentionedJid[0]
     } else if (m.quoted?.sender) {
       target = m.quoted.sender
     }
 
-    let tag = args[0] || db[target]?.tag
-    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
-      return await conn.reply(m.chat, '❗ Nessun tag salvato. Usa .setbrawl #TAG', m)
+    let tag = args[0]
+
+    if (!tag) {
+      tag = db[target]?.tag
     }
 
-    tag = tag.toUpperCase().replace(/[^A-Z0-9#]/g, '')
+    if (!tag || typeof tag !== 'string' || !tag.includes('#')) {
+      return await conn.reply(
+        m.chat,
+        '❗ Nessun tag salvato per questo utente.\nUsa .setbrawl #TAG',
+        m
+      )
+    }
+
+    tag = String(tag).toUpperCase().replace(/[^A-Z0-9#]/g, '')
+    if (!tag.startsWith('#')) tag = '#' + tag
+
     const encodedTag = encodeURIComponent(tag)
 
     try {
       const res = await fetch(`${API_BASE}/players/${encodedTag}`, {
-        headers: { Accept: 'application/json', Authorization: `Bearer ${API_TOKEN}` }
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${API_TOKEN}`
+        }
       })
 
-      if (!res.ok) return await conn.reply(m.chat, '❌ Errore API: Tag non trovato.', m)
+      if (!res.ok) {
+        return await conn.reply(m.chat, '❌ Errore API', m)
+      }
 
       const data = await res.json()
+
       const victories3v3 = data['3vs3Victories'] || 0
       const victoriesSolo = data['soloVictories'] || 0
       const victoriesDuo = data['duoVictories'] || 0
@@ -103,23 +138,22 @@ let handler = async (m, { conn, command, args }) => {
               body {
                   width: 1000px; height: 600px;
                   display: flex; align-items: center; justify-content: center;
-                  background-color: #0d1323; overflow: hidden;
-                  position: relative;
+                  background-color: #0d1323; overflow: hidden; position: relative;
               }
               
-              .bg-blur {
+              .bg-image {
                   position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
-                  background: url('https://wallpapercave.com/wp/wp4263657.jpg') center/cover;
-                  filter: blur(15px) brightness(0.4); z-index: 0;
+                  background-image: url('https://wallpapercave.com/wp/wp4263657.jpg');
+                  background-size: cover; background-position: center;
+                  filter: blur(12px) brightness(0.4); z-index: 0;
               }
               
               .card {
                   z-index: 1; width: 940px; height: 540px;
-                  background: rgba(18, 25, 46, 0.94);
+                  background: rgba(18, 25, 46, 0.92);
                   border: 5px solid #3c6efd; border-radius: 30px;
                   display: flex; flex-direction: column;
-                  box-shadow: 0 0 50px rgba(0,0,0,0.9);
-                  overflow: hidden;
+                  box-shadow: 0 0 40px rgba(0,0,0,0.8); overflow: hidden;
               }
               
               .header {
@@ -129,16 +163,16 @@ let handler = async (m, { conn, command, args }) => {
               }
               
               .header h1 {
-                  font-size: 48px; color: #fff;
+                  font-size: 46px; color: #fff;
                   -webkit-text-stroke: 2px #000;
                   text-shadow: 3px 3px 0 #000;
-                  letter-spacing: 3px;
+                  text-transform: uppercase; letter-spacing: 2px;
               }
               
-              .main-content { display: flex; flex: 1; padding: 25px; gap: 20px; }
+              .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               
               .left-panel {
-                  width: 32%; background: rgba(0,0,0,0.4);
+                  width: 32%; background: rgba(0,0,0,0.35);
                   border-radius: 20px; padding: 20px;
                   display: flex; flex-direction: column; align-items: center;
                   border: 2px solid rgba(255,255,255,0.1);
@@ -154,8 +188,8 @@ let handler = async (m, { conn, command, args }) => {
               }
               
               .player-name {
-                  font-size: 38px; color: #FFD700; text-align: center;
-                  -webkit-text-stroke: 1.5px #000; text-shadow: 3px 3px 0 #000;
+                  font-size: 36px; color: #FFD700; text-align: center;
+                  -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000;
                   margin-bottom: 5px;
               }
               
@@ -164,103 +198,99 @@ let handler = async (m, { conn, command, args }) => {
                   padding: 5px 15px; border-radius: 10px; margin-bottom: 25px;
               }
               
-              .club-box {
-                  width: 100%; background: #FF2E63; color: #fff;
-                  padding: 12px; border-radius: 15px; text-align: center;
-                  font-size: 20px; border: 3px solid #fff;
-                  box-shadow: 0 5px 15px rgba(255,46,99,0.3);
+              .club-badge {
+                  width: 100%; background: linear-gradient(180deg, #ff3366, #cc0033);
+                  color: #fff; text-align: center; padding: 12px;
+                  border: 3px solid #fff; border-radius: 15px;
+                  font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
               }
               
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
               
               .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
               
-              .stat-card {
-                  background: rgba(255,255,255,0.05); border: 3px solid rgba(255,255,255,0.1);
+              .stat-box {
+                  background: rgba(255,255,255,0.05); border: 2.5px solid rgba(255,255,255,0.1);
                   border-radius: 18px; padding: 12px 20px;
                   display: flex; align-items: center; justify-content: space-between;
               }
               
-              .stat-label { font-size: 14px; color: #8899aa; text-transform: uppercase; }
+              .stat-info { text-align: right; }
+              .stat-title { font-size: 14px; color: #8899aa; text-transform: uppercase; }
               .stat-value { 
-                  font-size: 34px; color: #fff; 
+                  font-size: 32px; color: #fff; 
                   -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000;
               }
               
-              .victory-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+              .victories-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
               
-              .v-card {
-                  padding: 15px 10px; border-radius: 18px; text-align: center;
-                  border: 3px solid rgba(0,0,0,0.4);
-              }
-              
+              .v-box { padding: 15px 10px; border-radius: 18px; text-align: center; border: 3px solid rgba(0,0,0,0.3); }
               .v-3v3 { background: #3c6efd; }
               .v-solo { background: #2ecc71; }
               .v-duo { background: #f39c12; }
               
-              .v-label { font-size: 11px; color: rgba(255,255,255,0.8); margin-bottom: 5px; }
-              .v-val { font-size: 28px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
+              .v-label { font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 5px; text-transform: uppercase; }
+              .v-val { font-size: 26px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
               
-              .bottom-row { display: flex; gap: 15px; }
-              
-              .bottom-card {
-                  flex: 1; background: rgba(0,0,0,0.3); padding: 15px;
-                  border-radius: 18px; text-align: center; border: 2px solid rgba(255,255,255,0.05);
+              .bottom-stats { display: flex; gap: 15px; }
+              .bottom-box {
+                  flex: 1; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.05);
+                  border-radius: 18px; padding: 15px; text-align: center;
               }
           </style>
       </head>
       <body>
-          <div class="bg-blur"></div>
+          <div class="bg-image"></div>
           <div class="card">
               <div class="header"><h1>BRAWL STARS PROFILE</h1></div>
-              <div class="main-content">
+              <div class="content">
                   <div class="left-panel">
                       <div class="player-icon">⭐</div>
-                      <div class="player-name">${data.name}</div>
-                      <div class="player-tag">${data.tag}</div>
-                      <div class="club-box">${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}</div>
+                      <div class="player-name">${data.name || 'Unknown'}</div>
+                      <div class="player-tag">${data.tag || tag}</div>
+                      <div class="club-badge">${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}</div>
                   </div>
                   <div class="right-panel">
                       <div class="stats-grid">
-                          <div class="stat-card">
-                              <span class="stat-label">🏆 Trofei</span>
-                              <span class="stat-value" style="color: #FFD700;">${data.trophies.toLocaleString()}</span>
+                          <div class="stat-box">
+                              <span class="stat-title">🏆 TROFEI</span>
+                              <span class="stat-value" style="color: #FFD700;">${(data.trophies || 0).toLocaleString()}</span>
                           </div>
-                          <div class="stat-card">
-                              <span class="stat-label">⭐ Record</span>
-                              <span class="stat-value" style="color: #FFD700;">${data.highestTrophies.toLocaleString()}</span>
+                          <div class="stat-box">
+                              <span class="stat-title">⭐ RECORD</span>
+                              <span class="stat-value" style="color: #FFD700;">${(data.highestTrophies || 0).toLocaleString()}</span>
                           </div>
-                          <div class="stat-card">
-                              <span class="stat-label">💥 Livello</span>
-                              <span class="stat-value" style="color: #CD7F32;">${data.expLevel}</span>
+                          <div class="stat-box">
+                              <span class="stat-title">💥 LIVELLO</span>
+                              <span class="stat-value" style="color: #d633ff;">${data.expLevel || 0}</span>
                           </div>
-                          <div class="stat-card">
-                              <span class="stat-label">🎮 Brawlers</span>
-                              <span class="stat-value" style="color: #3c6efd;">${data.brawlers?.length || 0}</span>
+                          <div class="stat-box">
+                              <span class="stat-title">🎮 BRAWLERS</span>
+                              <span class="stat-value" style="color: #33ccff;">${data.brawlers?.length || 0}</span>
                           </div>
                       </div>
-                      <div class="victory-row">
-                          <div class="v-card v-3v3">
-                              <div class="v-label">3V3 VITTORIE</div>
+                      <div class="victories-row">
+                          <div class="v-box v-3v3">
+                              <div class="v-label">3v3 VITTORIE</div>
                               <div class="v-val">${victories3v3.toLocaleString()}</div>
                           </div>
-                          <div class="v-card v-solo">
+                          <div class="v-box v-solo">
                               <div class="v-label">SOLO VITTORIE</div>
                               <div class="v-val">${victoriesSolo.toLocaleString()}</div>
                           </div>
-                          <div class="v-card v-duo">
+                          <div class="v-box v-duo">
                               <div class="v-label">DUO VITTORIE</div>
                               <div class="v-val">${victoriesDuo.toLocaleString()}</div>
                           </div>
                       </div>
-                      <div class="bottom-row">
-                          <div class="bottom-card">
+                      <div class="bottom-stats">
+                           <div class="bottom-box">
                               <div class="v-label">PARTITE TOTALI</div>
-                              <div class="v-val" style="font-size: 32px; color: #fff;">${totalPlayed.toLocaleString()}</div>
+                              <div class="v-val" style="color: #33ccff; font-size: 30px;">${totalPlayed.toLocaleString()}</div>
                           </div>
-                          <div class="bottom-card">
+                          <div class="bottom-box">
                               <div class="v-label">BRAWLERS SBLOCCATI</div>
-                              <div class="v-val" style="font-size: 32px; color: #FFD700;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
+                              <div class="v-val" style="color: #FFD700; font-size: 30px;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
                           </div>
                       </div>
                   </div>
@@ -270,18 +300,44 @@ let handler = async (m, { conn, command, args }) => {
       </html>`
 
       const imageBuffer = await retryScreenshot(html)
-      
-      const headerText = target === m.sender 
-        ? '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐭𝐮𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬:' 
-        : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${target.split('@')[0]}:`
 
-      const caption = `${headerText}\n\n👤 *Giocatore:* ${data.name}\n🏆 *Trofei:* ${data.trophies}\n⭐ *Record:* ${data.highestTrophies}\n🎮 *Brawlers:* ${data.brawlers?.length}\n\n🎯 *Vittorie:* 3v3: ${victories3v3} | Solo: ${victoriesSolo} | Duo: ${victoriesDuo}`
+      const header =
+        target === m.sender
+          ? '𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐭𝐮𝐨 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬:'
+          : `𝐄𝐜𝐜𝐨 𝐥𝐞 𝐬𝐭𝐚𝐭𝐢𝐬𝐭𝐢𝐜𝐡𝐞 𝐝𝐞𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨 𝐁𝐫𝐚𝐰𝐥 𝐒𝐭𝐚𝐫𝐬 𝐝𝐢 @${target.split('@')[0]}:`
 
-      await conn.sendMessage(m.chat, { image: imageBuffer, caption, mentions: [target] }, { quoted: m })
+      const msg = `
+${header}
+
+👤 𝐆𝐢𝐨𝐜𝐚𝐭𝐨𝐫𝐞: *${data.name}*
+🏷️ 𝐓𝐚𝐠 𝐩𝐫𝐨𝐟𝐢𝐥𝐨: *${data.tag}*
+🏆 𝐓𝐫𝐨𝐟𝐞𝐢 𝐚𝐭𝐭𝐮𝐚𝐥𝐢: *${data.trophies || 0}*
+⭐ 𝐑𝐞𝐜𝐨𝐫𝐝 𝐦𝐚𝐬𝐬𝐢𝐦𝐨 𝐭𝐫𝐨𝐟𝐞𝐢: *${data.highestTrophies || 0}*
+💥 𝐏𝐮𝐧𝐭𝐢 𝐞𝐬𝐩𝐞𝐫𝐢𝐞𝐧𝐳𝐚: *${data.expLevel || 0}*
+
+🎯 𝟑𝐯𝟑 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victories3v3}*
+🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
+🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
+
+🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${data.brawlers?.length || 0}*
+🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
+
+🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}
+`.trim()
+
+      await conn.sendMessage(m.chat, {
+        image: imageBuffer,
+        caption: msg,
+        mentions: [target]
+      }, { quoted: m })
 
     } catch (err) {
       console.error(err)
-      await conn.reply(m.chat, '⚠️ Errore durante il recupero dei dati o la generazione dell\'immagine.', m)
+      return await conn.reply(
+        m.chat,
+        '⚠️ Si è verificato un errore durante la richiesta (API o connessione).',
+        m
+      )
     }
   }
 }
