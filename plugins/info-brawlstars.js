@@ -1,4 +1,4 @@
-l//Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
