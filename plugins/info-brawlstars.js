@@ -133,13 +133,14 @@ let handler = async (m, { conn, command, args }) => {
           <style>
               * { margin: 0; padding: 0; box-sizing: border-box; }
               
-              @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+              /* Font Stile Brawl Stars */
+              @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
               
               body {
                   width: 1000px;
                   height: 600px;
-                  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-                  font-family: 'Poppins', sans-serif;
+                  background: radial-gradient(circle, #2fa3ff 0%, #004dc6 100%);
+                  font-family: 'Lilita One', cursive;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -147,244 +148,290 @@ let handler = async (m, { conn, command, args }) => {
                   overflow: hidden;
               }
               
-              .bg-pattern {
+              .bg-stripes {
                   position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  background-image: url('https://cdn2.unrealengine.com/Dynamic%2Fblog%2Fbrawl-stars-hay-day-pop-up%2Fbs_mobile_blog_thumb-1920x1080-6ce4fcc3122c.jpg');
-                  background-size: cover;
-                  background-position: center;
-                  opacity: 0.15;
-                  filter: blur(5px);
+                  top: 0; left: 0; right: 0; bottom: 0;
+                  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 20px, transparent 20px, transparent 40px);
+                  z-index: 0;
               }
               
               .card {
                   position: relative;
-                  width: 920px;
+                  width: 900px;
                   height: 520px;
-                  background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(30,30,50,0.9) 100%);
-                  border-radius: 40px;
-                  backdrop-filter: blur(10px);
-                  border: 2px solid rgba(255,215,0,0.3);
-                  box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-                  overflow: hidden;
+                  background: #f4f6f8;
+                  border-radius: 24px;
+                  border: 6px solid #000;
+                  box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+                  z-index: 1;
+                  display: flex;
+                  flex-direction: column;
               }
               
               .header {
-                  background: linear-gradient(90deg, #ffd700, #ff8c00);
-                  padding: 20px 30px;
+                  background: #ffcc00;
+                  padding: 15px;
+                  border-bottom: 6px solid #000;
+                  border-top-left-radius: 18px;
+                  border-top-right-radius: 18px;
                   text-align: center;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  box-shadow: inset 0 -5px 0 rgba(200, 150, 0, 0.5);
               }
               
               .header h1 {
-                  font-size: 28px;
-                  font-weight: 900;
-                  color: #1a1a2e;
-                  text-transform: uppercase;
+                  font-size: 40px;
+                  color: #fff;
+                  -webkit-text-stroke: 2px #000;
+                  text-shadow: 3px 3px 0px #000;
                   letter-spacing: 2px;
               }
               
               .content {
-                  padding: 30px;
                   display: flex;
-                  gap: 30px;
+                  flex: 1;
+                  padding: 20px;
+                  gap: 20px;
               }
               
-              .icon-section {
-                  flex: 1;
-                  text-align: center;
+              .left-panel {
+                  width: 35%;
+                  background: #fff;
+                  border: 5px solid #000;
+                  border-radius: 16px;
+                  padding: 20px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  box-shadow: 5px 5px 0px #000, inset 0 -4px 0px #e0e0e0;
               }
               
               .player-icon {
-                  width: 150px;
-                  height: 150px;
-                  background: linear-gradient(135deg, #ffd700, #ff8c00);
-                  border-radius: 50%;
+                  width: 140px;
+                  height: 140px;
+                  background: #33ccff;
+                  border: 5px solid #000;
+                  border-radius: 20px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  margin: 0 auto 15px;
-                  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                  border: 3px solid #ffd700;
-              }
-              
-              .player-icon span {
+                  box-shadow: 4px 4px 0px #000, inset 0 -6px 0px rgba(0,0,0,0.2);
+                  margin-bottom: 15px;
                   font-size: 70px;
               }
               
               .player-name {
-                  font-size: 28px;
-                  font-weight: 800;
-                  color: #ffd700;
-                  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-                  margin-bottom: 5px;
+                  font-size: 36px;
+                  color: #fff;
+                  -webkit-text-stroke: 1.5px #000;
+                  text-shadow: 3px 3px 0px #000;
+                  text-align: center;
+                  line-height: 1.1;
+                  margin-bottom: 8px;
               }
               
               .player-tag {
-                  font-size: 16px;
-                  color: #aaa;
+                  font-size: 20px;
+                  color: #555;
+                  background: #ddd;
+                  padding: 4px 12px;
+                  border-radius: 10px;
+                  border: 3px solid #000;
                   margin-bottom: 15px;
+                  box-shadow: inset 0 -3px 0px #bbb;
               }
               
-              .club-info {
-                  background: rgba(255,215,0,0.15);
-                  border-radius: 20px;
+              .club-badge {
+                  width: 100%;
+                  background: #ff3366;
+                  color: #fff;
+                  text-align: center;
                   padding: 10px;
-                  margin-top: 15px;
+                  border: 4px solid #000;
+                  border-radius: 12px;
+                  font-size: 22px;
+                  -webkit-text-stroke: 1px #000;
+                  text-shadow: 2px 2px 0px #000;
+                  box-shadow: 3px 3px 0px #000, inset 0 -3px 0 rgba(0,0,0,0.2);
               }
               
-              .club-info p {
-                  color: #ffd700;
-                  font-size: 14px;
-                  font-weight: 600;
-              }
-              
-              .stats-section {
-                  flex: 2;
+              .right-panel {
+                  width: 65%;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 15px;
               }
               
               .stats-grid {
                   display: grid;
-                  grid-template-columns: repeat(2, 1fr);
+                  grid-template-columns: 1fr 1fr;
                   gap: 15px;
-                  margin-bottom: 20px;
               }
               
-              .stat-card {
-                  background: rgba(255,255,255,0.08);
-                  border-radius: 20px;
+              .stat-box {
+                  background: #fff;
+                  border: 4px solid #000;
+                  border-radius: 16px;
                   padding: 12px 15px;
-                  border: 1px solid rgba(255,215,0,0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  box-shadow: 4px 4px 0px #000, inset 0 -4px 0 rgba(0,0,0,0.15);
               }
               
-              .stat-label {
-                  font-size: 11px;
+              .stat-icon {
+                  font-size: 32px;
+              }
+              
+              .stat-info {
+                  text-align: right;
+              }
+              
+              .stat-title {
+                  font-size: 14px;
+                  color: #000;
                   text-transform: uppercase;
-                  letter-spacing: 1px;
-                  color: #ffd700;
-                  font-weight: 600;
-                  margin-bottom: 5px;
+                  margin-bottom: -2px;
               }
               
               .stat-value {
-                  font-size: 28px;
-                  font-weight: 800;
-                  color: white;
-                  line-height: 1;
+                  font-size: 32px;
+                  color: #fff;
+                  -webkit-text-stroke: 1.5px #000;
+                  text-shadow: 2px 2px 0px #000;
               }
               
-              .victories-grid {
-                  display: grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  gap: 12px;
-                  margin-top: 15px;
+              .box-trophies { background: #ffcc00; }
+              .box-record { background: #ff9900; }
+              .box-exp { background: #cc33ff; }
+              .box-brawlers { background: #33ccff; }
+              
+              .victories-row {
+                  display: flex;
+                  gap: 15px;
               }
               
-              .victory-card {
-                  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.1));
-                  border-radius: 15px;
+              .victory-box {
+                  flex: 1;
+                  border: 4px solid #000;
+                  border-radius: 16px;
                   padding: 10px;
                   text-align: center;
-                  border: 1px solid rgba(255,215,0,0.3);
+                  box-shadow: 4px 4px 0px #000, inset 0 -4px 0 rgba(0,0,0,0.2);
+              }
+              
+              .victory-title {
+                  color: #000;
+                  font-size: 16px;
+                  margin-bottom: 2px;
               }
               
               .victory-value {
-                  font-size: 22px;
-                  font-weight: 800;
-                  color: #ffd700;
+                  font-size: 30px;
+                  color: #fff;
+                  -webkit-text-stroke: 1.5px #000;
+                  text-shadow: 2px 2px 0px #000;
               }
               
-              .victory-label {
-                  font-size: 10px;
-                  color: #ccc;
-                  margin-top: 3px;
-              }
+              .box-3v3 { background: #ff4d4d; }
+              .box-solo { background: #00e600; }
+              .box-duo { background: #ffaa00; }
               
-              .brawler-stats {
+              .bottom-stats {
                   display: flex;
-                  justify-content: space-between;
-                  margin-top: 15px;
-                  padding-top: 15px;
-                  border-top: 1px solid rgba(255,215,0,0.2);
+                  gap: 15px;
               }
               
-              .brawler-stat {
-                  text-align: center;
+              .bottom-box {
                   flex: 1;
+                  background: #fff;
+                  border: 4px solid #000;
+                  border-radius: 16px;
+                  padding: 10px 15px;
+                  text-align: center;
+                  box-shadow: 4px 4px 0px #000, inset 0 -4px 0 #e0e0e0;
               }
               
-              .brawler-stat-value {
-                  font-size: 24px;
-                  font-weight: 800;
-                  color: #ffd700;
-              }
-              
-              .brawler-stat-label {
-                  font-size: 10px;
-                  color: #aaa;
+              .bottom-value {
+                  font-size: 32px;
+                  -webkit-text-stroke: 1.5px #000;
+                  text-shadow: 2px 2px 0px #000;
               }
           </style>
       </head>
       <body>
-          <div class="bg-pattern"></div>
+          <div class="bg-stripes"></div>
           <div class="card">
               <div class="header">
-                  <h1>⭐ BRAWL STARS PROFILE ⭐</h1>
+                  <h1>BRAWL STARS PROFILE</h1>
               </div>
               <div class="content">
-                  <div class="icon-section">
-                      <div class="player-icon">
-                          <span>🎮</span>
-                      </div>
+                  <div class="left-panel">
+                      <div class="player-icon">🌟</div>
                       <div class="player-name">${data.name || 'Unknown'}</div>
                       <div class="player-tag">${data.tag || tag}</div>
-                      <div class="club-info">
-                          <p>🏆 ${data.club?.name ? 'Club: ' + data.club.name : 'Nessun Club'}</p>
+                      <div class="club-badge">
+                          ${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}
                       </div>
                   </div>
-                  <div class="stats-section">
+                  
+                  <div class="right-panel">
                       <div class="stats-grid">
-                          <div class="stat-card">
-                              <div class="stat-label">🏆 TROFEI</div>
-                              <div class="stat-value">${(data.trophies || 0).toLocaleString()}</div>
+                          <div class="stat-box box-trophies">
+                              <div class="stat-icon">🏆</div>
+                              <div class="stat-info">
+                                  <div class="stat-title">TROFEI</div>
+                                  <div class="stat-value">${(data.trophies || 0).toLocaleString()}</div>
+                              </div>
                           </div>
-                          <div class="stat-card">
-                              <div class="stat-label">⭐ RECORD</div>
-                              <div class="stat-value">${(data.highestTrophies || 0).toLocaleString()}</div>
+                          <div class="stat-box box-record">
+                              <div class="stat-icon">⭐</div>
+                              <div class="stat-info">
+                                  <div class="stat-title">RECORD</div>
+                                  <div class="stat-value">${(data.highestTrophies || 0).toLocaleString()}</div>
+                              </div>
                           </div>
-                          <div class="stat-card">
-                              <div class="stat-label">💥 ESPERIENZA</div>
-                              <div class="stat-value">${data.expLevel || 0}</div>
+                          <div class="stat-box box-exp">
+                              <div class="stat-icon">💥</div>
+                              <div class="stat-info">
+                                  <div class="stat-title">LIV. ESP.</div>
+                                  <div class="stat-value">${data.expLevel || 0}</div>
+                              </div>
                           </div>
-                          <div class="stat-card">
-                              <div class="stat-label">🎮 BRAWLERS</div>
-                              <div class="stat-value">${data.brawlers?.length || 0}</div>
+                          <div class="stat-box box-brawlers">
+                              <div class="stat-icon">🎮</div>
+                              <div class="stat-info">
+                                  <div class="stat-title">BRAWLERS</div>
+                                  <div class="stat-value">${data.brawlers?.length || 0}</div>
+                              </div>
                           </div>
                       </div>
                       
-                      <div class="victories-grid">
-                          <div class="victory-card">
+                      <div class="victories-row">
+                          <div class="victory-box box-3v3">
+                              <div class="victory-title">3v3 VITTORIE</div>
                               <div class="victory-value">${victories3v3.toLocaleString()}</div>
-                              <div class="victory-label">🎯 3v3</div>
                           </div>
-                          <div class="victory-card">
+                          <div class="victory-box box-solo">
+                              <div class="victory-title">SOLO VITTORIE</div>
                               <div class="victory-value">${victoriesSolo.toLocaleString()}</div>
-                              <div class="victory-label">👤 SOLO</div>
                           </div>
-                          <div class="victory-card">
+                          <div class="victory-box box-duo">
+                              <div class="victory-title">DUO VITTORIE</div>
                               <div class="victory-value">${victoriesDuo.toLocaleString()}</div>
-                              <div class="victory-label">👥 DUO</div>
                           </div>
                       </div>
                       
-                      <div class="brawler-stats">
-                          <div class="brawler-stat">
-                              <div class="brawler-stat-value">${totalPlayed.toLocaleString()}</div>
-                              <div class="brawler-stat-label">🎮 PARTITE TOTALI</div>
+                      <div class="bottom-stats">
+                           <div class="bottom-box">
+                              <div class="stat-title">PARTITE TOTALI</div>
+                              <div class="bottom-value" style="color: #33ccff;">${totalPlayed.toLocaleString()}</div>
                           </div>
-                          <div class="brawler-stat">
-                              <div class="brawler-stat-value">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
-                              <div class="brawler-stat-label">⭐ BRAWLER SBLOCATI</div>
+                          <div class="bottom-box">
+                              <div class="stat-title">BRAWLERS SBLOCCATI</div>
+                              <div class="bottom-value" style="color: #ffcc00;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
                           </div>
                       </div>
                   </div>
