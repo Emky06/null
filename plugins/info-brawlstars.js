@@ -247,7 +247,13 @@ let handler = async (m, { conn, command, args }) => {
                       <div class="player-icon">⭐</div>
                       <div class="player-name">${data.name || 'Unknown'}</div>
                       <div class="player-tag">${data.tag || tag}</div>
-                      <div class="club-badge">${data.club?.name ? '🛡️ ' + data.club.name : 'NO CLUB'}</div>
+                      <div class="bottom-box" style="width: 100%; margin-top: auto; background: rgba(255, 46, 99, 0.2); border: 2px solid #FF2E63;">
+    <div class="v-label" style="color: #FF2E63;">CLUB</div>
+    <div class="player-name" style="font-size: 24px; color: #fff; margin: 0;">
+        ${data.club?.name ? data.club.name : 'NESSUNO'}
+    </div>
+</div>
+
                   </div>
                   <div class="right-panel">
                       <div class="stats-grid">
