@@ -1,3 +1,5 @@
+// Codice di tools-cur.js
+
 //Plugin fatto da Axtral_WiZaRd
 import Jimp from 'jimp'
 import fetch from 'node-fetch'
@@ -12,6 +14,7 @@ const USERS_FILE = path.join(process.cwd(), 'storage', 'file-json', 'lastfm_user
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}')
 
 const LASTFM_API_KEY = '36f859a1fc4121e7f0e931806507d5f9'
+const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d'
 
 function getLastfmUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'))
@@ -155,7 +158,31 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     const globalPlaycount = parseInt(detailedTrack?.playcount) || 0
     const globalListeners = parseInt(detailedTrack?.listeners) || 0
 
-    const buffer = await generateTrackImage(current)
+    let buffer
+    try {
+      const html = `
+      <html>
+      <body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;width:600px;height:600px;">
+        <img src="${current.image?.[2]?.['#text'] || ''}" style="width:600px;height:600px;object-fit:cover;" />
+      </body>
+      </html>`
+
+      const res = await fetch(`https://chrome.browserless.io/screenshot?token=${BROWSERLESS_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          html,
+          options: { type: 'jpeg', quality: 90 },
+          viewport: { width: 600, height: 600 }
+        })
+      })
+
+      if (!res.ok) throw new Error('browserless fail')
+      const array = await res.arrayBuffer()
+      buffer = Buffer.from(array)
+    } catch (e) {
+      buffer = await generateTrackImage(current)
+    }
 
     const caption = current['@attr']?.nowplaying === 'true'
       ? `🎧 𝐈𝐧 𝐫𝐢𝐩𝐫𝐨𝐝𝐮𝐳𝐢𝐨𝐧𝐞 𝐨𝐫𝐚 • @${targetJid.split('@')[0]}\n\n` +
