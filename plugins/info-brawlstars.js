@@ -34,7 +34,6 @@ async function retryScreenshot(html, retries = 5, delay = 2000) {
             }, { responseType: 'arraybuffer', timeout: 20000 });
             return Buffer.from(response.data);
         } catch (e) {
-            console.error('Screenshot Error:', e.message);
             if (e.response?.status === 429) {
                 await new Promise(resolve => setTimeout(resolve, delay));
                 delay *= 2;
@@ -84,7 +83,9 @@ let handler = async (m, { conn, command, args }) => {
       const victoriesSolo = data['soloVictories'] || 0
       const victoriesDuo = data['duoVictories'] || 0
       const totalPlayed = victories3v3 + victoriesSolo + victoriesDuo
-      const iconUrl = `https://game-assets.brawlstars.com/player_icons/${data.icon.id}.png`
+      
+      // Icona profilo dinamica
+      const iconUrl = `https://cdn-old.brawlstats.com/player-icons/${data.icon.id}.png`
 
       const html = `
       <!DOCTYPE html>
@@ -101,10 +102,10 @@ let handler = async (m, { conn, command, args }) => {
               .header h1 { font-size: 50px; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0 #000; text-transform: uppercase; letter-spacing: 2px; }
               .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               .left-panel { width: 32%; background: rgba(0,0,0,0.35); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255,255,255,0.1); }
-              .player-icon { width: 150px; height: 150px; background: #2a475e; border: 5px solid #fff; border-radius: 35px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+              .player-icon { width: 140px; height: 140px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); border: 5px solid #fff; border-radius: 25px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); overflow: hidden; display: flex; align-items: center; justify-content: center; }
               .player-icon img { width: 100%; height: 100%; object-fit: cover; }
-              .player-name { font-size: 30px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
-              .player-tag { font-size: 18px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
+              .player-name { font-size: 30px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.8px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
+              .player-tag { font-size: 20px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
               .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
               .stat-box { background: rgba(255,255,255,0.05); border: 2.5px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
@@ -112,13 +113,15 @@ let handler = async (m, { conn, command, args }) => {
               .stat-value { font-size: 38px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2.5px 2.5px 0 #000; }
               .victories-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
               .v-box { padding: 15px 10px; border-radius: 18px; text-align: center; border: 3px solid rgba(0,0,0,0.3); }
-              .v-3v3 { background: #3c6efd; } .v-solo { background: #2ecc71; } .v-duo { background: #f39c12; }
+              .v-3v3 { background: #3c6efd; }
+              .v-solo { background: #2ecc71; }
+              .v-duo { background: #f39c12; }
               .v-label { font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 5px; text-transform: uppercase; }
               .v-val { font-size: 30px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
               .bottom-stats { display: flex; gap: 15px; }
               .bottom-box { flex: 1; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.05); border-radius: 18px; padding: 15px; text-align: center; }
               .club-card { width: 100%; margin-top: auto; background: rgba(255, 46, 99, 0.2); border: 3px solid #FF2E63; border-radius: 18px; padding: 15px; text-align: center; }
-              .club-name { font-size: 26px; color: #fff; -webkit-text-stroke: 1.2px #000; text-shadow: 2px 2px 0 #000; }
+              .club-name { font-size: 28px; color: #fff; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; }
           </style>
       </head>
       <body>
@@ -128,7 +131,7 @@ let handler = async (m, { conn, command, args }) => {
               <div class="content">
                   <div class="left-panel">
                       <div class="player-icon">
-                          <img src="${iconUrl}" onerror="this.src='https://game-assets.brawlstars.com/player_icons/28000000.png'">
+                          <img src="${iconUrl}" onerror="this.src='https://cdn-old.brawlstats.com/player-icons/28000000.png'">
                       </div>
                       <div class="player-name">${data.name || 'Unknown'}</div>
                       <div class="player-tag">${data.tag || tag}</div>
@@ -187,7 +190,7 @@ ${headerText}
 🎯 𝐒𝐨𝐥𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesSolo}*
 🎯 𝐃𝐮𝐨 𝐕𝐢𝐭𝐭𝐨𝐫𝐢𝐞: *${victoriesDuo}*
 
-🧩 𝐁𝐫𝐚𝐰𝐥 e𝐫𝐬: *${data.brawlers?.length || 0}*
+🧩 𝐁𝐫𝐚𝐰𝐥𝐞𝐫𝐬: *${data.brawlers?.length || 0}*
 🧩 𝐏𝐚𝐫𝐭𝐢𝐭𝐞 𝐭𝐨𝐭𝐚𝐥𝐢: *${totalPlayed}*
 
 🏅 𝐂𝐥𝐮𝐛: ${data.club?.name || '𝐍𝐞𝐬𝐬𝐮𝐧𝐨'}`.trim()
