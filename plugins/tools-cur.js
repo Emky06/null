@@ -115,7 +115,7 @@ async function generateTrackImageJimp(track) {
     track.image?.find(i => i.size === 'medium')?.['#text']
 
   if (!imageUrl || imageUrl.trim() === '') {
-  imageUrl = path.join(__dirname, '../icone/cur.jpg')
+  imageUrl = path.join(process.cwd(), 'icone', 'cur.jpg')
 }
 
   try {
