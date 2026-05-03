@@ -1,4 +1,3 @@
-
 //Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch'
 import fs from 'fs'
@@ -289,7 +288,7 @@ let handler = async (m, { conn, command, args }) => {
                               <div class="v-val" style="color: #33ccff; font-size: 30px;">${totalPlayed.toLocaleString()}</div>
                           </div>
                           <div class="bottom-box">
-                              <div class="v-label">BRAWLERS SBLOCCATI</div>
+                              <div class="v-label">BRAWLERS USATI</div>
                               <div class="v-val" style="color: #FFD700; font-size: 30px;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div>
                           </div>
                       </div>
