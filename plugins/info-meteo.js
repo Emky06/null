@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d';
 
-// Funzione per generare lo screenshot
 async function retryScreenshot(html, width = 900, height = 600, retries = 3) {
     for (let i = 0; i < retries; i++) {
         try {
@@ -21,20 +20,19 @@ async function retryScreenshot(html, width = 900, height = 600, retries = 3) {
 }
 
 const handler = async (m, { conn, args, usedPrefix, command }) => {
-    // Controlla se l'utente ha fornito il nome della città
+    
     if (!args[0]) {
         return m.reply(`⚠️ *Inserisci il nome di una città o di un paese.*\\nEsempio: *${usedPrefix}${command} Roma it*`);
     }
 
     await conn.sendPresenceUpdate('composing', m.chat);
 
-    // 1) Logica per riconoscere il prefisso IT, US, ecc. (es. "Roma it")
     let cityQuery = args.join(' ');
-    let cityNameForImg = cityQuery; // Usato per cercare l'immagine di sfondo
+    let cityNameForImg = cityQuery; 
 
     if (args.length > 1 && args[args.length - 1].length === 2) {
-        const countryCode = args.pop(); // Estrae l'ultimo elemento se lungo 2 caratteri (es. 'it')
-        const cityOnly = args.join(' '); // Il resto è la città (es. 'Roma')
+        const countryCode = args.pop(); 
+        const cityOnly = args.join(' '); 
         cityQuery = `${cityOnly},${countryCode}`;
         cityNameForImg = cityOnly;
     }
@@ -57,7 +55,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
         const icon = weather[0].icon; 
         const mainCondition = weather[0].main.toLowerCase(); // Serve per la logica degli effetti meteo
         
-        // Generatore di Effetti CSS in base al meteo
+        
         let effectOverlay = '';
         if (mainCondition.includes('rain') || mainCondition.includes('drizzle')) {
             effectOverlay = `
@@ -111,7 +109,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
                 </style>`;
         }
 
-        // HTML della Card Meteo con Sfondo Foto Città
+        
         const html = `
         <html><head><style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap');
@@ -130,7 +128,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
                 position: relative;
             }
 
-            /* Overlay per sfocare e scurire la foto di sfondo */
+            
             .bg-overlay {
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0, 0, 0, 0.45); /* Scurisce */
@@ -141,10 +139,10 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
 
             .container { position: relative; z-index: 3; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-            /* Livello degli effetti atmosferici (sopra lo sfondo, sotto la card) */
+            
             .weather-effect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
-            /* 3) Design Card (Allargata a destra e sinistra) */
+            
             .card { 
                 position: relative;
                 width: 600px; /* Larghezza aumentata */
@@ -159,7 +157,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
                 box-shadow: 0 30px 60px rgba(0,0,0,0.4);
             }
 
-            /* Riflesso luce sul vetro */
+            
             .card::before {
                 content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                 background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 40%);
@@ -223,10 +221,10 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
             </div>
         </body></html>`;
 
-        // Screenshot generato a risoluzione 900x600 (widescreen)
+        
         const buffer = await retryScreenshot(html, 900, 600);
         
-        const caption = `🌍 *Meteo di ${cityName} (${country})*\n🌡️ Temp: ${temp}°C\n📝 Condizioni: ${weatherDesc}`;
+        const caption = `🌍 *𝐌𝐞𝐭𝐞𝐨 𝐝𝐢 ${cityName} (${country})*\n🌡️ 𝐓𝐞𝐦𝐩: ${temp}°C\n📝 𝐂𝐨𝐧𝐝𝐢𝐳𝐢𝐨𝐧𝐢: ${weatherDesc}`;
         
         await conn.sendMessage(m.chat, { image: buffer, caption: caption }, { quoted: m });
 
