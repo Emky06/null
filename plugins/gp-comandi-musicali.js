@@ -872,10 +872,31 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
         .user-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
         .user-card img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .meta { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        .meta { 
+    display: flex; 
+    flex-direction: column; 
+    flex: 1; 
+    overflow: hidden; 
+    min-width: 0; 
+}
         .user-name { font-size: 13px; color: #0a84ff; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .track-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .artist-name { font-size: 15px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-name { 
+    font-size: 18px; 
+    font-weight: 800; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 100%;
+}
+
+.artist-name { 
+    font-size: 15px; 
+    color: #bbb; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 100%;
+}
         .live-dot { position: absolute; top: 15px; right: 15px; width: 12px; height: 12px; background: #ff3b30; border-radius: 50%; box-shadow: 0 0 12px #ff3b30; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
     `);
