@@ -871,12 +871,13 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
         .container { width: 900px; height: auto; min-height: 550px; padding: 40px; box-sizing: border-box; }
         .grid { 
     display: grid; 
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: repeat(2, minmax(0, 1fr)); 
     gap: 25px; 
 }
         .user-card { 
     width: 100%;
     height: 110px; 
+    overflow: hidden;
     background: rgba(255,255,255,0.05); 
     border-radius: 20px; 
     padding: 15px; 
