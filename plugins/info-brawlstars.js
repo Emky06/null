@@ -97,30 +97,30 @@ let handler = async (m, { conn, command, args }) => {
               .bg-image { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; background-image: url('https://wallpapercave.com/wp/wp4263657.jpg'); background-size: cover; background-position: center; filter: blur(12px) brightness(0.4); z-index: 0; }
               .card { z-index: 1; width: 940px; height: 540px; background: rgba(18, 25, 46, 0.92); border: 5px solid #3c6efd; border-radius: 30px; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.8); overflow: hidden; }
               .header { background: linear-gradient(180deg, #FFD700 0%, #FF8C00 100%); padding: 15px; text-align: center; border-bottom: 5px solid #000; }
-              .header h1 { font-size: 46px; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0 #000; text-transform: uppercase; letter-spacing: 2px; }
+              .header h1 { font-size: 50px; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0 #000; text-transform: uppercase; letter-spacing: 2px; }
               .content { display: flex; flex: 1; padding: 25px; gap: 20px; }
               .left-panel { width: 32%; background: rgba(0,0,0,0.35); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px solid rgba(255,255,255,0.1); }
               .player-icon { width: 140px; height: 140px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); border: 5px solid #fff; border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 80px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-              .player-name { font-size: 36px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
-              .player-tag { font-size: 18px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
+              .player-name { font-size: 40px; color: #FFD700; text-align: center; -webkit-text-stroke: 1.8px #000; text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
+              .player-tag { font-size: 20px; color: #aab; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 10px; margin-bottom: 20px; }
               .right-panel { width: 68%; display: flex; flex-direction: column; gap: 15px; }
               .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-              .stat-box { background: rgba(255,255,255,0.05); border: 2.5px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
-              .stat-title { font-size: 14px; color: #8899aa; text-transform: uppercase; }
-              .stat-value { font-size: 32px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
+              .stat-box { background: rgba(255,255,255,0.05); border: 2.5px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
+              .stat-title { font-size: 18px; color: #8899aa; text-transform: uppercase; }
+              .stat-value { font-size: 38px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2.5px 2.5px 0 #000; }
               .victories-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
               .v-box { padding: 15px 10px; border-radius: 18px; text-align: center; border: 3px solid rgba(0,0,0,0.3); }
               .v-3v3 { background: #3c6efd; }
               .v-solo { background: #2ecc71; }
               .v-duo { background: #f39c12; }
-              .v-label { font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 5px; text-transform: uppercase; }
-              .v-val { font-size: 26px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
+              .v-label { font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 5px; text-transform: uppercase; }
+              .v-val { font-size: 30px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
               .bottom-stats { display: flex; gap: 15px; }
               .bottom-box { flex: 1; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.05); border-radius: 18px; padding: 15px; text-align: center; }
               
-              /* STILE BOX CLUB */
-              .club-card { width: 100%; margin-top: auto; background: rgba(255, 46, 99, 0.2); border: 3px solid #FF2E63; border-radius: 18px; padding: 12px; text-align: center; }
-              .club-name { font-size: 22px; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; }
+              /* STILE BOX CLUB MAGGIORATO */
+              .club-card { width: 100%; margin-top: auto; background: rgba(255, 46, 99, 0.2); border: 3px solid #FF2E63; border-radius: 18px; padding: 15px; text-align: center; }
+              .club-name { font-size: 28px; color: #fff; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0 #000; }
           </style>
       </head>
       <body>
@@ -134,7 +134,7 @@ let handler = async (m, { conn, command, args }) => {
                       <div class="player-tag">${data.tag || tag}</div>
                       
                       <div class="club-card">
-                          <div class="v-label" style="color: #FF2E63; font-size: 14px;">CLUB</div>
+                          <div class="v-label" style="color: #FF2E63; font-size: 18px;">CLUB</div>
                           <div class="club-name">${data.club?.name ? data.club.name : 'NESSUNO'}</div>
                       </div>
                   </div>
@@ -163,8 +163,8 @@ let handler = async (m, { conn, command, args }) => {
                           <div class="v-box v-duo"><div class="v-label">DUO VITTORIE</div><div class="v-val">${victoriesDuo.toLocaleString()}</div></div>
                       </div>
                       <div class="bottom-stats">
-                           <div class="bottom-box"><div class="v-label">PARTITE TOTALI</div><div class="v-val" style="color: #33ccff; font-size: 30px;">${totalPlayed.toLocaleString()}</div></div>
-                          <div class="bottom-box"><div class="v-label">BRAWLERS USATI</div><div class="v-val" style="color: #FFD700; font-size: 30px;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div></div>
+                           <div class="bottom-box"><div class="v-label">PARTITE TOTALI</div><div class="v-val" style="color: #33ccff; font-size: 34px;">${totalPlayed.toLocaleString()}</div></div>
+                          <div class="bottom-box"><div class="v-label">BRAWLERS USATI</div><div class="v-val" style="color: #FFD700; font-size: 34px;">${data.brawlers?.filter(b => b.trophies > 0).length || 0}</div></div>
                       </div>
                   </div>
               </div>
