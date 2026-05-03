@@ -1,4 +1,9 @@
+//Plugin fatto da Axtral_WiZaRd
+import fs from 'fs';
+import path from 'path';
 import { performance } from 'perf_hooks';
+
+const BASE_PATH = './storage/onepiece';
 
 function pickRandom(list) {
   return list[Math.floor(Math.random() * list.length)];
@@ -17,7 +22,16 @@ function progressBar(percent) {
 
 let handler = async (m, { conn }) => {
   try {
-    let mention = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
+    let mention;
+
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+      mention = m.mentionedJid[0];
+    } else if (m.quoted) {
+      mention = m.quoted.sender;
+    } else {
+      mention = m.sender;
+    }
+
     const mentions = [mention];
     const userId = mention.split('@')[0];
 
@@ -25,18 +39,22 @@ let handler = async (m, { conn }) => {
 
     let { key } = await conn.sendMessage(
       m.chat,
-      { text: `🏴‍☠️ *SCANSIONE PIRATA...*\n\n${progressBar(percent)} ${percent}%` },
+      {
+        text: `⏳ *𝐒𝐂𝐀𝐍𝐒𝐈𝐎𝐍𝐄 𝐏𝐈𝐑𝐀𝐓𝐀 𝐈𝐍 𝐂𝐎𝐑𝐒𝐎...*\n\n${progressBar(percent)} ${percent}%`
+      },
       { quoted: m }
     );
 
-    for (const p of [30, 60, 100]) {
-      await wait(700);
+    const steps = [30, 50, 70, 100];
+
+    for (const p of steps) {
+      await wait(800);
       percent = p;
 
       await conn.sendMessage(
         m.chat,
         {
-          text: `🏴‍☠️ *SCANSIONE PIRATA...*\n\n${progressBar(percent)} ${percent}%`,
+          text: `⏳ *𝐒𝐂𝐀𝐍𝐒𝐈𝐎𝐍𝐄 𝐏𝐈𝐑𝐀𝐓𝐀 𝐈𝐍 𝐂𝐎𝐑𝐒𝐎...*\n\n${progressBar(percent)} ${percent}%`,
           edit: key,
           mentions
         },
@@ -44,88 +62,70 @@ let handler = async (m, { conn }) => {
       );
     }
 
-    const pool = [
-      {
-        name: 'Monkey D. Luffy',
-        rarity: 'Leggendario',
-        url: 'https://files.catbox.moe/7k3p9m.mp4'
-      },
-      {
-        name: 'Roronoa Zoro',
-        rarity: 'Epico',
-        url: 'https://files.catbox.moe/2x9kqv.mp4'
-      },
-      {
-        name: 'Sanji',
-        rarity: 'Raro',
-        url: 'https://files.catbox.moe/9m1zla.mp4'
-      },
-      {
-        name: 'Trafalgar Law',
-        rarity: 'Raro',
-        url: 'https://files.catbox.moe/0q8wjd.mp4'
-      },
-      {
-        name: 'Shanks',
-        rarity: 'Leggendario',
-        url: 'https://files.catbox.moe/5v7n2c.mp4'
-      },
-      {
-        name: 'Kaido',
-        rarity: 'Leggendario',
-        url: 'https://files.catbox.moe/8d1xpp.mp4'
-      },
-      {
-        name: 'Portgas D. Ace',
-        rarity: 'Epico',
-        url: 'https://files.catbox.moe/3l9zrt.mp4'
-      }
-    ];
-
-    const getCharacter = () => {
-      const roll = Math.random() * 100;
-
-      if (roll < 50) return pickRandom(pool.filter(x => x.rarity === 'Raro'));
-      if (roll < 80) return pickRandom(pool.filter(x => x.rarity === 'Epico'));
-      return pickRandom(pool.filter(x => x.rarity === 'Leggendario'));
-    };
-
-    const chosen = getCharacter();
-
+    const delay = Math.floor(Math.random() * 7000) + 1000;
     const start = performance.now();
-    await wait(1200);
+    await wait(delay);
     const end = performance.now();
-
     const timeTaken = ((end - start) / 1000).toFixed(2);
 
-    const rarityIcon = {
-      Raro: '🔵',
-      Epico: '🟣',
-      Leggendario: '🔴'
+    const localVideos = {
+      'Monkey D. Luffy': 'luffy.mp4',
+      'Roronoa Zoro': 'zoro.mp4',
+      'Sanji': 'sanji.mp4',
+      'TonyTony Chopper': 'chopper.mp4',
+      'Brook': 'brook.mp4',
+      'Jinbe': 'jinbe.mp4',
+      'Franky': 'franky.mp4',
+      'Usop': 'usop.mp4',
+      'Nami': 'nami.mp4',
+      'Nico Robin': 'nicorobin.mp4',
+      'Shanks': 'shanks.mp4',
+      'Ace': 'ace.mp4',
+      'Trafalgar Law': 'trafalgar_law.mp4',
+      'Donquijote Doflamingo': 'doflamingo.mp4',
+      'Katakuri': 'katakuri.mp4',
+      'Drakul Mihawk': 'mihawk.mp4',
+      'Crocodile': 'crocodile.mp4',
+      'Boa Hancock': 'hancock.mp4',
+      'Edward Newgate (Barbabianca)': 'barba_bianca.mp4',
+      'Gol D. Roger': 'roger.mp4',
     };
 
-    const caption = `*🏴‍☠️ IDENTITÀ RIVELATA*  
-━━━━━━━━━━━━━━━━━━━  
-👤 @${userId}  
-⚔️ Sei: *${chosen.name}*  
-${rarityIcon[chosen.rarity]} Rarità: *${chosen.rarity}*  
-🕒 Tempo: ${timeTaken}s  
-━━━━━━━━━━━━━━━━━━━`;
+    const keys = Object.keys(localVideos);
+    const chosen = pickRandom(keys);
+    const videoFile = localVideos[chosen];
+    const videoPath = path.join(BASE_PATH, videoFile);
+
+    if (!fs.existsSync(videoPath)) {
+      await conn.sendMessage(
+        m.chat,
+        { text: `⚠️ 𝐕𝐢𝐝𝐞𝐨 𝐧𝐨𝐧 𝐭𝐫𝐨𝐯𝐚𝐭𝐨: ${videoFile}`, edit: key, mentions },
+        { quoted: m }
+      );
+      return;
+    }
+
+    const finalMsg = `*✔️ 𝐈𝐃𝐄𝐍𝐓𝐈𝐓𝐀̀ 𝐑𝐈𝐕𝐄𝐋𝐀𝐓𝐀*  
+━━━━━━━━━━━━━━━━━━━━━  
+👤 *𝐏𝐞𝐫𝐬𝐨𝐧𝐚:* @${userId}  
+🪐 *𝐏𝐢𝐫𝐚𝐭𝐚:* ${chosen}  
+🕒 *𝐓𝐞𝐦𝐩𝐨:* ${timeTaken}s  
+━━━━━━━━━━━━━━━━━━━━━`;
 
     await conn.sendMessage(
       m.chat,
       {
-        video: { url: chosen.url },
-        caption,
+        video: { url: videoPath },
+        caption: finalMsg,
         mentions,
         gifPlayback: true
       },
       { quoted: m }
     );
 
-  } catch (e) {
-    console.error(e);
-    m.reply('⚠️ Errore durante la trasformazione.');
+  } catch (err) {
+    console.error('Errore nel comando:', err);
+    await m.reply('⚠️ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐝𝐮𝐫𝐚𝐧𝐭𝐞 𝐥\'𝐢𝐧𝐯𝐢𝐨 𝐝𝐞𝐥 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐠𝐠𝐢𝐨.');
   }
 };
 
