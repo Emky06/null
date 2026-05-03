@@ -6,6 +6,7 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import axios from 'axios'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -14,7 +15,7 @@ const USERS_FILE = path.join(process.cwd(), 'storage', 'file-json', 'lastfm_user
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}')
 
 const LASTFM_API_KEY = '36f859a1fc4121e7f0e931806507d5f9'
-const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d'
+const BROWSERLESS_KEY = '2TdsfCQhO6hHvc062aa52ef9f252d478cde399ff9c1cb557c' // Inserisci la tua chiave browserless
 
 function getLastfmUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'))
@@ -49,7 +50,65 @@ async function getTrackInfo(username, artist, track) {
   return json?.track
 }
 
-async function generateTrackImage(track) {
+async function generateTrackImageBrowserless(track) {
+  let imageUrl =
+    track.image?.find(i => i.size === 'extralarge')?.['#text'] ||
+    track.image?.find(i => i.size === 'large')?.['#text'] ||
+    track.image?.find(i => i.size === 'medium')?.['#text']
+
+  if (!imageUrl || imageUrl.trim() === '') {
+    imageUrl = path.join(__dirname, '../icone/cur.jpg')
+  }
+
+  const isNowPlaying = track['@attr']?.nowplaying === 'true'
+  const statusColor = isNowPlaying ? '#32d74b' : '#ff3b30'
+  const statusText = isNowPlaying ? 'In Riproduzione' : 'Ultimo Ascoltato'
+
+  const html = `
+  <html>
+  <head>
+      <style>
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+          body { margin: 0; padding: 0; width: 1000px; height: 600px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; }
+          .background { position: absolute; width: 100%; height: 100%; background: url('${imageUrl}') center/cover; filter: blur(30px) brightness(0.7); opacity: 0.7; }
+          .glass-card { position: relative; width: 880px; height: 480px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; display: flex; align-items: center; padding: 45px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+          .album-art { width: 340px; height: 340px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); object-fit: cover; }
+          .details { flex: 1; margin-left: 50px; color: white; }
+          .status { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: ${statusColor}; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+          .track-name { font-size: 44px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; letter-spacing: -1.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 400px; }
+          .artist-name { font-size: 26px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 30px; }
+      </style>
+  </head>
+  <body>
+      <div class="background"></div>
+      <div class="glass-card">
+          <img src="${imageUrl}" class="album-art" />
+          <div class="details">
+              <div class="status"><span style="width:10px; height:10px; background:currentColor; border-radius:50%; box-shadow: 0 0 1px currentColor;"></span>${statusText}</div>
+              <div class="track-name">${track.name}</div>
+              <div class="artist-name">${track.artist['#text']}</div>
+          </div>
+      </div>
+  </body>
+  </html>`
+
+  for (let i = 0; i < 5; i++) {
+    try {
+      const response = await axios.post(`https://chrome.browserless.io/screenshot?token=${BROWSERLESS_KEY}`, {
+        html,
+        options: { type: 'jpeg', quality: 90 },
+        viewport: { width: 1000, height: 600 }
+      }, { responseType: 'arraybuffer', timeout: 15000 });
+      return Buffer.from(response.data);
+    } catch (e) {
+      if (i === 4) throw e;
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+}
+
+// Fallback originale con Jimp
+async function generateTrackImageJimp(track) {
   const width = 600
   const height = 600
 
@@ -67,7 +126,6 @@ async function generateTrackImage(track) {
     img.cover(width, height)
     return await img.getBufferAsync(Jimp.MIME_JPEG)
   } catch (e) {
-    
     const fallback = await Jimp.read(path.join(__dirname, '../icone/cur.jpg'))
     fallback.cover(width, height)
     return await fallback.getBufferAsync(Jimp.MIME_JPEG)
@@ -159,29 +217,16 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     const globalListeners = parseInt(detailedTrack?.listeners) || 0
 
     let buffer
+    // Prova con browserless, se fallisce usa Jimp
     try {
-      const html = `
-      <html>
-      <body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;width:600px;height:600px;">
-        <img src="${current.image?.[2]?.['#text'] || ''}" style="width:600px;height:600px;object-fit:cover;" />
-      </body>
-      </html>`
-
-      const res = await fetch(`https://chrome.browserless.io/screenshot?token=${BROWSERLESS_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          html,
-          options: { type: 'jpeg', quality: 90 },
-          viewport: { width: 600, height: 600 }
-        })
-      })
-
-      if (!res.ok) throw new Error('browserless fail')
-      const array = await res.arrayBuffer()
-      buffer = Buffer.from(array)
+      if (BROWSERLESS_KEY && BROWSERLESS_KEY !== '2TdsfCQhO6hHvc062aa52ef9f252d478cde399ff9c1cb557c') {
+        buffer = await generateTrackImageBrowserless(current)
+      } else {
+        throw new Error('Browserless key non configurata')
+      }
     } catch (e) {
-      buffer = await generateTrackImage(current)
+      console.error('Browserless failed, using Jimp fallback:', e.message)
+      buffer = await generateTrackImageJimp(current)
     }
 
     const caption = current['@attr']?.nowplaying === 'true'
@@ -190,7 +235,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
       : `⏹️ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐛𝐫𝐚𝐧𝐨 𝐝𝐢 @${targetJid.split('@')[0]}:\n\n` +
         `🎵 *${current.name}*\n🎤 ${current.artist['#text']}\n💿 ${current.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
-        `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
+        `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐜𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
 
     await conn.sendMessage(m.chat, {
       image: buffer,
