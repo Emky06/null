@@ -863,7 +863,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     html = getHtmlWrapper(`
         <div class="mesh-bg"></div>
         <div class="container">
-            <h1 style="text-align:center; font-size: 45px; margin-bottom: 40px; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">📻 In Onda Ora</h1>
+            <h1 style="text-align:center; font-size: 40px; margin: 0 0 20px 0; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">📻 In Onda Ora</h1>
             <div class="grid">${cardsHtml}</div>
         </div>
     `, `
