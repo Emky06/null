@@ -808,7 +808,8 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     
     let playingUsers = [];
     let seenLastFmUsers = new Set();
-    const checkLimit = users.slice(0, 20); 
+    const checkLimit = users;
+    playingUsers = playingUsers.slice(0, 8);
 
     for (let u of checkLimit) {
         const lfUser = db[u];
