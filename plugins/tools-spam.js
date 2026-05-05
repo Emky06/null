@@ -1,4 +1,3 @@
-// Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, args }) => {
 
     if (args.length < 2) {
@@ -23,7 +22,7 @@ const handler = async (m, { conn, args }) => {
     const mentions = [mention];
     const userId = mention.split('@')[0];
     
-    let processedText = text.replace(`@${userId}`, `@${userId}`);
+    let processedText = text.replace(new RegExp(`@${userId}`, 'g'), `@${userId}`);
 
     for (let i = 0; i < times; i++) {
         await conn.sendMessage(
