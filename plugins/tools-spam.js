@@ -10,14 +10,20 @@ const handler = async (m, { conn, args }) => {
 
     let text = args.slice(1).join(" ");
     
-    let mentionedJids = [];
-    let processedText = text.replace(/@(\d+)/g, (match, number) => {
-        mentionedJids.push(number + '@s.whatsapp.net');
-        return match;
-    });
+    let groupMetadata = await conn.groupMetadata(m.chat);
+    let processedText = text;
+    let mentions = [];
     
-    if (m.mentionedJid && m.mentionedJid.length > 0) {
-        mentionedJids = [...new Set([...mentionedJids, ...m.mentionedJid])];
+    for (let mention of m.mentionedJid) {
+        let participant = groupMetadata.participants.find(p => p.id === mention);
+        if (participant) {
+            let pushname = participant.pushname || participant.id.split('@')[0];
+            processedText = processedText.replace(new RegExp(`@${participant.id.split('@')[0]}`, 'g'), `@${pushname}`);
+            processedText = processedText.replace(new RegExp(`@\\+?${participant.id.split('@')[0].replace(/\+/g, '\\+')}`, 'g'), `@${pushname}`);
+            mentions.push(mention);
+        } else {
+            mentions.push(mention);
+        }
     }
 
     for (let i = 0; i < times; i++) {
@@ -25,7 +31,7 @@ const handler = async (m, { conn, args }) => {
             m.chat, 
             { 
                 text: `➠ ${processedText}`, 
-                mentions: mentionedJids 
+                mentions: mentions 
             }, 
             { quoted: m }
         );
