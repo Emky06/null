@@ -1,8 +1,23 @@
 import fetch from 'node-fetch';
+import fs from 'fs';
 
-const HF_SPACE_URL = process.env.HF_SPACE_URL
+let HF_SPACE_URL = process.env.HF_SPACE_URL;
+let HF_TOKEN = process.env.HF_TOKEN;
 
-const HF_TOKEN     = process.env.HF_TOKEN;
+try {
+    const configFile = fs.readFileSync('give.txt', 'utf-8');
+    const lines = configFile.split('\n');
+    for (const line of lines) {
+        if (line.startsWith('HF_SPACE_URL=')) {
+            HF_SPACE_URL = line.split('=')[1].trim();
+        } else if (line.startsWith('HF_TOKEN=')) {
+            HF_TOKEN = line.split('=')[1].trim();
+        }
+    }
+} catch (err) {
+    console.log('give.txt non trovato, uso variabili ambiente');
+}
+
 const HF_SPACE_KEY = HF_TOKEN; 
 const MAX_RESULTS = 5;
 
