@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, args }) => {
 
     if (args.length < 2) {
@@ -40,6 +41,6 @@ handler.help = ['spam <quantità> <testo>'];
 handler.tags = ['fun'];
 handler.command = /^spam$/i;
 handler.group = true;
-handler.admin = true;
+handler.owner = true;
 
 export default handler;
