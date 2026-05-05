@@ -17,24 +17,19 @@ const handler = async (m, { conn, args }) => {
     for (let mention of m.mentionedJid) {
         let participant = groupMetadata.participants.find(p => p.id === mention);
         if (participant) {
-            let pushname = participant.pushname || participant.id.split('@')[0];
-            processedText = processedText.replace(new RegExp(`@${participant.id.split('@')[0]}`, 'g'), `@${pushname}`);
-            processedText = processedText.replace(new RegExp(`@\\+?${participant.id.split('@')[0].replace(/\+/g, '\\+')}`, 'g'), `@${pushname}`);
-            mentions.push(mention);
-        } else {
+            let name = participant.pushname || participant.name || mention.split('@')[0];
+            let number = mention.split('@')[0].replace('+', '');
+            processedText = processedText.replace(new RegExp(`@${number}`, 'g'), `@${name}`);
+            processedText = processedText.replace(new RegExp(`@\\+${number}`, 'g'), `@${name}`);
             mentions.push(mention);
         }
     }
 
     for (let i = 0; i < times; i++) {
-        await conn.sendMessage(
-            m.chat, 
-            { 
-                text: `➠ ${processedText}`, 
-                mentions: mentions 
-            }, 
-            { quoted: m }
-        );
+        await conn.sendMessage(m.chat, { 
+            text: `➠ ${processedText}`, 
+            mentions: mentions 
+        }, { quoted: m });
     }
 };
 
