@@ -20,12 +20,15 @@ const handler = async (m, { conn, args }) => {
     }
 
     const mentions = [mention];
+    const userId = mention.split('@')[0].replace('+', '');
+    
+    let processedText = text.replace(/@\d+/g, `@${userId}`);
 
     for (let i = 0; i < times; i++) {
         await conn.sendMessage(
             m.chat, 
             { 
-                text: `➠ ${text}`, 
+                text: `➠ ${processedText}`, 
                 mentions: mentions 
             }, 
             { quoted: m }
