@@ -1,16 +1,9 @@
-/* Plugin .give per kinderino (e axtral) 
-   Usa il token KINDER e la chiave API kinder22 per autenticarsi allo Space.
-   NON contiene il token principale del proprietario.
-   
-   La chiave non e personale di kinderino
-*/
-
 import fetch from 'node-fetch';
 
-const HF_SPACE_URL = 'easterbin-viridicelesti.hf.space';
-const HF_TOKEN     = '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';
-const HF_SPACE_KEY = HF_TOKEN; // il token HF è anche la chiave API (secret KINDER nello Space)
-//modifca il valore per quanti profili mostrare insieme
+const HF_SPACE_URL = process.env.HF_SPACE_URL
+
+const HF_TOKEN     = process.env.HF_TOKEN;
+const HF_SPACE_KEY = HF_TOKEN; 
 const MAX_RESULTS = 5;
 
 if (!global._giveKinderQueue) global._giveKinderQueue = [];
@@ -39,7 +32,7 @@ async function searchHF(searchTerm, searchType) {
     console.log(`[give-kinder] searchHF API: term="${searchTerm}" type="${searchType}"`);
     const params = new URLSearchParams({ type: searchType, q: searchTerm, key: HF_SPACE_KEY });
     const res = await fetch(`https://${HF_SPACE_URL}/search?${params}`, {
-        headers: { 'User-Agent': 'phishy', 'Authorization': `Bearer ${HF_TOKEN}` }
+        headers: { 'User-Agent': 'varebot-kinder', 'Authorization': `Bearer ${HF_TOKEN}` }
     });
     if (!res.ok) throw new Error(`Search API ${res.status}: ${res.statusText}`);
     const json = await res.json();
@@ -147,7 +140,7 @@ let handler = async (m, { conn, args }) => {
 
             return conn.reply(m.chat, message.trim(), m);
         } catch (error) {
-            console.error('Errore give command:', error);
+            console.error('Errore give-kinder command:', error);
             return conn.reply(m.chat, `❌ *Errore durante la ricerca*\n\n${error.message}`, m);
         }
     });
