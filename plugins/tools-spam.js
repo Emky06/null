@@ -1,8 +1,7 @@
-// Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, args }) => {
 
     if (args.length < 2) {
-        return m.reply(`Uso corretto: .spam <quantità> <testo>\nEsempio: .spam 5 ciao`);
+        return m.reply(`Uso corretto: .spam <quantità> <testo>\nEsempio: .spam 5 ciao @utente`);
     }
 
     let times = parseInt(args[0]);
@@ -10,18 +9,24 @@ const handler = async (m, { conn, args }) => {
     if (times > 50) times = 50;
 
     let text = args.slice(1).join(" ");
-
-    let mentions = [];
-    let textWithMentions = text.replace(/@(\d{6,15})/g, (_, number) => {
-        let jid = number + "@s.whatsapp.net";
-        mentions.push(jid);
-        return `@${number}`;
+    
+    let mentionedJids = [];
+    let processedText = text.replace(/@(\d+)/g, (match, number) => {
+        mentionedJids.push(number + '@s.whatsapp.net');
+        return match;
     });
+    
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+        mentionedJids = [...new Set([...mentionedJids, ...m.mentionedJid])];
+    }
 
     for (let i = 0; i < times; i++) {
         await conn.sendMessage(
             m.chat, 
-            { text: `➠ ${textWithMentions}`, mentions }, 
+            { 
+                text: `➠ ${processedText}`, 
+                mentions: mentionedJids 
+            }, 
             { quoted: m }
         );
     }
