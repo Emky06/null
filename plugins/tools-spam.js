@@ -1,3 +1,4 @@
+// Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, args }) => {
 
     if (args.length < 2) {
@@ -10,26 +11,29 @@ const handler = async (m, { conn, args }) => {
 
     let text = args.slice(1).join(" ");
     
-    let groupMetadata = await conn.groupMetadata(m.chat);
-    let processedText = text;
-    let mentions = [];
-    
-    for (let mention of m.mentionedJid) {
-        let participant = groupMetadata.participants.find(p => p.id === mention);
-        if (participant) {
-            let name = participant.pushname || participant.name || mention.split('@')[0];
-            let number = mention.split('@')[0].replace('+', '');
-            processedText = processedText.replace(new RegExp(`@${number}`, 'g'), `@${name}`);
-            processedText = processedText.replace(new RegExp(`@\\+${number}`, 'g'), `@${name}`);
-            mentions.push(mention);
-        }
+    let mention;
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+        mention = m.mentionedJid[0];
+    } else if (m.quoted) {
+        mention = m.quoted.sender;
+    } else {
+        mention = m.sender;
     }
 
+    const mentions = [mention];
+    const userId = mention.split('@')[0];
+    
+    let processedText = text.replace(`@${userId}`, `@${userId}`);
+
     for (let i = 0; i < times; i++) {
-        await conn.sendMessage(m.chat, { 
-            text: `➠ ${processedText}`, 
-            mentions: mentions 
-        }, { quoted: m });
+        await conn.sendMessage(
+            m.chat, 
+            { 
+                text: `➠ ${processedText}`, 
+                mentions: mentions 
+            }, 
+            { quoted: m }
+        );
     }
 };
 
