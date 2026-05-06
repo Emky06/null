@@ -33,21 +33,49 @@ let handler = async (m, { conn, text, participants }) => {
   try {
     let quoted = m.quoted ? m.quoted : m
     let mime = (quoted.msg || quoted)?.mimetype || ''
-    let isMedia = /image|video|sticker|audio/.test(mime)
+    let isMedia = /image|video|sticker|audio|gif/.test(mime)
+    let isViewOnce = quoted.msg?.viewOnce || quoted.viewOnce || false
 
-    if (isMedia) {
-      let media = await quoted.download?.()
-      if (!media) throw 'Errore nel download del media'
+    let media = await quoted.download?.()
+    if (!media && isMedia) throw 'Errore nel download del media'
 
-      if (quoted.mtype === 'imageMessage') {
-        await conn.sendMessage(m.chat, { image: media, mentions: mentions, caption: captionText }, { quoted: m })
-      } else if (quoted.mtype === 'videoMessage') {
-        await conn.sendMessage(m.chat, { video: media, mentions: mentions, caption: captionText, mimetype: 'video/mp4' }, { quoted: m })
-      } else if (quoted.mtype === 'audioMessage') {
-        await conn.sendMessage(m.chat, { audio: media, mentions: mentions, mimetype: 'audio/mp4', fileName: `Hidetag.mp3` }, { quoted: m })
-      } else if (quoted.mtype === 'stickerMessage') {
-        await conn.sendMessage(m.chat, { sticker: media, mentions: mentions }, { quoted: m })
-      }
+    if (quoted.mtype === 'imageMessage') {
+      await conn.sendMessage(m.chat, { 
+        image: media, 
+        mentions: mentions, 
+        caption: captionText,
+        viewOnce: isViewOnce
+      }, { quoted: m })
+    } else if (quoted.mtype === 'videoMessage') {
+      await conn.sendMessage(m.chat, { 
+        video: media, 
+        mentions: mentions, 
+        caption: captionText, 
+        mimetype: 'video/mp4',
+        gifPlayback: mime === 'image/gif' || mime === 'video/gif',
+        viewOnce: isViewOnce
+      }, { quoted: m })
+    } else if (quoted.mtype === 'audioMessage') {
+      await conn.sendMessage(m.chat, { 
+        audio: media, 
+        mentions: mentions, 
+        mimetype: 'audio/mp4', 
+        fileName: `Hidetag.mp3`,
+        viewOnce: isViewOnce
+      }, { quoted: m })
+    } else if (quoted.mtype === 'stickerMessage') {
+      await conn.sendMessage(m.chat, { 
+        sticker: media, 
+        mentions: mentions 
+      }, { quoted: m })
+    } else if (mime === 'image/gif' || mime === 'video/gif') {
+      await conn.sendMessage(m.chat, { 
+        video: media, 
+        mentions: mentions, 
+        caption: captionText, 
+        gifPlayback: true,
+        viewOnce: isViewOnce
+      }, { quoted: m })
     } else {
       await conn.sendMessage(
         m.chat,
