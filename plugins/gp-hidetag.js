@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
 import * as fs from 'fs'
 
@@ -15,17 +14,18 @@ let handler = async (m, { conn, text, participants }) => {
     captionText = `➠`
   }
 
-  let mention
+  let specificMentions = []
   if (m.mentionedJid && m.mentionedJid.length > 0) {
-    mention = m.mentionedJid[0]
-    const userId = mention.split('@')[0].replace('+', '')
-    const mentionJid = userId + '@s.whatsapp.net'
-    
-    if (captionText.includes('@')) {
-      captionText = captionText.replace(/@\d+/g, `@${userId}`)
+    for (let mention of m.mentionedJid) {
+      const userId = mention.split('@')[0].replace('+', '')
+      const mentionJid = userId + '@s.whatsapp.net'
+      specificMentions.push(mentionJid)
+      
+      if (captionText.includes('@')) {
+        captionText = captionText.replace(new RegExp(`@${userId.replace('+', '')}`, 'g'), `@${userId}`)
+      }
     }
-    
-    var mentions = [mentionJid, ...users]
+    var mentions = [...specificMentions, ...users]
   } else {
     var mentions = users
   }
