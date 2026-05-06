@@ -43,53 +43,46 @@ let handler = async (m, { conn, text, participants }) => {
     }
     
     let mime = (quoted.msg || quoted)?.mimetype || ''
-    let isMedia = /image|video|sticker|audio/.test(mime)
-    let isGif = mime === 'image/gif' || mime === 'video/gif' || quoted.msg?.gifPlayback === true
     let isViewOnce = quoted.msg?.viewOnce || quoted.viewOnce || false
+    let isGif = mime === 'image/gif' || (quoted.msg?.gifPlayback === true)
+    
+    let media = await quoted.download?.()
+    if (!media && (mime || isGif)) throw 'Errore nel download del media'
 
-    if (isMedia && !isGif) {
-      let media = await quoted.download?.()
-      if (!media) throw 'Errore nel download del media'
-
-      if (quoted.mtype === 'imageMessage') {
-        await conn.sendMessage(m.chat, { 
-          image: media, 
-          mentions: mentions, 
-          caption: captionText,
-          viewOnce: isViewOnce
-        }, { quoted: m })
-      } else if (quoted.mtype === 'videoMessage') {
-        await conn.sendMessage(m.chat, { 
-          video: media, 
-          mentions: mentions, 
-          caption: captionText, 
-          mimetype: 'video/mp4',
-          viewOnce: isViewOnce
-        }, { quoted: m })
-      } else if (quoted.mtype === 'audioMessage') {
-        await conn.sendMessage(m.chat, { 
-          audio: media, 
-          mentions: mentions, 
-          mimetype: 'audio/mp4', 
-          fileName: `Hidetag.mp3`,
-          viewOnce: isViewOnce
-        }, { quoted: m })
-      } else if (quoted.mtype === 'stickerMessage') {
-        await conn.sendMessage(m.chat, { 
-          sticker: media, 
-          mentions: mentions 
-        }, { quoted: m })
-      }
-    } else if (isGif) {
-      let media = await quoted.download?.()
-      if (!media) throw 'Errore nel download della GIF'
-      
+    if (isGif) {
       await conn.sendMessage(m.chat, { 
         video: media, 
         mentions: mentions, 
         caption: captionText, 
         gifPlayback: true,
         mimetype: 'video/mp4'
+      }, { quoted: m })
+    } else if (quoted.mtype === 'imageMessage') {
+      await conn.sendMessage(m.chat, { 
+        image: media, 
+        mentions: mentions, 
+        caption: captionText,
+        viewOnce: isViewOnce
+      }, { quoted: m })
+    } else if (quoted.mtype === 'videoMessage') {
+      await conn.sendMessage(m.chat, { 
+        video: media, 
+        mentions: mentions, 
+        caption: captionText, 
+        mimetype: 'video/mp4',
+        viewOnce: isViewOnce
+      }, { quoted: m })
+    } else if (quoted.mtype === 'audioMessage') {
+      await conn.sendMessage(m.chat, { 
+        audio: media, 
+        mentions: mentions, 
+        mimetype: 'audio/mp4', 
+        fileName: `Hidetag.mp3`
+      }, { quoted: m })
+    } else if (quoted.mtype === 'stickerMessage') {
+      await conn.sendMessage(m.chat, { 
+        sticker: media, 
+        mentions: mentions 
       }, { quoted: m })
     } else {
       await conn.sendMessage(
