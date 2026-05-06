@@ -44,7 +44,7 @@ let handler = async (m, { conn, text, participants }) => {
     
     let mime = (quoted.msg || quoted)?.mimetype || ''
     let isViewOnce = quoted.msg?.viewOnce || quoted.viewOnce || false
-    let isGif = mime === 'image/gif' || (quoted.msg?.gifPlayback === true)
+    let isGif = mime === 'image/gif' || mime === 'video/gif' || quoted.msg?.gifPlayback === true
     
     let media = await quoted.download?.()
     if (!media && (mime || isGif)) throw 'Errore nel download del media'
@@ -53,25 +53,18 @@ let handler = async (m, { conn, text, participants }) => {
       await conn.sendMessage(m.chat, { 
         video: media, 
         mentions: mentions, 
-        caption: captionText, 
         gifPlayback: true,
-        mimetype: 'video/mp4'
+        mimetype: 'video/mp4',
+        caption: captionText
       }, { quoted: m })
     } else if (quoted.mtype === 'imageMessage') {
-      await conn.sendMessage(m.chat, { 
-        image: media, 
-        mentions: mentions, 
-        caption: captionText,
-        viewOnce: isViewOnce
-      }, { quoted: m })
+      let msg = { image: media, mentions: mentions, caption: captionText }
+      if (isViewOnce) msg.viewOnce = true
+      await conn.sendMessage(m.chat, msg, { quoted: m })
     } else if (quoted.mtype === 'videoMessage') {
-      await conn.sendMessage(m.chat, { 
-        video: media, 
-        mentions: mentions, 
-        caption: captionText, 
-        mimetype: 'video/mp4',
-        viewOnce: isViewOnce
-      }, { quoted: m })
+      let msg = { video: media, mentions: mentions, caption: captionText, mimetype: 'video/mp4' }
+      if (isViewOnce) msg.viewOnce = true
+      await conn.sendMessage(m.chat, msg, { quoted: m })
     } else if (quoted.mtype === 'audioMessage') {
       await conn.sendMessage(m.chat, { 
         audio: media, 
