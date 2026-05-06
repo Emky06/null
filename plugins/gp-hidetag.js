@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
 import * as fs from 'fs'
 
