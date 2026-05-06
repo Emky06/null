@@ -178,10 +178,25 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 10, period: '1month' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore recupero artisti.");
 
-                const colors = ['#8A2BE2', '#FF4500', '#1E90FF', '#FF1493', '#00FA9A'];
+                // Calcoliamo un punteggio basato sugli ascolti per rendere l'aura dinamica ma coerente per l'utente
+                const totalPlays = topArt.topartists.artist.reduce((acc, art) => acc + parseInt(art.playcount), 0);
+                
+                const auras = [
+                    { name: "Oscura & Misteriosa", colors: ['#4B0082', '#000000', '#2F4F4F'] },
+                    { name: "Eclettica & Vibrante", colors: ['#8A2BE2', '#FF4500', '#1E90FF'] },
+                    { name: "Calma & Eterea", colors: ['#A4C639', '#87CEFA', '#E0FFFF'] },
+                    { name: "Fuoco & Passione", colors: ['#FF0000', '#FF8C00', '#FF1493'] },
+                    { name: "Malinconica & Profonda", colors: ['#000080', '#4682B4', '#708090'] },
+                    { name: "Energetica & Caotica", colors: ['#FF1493', '#00FF00', '#FFFF00'] },
+                    { name: "Celestiale & Pura", colors: ['#FFFFFF', '#87CEEB', '#E6E6FA'] }
+                ];
+                
+                // Seleziona un'aura basata sul punteggio
+                const selectedAura = auras[totalPlays % auras.length];
+
                 let tagsStr = `<div style="z-index: 10; text-align: center;">
                     <h2 style="font-size: 24px; opacity:0.9; letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">La tua Aura Musicale</h2>
-                    <h1 style="font-size: 60px; font-family: 'Playfair Display', serif; margin: 10px 0; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">Eclettica & Vibrante</h1>
+                    <h1 style="font-size: 60px; font-family: 'Playfair Display', serif; margin: 10px 0; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">${selectedAura.name}</h1>
                     <p style="font-size: 20px; opacity:0.8; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">@${user}</p>
                 </div>`;
 
@@ -191,11 +206,11 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 `, `
                     body { background: #020202; }
                     .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.8; mix-blend-mode: screen; z-index: 1; }
-                    .b1 { width: 600px; height: 600px; background: ${colors[0]}; top: -100px; left: -100px; }
-                    .b2 { width: 500px; height: 500px; background: ${colors[1]}; bottom: -50px; right: 50px; }
-                    .b3 { width: 400px; height: 400px; background: ${colors[2]}; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+                    .b1 { width: 600px; height: 600px; background: ${selectedAura.colors[0]}; top: -100px; left: -100px; }
+                    .b2 { width: 500px; height: 500px; background: ${selectedAura.colors[1]}; bottom: -50px; right: 50px; }
+                    .b3 { width: 400px; height: 400px; background: ${selectedAura.colors[2]}; top: 50%; left: 50%; transform: translate(-50%, -50%); }
                 `);
-                caption = `✨ *La tua Music Aura mensile*\n@${user}`;
+                caption = `✨ *La tua Music Aura mensile*\n@${user} - ${selectedAura.name}`;
                 break;
             }
 
@@ -606,49 +621,78 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 html = getHtmlWrapper(`
                     <div class="magazine-bg" style="background-image: url('${cover}')"></div>
                     <div class="magazine-overlay"></div>
+                    
                     <div class="magazine-container">
-                        <h1 class="magazine-title">SOUND</h1>
-                        
-                        <div class="headlines">
-                            <div class="headline-left">
-                                <span class="hl-tag">ESCLUSIVA</span>
-                                <h2>Il fenomeno<br><span style="color:#ff3b30">${artist.name}</span></h2>
-                                <p>Perché @${user} non riesce a smettere di ascoltarlo?</p>
-                            </div>
-                            
-                            <div class="headline-right">
-                                <h3>Hit del Mese</h3>
-                                <p>"${trackName}"</p>
-                                <hr>
-                                <h3>Scrobble totali</h3>
-                                <p style="font-size: 24px; font-weight: 800;">${artist.playcount}</p>
-                            </div>
+                        <div class="top-bar">
+                            <span>ISSUE NO. 42</span>
+                            <span>MUSIC & CULTURE</span>
+                            <span>$5.99 / €4.50</span>
                         </div>
                         
-                        <div class="barcode-area">
-                            <div class="barcode">||| | || ||| || | || |</div>
-                            <p>ISSUE #01 • ${new Date().toLocaleDateString('it-IT').toUpperCase()}</p>
+                        <h1 class="magazine-title">SOUND</h1>
+                        
+                        <div class="main-content">
+                            <div class="side-articles">
+                                <div class="mini-article">
+                                    <h4>ALBUM REVIEW</h4>
+                                    <p>I 10 dischi che cambieranno il tuo modo di ascoltare la musica quest'anno.</p>
+                                </div>
+                                <div class="mini-article">
+                                    <h4>EXCLUSIVE</h4>
+                                    <p>Il dietro le quinte del tour mondiale. Foto inedite e interviste.</p>
+                                </div>
+                            </div>
+
+                            <div class="headlines">
+                                <div class="headline-main">
+                                    <span class="hl-tag">COVER STORY</span>
+                                    <h2>L'era di<br><span style="color:#ffcc00">${artist.name}</span></h2>
+                                    <p>Perché @${user} ci ha fatto <strong>${artist.playcount}</strong> ascolti in un solo mese? Indagine su un'ossessione.</p>
+                                </div>
+                                
+                                <div class="headline-right">
+                                    <div class="track-box">
+                                        <h3>HIT DEL MESE</h3>
+                                        <p>"${trackName}"</p>
+                                    </div>
+                                    <div class="barcode-area">
+                                        <div class="barcode">||| | || ||| || | || |</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `, `
-                    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap');
-                    body { font-family: 'Inter', sans-serif; }
+                    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;700;900&display=swap');
+                    body { font-family: 'Inter', sans-serif; color: #fff; }
                     .magazine-bg { position: absolute; top:0; left:0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: -2; filter: contrast(1.1) saturate(1.2); }
-                    .magazine-overlay { position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%); z-index: -1; }
-                    .magazine-container { width: 100%; height: 100%; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
-                    .magazine-title { font-family: 'Anton', sans-serif; font-size: 180px; margin: 0; color: #fff; text-align: center; letter-spacing: -2px; line-height: 0.8; text-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
-                    .headlines { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-bottom: 40px; }
-                    .headline-left { max-width: 400px; }
-                    .hl-tag { background: #ff3b30; color: #fff; padding: 5px 10px; font-weight: 900; font-size: 14px; letter-spacing: 2px; }
-                    .headline-left h2 { font-size: 65px; margin: 10px 0; font-weight: 900; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
-                    .headline-left p { font-size: 20px; font-weight: 700; color: #ddd; }
-                    .                    .headline-right { text-align: right; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
-                    .headline-right h3 { font-size: 20px; color: #ff3b30; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
-                    .headline-right p { font-size: 26px; margin: 0 0 15px 0; font-weight: 700; }
-                    .headline-right hr { border-color: rgba(255,255,255,0.3); margin: 15px 0; }
-                    .barcode-area { display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #fff; padding-top: 15px; }
-                    .barcode { font-family: 'Courier New', Courier, monospace; font-size: 30px; letter-spacing: -2px; font-weight: 900; }
-                    .barcode-area p { font-size: 14px; font-weight: 700; letter-spacing: 1px; margin: 0; }
+                    .magazine-overlay { position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); z-index: -1; }
+                    .magazine-container { width: 100%; height: 100%; padding: 30px 40px; box-sizing: border-box; display: flex; flex-direction: column; }
+                    
+                    .top-bar { display: flex; justify-content: space-between; border-bottom: 2px solid #fff; padding-bottom: 10px; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
+                    .magazine-title { font-family: 'Anton', sans-serif; font-size: 190px; margin: 10px 0 0 0; color: #fff; text-align: center; letter-spacing: -2px; line-height: 0.8; text-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
+                    
+                    .main-content { display: flex; flex-direction: column; flex: 1; justify-content: space-between; margin-top: 40px; }
+                    
+                    .side-articles { width: 250px; display: flex; flex-direction: column; gap: 20px; }
+                    .mini-article { border-left: 4px solid #ffcc00; padding-left: 15px; background: rgba(0,0,0,0.4); padding: 10px 15px; }
+                    .mini-article h4 { font-family: 'Anton', sans-serif; margin: 0 0 5px 0; font-size: 20px; letter-spacing: 1px; }
+                    .mini-article p { font-family: 'Playfair Display', serif; margin: 0; font-size: 15px; line-height: 1.3; }
+
+                    .headlines { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+                    
+                    .headline-main { max-width: 450px; }
+                    .hl-tag { background: #ffcc00; color: #000; padding: 5px 10px; font-weight: 900; font-size: 14px; letter-spacing: 2px; }
+                    .headline-main h2 { font-size: 75px; margin: 10px 0; font-weight: 900; line-height: 0.9; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+                    .headline-main p { font-family: 'Playfair Display', serif; font-size: 22px; color: #eee; margin: 0; line-height: 1.2; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+                    
+                    .headline-right { display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+                    .track-box { background: #fff; color: #000; padding: 15px; text-align: right; border-radius: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); max-width: 200px;}
+                    .track-box h3 { margin: 0 0 5px 0; font-size: 16px; font-weight: 900; color: #ff3b30; }
+                    .track-box p { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.1; }
+                    
+                    .barcode-area { background: #fff; padding: 10px; color: #000; display: inline-block; }
+                    .barcode { font-family: 'Courier New', Courier, monospace; font-size: 30px; letter-spacing: -2px; font-weight: 900; line-height: 1; }
                 `);
                 caption = `📸 *Sulla copertina di questo mese c'è @${user}!*\nArtista in evidenza: ${artist.name}`;
                 break;
@@ -741,11 +785,27 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 }
 
                 const registeredYear = new Date(uData.registered.unixtime * 1000).getFullYear();
-                const totalPlays = parseInt(uData.playcount).toLocaleString();
+                const totalPlays = parseInt(uData.playcount);
+                
+                let userStatus = "LISTENER";
+                if (totalPlays > 25000) userStatus = "ENTHUSIAST";
+                if (totalPlays > 50000) userStatus = "ADDICT";
+                if (totalPlays > 100000) userStatus = "MELOMANE";
+                if (totalPlays > 200000) userStatus = "LEGEND";
+
+                const bgColors = {
+                    "LISTENER": "linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%)",
+                    "ENTHUSIAST": "linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%)",
+                    "ADDICT": "linear-gradient(135deg, #ffe0b2 0%, #ffb74d 100%)",
+                    "MELOMANE": "linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%)",
+                    "LEGEND": "linear-gradient(135deg, #ece9e6 0%, #ffffff 100%)"
+                };
+                const cardBg = bgColors[userStatus] || bgColors["LISTENER"];
+                const textColor = (userStatus === "LEGEND") ? "#222" : "#102a43";
 
                 viewport = { w: 700, h: 450 };
                 html = getHtmlWrapper(`
-                    <div class="id-card">
+                    <div class="id-card" style="background: ${cardBg}; color: ${textColor};">
                         <div class="id-header">
                             <div class="logo">LAST.FM <span>ID</span></div>
                             <div class="country">REPUBLIC OF MUSIC</div>
@@ -753,26 +813,26 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                         <div class="id-body">
                             <div class="photo-area">
                                 <img src="${cover}" class="profile-pic">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/NFC_logo.svg/1200px-NFC_logo.svg.png" class="chip">
+                                <div class="css-chip"></div>
                             </div>
                             <div class="info-area">
                                 <div class="field">
-                                    <span class="label">USERNAME / NOME</span>
+                                    <span class="label" style="color: ${textColor}; opacity: 0.7;">USERNAME / NOME</span>
                                     <span class="value">@${user.toUpperCase()}</span>
                                 </div>
                                 <div class="field-row">
                                     <div class="field">
-                                        <span class="label">SCROBBLES TOTALI</span>
-                                        <span class="value">${totalPlays}</span>
+                                        <span class="label" style="color: ${textColor}; opacity: 0.7;">SCROBBLES</span>
+                                        <span class="value">${totalPlays.toLocaleString('it-IT')}</span>
                                     </div>
                                     <div class="field">
-                                        <span class="label">REGISTRATO DAL</span>
-                                        <span class="value">${registeredYear}</span>
+                                        <span class="label" style="color: ${textColor}; opacity: 0.7;">STATUS</span>
+                                        <span class="value">${userStatus}</span>
                                     </div>
                                 </div>
                                 <div class="field">
-                                    <span class="label">ARTISTA PRINCIPALE</span>
-                                    <span class="value" style="color: #0a84ff;">${artistName.toUpperCase()}</span>
+                                    <span class="label" style="color: ${textColor}; opacity: 0.7;">ARTISTA PRINCIPALE</span>
+                                    <span class="value" style="color: #0a84ff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${artistName.toUpperCase()}</span>
                                 </div>
                                 <div class="mrz">P&lt;LFM${user.substring(0,10).toUpperCase()}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${totalPlays}M${registeredYear}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;02</div>
                             </div>
@@ -781,24 +841,313 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 `, `
                     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
                     body { background: transparent; display: flex; justify-content: center; align-items: center; }
-                    .id-card { width: 600px; height: 380px; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.5); padding: 25px; box-sizing: border-box; color: #102a43; position: relative; overflow: hidden; }
+                    .id-card { width: 600px; height: 380px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.5); padding: 25px; box-sizing: border-box; position: relative; overflow: hidden; }
                     .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 20px); z-index: 0; pointer-events: none; opacity: 0.5; }
-                    .id-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #9fb3c8; padding-bottom: 10px; margin-bottom: 20px; position: relative; z-index: 1; }
-                    .logo { font-size: 24px; font-weight: 900; color: #d64541; letter-spacing: -1px; }
-                    .logo span { color: #102a43; font-weight: 400; }
-                    .country { font-size: 12px; font-weight: 700; letter-spacing: 2px; color: #486581; }
+                    .id-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,0,0,0.2); padding-bottom: 10px; margin-bottom: 20px; position: relative; z-index: 1; }
+                    .logo { font-size: 24px; font-weight: 900; color: #d64541; letter-spacing: -1px; text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+                    .logo span { font-weight: 400; color: inherit; }
+                    .country { font-size: 12px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; }
                     .id-body { display: flex; gap: 25px; position: relative; z-index: 1; }
                     .photo-area { display: flex; flex-direction: column; align-items: center; gap: 15px; }
                     .profile-pic { width: 140px; height: 180px; object-fit: cover; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); filter: contrast(1.1) grayscale(20%); border: 3px solid #fff; }
-                    .chip { width: 40px; opacity: 0.8; }
+                    
+                    /* Chip in puro CSS */
+                    .css-chip { width: 45px; height: 35px; background: linear-gradient(135deg, #d4af37, #f3e5ab); border-radius: 6px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 1px solid #b89020; overflow: hidden; }
+                    .css-chip::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #b89020; }
+                    .css-chip::after { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 1px; background: #b89020; }
+                    
                     .info-area { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
                     .field { display: flex; flex-direction: column; margin-bottom: 15px; }
                     .field-row { display: flex; gap: 30px; }
-                    .label { font-size: 11px; color: #627d98; font-weight: 700; margin-bottom: 2px; }
+                    .label { font-size: 11px; font-weight: 800; margin-bottom: 2px; letter-spacing: 1px;}
                     .value { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
-                    .mrz { font-family: 'Share Tech Mono', monospace; font-size: 14px; letter-spacing: 2px; line-height: 1.5; color: #334e68; margin-top: auto; }
+                    .mrz { font-family: 'Share Tech Mono', monospace; font-size: 14px; letter-spacing: 2px; line-height: 1.5; margin-top: auto; opacity: 0.8; }
                 `);
                 caption = `🪪 *Carta d'Identità Musicale*\nRichiesta da: @${user}`;
+                break;
+            }
+            case 'festival': {
+                const limit = 12;
+                const topArt = await apiCall('user.gettopartists', { user, limit, period: '1month' });
+                if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore nel recupero degli artisti. Ascolta più musica!");
+
+                const artists = topArt.topartists.artist.map(a => a.name);
+                while (artists.length < limit) artists.push("Special Guest");
+
+                const topCover = await fetchCover(topArt.topartists.artist[0]?.image, artists[0], true);
+
+                viewport = { w: 600, h: 800 };
+                html = getHtmlWrapper(`
+                    <div class="festival-bg" style="background-image: url('${topCover}')"></div>
+                    <div class="festival-overlay"></div>
+                    <div class="poster">
+                        <div class="dates">15-16-17 AGOSTO 2026</div>
+                        <h1 class="fest-title">SOUND<br>FEST</h1>
+                        <div class="presented-by">CURATED BY @${user.toUpperCase()}</div>
+                        
+                        <div class="lineup">
+                            <h2 class="headliners"><span>${artists[0]}</span><br><span>${artists[1]}</span></h2>
+                            <h3 class="mid-tier">${artists[2]} • ${artists[3]}<br>${artists[4]} • ${artists[5]}</h3>
+                            <div class="undercard-box">
+                                <p class="undercard">${artists.slice(6, 12).join(' • ').toUpperCase()}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-info">TICKETS AVAILABLE NOW • VIP PASSES SOLD OUT</div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700&display=swap');
+                    body { font-family: 'Inter', sans-serif; background: #000; }
+                    .festival-bg { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; filter: blur(3px) brightness(0.7); z-index: -2; }
+                    .festival-overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%); z-index: -1; }
+                    .poster { width: 100%; height: 100%; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; text-align: center; color: #fff; border: 12px solid #fff; }
+                    
+                    .dates { font-size: 14px; letter-spacing: 4px; font-weight: 700; margin-bottom: 5px; color: #ff3b30; }
+                    .fest-title { font-family: 'Bebas Neue', sans-serif; font-size: 110px; line-height: 0.85; margin: 0; color: #fff; }
+                    .presented-by { font-size: 12px; letter-spacing: 3px; margin-top: 15px; border-top: 1px solid #fff; border-bottom: 1px solid #fff; padding: 5px 0; width: 80%; font-weight: 700; }
+                    
+                    .lineup { margin-top: auto; margin-bottom: auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+                    .headliners { font-family: 'Bebas Neue', sans-serif; font-size: 65px; margin: 0; line-height: 1; color: #ffd700; display: flex; flex-direction: column; text-shadow: 2px 2px 0 #000; }
+                    .mid-tier { font-family: 'Bebas Neue', sans-serif; font-size: 38px; margin: 0; color: #fff; line-height: 1.1; letter-spacing: 1px; }
+                    
+                    .undercard-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
+                    .undercard { font-size: 15px; font-weight: 700; margin: 0; line-height: 1.6; color: #ddd; letter-spacing: 1px; }
+                    
+                    .ticket-info { font-size: 12px; letter-spacing: 2px; font-weight: 700; color: #aaa; margin-top: 20px; }
+                `);
+                caption = `🎪 *La tua Lineup Ideale*\nEcco il festival curato da @${user}`;
+                break;
+            }
+            case 'roast': {
+                const topArt = await apiCall('user.gettopartists', { user, limit: 1, period: '1month' });
+                if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Non hai ascoltato abbastanza musica per essere preso in giro.");
+
+                const artist = topArt.topartists.artist[0];
+                const playcount = parseInt(artist.playcount);
+                const cover = await fetchCover(artist.image, artist.name, true);
+
+                const roasts = [
+                    "Sospettato di non toccare erba dal 2021.",
+                    "Pericolo pubblico: monopolizza il cavo Aux.",
+                    "Richiesto supporto psicologico immediato.",
+                    "Colpevole di avere gusti musicali discutibili.",
+                    "Sintomi di grave ossessione musicale rilevati."
+                ];
+                const randomRoast = roasts[Math.floor(Math.random() * roasts.length)];
+
+                viewport = { w: 600, h: 750 };
+                html = getHtmlWrapper(`
+                    <div class="wanted-poster">
+                        <h1 class="wanted-title">WANTED</h1>
+                        <h2 class="reward">DEAD OR ALIVE</h2>
+                        <div class="mugshot-container">
+                            <img src="${cover}" class="mugshot">
+                            <div class="bars"></div>
+                        </div>
+                        <div class="details">
+                            <p class="alias">ALIAS: @${user.toUpperCase()}</p>
+                            <p class="crime">CRIMINE: Ascolto compulsivo di <strong>${artist.name.toUpperCase()}</strong></p>
+                            <p class="evidence">PROVE: ${playcount} riproduzioni in soli 30 giorni.</p>
+                            <p class="note">NOTA: ${randomRoast}</p>
+                        </div>
+                        <div class="stamp">EXPOSED</div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&display=swap');
+                    body { background: url('https://www.transparenttextures.com/patterns/aged-paper.png') #d4c5b0; display: flex; justify-content: center; align-items: center; }
+                    .wanted-poster { width: 500px; padding: 40px; border: 8px solid #3e2723; background: transparent; text-align: center; color: #3e2723; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                    .wanted-title { font-family: 'Rye', serif; font-size: 80px; margin: 0; letter-spacing: 5px; }
+                    .reward { font-family: 'Rye', serif; font-size: 30px; margin: -10px 0 20px 0; }
+                    .mugshot-container { width: 100%; height: 300px; position: relative; border: 5px solid #3e2723; box-sizing: border-box; overflow: hidden; }
+                    .mugshot { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.8) contrast(1.5) grayscale(0.5); }
+                    .bars { position: absolute; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(90deg, transparent, transparent 40px, #111 40px, #111 50px); opacity: 0.8; }
+                    .details { font-family: 'Special Elite', monospace; text-align: left; margin-top: 25px; font-size: 18px; line-height: 1.5; font-weight: bold; }
+                    .alias { font-size: 24px; text-decoration: underline; }
+                    .stamp { position: absolute; bottom: 30px; right: 20px; font-family: 'Rye', serif; font-size: 50px; color: #c62828; border: 5px solid #c62828; padding: 5px 15px; transform: rotate(-15deg); opacity: 0.7; border-radius: 10px; }
+                `);
+                caption = `🚨 *SEGNALAZIONE UTENTE*\nAttenzione a @${user}, il suo ultimo mese musicale è preoccupante.`;
+                break;
+            }
+            case 'soulmate': {
+                if (!m.mentionedJid || m.mentionedJid.length === 0) return m.reply(`❌ Uso: *${usedPrefix}soulmate @utente*`);
+                const user2Jid = m.mentionedJid[0];
+                const user2 = db[user2Jid];
+                if (!user2) return m.reply("⚠️ L'utente taggato non ha registrato il suo account Last.fm.");
+
+                const limit = 50;
+                const top1 = await apiCall('user.gettopartists', { user, limit, period: 'overall' });
+                const top2 = await apiCall('user.gettopartists', { user: user2, limit, period: 'overall' });
+
+                if (top1.error || top2.error) throw new Error("Errore API durante il calcolo dell'affinità.");
+
+                const artists1 = top1.topartists.artist.map(a => a.name.toLowerCase());
+                const artists2 = top2.topartists.artist.map(a => a.name.toLowerCase());
+
+                let shared = 0;
+                artists1.forEach(a => { if (artists2.includes(a)) shared++; });
+
+                // Formula magica per calcolare la percentuale in base ai top 50 (max ~100%)
+                let matchPercent = Math.min(Math.round((shared / 25) * 100), 100);
+                
+                let status = "Nemici Giurati 💔";
+                let heartColor = "#ff3b30";
+                if (matchPercent > 20) { status = "Conoscenti Musicali 🎵"; heartColor = "#ff9500"; }
+                if (matchPercent > 50) { status = "Compagni di Cuffiette 🎧"; heartColor = "#4cd964"; }
+                if (matchPercent > 80) { status = "Anime Gemelle ✨"; heartColor = "#ff2d55"; }
+
+                viewport = { w: 800, h: 500 };
+                html = getHtmlWrapper(`
+                    <div class="soul-container">
+                        <h2 class="title">COMPATIBILITÀ LAST.FM</h2>
+                        <div class="users">
+                            <div class="user-pill">@${user}</div>
+                            <div class="user-pill">@${user2}</div>
+                        </div>
+                        <div class="percentage" style="color: ${heartColor}; text-shadow: 0 0 20px ${heartColor};">${matchPercent}%</div>
+                        <div class="status">${status}</div>
+                        <div class="shared-count">Artisti in comune (Top 50): ${shared}</div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&display=swap');
+                    body { background: #0f0c29; background: linear-gradient(to right, #24243e, #302b63, #0f0c29); font-family: 'Montserrat', sans-serif; }
+                    .soul-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 10; }
+                    .title { color: #fff; font-size: 24px; letter-spacing: 5px; opacity: 0.8; margin-bottom: 40px; }
+                    .users { display: flex; gap: 30px; margin-bottom: 20px; }
+                    .user-pill { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 15px 30px; border-radius: 30px; font-size: 22px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+                    .percentage { font-size: 130px; font-weight: 900; line-height: 1; margin: 10px 0; }
+                    .status { font-size: 28px; font-weight: 800; color: #fff; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; }
+                    .shared-count { margin-top: 20px; font-size: 16px; color: #aaa; }
+                `);
+                caption = `💖 *Test di Compatibilità*\n@${user} e @${user2} sono affini al ${matchPercent}%!`;
+                break;
+            }
+            case 'vinyl': {
+                const res = await apiCall('user.getrecenttracks', { user, limit: 1 });
+                const track = res.recenttracks?.track?.[0];
+                if (!track) throw new Error("Non hai nessun ascolto recente.");
+
+                const artistName = track.artist['#text'] || track.artist?.name;
+                const trackName = track.name;
+                const cover = await fetchCover(track.image, `${artistName} ${trackName}`);
+
+                viewport = { w: 700, h: 700 };
+                html = getHtmlWrapper(`
+                    <div class="turntable-base">
+                        <div class="platter">
+                            <div class="vinyl">
+                                <div class="label" style="background-image: url('${cover}')">
+                                    <div class="hole"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tonearm-base"></div>
+                        <div class="tonearm"></div>
+                        <div class="stylus"></div>
+                    </div>
+                    <div class="info-box">
+                        <div class="song-text">${trackName}</div>
+                        <div class="artist-text">${artistName}</div>
+                        <div class="user-tag">SPINNING BY @${user.toUpperCase()}</div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@500;700&display=swap');
+                    body { background: #1a1a1a; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Jost', sans-serif; }
+                    .turntable-base { position: relative; width: 650px; height: 500px; background: #e0e0e0; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 5px 15px #fff; border: 2px solid #ccc; display: flex; align-items: center; padding-left: 40px; }
+                    .platter { width: 440px; height: 440px; background: #888; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 10px #555; }
+                    .vinyl { width: 420px; height: 420px; border-radius: 50%; background: #111; box-shadow: inset 0 0 0 8px #222; display: flex; justify-content: center; align-items: center; position: relative; background-image: repeating-radial-gradient(circle, #111, #111 4px, #1a1a1a 5px, #111 6px); }
+                    .vinyl::before { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1) 15deg, transparent 30deg, transparent 180deg, rgba(255,255,255,0.1) 195deg, transparent 210deg); pointer-events: none; }
+                    .label { width: 160px; height: 160px; border-radius: 50%; background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 0 4px #000; position: relative; }
+                    .hole { width: 12px; height: 12px; background: #e0e0e0; border-radius: 50%; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); position: absolute; }
+                    
+                    /* Braccio del giradischi */
+                    .tonearm-base { position: absolute; right: 80px; top: 100px; width: 60px; height: 60px; background: #333; border-radius: 50%; box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 2px 5px #777; }
+                    .tonearm { position: absolute; right: 105px; top: 130px; width: 12px; height: 280px; background: linear-gradient(90deg, #aaa, #ddd, #aaa); transform-origin: top center; transform: rotate(25deg); border-radius: 6px; box-shadow: -5px 10px 15px rgba(0,0,0,0.4); }
+                    .stylus { position: absolute; right: 235px; bottom: 100px; width: 25px; height: 40px; background: #222; transform: rotate(25deg); border-radius: 5px; box-shadow: -2px 5px 5px rgba(0,0,0,0.5); }
+
+                    .info-box { background: rgba(20, 20, 20, 0.9); margin-top: -30px; z-index: 10; padding: 20px 40px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); width: 80%; box-shadow: 0 10px 30px rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+                    .song-text { font-size: 28px; font-weight: 700; color: #fff; margin: 0; text-shadow: 0 2px 5px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                    .artist-text { font-size: 18px; font-weight: 500; color: #bbb; margin-top: 5px; }
+                    .user-tag { font-size: 12px; color: #888; letter-spacing: 4px; margin-top: 15px; font-weight: 700; }
+                `);
+                caption = `📀 *Sul giradischi di @${user}...*\nIn riproduzione: ${trackName} - ${artistName}`;
+                break;
+            }
+            case 'wrapped':
+            case 'recap': {
+                const [topArt, topTrack, topAlbum] = await Promise.all([
+                    apiCall('user.gettopartists', { user, limit: 1, period: '7day' }),
+                    apiCall('user.gettoptracks', { user, limit: 1, period: '7day' }),
+                    apiCall('user.gettopalbums', { user, limit: 1, period: '7day' })
+                ]);
+
+                if (topArt.error || topTrack.error) throw new Error("Statistiche insufficienti per generare il recap settimanale.");
+
+                const artist = topArt.topartists?.artist?.[0] || { name: 'N/A', playcount: 0 };
+                const track = topTrack.toptracks?.track?.[0] || { name: 'N/A', artist: { name: '' }, playcount: 0 };
+                const album = topAlbum.topalbums?.album?.[0] || { name: 'N/A', playcount: 0 };
+
+                viewport = { w: 600, h: 900 };
+                html = getHtmlWrapper(`
+                    <div class="wrap-bg">
+                        <div class="shape circle"></div>
+                        <div class="shape square"></div>
+                    </div>
+                    <div class="wrap-content">
+                        <div class="header">Il tuo<br>Recap</div>
+                        
+                        <div class="blocks-container">
+                            <div class="stat-block">
+                                <p class="label">Top Artista</p>
+                                <h1 class="value text-green">${artist.name}</h1>
+                                <p class="sub">${artist.playcount} ascolti</p>
+                            </div>
+
+                            <div class="stat-block">
+                                <p class="label">Top Brano</p>
+                                <h1 class="value text-pink">${track.name}</h1>
+                                <p class="sub">${track.artist.name}</p>
+                            </div>
+
+                            <div class="stat-block">
+                                <p class="label">Top Album</p>
+                                <h1 class="value text-yellow">${album.name}</h1>
+                            </div>
+                        </div>
+                        
+                        <div class="footer">
+                            <div class="username">@${user}</div>
+                            <div class="logo">LAST.FM</div>
+                        </div>
+                    </div>
+                `, `
+                    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@500;700&display=swap');
+                    body { font-family: 'Inter', sans-serif; color: #fff; background: #4a00e0; overflow: hidden; }
+                    
+                    /* Forme astratte stile Spotify */
+                    .wrap-bg { position: absolute; width: 100%; height: 100%; z-index: -1; }
+                    .shape { position: absolute; filter: blur(40px); opacity: 0.8; }
+                    .circle { width: 400px; height: 400px; background: #ff007f; border-radius: 50%; top: -100px; right: -100px; }
+                    .square { width: 500px; height: 500px; background: #1db954; top: 60%; left: -150px; transform: rotate(45deg); }
+
+                    .wrap-content { width: 100%; height: 100%; padding: 50px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; z-index: 10; }
+                    .header { font-family: 'Montserrat', sans-serif; font-size: 60px; line-height: 0.9; margin-bottom: 60px; text-transform: uppercase; letter-spacing: -2px; }
+                    
+                    .blocks-container { display: flex; flex-direction: column; gap: 40px; }
+                    .stat-block { display: flex; flex-direction: column; align-items: flex-start; }
+                    .label { font-size: 18px; font-weight: 700; background: #fff; color: #000; padding: 5px 15px; border-radius: 20px; margin: 0 0 10px 0; text-transform: uppercase; }
+                    .value { font-family: 'Montserrat', sans-serif; font-size: 55px; margin: 0; line-height: 1; word-wrap: break-word; text-transform: uppercase; letter-spacing: -1px; }
+                    
+                    /* Colori vividi */
+                    .text-green { color: #1db954; text-shadow: 2px 2px 0px #000; }
+                    .text-pink { color: #ff6b6b; text-shadow: 2px 2px 0px #000; }
+                    .text-yellow { color: #feca57; text-shadow: 2px 2px 0px #000; }
+
+                    .sub { font-size: 18px; font-weight: 500; margin: 5px 0 0 0; opacity: 0.9; }
+                    .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; border-top: 3px solid rgba(255,255,255,0.3); padding-top: 20px; }
+                    .username { font-size: 26px; font-weight: 700; background: #000; padding: 5px 15px; border-radius: 10px; }
+                    .logo { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; }
+                `);
+                caption = `📆 *Il Recap della tua settimana!*\nEcco cos'hai ascoltato di più negli ultimi 7 giorni.`;
                 break;
             }
 
@@ -918,8 +1267,8 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
     }
 };
 
-handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
-handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap'];
+handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap', 'festival', 'roast', 'soulmate', 'vinyl', 'wrapped'];
+handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap', 'festival', 'roast', 'soulmate', 'vinyl', 'wrapped', 'recap'];
 handler.group = true; 
 
 export default handler;
