@@ -5,9 +5,9 @@ let handler = async (m, { conn, text, participants }) => {
   let users = participants.map(u => conn.decodeJid(u.id))
   let q = m.quoted ? m.quoted : m
   
-  let isViewOnce = q.msg?.viewOnce || q.viewOnce || q.mtype === 'viewOnceMessage' || q.mtype === 'viewOnceMessageV2'
-  let msg = isViewOnce ? q.msg.message[Object.keys(q.msg.message)[0]] : (q.msg || q)
-  let type = isViewOnce ? Object.keys(q.msg.message)[0] : q.mtype
+  let isViewOnce = q.mtype === 'viewOnceMessageV2' || q.mtype === 'viewOnceMessage'
+  let type = isViewOnce ? Object.keys(q.message)[0] : q.mtype
+  let msg = isViewOnce ? q.message[type].message[Object.keys(q.message[type].message)[0]] : (q.msg || q)
 
   let captionText = m.quoted?.text ? `➠ ${m.quoted.text}` : (text?.trim() ? `➠ ${text.trim()}` : `➠`)
   let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
@@ -19,7 +19,7 @@ let handler = async (m, { conn, text, participants }) => {
     }
 
     let media = await q.download?.().catch(() => null)
-    let isGif = msg?.gifPlayback || false
+    let isGif = msg?.gifPlayback || q.msg?.gifPlayback || false
 
     let opt = {
       mentions: mentions,
@@ -30,18 +30,18 @@ let handler = async (m, { conn, text, participants }) => {
       viewOnce: isViewOnce
     }
 
-    if (isGif || (type === 'videoMessage' && isGif)) {
+    if (isGif || type === 'videoMessage' && isGif) {
       await conn.sendMessage(m.chat, { 
         video: media, 
         gifPlayback: true, 
         caption: captionText,
         ...opt 
       }, { quoted: m })
-    } else if (type === 'imageMessage') {
+    } else if (type === 'imageMessage' || (isViewOnce && type.includes('image'))) {
       await conn.sendMessage(m.chat, { image: media, caption: captionText, ...opt }, { quoted: m })
-    } else if (type === 'videoMessage') {
+    } else if (type === 'videoMessage' || (isViewOnce && type.includes('video'))) {
       await conn.sendMessage(m.chat, { video: media, caption: captionText, ...opt }, { quoted: m })
-    } else if (type === 'audioMessage') {
+    } else if (type === 'audioMessage' || (isViewOnce && type.includes('audio'))) {
       await conn.sendMessage(m.chat, { 
         audio: media, 
         mimetype: 'audio/mp4', 
