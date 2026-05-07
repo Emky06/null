@@ -25,4 +25,4 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 };
 
 handler.command = ['abbraccia'];
-export default handler;
+export default handler;
