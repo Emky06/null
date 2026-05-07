@@ -84,10 +84,10 @@ Hai 60 secondi per rispondere.`;
 
         if (!Array.isArray(figlio.genitori)) figlio.genitori = [];
 
-        // Rimuovi genitore e coniuge dai genitori del figlio
+        
         figlio.genitori = figlio.genitori.filter(g => g !== m.sender && g !== user.coniuge);
 
-        // Rimuovi il figlio anche dal coniuge
+        
         if (user.sposato && user.coniuge) {
           const coniuge = users[user.coniuge];
           if (Array.isArray(coniuge?.figli)) {
@@ -159,7 +159,7 @@ handler.before = async (m, { conn }) => {
     if (!Array.isArray(adoptee.genitori)) adoptee.genitori = [];
     if (!adoptee.genitori.includes(from)) adoptee.genitori.push(from);
 
-    // Se chi adotta è sposato, anche il coniuge eredita il figlio
+    
     if (adopter.sposato && adopter.coniuge && adopter.coniuge !== m.sender) {
       const coniuge = global.db.data.users[adopter.coniuge];
       if (!Array.isArray(coniuge.figli)) coniuge.figli = [];
@@ -167,7 +167,7 @@ handler.before = async (m, { conn }) => {
         coniuge.figli.push(m.sender);
       }
 
-      // Anche il coniuge diventa genitore
+      
       if (!adoptee.genitori.includes(adopter.coniuge)) {
         adoptee.genitori.push(adopter.coniuge);
       }
