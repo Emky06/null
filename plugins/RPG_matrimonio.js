@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const proposals = {};
 
 let handler = async (m, { conn, command, usedPrefix }) => {
