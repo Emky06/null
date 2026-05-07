@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn }) => {
   const users = global.db.data.users;
   const user = users[m.sender];
