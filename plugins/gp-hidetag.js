@@ -5,7 +5,7 @@ let handler = async (m, { conn, text, participants }) => {
   let users = participants.map(u => conn.decodeJid(u.id))
   let q = m.quoted ? m.quoted : m
   
-  let type = Object.keys(q.msg || q)[0] || ''
+  let type = q?.mtype || ''
   let msg = q.msg?.[type] || q.msg || q
 
   let captionText = m.quoted?.text ? `➠ ${m.quoted.text}` : (text?.trim() ? `➠ ${text.trim()}` : `➠`)
