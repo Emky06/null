@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const friendRequests = {};
 
 let handler = async (m, { conn, participants, command, text, args, usedPrefix }) => {
