@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import fetch from 'node-fetch';
 import fs from 'fs';
 
@@ -7,14 +8,14 @@ const handler = async (m, { conn }) => {
 
   if (!Array.isArray(user.ex)) user.ex = [];
   if (!Array.isArray(user.figli)) user.figli = [];
-  if (!Array.isArray(user.genitori)) user.genitori = []; // <-- AGGIUNTA
+  if (!Array.isArray(user.genitori)) user.genitori = []; 
 
   const nomeUtente = await conn.getName(mention);
 
   const formatList = (arr) => arr.length > 0 ? arr.map(j => '@' + j.split('@')[0]).join('\n') : 'nessuno';
   const figliList = formatList(user.figli);
   const exList = formatList(user.ex);
-  const genitoriList = formatList(user.genitori); // <-- AGGIUNTA
+  const genitoriList = formatList(user.genitori); 
 
   const text = `ೋೋ══ • ══ೋೋ
 > 𝐍𝐨𝐦𝐞: ${nomeUtente}
@@ -29,7 +30,7 @@ const handler = async (m, { conn }) => {
   const mentions = [
     ...(user.figli || []),
     ...(user.ex || []),
-    ...(user.genitori || []), // <-- AGGIUNTA
+    ...(user.genitori || []), 
     ...(user.coniuge ? [user.coniuge] : [])
   ];
 
