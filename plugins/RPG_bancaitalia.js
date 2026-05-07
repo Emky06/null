@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, participants }) => {
   if (!m.isGroup) return;
 
