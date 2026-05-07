@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const adoptions = {};
 
 const handler = async (m, { conn, command, usedPrefix, args }) => {
