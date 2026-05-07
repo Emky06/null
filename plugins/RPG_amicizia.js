@@ -34,7 +34,7 @@ const handleFriendRequest = async (m, user, users, text, usedPrefix, conn) => {
         return m.reply('⚠️ C\'è già una richiesta di amicizia in corso.');
     }
 
-    // Salva la richiesta
+    
     friendRequests[mention] = { from: m.sender, timeout: null };
     friendRequests[m.sender] = { to: mention, timeout: null };
 
