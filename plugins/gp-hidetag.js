@@ -6,7 +6,7 @@ let handler = async (m, { conn, text, participants }) => {
   let q = m.quoted ? m.quoted : m
   
   let type = q?.mtype || ''
-  let msg = q.msg?.[type] || q.msg || q
+  let msg = q?.msg || {}
 
   let captionText = m.quoted?.text ? `➠ ${m.quoted.text}` : (text?.trim() ? `➠ ${text.trim()}` : `➠`)
   let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
