@@ -5,9 +5,8 @@ let handler = async (m, { conn, text, participants }) => {
   let users = participants.map(u => conn.decodeJid(u.id))
   let q = m.quoted ? m.quoted : m
   
-  let mime = (q.msg || q)?.mimetype || ''
-  let isViewOnce = q.msg?.viewOnce || q.viewOnce || false
-  let isGif = q.msg?.gifPlayback || false
+  let type = Object.keys(q.msg || q)[0] || ''
+  let msg = q.msg?.[type] || q.msg || q
 
   let captionText = m.quoted?.text ? `➠ ${m.quoted.text}` : (text?.trim() ? `➠ ${text.trim()}` : `➠`)
   let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
@@ -20,7 +19,10 @@ let handler = async (m, { conn, text, participants }) => {
 
     let media = await q.download?.().catch(() => null)
     
-    let common = {
+    let isViewOnce = q.msg?.viewOnce || q.viewOnce || false
+    let isGif = q.msg?.gifPlayback || q.gifPlayback || (q.mtype === 'videoMessage' && q.msg?.gifPlayback)
+
+    let commonOptions = {
       mentions: mentions,
       contextInfo: { 
         mentionedJid: mentions,
@@ -29,37 +31,26 @@ let handler = async (m, { conn, text, participants }) => {
       viewOnce: isViewOnce
     }
 
-    if (isGif || (q.mtype === 'videoMessage' && isGif)) {
+    if (isGif) {
       await conn.sendMessage(m.chat, { 
         video: media, 
         gifPlayback: true, 
         caption: captionText,
-        ...common 
+        ...commonOptions 
       }, { quoted: m })
-    } else if (q.mtype === 'imageMessage' || mime.includes('image')) {
-      await conn.sendMessage(m.chat, { 
-        image: media, 
-        caption: captionText, 
-        ...common 
-      }, { quoted: m })
-    } else if (q.mtype === 'videoMessage' || mime.includes('video')) {
-      await conn.sendMessage(m.chat, { 
-        video: media, 
-        caption: captionText, 
-        ...common 
-      }, { quoted: m })
-    } else if (q.mtype === 'audioMessage' || mime.includes('audio')) {
+    } else if (q.mtype === 'imageMessage' || type === 'imageMessage') {
+      await conn.sendMessage(m.chat, { image: media, caption: captionText, ...commonOptions }, { quoted: m })
+    } else if (q.mtype === 'videoMessage' || type === 'videoMessage') {
+      await conn.sendMessage(m.chat, { video: media, caption: captionText, ...commonOptions }, { quoted: m })
+    } else if (q.mtype === 'audioMessage' || type === 'audioMessage') {
       await conn.sendMessage(m.chat, { 
         audio: media, 
         mimetype: 'audio/mp4', 
         ptt: isViewOnce ? true : (q.msg?.ptt || false),
-        ...common 
+        ...commonOptions 
       }, { quoted: m })
-    } else if (q.mtype === 'stickerMessage') {
-      await conn.sendMessage(m.chat, { 
-        sticker: media, 
-        ...common 
-      }, { quoted: m })
+    } else if (q.mtype === 'stickerMessage' || type === 'stickerMessage') {
+      await conn.sendMessage(m.chat, { sticker: media, ...commonOptions }, { quoted: m })
     } else {
       await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
     }
