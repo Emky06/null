@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRdh
 import fs from 'fs'
 
 async function handler(m, { conn, isBotAdmin, isOwner, text }) {
