@@ -6,11 +6,9 @@ function delay(ms) {
 let handler = async (m, { conn }) => {
     if (!m.isGroup) return m.reply("⚠️ Questo comando funziona solo nei gruppi!");
 
-
     let groupMetadata = await conn.groupMetadata(m.chat);
     let owner = groupMetadata.owner;
     let participantsData = groupMetadata.participants;
-
 
     let participants = participantsData
         .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid)
@@ -22,11 +20,13 @@ let handler = async (m, { conn }) => {
 
     let messaggio = await conn.reply(m.chat, `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎*\n\n🔄 Preparando la ruota...`, m);
 
-
     for (let i = 0; i < 6; i++) {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
+        let righe = randomNames.map(u => {
+            let userId = u.split('@')[0].replace('+', '')
+            return `@${userId}`
+        }).join(" | ");
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
             text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
@@ -36,7 +36,6 @@ let handler = async (m, { conn }) => {
 
     await delay(2000);
 
-
     let esito = Math.floor(Math.random() * 4); 
     if (esito === 0) {
         await conn.sendMessage(m.chat, { 
@@ -45,9 +44,10 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
+        let userId = scelto.split('@')[0].replace('+', '')
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${userId}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
@@ -56,4 +56,5 @@ let handler = async (m, { conn }) => {
 handler.command = /^rouletterussa$/i;
 handler.staff = true;
 handler.group = true;
+
 export default handler;
