@@ -100,7 +100,7 @@ function generateMenuText(prefix) {
 📂 *Gestione Bot*
 ┣━ 🔧 .impostanome ┃ Imposta nome bot
 ┣━ ♻️ .resettanome ┃ Resetta nome
-┣━ 🖼️ .setpp ┃ Cambia immagine profilo
+┣━ 🖼️ .setfp ┃ Cambia immagine profilo
 
 🙎 *Gestione Utenti*
 ┣━ ⛔ .banuser @ / .unbanuser @
