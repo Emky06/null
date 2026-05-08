@@ -22,7 +22,7 @@ let handler = async (m, { conn }) => {
 ━━━━━━━━━━━━━━━━━━━━━
 *MOMENTO DEL TEST DELL'ALCOL!🍷*
 ━━━━━━━━━━━━━━━━━━━━━
-🍷 *Alcolicità di @${target.split("@")[0]}* : ${width}%
+🍷 *Alcolicità di @${target.split("@")[0]}:* ${width}%
 ━━━━━━━━━━━━━━━━━━━━━
 ${finalPhrase}
 `.trim();
