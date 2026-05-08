@@ -26,15 +26,12 @@ let handler = async (m, { conn }) => {
     for (let i = 0; i < 6; i++) {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
+        let righe = randomNames.map(u => `@${u.split('@')[0].split(':')[0]}`).join(" | ");
         await conn.sendMessage(m.chat, { 
-    edit: messaggio.key, 
-    text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
-    mentions: randomNames,
-    contextInfo: {
-        mentionedJid: randomNames
-    }
-});
+            edit: messaggio.key, 
+            text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
+            mentions: randomNames
+        });
     }
 
     await delay(2000);
@@ -49,13 +46,10 @@ let handler = async (m, { conn }) => {
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
         await conn.sendMessage(m.chat, { 
-    edit: messaggio.key, 
-    text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
-    mentions: [scelto],
-    contextInfo: {
-        mentionedJid: [scelto]
-    }
-});
+            edit: messaggio.key, 
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0].split(':')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            mentions: [scelto]
+        });
     }
 };
 
