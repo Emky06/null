@@ -6,9 +6,11 @@ function delay(ms) {
 let handler = async (m, { conn }) => {
     if (!m.isGroup) return m.reply("⚠️ Questo comando funziona solo nei gruppi!");
 
+
     let groupMetadata = await conn.groupMetadata(m.chat);
     let owner = groupMetadata.owner;
     let participantsData = groupMetadata.participants;
+
 
     let participants = participantsData
         .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid)
@@ -20,27 +22,23 @@ let handler = async (m, { conn }) => {
 
     let messaggio = await conn.reply(m.chat, `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎*\n\n🔄 Preparando la ruota...`, m);
 
+
     for (let i = 0; i < 6; i++) {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => {
-            let number = u.split('@')[0].replace(/[^0-9]/g, '')
-            if (number.length > 15) {
-                let contact = conn.contacts[u]
-                number = contact?.number || contact?.jid?.split('@')[0] || number
-            }
-            if (number.startsWith('39')) number = number.substring(2)
-            if (number.startsWith('0')) number = number.substring(1)
-            return `@${number}`
-        }).join(" | ");
+        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
         await conn.sendMessage(m.chat, { 
-            edit: messaggio.key, 
-            text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
-            mentions: randomNames
-        });
+    edit: messaggio.key, 
+    text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
+    mentions: randomNames,
+    contextInfo: {
+        mentionedJid: randomNames
+    }
+});
     }
 
     await delay(2000);
+
 
     let esito = Math.floor(Math.random() * 4); 
     if (esito === 0) {
@@ -50,18 +48,14 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
-        let number = scelto.split('@')[0].replace(/[^0-9]/g, '')
-        if (number.length > 15) {
-            let contact = conn.contacts[scelto]
-            number = contact?.number || contact?.jid?.split('@')[0] || number
-        }
-        if (number.startsWith('39')) number = number.substring(2)
-        if (number.startsWith('0')) number = number.substring(1)
         await conn.sendMessage(m.chat, { 
-            edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${number}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
-            mentions: [scelto]
-        });
+    edit: messaggio.key, 
+    text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+    mentions: [scelto],
+    contextInfo: {
+        mentionedJid: [scelto]
+    }
+});
     }
 };
 
