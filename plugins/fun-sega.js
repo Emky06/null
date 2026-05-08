@@ -1,19 +1,16 @@
-//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, usedPrefix, text }) => {
-    let target;
+    let mention;
 
-    if (m.quoted) {
-        target = m.quoted.sender;
-    } else if (text) {
-        let match = text.match(/@?(\d{5,})/);
-        if (match) {
-            target = match[1] + '@s.whatsapp.net';
-        }
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+        mention = m.mentionedJid[0];
+    } else if (m.quoted) {
+        mention = m.quoted.sender;
+    } else {
+        mention = m.sender;
     }
 
-    if (!target) return m.reply(
-        `Chi devo taggare?\nUsa: *${usedPrefix}sega @utente*\nOppure rispondi a un messaggio`
-    );
+    const jid = mention;
+    const mentions = [jid];
 
     let tempoVenuto = (Math.random() * 4.9 + 0.1).toFixed(1);
 
@@ -49,7 +46,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 
     let finale = `
 ━━━━━━━━━━━━━━━━━━━━━
-😋 *Oh @${target.split('@')[0]} ha raggiunto il culmine!* 💦
+😋 *Oh @${jid.split('@')[0]} ha raggiunto il culmine!* 💦
 ━━━━━━━━━━━━━━━━━━━━━
 ⏱️💦 *È venuto in: ${tempoVenuto} secondi.*
 `.trim();
@@ -59,7 +56,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
         {
             text: finale,
             edit: key,
-            mentions: [target]
+            mentions
         },
         { quoted: m }
     );
