@@ -22,7 +22,7 @@ const log = {
 
 const displayBanner = () => {
   console.clear();
-  cfonts.say('Axtral|WiZaRd', {
+  cfonts.say('AXTRAL|WIZARD', {
     font: 'slick',
     align: 'left',
     gradient: ['blue', 'cyan', 'blue'],
