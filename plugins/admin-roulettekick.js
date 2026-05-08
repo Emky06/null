@@ -1,21 +1,20 @@
-//Plugin fatto da Axtral_WiZaRd
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
 
-let handler = async (m, { conn, participants }) => {
+let handler = async (m, { conn }) => {
     if (!m.isGroup) return m.reply("⚠️ Questo comando funziona solo nei gruppi!");
 
     let groupMetadata = await conn.groupMetadata(m.chat);
-    let owner = groupMetadata.owner;
+    let participants = groupMetadata.participants;
+    let botJid = conn.decodeJid(conn.user.jid);
 
     let validParticipants = participants
-        .filter(p => !p.admin && p.id !== owner && conn.decodeJid(p.id) !== conn.decodeJid(conn.user.jid))
-        .map(p => conn.decodeJid(p.id))
-        .filter(id => id.endsWith('@s.whatsapp.net'));
+        .filter(p => !p.admin && conn.decodeJid(p.id) !== botJid)
+        .map(p => conn.decodeJid(p.id));
 
     if (validParticipants.length < 1) {
-        return m.reply("😅 Non ci sono utenti sacrificabili in questo gruppo.");
+        return m.reply("😅 Non ci sono utenti sacrificabili (non admin) in questo gruppo.");
     }
 
     let messaggio = await conn.reply(m.chat, `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎*\n\n🔄 Preparando la ruota...`, m);
@@ -53,5 +52,4 @@ let handler = async (m, { conn, participants }) => {
 handler.command = /^rouletterussa$/i;
 handler.staff = true;
 handler.group = true;
-
 export default handler;
