@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
