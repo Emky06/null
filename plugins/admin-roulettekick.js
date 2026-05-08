@@ -24,10 +24,8 @@ let handler = async (m, { conn }) => {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
         let righe = randomNames.map(u => {
-            let number = u.split('@')[0]
-            if (number.startsWith('39')) number = number.substring(2)
-            if (number.startsWith('+')) number = number.substring(1)
-            return `@${number}`
+            let name = groupMetadata.participants.find(p => p.id === u)?.name || u.split('@')[0]
+            return `@${name.replace(/[^a-zA-Z0-9]/g, '')}`
         }).join(" | ");
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
@@ -46,12 +44,10 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
-        let number = scelto.split('@')[0]
-        if (number.startsWith('39')) number = number.substring(2)
-        if (number.startsWith('+')) number = number.substring(1)
+        let name = groupMetadata.participants.find(p => p.id === scelto)?.name || scelto.split('@')[0]
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${number}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${name.replace(/[^a-zA-Z0-9]/g, '')}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
