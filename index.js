@@ -3,92 +3,87 @@ import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { setupMaster, fork } from 'cluster';
 import { watchFile, unwatchFile } from 'fs';
-import cfonts from 'cfonts';
 import { createInterface } from 'readline';
+import cfonts from 'cfonts';
 import yargs from 'yargs';
+import chalk from 'chalk'; 
 
-// Configurazioni iniziali
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(__dirname);
-const { name, author } = require(join(__dirname, './package.json'));
+const { name, version } = require(join(__dirname, './package.json'));
 const rl = createInterface(process.stdin, process.stdout);
 
-// Funzione per messaggi animati
-const animatedMessage = (text, font = 'block', colors = ['cyan', 'blue'], align = 'center') => {
-  cfonts.say(text, {
-    font,
-    align,
-    gradient: colors,
-    transitionGradient: true,
-  });
+const log = {
+  info: (msg) => console.log(`${chalk.cyan('<b>[INFO]</b>')} ${chalk.white(msg)}`),
+  success: (msg) => console.log(`${chalk.green('<b>[READY]</b>')} ${chalk.bold(msg)}`),
+  error: (msg) => console.log(`${chalk.red('<b>[ERROR]</b>')} ${chalk.redBright(msg)}`),
+  system: (msg) => console.log(`${chalk.magenta('<b>[SYSTEM]</b>')} ${chalk.grey(msg)}`)
 };
 
+const displayBanner = () => {
+  console.clear();
+  cfonts.say('Axtral|WiZaRd', {
+    font: 'slick',
+    align: 'left',
+    gradient: ['blue', 'cyan', 'blue'],
+    transitionGradient: true,
+  });
+  console.log(chalk.gray(`» System: ${name} | Release: v${version}`));
+  console.log(chalk.gray(`» Kernel: Node ${process.version}\n`));
+  console.log(chalk.yellow('—'.repeat(40)));
+};
 
-console.clear();
-animatedMessage('Axtral\nWiZaRd\nBot', 'block', ['#191970', 'blue', '#191970']);
-console.log('🔵 𝐀𝐯𝐯𝐢𝐨 𝐀𝐱𝐭𝐫𝐚𝐥_𝐖𝐢𝐙𝐚𝐑𝐝-𝐁𝐨𝐭...');
-
-// Variabile per controllo dello stato
 let isRunning = false;
 
-/**
- * Avvia un file JavaScript
- * @param {String} file - Percorso del file da avviare.
- */
-function start(file) {
+async function boot(script) {
   if (isRunning) return;
   isRunning = true;
 
-  const args = [join(__dirname, file), ...process.argv.slice(2)];
+  const scriptPath = join(__dirname, script);
+  const args = [scriptPath, ...process.argv.slice(2)];
 
-  animatedMessage('Developed by Axtral_WiZaRd', 'console', ['blue', 'cyan', 'blue']);
-
-  // Configurazione del cluster
+  log.system(`Initializing process: ${script}`);
+  
   setupMaster({
-    exec: args[0],
-    args: args.slice(1),
+    exec: scriptPath,
+    args: process.argv.slice(2),
   });
 
-  let processInstance = fork();
+  let pInstance = fork();
 
-  processInstance.on('message', (data) => {
-    console.log('[📩 RICEVUTO]', data);
-    switch (data) {
-      case 'reset':
-        processInstance.kill();
-        isRunning = false;
-        start(file);
-        break;
-      case 'uptime':
-        processInstance.send(process.uptime());
-        break;
+  pInstance.on('message', (data) => {
+    const timestamp = new Date().toLocaleTimeString();
+    log.info(`Signal received [${timestamp}] -> ${JSON.stringify(data)}`);
+    
+    if (data === 'reset') {
+      log.system('Rebooting sub-process...');
+      pInstance.kill();
+      isRunning = false;
+      boot(script);
     }
   });
 
-  processInstance.on('exit', (_, code) => {
+  pInstance.on('exit', (code) => {
     isRunning = false;
-    console.error('❌ Errore inatteso:', code);
+    log.error(`Process terminated with exit code: ${code}`);
 
     if (code !== 0) {
-      watchFile(args[0], () => {
-        unwatchFile(args[0]);
-        start(file);
+      log.system('Watchdog active: monitoring file changes for auto-restart...');
+      watchFile(scriptPath, () => {
+        unwatchFile(scriptPath);
+        log.success('Source changed. Hot-reloading...');
+        boot(script);
       });
     }
   });
 
-  // Gestione input da console
-  let opts = new Object(
-    yargs(process.argv.slice(2)).exitProcess(false).parse()
-  );
-  if (!opts['test']) {
-    if (!rl.listenerCount('line')) {
-      rl.on('line', (line) => {
-        processInstance.emit('message', line.trim());
-      });
-    }
+  if (!yargs(process.argv.slice(2)).parse().test) {
+    rl.removeAllListeners('line');
+    rl.on('line', (line) => {
+      pInstance.send(line.trim());
+    });
   }
 }
 
-// Avvio del file principale
-start('main.js');
+displayBanner();
+boot('main.js');
