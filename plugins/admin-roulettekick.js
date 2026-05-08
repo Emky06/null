@@ -10,24 +10,23 @@ let handler = async (m, { conn }) => {
     let owner = groupMetadata.owner;
     let participantsData = groupMetadata.participants;
 
+     p.id.endsWith('@s.whatsapp.net') per scartare i @lid
     let participants = participantsData
-        .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid)
+        .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid && p.id.endsWith('@s.whatsapp.net'))
         .map(p => p.id);
 
     if (participants.length < 1) {
-        return m.reply("😅 Non ci sono utenti sacrificabili in questo gruppo.");
+        return m.reply("😅 Non ci sono utenti sacrificabili in questo gruppo (solo admin o bot).");
     }
 
     let messaggio = await conn.reply(m.chat, `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎*\n\n🔄 Preparando la ruota...`, m);
 
     for (let i = 0; i < 6; i++) {
         await delay(1500);
-        let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => {
-            let number = u.split('@')[0].replace(/[^0-9]/g, '')
-            let cleanNumber = number.replace(/^39/, '')
-            return `@${cleanNumber}`
-        }).join(" | ");
+        
+        let randomNames = [...participants].sort(() => 0.5 - Math.random()).slice(0, 4);
+        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
+        
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
             text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
@@ -45,11 +44,9 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
-        let number = scelto.split('@')[0].replace(/[^0-9]/g, '')
-        let cleanNumber = number.replace(/^39/, '')
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${cleanNumber}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
