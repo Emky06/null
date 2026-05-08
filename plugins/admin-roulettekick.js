@@ -24,7 +24,7 @@ let handler = async (m, { conn }) => {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
         let righe = randomNames.map(u => {
-            let userId = u.split('@')[0].replace('+', '')
+            let userId = u.split('@')[0].replace(/\+/g, '')
             return `@${userId}`
         }).join(" | ");
         await conn.sendMessage(m.chat, { 
@@ -44,7 +44,7 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
-        let userId = scelto.split('@')[0].replace('+', '')
+        let userId = scelto.split('@')[0].replace(/\+/g, '')
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
             text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${userId}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
@@ -56,5 +56,4 @@ let handler = async (m, { conn }) => {
 handler.command = /^rouletterussa$/i;
 handler.staff = true;
 handler.group = true;
-
 export default handler;
