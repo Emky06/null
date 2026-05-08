@@ -24,8 +24,9 @@ let handler = async (m, { conn }) => {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
         let righe = randomNames.map(u => {
-            let userId = u.split('@')[0].replace(/\+/g, '')
-            return `@${userId}`
+            let number = u.split('@')[0].replace(/[^0-9]/g, '')
+            let cleanNumber = number.replace(/^39/, '')
+            return `@${cleanNumber}`
         }).join(" | ");
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
@@ -44,10 +45,11 @@ let handler = async (m, { conn }) => {
         });
     } else {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
-        let userId = scelto.split('@')[0].replace(/\+/g, '')
+        let number = scelto.split('@')[0].replace(/[^0-9]/g, '')
+        let cleanNumber = number.replace(/^39/, '')
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${userId}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${cleanNumber}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
