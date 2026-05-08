@@ -13,8 +13,13 @@ let handler = async (m, { conn }) => {
 
 
     let participants = participantsData
-        .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid)
-        .map(p => p.id);
+    .filter(p =>
+        !p.admin &&
+        p.id !== owner &&
+        p.id !== conn.user.jid &&
+        p.id.endsWith('@s.whatsapp.net')
+    )
+    .map(p => p.id);
 
     if (participants.length < 1) {
         return m.reply("😅 Non ci sono utenti sacrificabili in questo gruppo.");
@@ -26,7 +31,7 @@ let handler = async (m, { conn }) => {
     for (let i = 0; i < 6; i++) {
         await delay(1500);
         let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => `@${u.split('@')[0].split(':')[0]}`).join(" | ");
+        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
             text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
@@ -47,7 +52,7 @@ let handler = async (m, { conn }) => {
         let scelto = participants[Math.floor(Math.random() * participants.length)];
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0].split(':')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
