@@ -1,31 +1,29 @@
 //Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, text }) => {
+
     let width = Math.floor(Math.random() * 31);
 
     let finalPhrase = width >= 8 
         ? "🔥 *Complimenti, siamo su livelli impressionanti!*"
         : "😅 *Un risultato discreto, c'è sempre margine di miglioramento!*";
 
-    // Determina chi menzionare
-    let targetName = text;
+    let jid;
 
-    if (!text && m.quoted) {
-        targetName = '@' + m.quoted.sender.split('@')[0];
+    if (m.mentionedJid && m.mentionedJid.length > 0) {
+        jid = m.mentionedJid[0];
+    } else if (m.quoted) {
+        jid = m.quoted.sender;
+    } else {
+        jid = m.sender;
     }
 
-    if (!text && m.mentionedJid && m.mentionedJid.length > 0) {
-        targetName = '@' + m.mentionedJid[0].split('@')[0];
-    }
-
-    if (!targetName) {
-        return m.reply('Scrivi un nome, tagga qualcuno o rispondi a un messaggio!\nEsempio: *.figa @utente*');
-    }
+    let targetName = `@${jid.split('@')[0]}`;
 
     let message = `
 ━━━━━━━━━━━━━━━━━━━━━
 *CALCOLATORE DI APERTURA📏*
 ━━━━━━━━━━━━━━━━━━━━━
-🔍 *${targetName}* ha un'apertura stimata di:  
+🔍 ${targetName} ha un'apertura stimata di:  
 👉 *${width} cm🥔!*  
 ━━━━━━━━━━━━━━━━━━━━━
 ${finalPhrase}
@@ -33,7 +31,7 @@ ${finalPhrase}
 
     await conn.sendMessage(m.chat, {
         text: message,
-        mentions: [ ...(m.mentionedJid || []), ...(m.quoted ? [m.quoted.sender] : []) ]
+        mentions: [jid]
     }, { quoted: m });
 };
 
