@@ -1,3 +1,4 @@
+// Plugin by Axtral_WiZaRd 
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
@@ -6,24 +7,28 @@ let handler = async (m, { conn }) => {
     if (!m.isGroup) return m.reply("⚠️ Questo comando funziona solo nei gruppi!");
 
     let groupMetadata = await conn.groupMetadata(m.chat);
-    let participants = groupMetadata.participants;
-    let botJid = conn.decodeJid(conn.user.jid);
+    let owner = groupMetadata.owner;
+    let participantsData = groupMetadata.participants;
 
-    let validParticipants = participants
-        .filter(p => !p.admin && conn.decodeJid(p.id) !== botJid)
-        .map(p => conn.decodeJid(p.id));
+    let participants = participantsData
+        .filter(p => !p.admin && p.id !== owner && p.id !== conn.user.jid)
+        .map(p => p.id);
 
-    if (validParticipants.length < 1) {
-        return m.reply("😅 Non ci sono utenti sacrificabili (non admin) in questo gruppo.");
+    if (participants.length < 1) {
+        return m.reply("😅 Non ci sono utenti sacrificabili in questo gruppo.");
     }
 
     let messaggio = await conn.reply(m.chat, `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎*\n\n🔄 Preparando la ruota...`, m);
 
     for (let i = 0; i < 6; i++) {
         await delay(1500);
-        let randomNames = [...validParticipants].sort(() => 0.5 - Math.random()).slice(0, 4);
-        let righe = randomNames.map(u => `@${u.split('@')[0]}`).join(" | ");
-        
+        let randomNames = participants.sort(() => 0.5 - Math.random()).slice(0, 4);
+        let righe = randomNames.map(u => {
+            let number = u.split('@')[0]
+            if (number.startsWith('39')) number = number.substring(2)
+            if (number.startsWith('+')) number = number.substring(1)
+            return `@${number}`
+        }).join(" | ");
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
             text: `🎯 *𝐑𝐎𝐔𝐋𝐄𝐓𝐓𝐄 𝐑𝐔𝐒𝐒𝐀*\n\n[ ${righe} ]`,
@@ -40,10 +45,13 @@ let handler = async (m, { conn }) => {
             text: `😮 𝐏𝐞𝐫 𝐪𝐮𝐞𝐬𝐭𝐚 𝐯𝐨𝐥𝐭𝐚 𝐬𝐢𝐞𝐭𝐞 𝐭𝐮𝐭𝐭𝐢 𝐬𝐚𝐥𝐯𝐢.`
         });
     } else {
-        let scelto = validParticipants[Math.floor(Math.random() * validParticipants.length)];
+        let scelto = participants[Math.floor(Math.random() * participants.length)];
+        let number = scelto.split('@')[0]
+        if (number.startsWith('39')) number = number.substring(2)
+        if (number.startsWith('+')) number = number.substring(1)
         await conn.sendMessage(m.chat, { 
             edit: messaggio.key, 
-            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${scelto.split('@')[0]}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
+            text: `💥 𝐄̀ 𝐮𝐬𝐜𝐢𝐭𝐨 @${number}, 𝐚𝐝𝐝𝐢𝐨 𝐩𝐥𝐞𝐛𝐞𝐨.`,
             mentions: [scelto]
         });
     }
