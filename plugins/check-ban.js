@@ -5,7 +5,7 @@ let handler = async (m, { args, conn }) => {
 
   if (!args[0]) {
     return m.reply(`
-╭━〔 📱 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐁𝐀𝐍 𝐂𝐇𝐄𝐂𝐊 〕━╮
+╭━〔 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐁𝐀𝐍 𝐂𝐇𝐄𝐂𝐊 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📌 *𝐔𝐬𝐨:* .checkban <numero>
 ┃ 🌍 *𝐅𝐨𝐫𝐦𝐚𝐭𝐨:* internazionale
@@ -46,7 +46,7 @@ let handler = async (m, { args, conn }) => {
 
   if (phoneNumber.length < 10) {
     return m.reply(`
-╭━〔 ❌ 𝐍𝐔𝐌𝐄𝐑𝐎 𝐓𝐑𝐎𝐏𝐏𝐎 𝐂𝐎𝐑𝐓𝐎 〕━╮
+╭━〔 𝐍𝐔𝐌𝐄𝐑𝐎 𝐓𝐑𝐎𝐏𝐏𝐎 𝐂𝐎𝐑𝐓𝐎 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📌 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐚𝐥𝐦𝐞𝐧𝐨
 ┃ 𝟏𝟎 𝐜𝐢𝐟𝐫𝐞 𝐯𝐚𝐥𝐢𝐝𝐞
@@ -57,7 +57,7 @@ let handler = async (m, { args, conn }) => {
   try {
 
     await m.reply(`
-╭━〔 🔍 𝐂𝐎𝐍𝐓𝐑𝐎𝐋𝐋𝐎 〕━╮
+╭━━〔 🔍 𝐂𝐎𝐍𝐓𝐑𝐎𝐋𝐋𝐎 〕━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📱 𝐕𝐞𝐫𝐢𝐟𝐢𝐜𝐚 𝐧𝐮𝐦𝐞𝐫𝐨
 ┃ 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨 𝐬𝐮 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩...
@@ -68,7 +68,7 @@ let handler = async (m, { args, conn }) => {
 
     if (!tokenRes.ok) {
       return m.reply(`
-╭━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 𝐀𝐏𝐈 〕━╮
+╭━━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 𝐀𝐏𝐈 〕━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ HTTP ${tokenRes.status}
 ┃ Token non disponibile
@@ -91,7 +91,7 @@ let handler = async (m, { args, conn }) => {
 
     if (!response.ok) {
       return m.reply(`
-╭━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 𝐀𝐏𝐈 〕━╮
+╭━━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 𝐀𝐏𝐈 〕━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ HTTP ${response.status}
 ┃ Endpoint non disponibile
@@ -146,7 +146,7 @@ replyMsg += `┣━━━━━━━━━━━━━━━━━━━━
 ┃ • 𝐀𝐮𝐭𝐡: ${methods}
 ┃ • 𝐀𝐮𝐭𝐨𝐜𝐨𝐧𝐟: ${autoconf}
 ┃ • 𝐎𝐫𝐚: ${new Date().toLocaleString('it-IT')}
-╰━━━━━━━━━━━━━━━━━━━╯`;
+╰━━━━━━━━━━━━━━━━━━━━━╯`;
 
 m.reply(replyMsg.trim());
 
@@ -155,8 +155,8 @@ m.reply(replyMsg.trim());
     console.error('WhatsApp Ban Check Error:', error);
 
     m.reply(`
-╭━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 〕━╮
-┣━━━━━━━━━━━━━━━━━━━━
+╭━━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 〕━━╮
+┣━━━━━━━━━━━━━━━━━━━
 ┃ 🌐 𝐄𝐫𝐫𝐨𝐫𝐞 𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞
 ┃
 ┃ ${error.message}
