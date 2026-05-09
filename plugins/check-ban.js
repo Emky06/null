@@ -16,7 +16,7 @@ let handler = async (m, { args, conn }) => {
 ┃ • .checkban 347 968 4300
 ┃
 ┃ 🤖 𝐈𝐥 𝐛𝐨𝐭 𝐫𝐢𝐦𝐮𝐨𝐯𝐞
-┃ automaticamente spazi e +
+┃ 𝐚𝐮𝐭𝐨𝐦𝐚𝐭𝐢𝐜𝐚𝐦𝐞𝐧𝐭𝐞 𝐬𝐩𝐚𝐳𝐢 𝐞 +
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim());
   }
@@ -33,7 +33,7 @@ let handler = async (m, { args, conn }) => {
     return m.reply(`
 ╭━〔 ❌ 𝐍𝐔𝐌𝐄𝐑𝐎 𝐈𝐍𝐕𝐀𝐋𝐈𝐃𝐎 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 📌 Inserisci solo numeri
+┃ 📌 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐬𝐨𝐥𝐨 𝐧𝐮𝐦𝐞𝐫𝐢
 ┃
 ┃ ✅ 𝐅𝐨𝐫𝐦𝐚𝐭𝐢 𝐚𝐜𝐜𝐞𝐭𝐭𝐚𝐭𝐢:
 ┃ • 391112224444
@@ -48,8 +48,8 @@ let handler = async (m, { args, conn }) => {
     return m.reply(`
 ╭━〔 ❌ 𝐍𝐔𝐌𝐄𝐑𝐎 𝐓𝐑𝐎𝐏𝐏𝐎 𝐂𝐎𝐑𝐓𝐎 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 📌 Inserisci almeno
-┃ 10 cifre valide
+┃ 📌 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐚𝐥𝐦𝐞𝐧𝐨
+┃ 𝟏𝟎 𝐜𝐢𝐟𝐫𝐞 𝐯𝐚𝐥𝐢𝐝𝐞
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim());
   }
@@ -59,8 +59,8 @@ let handler = async (m, { args, conn }) => {
     await m.reply(`
 ╭━〔 🔍 𝐂𝐎𝐍𝐓𝐑𝐎𝐋𝐋𝐎 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 📱 Verifica numero
-┃ in corso su WhatsApp...
+┃ 📱 𝐕𝐞𝐫𝐢𝐟𝐢𝐜𝐚 𝐧𝐮𝐦𝐞𝐫𝐨
+┃ 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨 𝐬𝐮 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩...
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim());
 
@@ -119,42 +119,36 @@ let handler = async (m, { args, conn }) => {
         ? err.autoconf_type
         : 'n/a';
 
-    let replyMsg = `
-╭━〔 📱 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐒𝐓𝐀𝐓𝐔𝐒 〕━╮
+    let replyMsg = `╭━〔 📱 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐒𝐓𝐀𝐓𝐔𝐒 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 📞 Numero:
+┃ 📞 𝐍𝐮𝐦𝐞𝐫𝐨:
 ┃ +${loginNum}
 ┣━━━━━━━━━━━━━━━━━━━━
 `;
 
-    if (isBanned) {
-      replyMsg += `
-┃ 🔴 STATO: BANNATO
-┃ ❌ Numero bannato
-┃ da WhatsApp
+if (isBanned) {
+  replyMsg += `┃ 🔴 𝐒𝐓𝐀𝐓𝐎: 𝐁𝐀𝐍𝐍𝐀𝐓𝐎
+┃ ❌ 𝐍𝐮𝐦𝐞𝐫𝐨 𝐛𝐚𝐧𝐧𝐚𝐭𝐨
+┃ 𝐝𝐚 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩
 `;
-    } else {
-      replyMsg += `
-┃ 🟢 STATO: ATTIVO
-┃ ✅ Numero attivo
-┃ su WhatsApp
+} else {
+  replyMsg += `┃ 🟢 𝐒𝐓𝐀𝐓𝐎: 𝐀𝐓𝐓𝐈𝐕𝐎
+┃ ✅ 𝐍𝐮𝐦𝐞𝐫𝐨 𝐚𝐭𝐭𝐢𝐯𝐨
+┃ 𝐬𝐮 𝐖𝐡𝐚𝐭𝐬𝐀𝐩𝐩
 `;
-    }
+}
 
-    replyMsg += `
+replyMsg += `┣━━━━━━━━━━━━━━━━━━━━
+┃ 📊 𝐃𝐄𝐓𝐓𝐀𝐆𝐋𝐈
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 📊 DETTAGLI
-┣━━━━━━━━━━━━━━━━━━━━
-┃ • Status: ${status}
-┃ • Motivo: ${reason}
-┃ • Auth: ${methods}
-┃ • Autoconf: ${autoconf}
-┃ • Ora:
-┃ ${new Date().toLocaleString('it-IT')}
-╰━━━━━━━━━━━━━━━━━━━╯
-`;
+┃ • 𝐒𝐭𝐚𝐭𝐮𝐬: ${status}
+┃ • 𝐌𝐨𝐭𝐢𝐯𝐨: ${reason}
+┃ • 𝐀𝐮𝐭𝐡: ${methods}
+┃ • 𝐀𝐮𝐭𝐨𝐜𝐨𝐧𝐟: ${autoconf}
+┃ • 𝐎𝐫𝐚: ${new Date().toLocaleString('it-IT')}
+╰━━━━━━━━━━━━━━━━━━━╯`;
 
-    m.reply(replyMsg.trim());
+m.reply(replyMsg.trim());
 
   } catch (error) {
 
@@ -163,11 +157,11 @@ let handler = async (m, { args, conn }) => {
     m.reply(`
 ╭━〔 ❌ 𝐄𝐑𝐑𝐎𝐑𝐄 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 🌐 Errore connessione
+┃ 🌐 𝐄𝐫𝐫𝐨𝐫𝐞 𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞
 ┃
 ┃ ${error.message}
 ┃
-┃ 🔄 Riprova più tardi
+┃ 🔄 𝐑𝐢𝐩𝐫𝐨𝐯𝐚 𝐩𝐢𝐮̀ 𝐭𝐚𝐫𝐝𝐢
 ╰━━━━━━━━━━━━━━━━━━━╯
 `.trim());
   }
