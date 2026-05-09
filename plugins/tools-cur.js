@@ -55,8 +55,12 @@ async function generateTrackImageBrowserless(track) {
     track.image?.find(i => i.size === 'medium')?.['#text']
 
   if (!imageUrl || imageUrl.trim() === '') {
-    imageUrl = path.join(__dirname, '../icone/cur.jpg')
-  }
+  const fallbackPath = path.join(__dirname, '../icone/cur.jpg')
+  const fallbackBuffer = fs.readFileSync(fallbackPath)
+  const fallbackBase64 = fallbackBuffer.toString('base64')
+
+  imageUrl = `data:image/jpeg;base64,${fallbackBase64}`
+}
 
   const isNowPlaying = track['@attr']?.nowplaying === 'true'
   const statusColor = isNowPlaying ? '#32d74b' : '#ff3b30'
