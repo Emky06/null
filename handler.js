@@ -379,7 +379,7 @@ if (
     const now = Date.now()
     if (groupData.isSuspended) return
 
-    if (now - groupData.firstCommandTimestamp > 60000) {
+    if (now - groupData.firstCommandTimestamp > 30000) {
         groupData.count = 1
         groupData.firstCommandTimestamp = now
     } else {
