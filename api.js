@@ -19,7 +19,7 @@ global.keysneoxrrr = ['5VC9rvNx', 'cfALv5']
 global.keysneoxr = keysneoxrrr[Math.floor(keysneoxrrr.length * Math.random())]
 global.lolkeysapi = ['BrunoSobrino']
 global.itsrose = ['4b146102c4d500809da9d1ff']
-global.browserless = ['2UUj5Hx30kQHUHZ661a9116c0763739fd8b80d2f1d1367ee8']
+global.browserless = '2UUj5Hx30kQHUHZ661a9116c0763739fd8b80d2f1d1367ee8'
 
 global.APIs = { 
   xteam: 'https://api.xteam.xyz',
