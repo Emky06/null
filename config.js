@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 global.botnumber = ""
 global.confirmCode = ""
-global.browserless = '2UUj5Hx30kQHUHZ661a9116c0763739fd8b80d2f1d1367ee8'
+global.browserless = "2UUj5Hx30kQHUHZ661a9116c0763739fd8b80d2f1d1367ee8"
 
 global.owner = [
     ['17577575541', 'Owner', true],
