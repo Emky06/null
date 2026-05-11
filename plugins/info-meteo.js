@@ -1,7 +1,7 @@
 //Plugin fatto da Axtral_WiZaRd + Kinderino
 import axios from 'axios';
 
-const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d';
+const BROWSERLESS_KEY = global.browserless;
 
 async function retryScreenshot(html, width = 900, height = 600, retries = 3) {
     for (let i = 0; i < retries; i++) {
