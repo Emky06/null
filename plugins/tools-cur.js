@@ -13,7 +13,7 @@ const USERS_FILE = path.join(process.cwd(), 'storage', 'file-json', 'lastfm_user
 if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}')
 
 const LASTFM_API_KEY = '36f859a1fc4121e7f0e931806507d5f9'
-const BROWSERLESS_KEY = '2URLFvIaT2R9pY97626b5125ee35d7a9af4d8e0cd1261901d' 
+const BROWSERLESS_KEY = global.browserless;
 
 function getLastfmUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'))
