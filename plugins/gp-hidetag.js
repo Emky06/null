@@ -13,33 +13,30 @@ let handler = async (m, { conn, text, participants }) => {
     let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
 
     try {
-        // Controlla se il messaggio quotato è un sondaggio (poll)
-        let isPoll = q.msg?.pollCreationMessage || q.pollCreationMessage || (type === 'pollCreationMessage')
+        let isPoll = m.quoted && (q.msg?.pollCreationMessage || q.pollCreationMessage || q.msg?.pollMessage)
         
         if (isPoll && m.quoted) {
-            // Estrai i dati del sondaggio
-            let pollData = q.msg?.pollCreationMessage || q.pollCreationMessage || q
+            let pollData = q.msg?.pollCreationMessage || q.pollCreationMessage || q.msg?.pollMessage || q
             let pollName = pollData.name || 'Sondaggio'
-            let pollValues = pollData.options?.map(opt => opt.optionName || opt) || []
+            let pollValues = []
             
-            // Se non trova le opzioni, prova a cercare in altri modi
-            if (pollValues.length === 0 && pollData.values) {
+            if (pollData.options && Array.isArray(pollData.options)) {
+                pollValues = pollData.options.map(opt => opt.optionName || opt)
+            } else if (pollData.values && Array.isArray(pollData.values)) {
                 pollValues = pollData.values
+            } else if (pollData.pollValues && Array.isArray(pollData.pollValues)) {
+                pollValues = pollData.pollValues
             }
             
             if (pollValues.length > 0) {
-                // Ricrea il sondaggio con lo stesso testo e opzioni
                 await conn.sendMessage(m.chat, {
                     poll: {
                         name: pollName,
                         values: pollValues,
                         selectableCount: pollData.selectableCount || 1
-                    },
-                    contextInfo: {
-                        mentionedJid: mentions,
-                        isForwarded: false
                     }
                 }, { quoted: m })
+                await conn.sendMessage(m.chat, { text: `📢 Sondaggio ricreato e inviato a ${users.length} partecipanti`, mentions: mentions }, { quoted: m })
                 return
             }
         }
