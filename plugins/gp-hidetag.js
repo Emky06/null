@@ -44,15 +44,9 @@ let handler = async (m, { conn, text, participants }) => {
                         name: pollName,
                         values: pollValues,
                         selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
-                    }
+                    },
+                    mentions: mentions
                 }, { quoted: m })
-                
-                if (mentions.length > 0) {
-                    await conn.sendMessage(m.chat, {
-                        text: ' '.repeat(10),
-                        mentions: mentions
-                    }, { quoted: m })
-                }
                 return
             }
         }
