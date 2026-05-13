@@ -68,7 +68,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['delmodglobal <@user|numero>'];
 handler.tags = ['owner'];
-handler.command = /^(delmodglobal|globdelmod|removeallmod)$/i;
+handler.command = /^(delmodglobal)$/i;
 handler.owner = true;
 
 export default handler;
