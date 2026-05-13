@@ -23,14 +23,31 @@ let handler = async (m, { conn, text }) => {
 
   let data = extractGroupMetadata(res)
 
-  let txt = `*INFORMAZIONI GRUPPO*\n`
-  txt += `➣ *ID*: ${data.id}\n`
-  txt += `➣ *Nome*: ${data.subject}\n`
-  txt += `➣ *Creato il*: ${data.creation}\n`
-  txt += `➣ *Creatore*: @${data.ownerNumber}\n`
-  txt += `➣ *Numero membri*: ${data.size}\n`
-  txt += `➣ *Amministratori*: ${data.adminText}\n`
-  txt += `➣ *Descrizione*: ${data.desc || 'Nessuna descrizione'}\n`
+  let txt = `
+╭━〔 👥 𝐈𝐍𝐅𝐎 𝐆𝐑𝐔𝐏𝐏𝐎 〕━╮
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 🆔 𝐈𝐃:
+┃ ${data.id}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 📛 𝐍𝐨𝐦𝐞:
+┃ ${data.subject}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 👑 𝐂𝐫𝐞𝐚𝐭𝐨𝐫𝐞:
+┃ @${data.ownerNumber}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 👥 𝐌𝐞𝐦𝐛𝐫𝐢:
+┃ ${data.size}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 🛡️ 𝐀𝐦𝐦𝐢𝐧:
+┃ ${data.adminText}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 🕒 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:
+┃ ${data.creation}
+┣━━━━━━━━━━━━━━━━━━━━━
+┃ 📝 𝐃𝐞𝐬𝐜𝐫𝐢𝐳𝐢𝐨𝐧𝐞:
+┃ ${data.desc || 'Nessuna descrizione'}
+╰━━━━━━━━━━━━━━━━━━━━━╯
+`.trim()
 
   let pp = await conn.profilePictureUrl(data.id, 'image').catch(() => null)
 
