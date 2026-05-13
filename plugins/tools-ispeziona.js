@@ -50,26 +50,18 @@ let handler = async (m, { conn, text }) => {
 
   let mentions = [data.ownerJid].filter(Boolean)
 
-  if (pp) {
-    return conn.sendMessage(
-      m.chat,
-      {
+  let msg = pp
+    ? {
         image: { url: pp },
         caption: txt,
         mentions
-      },
-      { quoted: m }
-    )
-  }
+      }
+    : {
+        text: txt,
+        mentions
+      }
 
-  await conn.sendMessage(
-    m.chat,
-    {
-      text: txt,
-      mentions
-    },
-    { quoted: m }
-  )
+  await conn.sendMessage(m.chat, msg, { quoted: m })
 }
 
 handler.command = /^(ispeziona)$/i
@@ -100,8 +92,6 @@ const extractGroupMetadata = (result) => {
     ? ownerJid.split('@')[0]
     : 'sconosciuto'
 
-  const size = participants.length || 0
-
   return {
     id: group.attrs.id.includes('@')
       ? group.attrs.id
@@ -121,6 +111,6 @@ const extractGroupMetadata = (result) => {
 
     desc,
 
-    size
+    size: participants.length
   }
 }
