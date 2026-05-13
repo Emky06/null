@@ -1,6 +1,3 @@
-// Codice di gp-hidetag.js
-
-//Plugin fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
 import * as fs from 'fs'
 
@@ -13,15 +10,28 @@ let handler = async (m, { conn, text, participants }) => {
     let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
 
     try {
-        let isPoll = m.quoted && (q.msg?.pollCreationMessage || q.pollCreationMessage || q.msg?.pollMessage)
+        let isPoll = m.quoted && (
+            q.mtype?.includes('pollCreationMessage') ||
+            q.msg?.pollCreationMessage || 
+            q.msg?.pollCreationMessageV2 || 
+            q.msg?.pollCreationMessageV3 || 
+            q.pollCreationMessage || 
+            q.msg?.pollMessage
+        )
         
         if (isPoll && m.quoted) {
-            let pollData = q.msg?.pollCreationMessage || q.pollCreationMessage || q.msg?.pollMessage || q
+            let pollData = q.msg?.pollCreationMessageV3 || 
+                           q.msg?.pollCreationMessageV2 || 
+                           q.msg?.pollCreationMessage || 
+                           q.pollCreationMessage || 
+                           q.msg || q
+                           
             let pollName = pollData.name || 'Sondaggio'
             let pollValues = []
-            
-            if (pollData.options && Array.isArray(pollData.options)) {
-                pollValues = pollData.options.map(opt => opt.optionName || opt)
+            let optionsArray = pollData.options || q.options || q.msg?.options || []
+
+            if (Array.isArray(optionsArray) && optionsArray.length > 0) {
+                pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
             } else if (pollData.values && Array.isArray(pollData.values)) {
                 pollValues = pollData.values
             } else if (pollData.pollValues && Array.isArray(pollData.pollValues)) {
@@ -33,10 +43,10 @@ let handler = async (m, { conn, text, participants }) => {
                     poll: {
                         name: pollName,
                         values: pollValues,
-                        selectableCount: pollData.selectableCount || 1
-                    }
+                        selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                    },
+                    mentions: mentions
                 }, { quoted: m })
-                await conn.sendMessage(m.chat, { text: `📢 Sondaggio ricreato e inviato a ${users.length} partecipanti`, mentions: mentions }, { quoted: m })
                 return
             }
         }
