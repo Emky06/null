@@ -2,7 +2,7 @@ import * as baileys from '@whiskeysockets/baileys'
 
 let handler = async (m, { conn, text }) => {
   let [, code] =
-    text.match(/chat\.whatsapp\.com\/(?:invite\/)?([0-9A-Za-z]{20,24})/i) || []
+    text.match(/chat.whatsapp.com\/(?:invite\/)?([0-9A-Za-z]{20,24})/i) || []
 
   if (!code) throw '𝐈𝐍𝐒𝐄𝐑𝐈𝐑𝐄 𝐈𝐋 𝐋𝐈𝐍𝐊 𝐃𝐄𝐋 𝐆𝐑𝐔𝐏𝐏𝐎'
 
@@ -50,18 +50,26 @@ let handler = async (m, { conn, text }) => {
 
   let mentions = [data.ownerJid].filter(Boolean)
 
-  let msg = pp
-    ? {
+  if (pp) {
+    return conn.sendMessage(
+      m.chat,
+      {
         image: { url: pp },
         caption: txt,
         mentions
-      }
-    : {
-        text: txt,
-        mentions
-      }
+      },
+      { quoted: m }
+    )
+  }
 
-  await conn.sendMessage(m.chat, msg, { quoted: m })
+  await conn.sendMessage(
+    m.chat,
+    {
+      text: txt,
+      mentions
+    },
+    { quoted: m }
+  )
 }
 
 handler.command = /^(ispeziona)$/i
@@ -82,8 +90,23 @@ const extractGroupMetadata = (result) => {
   const participants =
     baileys.getBinaryNodeChildren(group, 'participant') || []
 
+  const adminParticipants = participants.filter(
+    p =>
+      p.attrs.type === 'admin' ||
+      p.attrs.type === 'superadmin'
+  )
+
+  const admins = adminParticipants.map(p => {
+    const jid = p.attrs.jid || p.attrs.id || ''
+    return {
+      jid,
+      number: jid.split('@')[0]
+    }
+  })
+
   let ownerJid =
-    group.attrs.creator ||
+    adminParticipants[0]?.attrs?.jid ||
+    adminParticipants[0]?.attrs?.id ||
     participants[0]?.attrs?.jid ||
     participants[0]?.attrs?.id ||
     ''
@@ -91,6 +114,16 @@ const extractGroupMetadata = (result) => {
   const ownerNumber = ownerJid
     ? ownerJid.split('@')[0]
     : 'sconosciuto'
+
+  const adminText = admins.length
+    ? admins.map(a => `@${a.number}`).join(', ')
+    : 'Nessuno'
+
+  const size =
+    Number(group.attrs.size) ||
+    Number(group.attrs.participants) ||
+    participants.length ||
+    0
 
   return {
     id: group.attrs.id.includes('@')
@@ -111,6 +144,9 @@ const extractGroupMetadata = (result) => {
 
     desc,
 
-    size: participants.length
+    size,
+
+    adminText,
+    adminMentions: admins.map(a => a.jid)
   }
 }
