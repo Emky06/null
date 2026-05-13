@@ -174,6 +174,168 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 break;
             }
 
+            case 'topartists':
+            case 'topartisti': {
+                const limit = 6;
+                const topArtRes = await apiCall('user.gettopartists', { user, limit, period: 'overall' });
+                
+                if (topArtRes.error || !topArtRes.topartists?.artist?.length) {
+                    throw new Error("Non hai abbastanza dati per generare la classifica.");
+                }
+
+                const artists = topArtRes.topartists.artist;
+                const topOne = artists[0];
+                const maxPlays = parseInt(topOne.playcount);
+                
+                // Prendiamo la cover del primo in classifica per lo sfondo
+                const mainCover = await fetchCover(topOne.image, topOne.name, true);
+
+                let artistListHtml = '';
+                artists.forEach((art, i) => {
+                    const plays = parseInt(art.playcount);
+                    const percentage = Math.max((plays / maxPlays) * 100, 8);
+                    artistListHtml += `
+                        <div class="art-row">
+                            <div class="art-rank">${i + 1}</div>
+                            <div class="art-info">
+                                <div class="art-name-row">
+                                    <span class="art-name">${art.name}</span>
+                                    <span class="art-count">${plays.toLocaleString('it-IT')}</span>
+                                </div>
+                                <div class="art-bar-bg">
+                                    <div class="art-bar-fill" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                viewport = { w: 800, h: 800 };
+                html = getHtmlWrapper(`
+                    <div class="bg-image" style="background-image: url('${mainCover}')"></div>
+                    <div class="overlay"></div>
+                    <div class="content-box glass">
+                        <div class="header">
+                            <p class="subtitle">STATISTICHE DI SEMPRE</p>
+                            <h1 class="title">TOP ARTISTI</h1>
+                            <div class="user-badge">@${user.toUpperCase()}</div>
+                        </div>
+                        <div class="list-container">
+                            ${artistListHtml}
+                        </div>
+                        <div class="footer-msg">Basato sui dati del tuo account Last.fm</div>
+                    </div>
+                `, `
+                    .bg-image { position: absolute; width: 110%; height: 110%; top: -5%; left: -5%; background-size: cover; background-position: center; filter: blur(30px) brightness(0.2); z-index: -2; }
+                    .overlay { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent, rgba(0,0,0,0.8)); z-index: -1; }
+                    .content-box { width: 700px; padding: 50px; border-radius: 40px; display: flex; flex-direction: column; gap: 40px; }
+                    .header { text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 30px; }
+                    .subtitle { font-size: 14px; letter-spacing: 5px; color: #0a84ff; font-weight: 800; margin: 0; }
+                    .title { font-size: 60px; font-weight: 900; margin: 10px 0; letter-spacing: -2px; }
+                    .user-badge { display: inline-block; background: #fff; color: #000; padding: 5px 20px; border-radius: 50px; font-weight: 800; font-size: 16px; }
+                    
+                    .list-container { display: flex; flex-direction: column; gap: 25px; }
+                    .art-row { display: flex; align-items: center; gap: 25px; }
+                    .art-rank { font-size: 35px; font-weight: 900; color: rgba(255,255,255,0.2); width: 40px; font-style: italic; }
+                    .art-info { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+                    .art-name-row { display: flex; justify-content: space-between; align-items: flex-end; }
+                    .art-name { font-size: 24px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+                    .art-count { font-size: 18px; font-weight: 800; opacity: 0.9; color: #0a84ff; }
+                    .art-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+                    .art-bar-fill { height: 100%; background: linear-gradient(90deg, #0a84ff, #00d2ff); border-radius: 10px; box-shadow: 0 0 15px rgba(10,132,255,0.4); }
+                    .footer-msg { text-align: center; font-size: 14px; opacity: 0.4; font-weight: 600; margin-top: 10px; }
+                `);
+                caption = `📊 *La tua Hall of Fame Musicale*\nQuesti sono gli artisti che hai ascoltato di più da quando sei su Last.fm!`;
+                break;
+            }
+
+            case 'topartist':
+            case 'topartista': {
+                const artistQuery = text.trim();
+                if (!artistQuery) return m.reply(`❌ Uso: *${usedPrefix}${command} <nome artista>*\nEsempio: *${usedPrefix}${command} The Weeknd*`);
+
+                // 1. Otteniamo le info dell'artista (nome esatto, cover e gli ascolti totali dell'utente per questo artista)
+                const artistInfo = await apiCall('artist.getinfo', { artist: artistQuery, username: user });
+                if (artistInfo.error || !artistInfo.artist) throw new Error("Artista non trovato su Last.fm.");
+
+                const realArtistName = artistInfo.artist.name;
+                const totalArtistPlays = parseInt(artistInfo.artist.stats?.userplaycount) || 0;
+                const cover = await fetchCover(artistInfo.artist.image, realArtistName, true);
+
+                if (totalArtistPlays === 0) return m.reply(`⚠️ Non hai mai ascoltato ${realArtistName} sul tuo account Last.fm!`);
+
+                // 2. Recuperiamo la Top 1000 generale dell'utente e filtriamo per trovare i brani di questo artista
+                const topTracksRes = await apiCall('user.gettoptracks', { user, limit: 1000, period: 'overall' });
+                if (topTracksRes.error) throw new Error("Errore nel recupero delle tue statistiche.");
+
+                let artistTracks = (topTracksRes.toptracks?.track || []).filter(t => 
+                    t.artist.name.toLowerCase() === realArtistName.toLowerCase()
+                );
+
+                if (artistTracks.length === 0) return m.reply(`⚠️ ${realArtistName} ha ${totalArtistPlays} ascolti, ma i suoi brani non rientrano nella tua Top 1000 di sempre. Continua ad ascoltarlo!`);
+
+                // Prendiamo i primi 5 brani
+                const top5 = artistTracks.slice(0, 5);
+                const maxPlays = parseInt(top5[0].playcount); // Il brano più ascoltato fa da 100% per le barre
+
+                let tracksHtml = '';
+                top5.forEach((t, i) => {
+                    const plays = parseInt(t.playcount);
+                    const percentage = Math.max((plays / maxPlays) * 100, 5); // Minimo 5% per estetica
+                    tracksHtml += `
+                        <div class="track-row">
+                            <div class="track-rank">${i + 1}</div>
+                            <div class="track-data">
+                                <div class="track-name">${t.name}</div>
+                                <div class="progress-bg">
+                                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                            <div class="track-plays">${plays}</div>
+                        </div>
+                    `;
+                });
+
+                viewport = { w: 850, h: 650 };
+                html = getHtmlWrapper(`
+                    <div class="background-blur" style="background-image: url('${cover}')"></div>
+                    <div class="color-overlay"></div>
+                    <div class="card glass">
+                        <div class="header">
+                            <img src="${cover}" class="artist-img">
+                            <div class="header-info">
+                                <h2>TOP TRACKS</h2>
+                                <h1>${realArtistName}</h1>
+                                <p class="user-tag">@${user.toUpperCase()} • ${totalArtistPlays.toLocaleString('it-IT')} SCROBBLES TOTALI</p>
+                            </div>
+                        </div>
+                        <div class="tracks-container">
+                            ${tracksHtml}
+                        </div>
+                    </div>
+                `, `
+                    .background-blur { position: absolute; top: -50px; left: -50px; right: -50px; bottom: -50px; background-size: cover; background-position: center; filter: blur(40px) brightness(0.3); z-index: -2; }
+                    .color-overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to bottom right, rgba(0,0,0,0.4), rgba(0,0,0,0.9)); z-index: -1; }
+                    .card { width: 750px; padding: 40px; display: flex; flex-direction: column; gap: 30px; border-radius: 30px; background: rgba(20, 20, 20, 0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
+                    .header { display: flex; align-items: center; gap: 30px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 30px; }
+                    .artist-img { width: 150px; height: 150px; border-radius: 20px; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+                    .header-info h2 { margin: 0; font-size: 18px; color: #0a84ff; letter-spacing: 4px; font-weight: 800; }
+                    .header-info h1 { margin: 5px 0 10px 0; font-size: 55px; line-height: 1; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+                    .user-tag { margin: 0; font-size: 16px; opacity: 0.8; font-weight: 600; letter-spacing: 1px; }
+                    
+                    .tracks-container { display: flex; flex-direction: column; gap: 15px; }
+                    .track-row { display: flex; align-items: center; gap: 20px; }
+                    .track-rank { font-size: 30px; font-weight: 800; color: rgba(255,255,255,0.3); width: 40px; text-align: center; font-style: italic; }
+                    .track-data { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+                    .track-name { font-size: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+                    .progress-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+                    .progress-fill { height: 100%; background: linear-gradient(90deg, #0a84ff, #00d2ff); border-radius: 4px; box-shadow: 0 0 10px rgba(10,132,255,0.5); }
+                    .track-plays { font-size: 24px; font-weight: 900; width: 60px; text-align: right; }
+                `);
+                caption = `🎧 *Le tue Top Tracks di ${realArtistName}*\nRichiesto da: @${user}`;
+                break;
+            }
+
             case 'aura': {
                 const topArt = await apiCall('user.gettopartists', { user, limit: 10, period: '1month' });
                 if (topArt.error || !topArt.topartists?.artist?.length) throw new Error("Errore recupero artisti.");
@@ -1268,7 +1430,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 };
 
 handler.help = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap', 'festival', 'roast', 'soulmate', 'vinyl', 'wrapped'];
-handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap', 'festival', 'roast', 'soulmate', 'vinyl', 'wrapped', 'recap'];
+handler.command = ['crown', 'aura', 'vs', 'mosaic', 'goal', 'whosplaying', 'comuni', 'receipt', 'throwback', 'leaderboard', 'magazine', 'ticket', 'identity', 'artistmap', 'festival', 'roast', 'soulmate', 'vinyl', 'wrapped', 'recap', 'topartista', 'topartist', 'topartisti', 'topartists'];
 handler.group = true; 
 
 export default handler;
