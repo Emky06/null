@@ -10,42 +10,50 @@ let handler = async (m, { conn, text, participants }) => {
     let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
 
     try {
-        let isPoll = q.mtype?.includes('poll') || type.includes('poll')
+        let isPoll = m.quoted && (
+            q.mtype?.includes('pollCreationMessage') ||
+            q.msg?.pollCreationMessage || 
+            q.msg?.pollCreationMessageV2 || 
+            q.msg?.pollCreationMessageV3 || 
+            q.pollCreationMessage || 
+            q.msg?.pollMessage
+        )
         
         if (isPoll && m.quoted) {
             let pollData = q.msg?.pollCreationMessageV3 || 
                            q.msg?.pollCreationMessageV2 || 
                            q.msg?.pollCreationMessage || 
                            q.pollCreationMessage || 
-                           q.msg?.pollMessage || 
-                           q.pollMessage || 
-                           (q.msg && q.msg.name ? q.msg : null)
+                           q.msg || q
+                           
+            let pollName = pollData.name || 'Sondaggio'
+            let pollValues = []
+            let optionsArray = pollData.options || q.options || q.msg?.options || []
 
-            if (pollData) {
-                let pollName = pollData.name || 'Sondaggio'
-                let pollValues = []
-                let optionsArray = pollData.options || q.msg?.options || q.options || []
-
-                if (Array.isArray(optionsArray) && optionsArray.length > 0) {
-                    pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
-                } else if (pollData.values && Array.isArray(pollData.values)) {
-                    pollValues = pollData.values
-                }
-
-                if (pollValues.length > 0) {
+            if (Array.isArray(optionsArray) && optionsArray.length > 0) {
+                pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
+            } else if (pollData.values && Array.isArray(pollData.values)) {
+                pollValues = pollData.values
+            } else if (pollData.pollValues && Array.isArray(pollData.pollValues)) {
+                pollValues = pollData.pollValues
+            }
+            
+            if (pollValues.length > 0) {
+                await conn.sendMessage(m.chat, {
+                    poll: {
+                        name: pollName,
+                        values: pollValues,
+                        selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                    }
+                }, { quoted: m })
+                
+                if (mentions.length > 0) {
                     await conn.sendMessage(m.chat, {
-                        poll: {
-                            name: pollName,
-                            values: pollValues,
-                            selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
-                        },
-                        mentions: mentions,
-                        contextInfo: { 
-                            mentionedJid: mentions 
-                        }
+                        text: ' '.repeat(10),
+                        mentions: mentions
                     }, { quoted: m })
-                    return
                 }
+                return
             }
         }
         
