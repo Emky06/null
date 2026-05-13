@@ -145,7 +145,7 @@ replyMsg += `┣━━━━━━━━━━━━━━━━━━━━━
 ┃ • 𝐌𝐨𝐭𝐢𝐯𝐨: ${reason}
 ┃ • 𝐀𝐮𝐭𝐡: ${methods}
 ┃ • 𝐀𝐮𝐭𝐨𝐜𝐨𝐧𝐟: ${autoconf}
-┃ • 𝐎𝐫𝐚: ${new Date().toLocaleString('it-IT')}
+┃ • 𝐎𝐫𝐚: ${new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome' })}
 ╰━━━━━━━━━━━━━━━━━━━━━╯`;
 
 m.reply(replyMsg.trim());
