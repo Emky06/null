@@ -10,37 +10,42 @@ let handler = async (m, { conn, text, participants }) => {
     let mentions = [...new Set([...(m.mentionedJid || []), ...users])]
 
     try {
-        let pollObj = q.msg?.pollCreationMessageV3 || 
-                      q.msg?.pollCreationMessageV2 || 
-                      q.msg?.pollCreationMessage || 
-                      q.pollCreationMessage;
+        let isPoll = q.mtype?.includes('poll') || type.includes('poll')
         
-        if (pollObj && m.quoted) {
-            let pollName = pollObj.name || 'Sondaggio';
-            let pollValues = [];
-            let optionsArray = pollObj.options || q.msg?.options || q.options || [];
+        if (isPoll && m.quoted) {
+            let pollData = q.msg?.pollCreationMessageV3 || 
+                           q.msg?.pollCreationMessageV2 || 
+                           q.msg?.pollCreationMessage || 
+                           q.pollCreationMessage || 
+                           q.msg?.pollMessage || 
+                           q.pollMessage || 
+                           (q.msg && q.msg.name ? q.msg : null)
 
-            if (Array.isArray(optionsArray) && optionsArray.length > 0) {
-                pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName);
-            } else if (pollObj.values && Array.isArray(pollObj.values)) {
-                pollValues = pollObj.values;
-            } else if (pollObj.pollValues && Array.isArray(pollObj.pollValues)) {
-                pollValues = pollObj.pollValues;
-            }
-            
-            if (pollValues.length > 0) {
-                await conn.sendMessage(m.chat, {
-                    poll: {
-                        name: pollName,
-                        values: pollValues,
-                        selectableCount: pollObj.selectableOptionsCount || pollObj.selectableCount || 1
-                    },
-                    mentions: mentions,
-                    contextInfo: { 
-                        mentionedJid: mentions 
-                    }
-                }, { quoted: m });
-                return;
+            if (pollData) {
+                let pollName = pollData.name || 'Sondaggio'
+                let pollValues = []
+                let optionsArray = pollData.options || q.msg?.options || q.options || []
+
+                if (Array.isArray(optionsArray) && optionsArray.length > 0) {
+                    pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
+                } else if (pollData.values && Array.isArray(pollData.values)) {
+                    pollValues = pollData.values
+                }
+
+                if (pollValues.length > 0) {
+                    await conn.sendMessage(m.chat, {
+                        poll: {
+                            name: pollName,
+                            values: pollValues,
+                            selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                        },
+                        mentions: mentions,
+                        contextInfo: { 
+                            mentionedJid: mentions 
+                        }
+                    }, { quoted: m })
+                    return
+                }
             }
         }
         
