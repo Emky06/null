@@ -126,27 +126,24 @@ const extractGroupMetadata = (result) => {
     0
 
   return {
-    id: group.attrs.id.includes('@')
-      ? group.attrs.id
-      : baileys.jidEncode(group.attrs.id, 'g.us'),
+  id: group.attrs.id.includes('@')
+    ? group.attrs.id
+    : baileys.jidEncode(group.attrs.id, 'g.us'),
 
-    subject: group.attrs.subject || 'Sconosciuto',
+  subject: group.attrs.subject || 'Sconosciuto',
 
-    creation: new Date(
-      +group.attrs.creation * 1000
-    ).toLocaleString('it-IT', {
-      timeZone: 'Europe/Rome'
-    }),
+  creation: new Date(
+    +group.attrs.creation * 1000
+  ).toLocaleString('it-IT', {
+    timeZone: 'Europe/Rome'
+  }),
 
-    ownerJid,
+  ownerJid,
 
-    ownerNumber,
+  ownerNumber,
 
-    desc,
+  desc,
 
-    size,
-
-    adminText,
-    adminMentions: admins.map(a => a.jid)
-  }
+  size
+}
 }
