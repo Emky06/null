@@ -24,7 +24,7 @@ let handler = async (m, { conn, text }) => {
   let data = extractGroupMetadata(res)
 
   let txt = `
-╭━〔 👥 𝐈𝐍𝐅𝐎 𝐆𝐑𝐔𝐏𝐏𝐎 〕━╮
+╭━━〔 👥 𝐈𝐍𝐅𝐎 𝐆𝐑𝐔𝐏𝐏𝐎 〕━━╮
 ┣━━━━━━━━━━━━━━━━━━━━━
 ┃ 🆔 𝐈𝐃:
 ┃ ${data.id}
