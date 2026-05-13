@@ -124,6 +124,8 @@ function generateMenuText(prefix) {
 ┣━ 📃 .banlist ┃ Utenti bannati
 ┣━ 👮🏻‍♂️ .addmod @ ┃ Aggiungi moderatori
 ┣━ 👮🏻‍♂️ .delmod @ ┃ Rimuovi moderatori
+┣━ 👮🏻‍♂️ .delallmod @ ┃ Rimuovi tutti moderatori dal gruppo
+┣━ 👮🏻‍♂️ .delmodglobal @ ┃ Rimuovi moderatore da più gruppi 
 
 🛠️ *Strumenti Avanzati*
 ┣━ 🕒 .timer ┃ Timer automatico per attivare/disattivare solostaff
