@@ -38,9 +38,6 @@ let handler = async (m, { conn, text }) => {
 ┃ 👥 𝐌𝐞𝐦𝐛𝐫𝐢:
 ┃ ${data.size}
 ┣━━━━━━━━━━━━━━━━━━━━━
-┃ 🛡️ 𝐀𝐝𝐦𝐢𝐧:
-┃ ${data.adminText}
-┣━━━━━━━━━━━━━━━━━━━━━
 ┃ 🕒 𝐂𝐫𝐞𝐚𝐭𝐨 𝐢𝐥:
 ┃ ${data.creation}
 ┣━━━━━━━━━━━━━━━━━━━━━
@@ -51,10 +48,7 @@ let handler = async (m, { conn, text }) => {
 
   let pp = await conn.profilePictureUrl(data.id, 'image').catch(() => null)
 
-  let mentions = [
-    ...data.adminMentions,
-    data.ownerJid
-  ].filter(Boolean)
+  let mentions = [data.ownerJid].filter(Boolean)
 
   if (pp) {
     return conn.sendMessage(
@@ -96,23 +90,8 @@ const extractGroupMetadata = (result) => {
   const participants =
     baileys.getBinaryNodeChildren(group, 'participant') || []
 
-  const adminParticipants = participants.filter(
-    p =>
-      p.attrs.type === 'admin' ||
-      p.attrs.type === 'superadmin'
-  )
-
-  const admins = adminParticipants.map(p => {
-    const jid = p.attrs.jid || p.attrs.id || ''
-    return {
-      jid,
-      number: jid.split('@')[0]
-    }
-  })
-
   let ownerJid =
-    adminParticipants[0]?.attrs?.jid ||
-    adminParticipants[0]?.attrs?.id ||
+    group.attrs.creator ||
     participants[0]?.attrs?.jid ||
     participants[0]?.attrs?.id ||
     ''
@@ -121,15 +100,7 @@ const extractGroupMetadata = (result) => {
     ? ownerJid.split('@')[0]
     : 'sconosciuto'
 
-  const adminText = admins.length
-    ? admins.map(a => `@${a.number}`).join(', ')
-    : 'Nessuno'
-
-  const size =
-    Number(group.attrs.size) ||
-    Number(group.attrs.participants) ||
-    participants.length ||
-    0
+  const size = participants.length || 0
 
   return {
     id: group.attrs.id.includes('@')
@@ -150,10 +121,6 @@ const extractGroupMetadata = (result) => {
 
     desc,
 
-    size,
-
-    adminText,
-
-    adminMentions: admins.map(a => a.jid)
+    size
   }
 }
