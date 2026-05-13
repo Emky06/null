@@ -104,20 +104,13 @@ let handler = async (m, { args, conn }) => {
     const isBanned = data.banned || false;
     const err = data.error || {};
 
-    const status = err.status || 'unknown';
-    const reason = err.reason || 'unknown';
     const loginNum = err.login || phoneNumber;
 
     const methods =
-      Array.isArray(err.fallback_methods) &&
-      err.fallback_methods.length
-        ? err.fallback_methods.join(', ')
-        : 'nessuno';
-
-    const autoconf =
-      err.autoconf_type != null
-        ? err.autoconf_type
-        : 'n/a';
+  Array.isArray(err.fallback_methods) &&
+  err.fallback_methods.length
+    ? err.fallback_methods.join(', ')
+    : 'nessuno';
 
     let replyMsg = `╭━〔 📱 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐒𝐓𝐀𝐓𝐔𝐒 〕━╮
 ┣━━━━━━━━━━━━━━━━━━━━━
@@ -141,10 +134,7 @@ if (isBanned) {
 replyMsg += `┣━━━━━━━━━━━━━━━━━━━━━
 ┃ 📊 𝐃𝐄𝐓𝐓𝐀𝐆𝐋𝐈
 ┣━━━━━━━━━━━━━━━━━━━━━
-┃ • 𝐒𝐭𝐚𝐭𝐮𝐬: ${status}
-┃ • 𝐌𝐨𝐭𝐢𝐯𝐨: ${reason}
 ┃ • 𝐀𝐮𝐭𝐡: ${methods}
-┃ • 𝐀𝐮𝐭𝐨𝐜𝐨𝐧𝐟: ${autoconf}
 ┃ • 𝐎𝐫𝐚: ${new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome' })}
 ╰━━━━━━━━━━━━━━━━━━━━━╯`;
 
