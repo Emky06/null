@@ -27,25 +27,38 @@ let handler = async (m, { conn, text }) => {
   txt += `➣ *ID*: ${data.id}\n`
   txt += `➣ *Nome*: ${data.subject}\n`
   txt += `➣ *Creato il*: ${data.creation}\n`
-  txt += `➣ *Creatore*: ${data.owner}\n`
+  txt += `➣ *Creatore*: @${data.ownerNumber}\n`
   txt += `➣ *Numero membri*: ${data.size}\n`
-  txt += `➣ *Amministratori*: ${data.admins.join(', ') || 'Nessuno'}\n`
+  txt += `➣ *Amministratori*: ${data.adminText}\n`
   txt += `➣ *Descrizione*: ${data.desc || 'Nessuna descrizione'}\n`
 
   let pp = await conn.profilePictureUrl(data.id, 'image').catch(() => null)
+
+  let mentions = [
+    ...data.adminMentions,
+    data.ownerJid
+  ].filter(Boolean)
 
   if (pp) {
     return conn.sendMessage(
       m.chat,
       {
         image: { url: pp },
-        caption: txt
+        caption: txt,
+        mentions
       },
       { quoted: m }
     )
   }
 
-  await conn.reply(m.chat, txt, m)
+  await conn.sendMessage(
+    m.chat,
+    {
+      text: txt,
+      mentions
+    },
+    { quoted: m }
+  )
 }
 
 handler.command = /^(ispeziona)$/i
@@ -63,7 +76,8 @@ const extractGroupMetadata = (result) => {
       ? baileys.getBinaryNodeChild(descChild, 'body')?.content
       : null
 
-  const participants = baileys.getBinaryNodeChildren(group, 'participant')
+  const participants =
+    baileys.getBinaryNodeChildren(group, 'participant') || []
 
   const adminParticipants = participants.filter(
     p =>
@@ -73,35 +87,32 @@ const extractGroupMetadata = (result) => {
 
   const admins = adminParticipants.map(p => {
     const jid = p.attrs.jid || p.attrs.id || ''
-    return 'wa.me/' +
-      baileys.jidNormalizedUser(jid).split('@')[0]
+    return {
+      jid,
+      number: jid.split('@')[0]
+    }
   })
 
-  let creatorJid =
+  let ownerJid =
     adminParticipants[0]?.attrs?.jid ||
     adminParticipants[0]?.attrs?.id ||
-    group.attrs.creator ||
+    participants[0]?.attrs?.jid ||
+    participants[0]?.attrs?.id ||
     ''
 
-  if (
-    creatorJid &&
-    !creatorJid.includes('@s.whatsapp.net') &&
-    !creatorJid.includes('@lid')
-  ) {
-    let possible =
-      participants.find(p =>
-        (p.attrs.jid || '').includes('@s.whatsapp.net')
-      )
+  const ownerNumber = ownerJid
+    ? ownerJid.split('@')[0]
+    : 'sconosciuto'
 
-    if (possible) {
-      creatorJid = possible.attrs.jid
-    }
-  }
+  const adminText = admins.length
+    ? admins.map(a => `@${a.number}`).join(', ')
+    : 'Nessuno'
 
-  const owner = creatorJid
-    ? 'wa.me/' +
-      baileys.jidNormalizedUser(creatorJid).split('@')[0]
-    : 'Sconosciuto'
+  const size =
+    Number(group.attrs.size) ||
+    Number(group.attrs.participants) ||
+    participants.length ||
+    0
 
   return {
     id: group.attrs.id.includes('@')
@@ -116,12 +127,16 @@ const extractGroupMetadata = (result) => {
       timeZone: 'Europe/Rome'
     }),
 
-    owner,
+    ownerJid,
+
+    ownerNumber,
 
     desc,
 
-    size: participants.length,
+    size,
 
-    admins
+    adminText,
+
+    adminMentions: admins.map(a => a.jid)
   }
 }
