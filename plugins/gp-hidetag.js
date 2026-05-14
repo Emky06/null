@@ -25,7 +25,7 @@ let handler = async (m, { conn, text, participants }) => {
                            q.msg?.pollCreationMessageV2 || 
                            q.msg?.pollCreationMessage || 
                            q.pollCreationMessage || 
-                           q.msg || q
+                           
                            
             let pollName =
     q.msg?.pollCreationMessageV3?.name ||
