@@ -27,7 +27,12 @@ let handler = async (m, { conn, text, participants }) => {
                            q.pollCreationMessage || 
                            q.msg || q
                            
-            let pollName = pollData.name || 'Sondaggio'
+            let pollName =
+    q.msg?.pollCreationMessageV3?.name ||
+    q.msg?.pollCreationMessageV2?.name ||
+    q.msg?.pollCreationMessage?.name ||
+    q.message?.pollCreationMessageV3?.name ||
+    'Sondaggio'
             let pollValues = []
             let optionsArray = pollData.options || q.options || q.msg?.options || []
 
