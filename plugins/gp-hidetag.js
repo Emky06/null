@@ -36,25 +36,28 @@ let handler = async (m, { conn, text, participants }) => {
             }
 
             let pollName =
-                pollData.name ||
-                pollData.contentText ||
-                pollData.question ||
+                pollData?.name ||
+                pollMsg?.pollMessage?.name ||
+                pollMsg?.message?.pollMessage?.name ||
                 pollMsg?.message?.conversation ||
+                pollMsg?.conversation ||
                 m.quoted?.text ||
                 'Sondaggio'
 
             let optionsArray =
-                pollData.options ||
-                pollData.values ||
-                pollData.pollValues ||
+                pollData?.options ||
+                pollData?.values ||
+                pollData?.pollValues ||
                 []
 
             let pollValues = []
 
-            for (let v of optionsArray) {
-                if (!v) continue
-                let val = typeof v === 'string' ? v : v.optionName || v.name
-                if (val) pollValues.push(val)
+            if (Array.isArray(optionsArray)) {
+                for (let v of optionsArray) {
+                    if (!v) continue
+                    let val = typeof v === 'string' ? v : v.optionName || v.name
+                    if (val) pollValues.push(val)
+                }
             }
 
             pollValues = pollValues.filter(Boolean)
@@ -70,7 +73,7 @@ let handler = async (m, { conn, text, participants }) => {
                 poll: {
                     name: pollName,
                     values: pollValues,
-                    selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                    selectableCount: pollData?.selectableOptionsCount || pollData?.selectableCount || 1
                 },
                 mentions,
                 contextInfo: {
