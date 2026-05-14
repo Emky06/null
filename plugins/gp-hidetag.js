@@ -1,3 +1,6 @@
+import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
+import * as fs from 'fs'
+
 let handler = async (m, { conn, text, participants }) => {
     let users = participants.map(u => conn.decodeJid(u.id))
     let q = m.quoted ? m.quoted : m
@@ -9,127 +12,86 @@ let handler = async (m, { conn, text, participants }) => {
     try {
         let isPoll = m.quoted && (
             q.mtype?.includes('pollCreationMessage') ||
-            q.msg?.pollCreationMessage ||
-            q.msg?.pollCreationMessageV2 ||
-            q.msg?.pollCreationMessageV3 ||
-            q.pollCreationMessage ||
-            q.msg?.pollMessage ||
-            q.msg?.message?.pollMessage
+            q.msg?.pollCreationMessage || 
+            q.msg?.pollCreationMessageV2 || 
+            q.msg?.pollCreationMessageV3 || 
+            q.pollCreationMessage || 
+            q.msg?.pollMessage
         )
-
+        
         if (isPoll && m.quoted) {
-
-            let pollMsg = m.quoted?.message || q.msg || m.msg || q
-
-            let pollData =
-                pollMsg?.pollMessage ||
-                pollMsg?.message?.pollMessage ||
-                pollMsg?.pollCreationMessageV3 ||
-                pollMsg?.pollCreationMessageV2 ||
-                pollMsg?.pollCreationMessage
-
-            if (!pollData) {
-                return conn.sendMessage(m.chat, {
-                    text: captionText,
-                    mentions
-                }, { quoted: m })
-            }
-
-            let pollName =
-                pollData?.name ||
-                pollMsg?.pollMessage?.name ||
-                pollMsg?.message?.pollMessage?.name ||
-                pollMsg?.message?.conversation ||
-                pollMsg?.conversation ||
-                m.quoted?.text ||
-                'Sondaggio'
-
-            let optionsArray =
-                pollData?.options ||
-                pollData?.values ||
-                pollData?.pollValues ||
-                []
-
+            let pollData = q.msg?.pollCreationMessageV3 || 
+                           q.msg?.pollCreationMessageV2 || 
+                           q.msg?.pollCreationMessage || 
+                           q.pollCreationMessage || 
+                           q.msg || q
+                           
+            let pollName = pollData.name || 'Sondaggio'
             let pollValues = []
+            let optionsArray = pollData.options || q.options || q.msg?.options || []
 
-            if (Array.isArray(optionsArray)) {
-                for (let v of optionsArray) {
-                    if (!v) continue
-                    let val = typeof v === 'string' ? v : v.optionName || v.name
-                    if (val) pollValues.push(val)
-                }
+            if (Array.isArray(optionsArray) && optionsArray.length > 0) {
+                pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
+            } else if (pollData.values && Array.isArray(pollData.values)) {
+                pollValues = pollData.values
+            } else if (pollData.pollValues && Array.isArray(pollData.pollValues)) {
+                pollValues = pollData.pollValues
             }
-
-            pollValues = pollValues.filter(Boolean)
-
-            if (!pollValues.length) {
-                return conn.sendMessage(m.chat, {
-                    text: captionText,
-                    mentions
+            
+            if (pollValues.length > 0) {
+                await conn.sendMessage(m.chat, {
+                    poll: {
+                        name: pollName,
+                        values: pollValues,
+                        selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                    },
+                    mentions: mentions
                 }, { quoted: m })
+                return
             }
-
-            await conn.sendMessage(m.chat, {
-                poll: {
-                    name: pollName,
-                    values: pollValues,
-                    selectableCount: pollData?.selectableOptionsCount || pollData?.selectableCount || 1
-                },
-                mentions,
-                contextInfo: {
-                    mentionedJid: mentions,
-                    isForwarded: true
-                }
-            }, { quoted: m })
-
-            return
         }
-
+        
         if (!m.quoted) {
-            await conn.sendMessage(m.chat, {
-                text: captionText,
-                mentions
-            }, { quoted: m })
+            await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
             return
         }
 
         const traceableTypes = ['imageMessage', 'videoMessage', 'audioMessage', 'stickerMessage', 'documentMessage']
         let isMedia = traceableTypes.includes(type) || traceableTypes.includes(q.mtype)
         let media = isMedia ? await q.download?.().catch(() => null) : null
+        
+        let isViewOnce = q.msg?.viewOnce || q.viewOnce || false  
+        let isGif = q.msg?.gifPlayback || q.gifPlayback || (q.mtype === 'videoMessage' && q.msg?.gifPlayback)  
 
-        let isViewOnce = q.msg?.viewOnce || q.viewOnce || false
-        let isGif = q.msg?.gifPlayback || q.gifPlayback || (q.mtype === 'videoMessage' && q.msg?.gifPlayback)
-
-        let commonOptions = {
-            mentions,
-            contextInfo: {
-                mentionedJid: mentions,
-                isForwarded: true
-            },
-            viewOnce: isViewOnce
-        }
+        let commonOptions = {  
+            mentions: mentions,  
+            contextInfo: {   
+                mentionedJid: mentions,  
+                isForwarded: false  
+            },  
+            viewOnce: isViewOnce  
+        }  
 
         if (isMedia && media) {
-            if (isGif) {
+            if (isGif) {  
                 await conn.sendMessage(m.chat, { video: media, gifPlayback: true, caption: captionText, ...commonOptions }, { quoted: m })
-            } else if (q.mtype === 'imageMessage' || type === 'imageMessage') {
+            } else if (q.mtype === 'imageMessage' || type === 'imageMessage') {  
                 await conn.sendMessage(m.chat, { image: media, caption: captionText, ...commonOptions }, { quoted: m })
-            } else if (q.mtype === 'videoMessage' || type === 'videoMessage') {
+            } else if (q.mtype === 'videoMessage' || type === 'videoMessage') {  
                 await conn.sendMessage(m.chat, { video: media, caption: captionText, ...commonOptions }, { quoted: m })
-            } else if (q.mtype === 'audioMessage' || type === 'audioMessage') {
+            } else if (q.mtype === 'audioMessage' || type === 'audioMessage') {  
                 await conn.sendMessage(m.chat, { audio: media, mimetype: 'audio/mp4', ptt: isViewOnce ? true : (q.msg?.ptt || false), ...commonOptions }, { quoted: m })
-            } else if (q.mtype === 'stickerMessage' || type === 'stickerMessage') {
+            } else if (q.mtype === 'stickerMessage' || type === 'stickerMessage') {  
                 await conn.sendMessage(m.chat, { sticker: media, ...commonOptions }, { quoted: m })
             } else {
-                await conn.sendMessage(m.chat, { text: captionText, mentions }, { quoted: m })
+                await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
             }
         } else {
-            await conn.sendMessage(m.chat, { text: captionText, mentions }, { quoted: m })
+            await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
         }
-
     } catch (e) {
         console.error(e)
-        await conn.sendMessage(m.chat, { text: captionText, mentions }, { quoted: m })
+        await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
     }
 }
 
