@@ -19,44 +19,45 @@ let handler = async (m, { conn, text, participants }) => {
             q.pollCreationMessage || 
             q.msg?.pollMessage
         )
-        
+
         if (isPoll && m.quoted) {
-            let pollData = q.msg?.pollCreationMessageV3 || 
-                           q.msg?.pollCreationMessageV2 || 
-                           q.msg?.pollCreationMessage || 
-                           q.pollCreationMessage || 
-                           
-                           
+
+            // 🔥 FIX SOLO QUI (pollData corretto)
+            let pollData =
+                q.msg?.pollCreationMessageV3 ||
+                q.msg?.pollCreationMessageV2 ||
+                q.msg?.pollCreationMessage
+
             let pollName =
-    q.msg?.pollCreationMessageV3?.name ||
-    q.msg?.pollCreationMessageV2?.name ||
-    q.msg?.pollCreationMessage?.name ||
-    q.message?.pollCreationMessageV3?.name ||
-    'Sondaggio'
+                q.msg?.pollCreationMessageV3?.name ||
+                q.msg?.pollCreationMessageV2?.name ||
+                q.msg?.pollCreationMessage?.name ||
+                'Sondaggio'
+
             let pollValues = []
-            let optionsArray = pollData.options || q.options || q.msg?.options || []
+            let optionsArray = pollData?.options || q.options || q.msg?.options || []
 
             if (Array.isArray(optionsArray) && optionsArray.length > 0) {
                 pollValues = optionsArray.map(opt => typeof opt === 'string' ? opt : opt.optionName)
-            } else if (pollData.values && Array.isArray(pollData.values)) {
+            } else if (pollData?.values && Array.isArray(pollData.values)) {
                 pollValues = pollData.values
-            } else if (pollData.pollValues && Array.isArray(pollData.pollValues)) {
+            } else if (pollData?.pollValues && Array.isArray(pollData.pollValues)) {
                 pollValues = pollData.pollValues
             }
-            
+
             if (pollValues.length > 0) {
                 await conn.sendMessage(m.chat, {
                     poll: {
                         name: pollName,
                         values: pollValues,
-                        selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
+                        selectableCount: pollData?.selectableOptionsCount || pollData?.selectableCount || 1
                     },
                     mentions: mentions
                 }, { quoted: m })
                 return
             }
         }
-        
+
         if (!m.quoted) {
             await conn.sendMessage(m.chat, { text: captionText, mentions: mentions }, { quoted: m })
             return
@@ -65,7 +66,7 @@ let handler = async (m, { conn, text, participants }) => {
         const traceableTypes = ['imageMessage', 'videoMessage', 'audioMessage', 'stickerMessage', 'documentMessage']
         let isMedia = traceableTypes.includes(type) || traceableTypes.includes(q.mtype)
         let media = isMedia ? await q.download?.().catch(() => null) : null
-        
+
         let isViewOnce = q.msg?.viewOnce || q.viewOnce || false  
         let isGif = q.msg?.gifPlayback || q.gifPlayback || (q.mtype === 'videoMessage' && q.msg?.gifPlayback)  
 
