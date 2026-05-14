@@ -118,25 +118,21 @@ function generateMenuText(prefix) {
 ┣━ ⏱️ .closetime
 ┣━ 🔓 .aperto / chiuso
 ┣━ 🔓 .remotegp/rgp (a distanza)
-┣━ 📜 .rules
+┣━ 📜 .regole / rules
 
 📥 *Messaggi automatici:*
 ┣━ 🎉 .setwelcome
 ┣━ 🥀 .setbye
-┣━ ❌ .setremove
-┣━ 📜 .setregole
 ┣━ 🎲 .sim
 
 📊 *Gestione Gruppo:*
 ┣━ 👻 .inattivi
 ┣━ 🚪 .viainattivi
-┣━ 👑 .admins
 ┣━ 📥 .richieste 
 ┣━ 📥 .request/profili (numeri nelle richieste)
 
 🧊 *Extra Admin Tools:*
 ┣━ ❄️ .freeze @
-┣━ 🗑️ .ds 
 ┣━ 👁️ .rivela
 ┣━ 🔗 .link
 ┣━ 🔗 .linkg
@@ -146,7 +142,8 @@ function generateMenuText(prefix) {
 🖼️ *Foto & Info:*
 ┣━ 📷 .pic @
 ┣━ 🖼️ .picgruppo
-┣━ 🧬 .bio <testo>
+┣━ 📋 .bio <testo>
+┣━ ✍️ .nome <testo>
 
 🎉 *Comandi Fun*
 ┣━ 🏆 .top (10,50,100)
