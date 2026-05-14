@@ -109,6 +109,7 @@ function generateModMenuText(prefix) {
 ┃ 🗑️ ${prefix}𝐝𝐞𝐥 — Elimina messaggi
 ┃ 📌 ${prefix}𝐩𝐢𝐧/𝐮𝐧𝐩𝐢𝐧 — Fissa/rimuovi messaggi
 ┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤 — Link gruppo
+┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐠 — Link gruppo
 ┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐪𝐫 — QR del gruppo 
 ┃ 👁️ ${prefix}𝐫𝐢𝐯𝐞𝐥𝐚 — Rivela media
 ┃ 🔒 ${prefix}𝐜𝐡𝐢𝐮𝐬𝐨𝐭𝐞𝐦𝐩 — Chiudi chat per tot min
