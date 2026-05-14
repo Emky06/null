@@ -17,27 +17,38 @@ let handler = async (m, { conn, text, participants }) => {
         )
 
         if (isPoll && m.quoted) {
+            let pollMsg = m.quoted?.message || q.msg || q
+
             let pollData =
-                q.msg?.pollCreationMessageV3 ||
-                q.msg?.pollCreationMessageV2 ||
-                q.msg?.pollCreationMessage ||
-                q.msg?.pollMessage ||
-                q.msg ||
-                q
+                pollMsg?.pollCreationMessageV3 ||
+                pollMsg?.pollCreationMessageV2 ||
+                pollMsg?.pollCreationMessage ||
+                pollMsg?.pollMessage
 
             let pollName =
-                pollData?.name ||
-                pollData?.message ||
-                q.text ||
+                pollMsg?.pollCreationMessageV3?.name ||
+                pollMsg?.pollCreationMessageV2?.name ||
+                pollMsg?.pollCreationMessage?.name ||
+                pollMsg?.pollCreationMessageV3?.contentText ||
+                pollMsg?.pollCreationMessageV2?.contentText ||
+                pollMsg?.pollCreationMessage?.contentText ||
+                pollMsg?.pollMessage?.name ||
                 m.quoted?.text ||
                 'Sondaggio'
 
-            let pollValues = []
-            let optionsArray = pollData?.options || pollData?.values || pollData?.pollValues || []
+            let optionsArray =
+                pollData?.options ||
+                pollData?.values ||
+                pollData?.pollValues ||
+                []
 
-            if (Array.isArray(optionsArray) && optionsArray.length > 0) {
+            let pollValues = []
+
+            if (Array.isArray(optionsArray)) {
                 pollValues = optionsArray.map(opt =>
-                    typeof opt === 'string' ? opt : opt.optionName || opt.name
+                    typeof opt === 'string'
+                        ? opt
+                        : opt.optionName || opt.name
                 )
             }
 
@@ -54,7 +65,6 @@ let handler = async (m, { conn, text, participants }) => {
                         isForwarded: true
                     }
                 }, { quoted: m })
-
                 return
             }
         }
