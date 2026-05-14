@@ -106,12 +106,11 @@ function generateModMenuText(prefix) {
 ┃ 📤 ${prefix}𝐞𝐬𝐩𝐞𝐥𝐥𝐢 — Espelli membri
 ┃ 📥 ${prefix}𝐫𝐞𝐪𝐮𝐞𝐬𝐭/𝐩𝐫𝐨𝐟𝐢𝐥𝐢 — Richieste
 ┃ ⏱️ ${prefix}𝐬𝐢𝐥𝐞𝐧𝐜𝐞 — Muto temporaneo 
-┃ 🗑️ ${prefix}𝐝𝐞𝐥𝐥 — Elimina messaggi
+┃ 🗑️ ${prefix}𝐝𝐞𝐥 — Elimina messaggi
 ┃ 📌 ${prefix}𝐩𝐢𝐧/𝐮𝐧𝐩𝐢𝐧 — Fissa/rimuovi messaggi
-┃ 🗑️ ${prefix}𝐝𝐬𝐦𝐨𝐝 — Svuota sessioni
-┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐠𝐩 — Link gruppo
-┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐪 — QR del gruppo 
-┃ 👁️ ${prefix}𝐫𝐢𝐯 — Rivela media
+┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤 — Link gruppo
+┃ 🔗 ${prefix}𝐥𝐢𝐧𝐤𝐪𝐫 — QR del gruppo 
+┃ 👁️ ${prefix}𝐫𝐢𝐯𝐞𝐥𝐚 — Rivela media
 ┃ 🔒 ${prefix}𝐜𝐡𝐢𝐮𝐬𝐨𝐭𝐞𝐦𝐩 — Chiudi chat per tot min
 ┃ 🔒 ${prefix}𝐫𝐞𝐦𝐨𝐭𝐞𝐠𝐩/𝐫𝐠𝐩 — Chiudi/apri gruppo a distanza con id
 ╰━━━━━━━━━━━━━━━━━━━╯
