@@ -4,7 +4,7 @@ let Reg = /^\s*(Maschio|Femmina|Altro)\s+(\d{1,2})$/i
 let handler = async function (m, { conn, text, args, usedPrefix, command }) {
   let user = global.db.data.users[m.sender]
 
-  if (['reg', 'verify', 'register', 'registrar'].includes(command)) {
+  if (['reg'].includes(command)) {
     if (user.registered === true) {
       throw `✳️ *Sei già registrato!*\n\n🔄 Vuoi annullare la registrazione?\n📌 Usa:\n*${usedPrefix}unreg*`
     }
@@ -35,7 +35,7 @@ let handler = async function (m, { conn, text, args, usedPrefix, command }) {
     return conn.reply(m.chat, confirmation, m)
   }
 
-  if (['unreg', 'unregister'].includes(command)) {
+  if (['unreg'].includes(command)) {
     if (!user.registered) {
       throw `❌ *Non sei registrato.*\n📌 Usa *${usedPrefix}reg Maschio 18* per registrarti.`
     }
@@ -51,7 +51,7 @@ let handler = async function (m, { conn, text, args, usedPrefix, command }) {
 }
 
 handler.help = ['reg <genere età>', 'unreg']
-handler.tags = ['rg']
-handler.command = ['verify', 'reg', 'register', 'registrar', 'unreg', 'unregister']
+handler.command = ['reg', 'unreg']
+handler.group = true
 
 export default handler
