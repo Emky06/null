@@ -13,31 +13,33 @@ let handler = async (m, { conn, text, participants }) => {
             q.msg?.pollCreationMessageV2 ||
             q.msg?.pollCreationMessageV3 ||
             q.pollCreationMessage ||
-            q.msg?.pollMessage
+            q.msg?.pollMessage ||
+            q.msg?.message?.pollMessage
         )
 
         if (isPoll && m.quoted) {
 
-            let pollMsg = m.quoted?.message || m.msg || q.msg || q
+            let pollMsg = m.quoted?.message || q.msg || m.msg || q
 
             let pollData =
+                pollMsg?.pollMessage ||
+                pollMsg?.message?.pollMessage ||
                 pollMsg?.pollCreationMessageV3 ||
                 pollMsg?.pollCreationMessageV2 ||
-                pollMsg?.pollCreationMessage ||
-                pollMsg?.pollMessage
+                pollMsg?.pollCreationMessage
 
             if (!pollData) {
-                await conn.sendMessage(m.chat, {
+                return conn.sendMessage(m.chat, {
                     text: captionText,
                     mentions
                 }, { quoted: m })
-                return
             }
 
             let pollName =
                 pollData.name ||
                 pollData.contentText ||
                 pollData.question ||
+                pollMsg?.message?.conversation ||
                 m.quoted?.text ||
                 'Sondaggio'
 
@@ -49,25 +51,26 @@ let handler = async (m, { conn, text, participants }) => {
 
             let pollValues = []
 
-            if (Array.isArray(optionsArray)) {
-                pollValues = optionsArray
-                    .map(v => typeof v === 'string' ? v : v.optionName || v.name)
-                    .filter(v => v && v.trim())
+            for (let v of optionsArray) {
+                if (!v) continue
+                let val = typeof v === 'string' ? v : v.optionName || v.name
+                if (val) pollValues.push(val)
             }
 
+            pollValues = pollValues.filter(Boolean)
+
             if (!pollValues.length) {
-                await conn.sendMessage(m.chat, {
+                return conn.sendMessage(m.chat, {
                     text: captionText,
                     mentions
                 }, { quoted: m })
-                return
             }
 
             await conn.sendMessage(m.chat, {
                 poll: {
                     name: pollName,
                     values: pollValues,
-                    selectableCount: pollData.selectableOptionsCount || 1
+                    selectableCount: pollData.selectableOptionsCount || pollData.selectableCount || 1
                 },
                 mentions,
                 contextInfo: {
