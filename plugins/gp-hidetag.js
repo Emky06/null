@@ -17,7 +17,8 @@ let handler = async (m, { conn, text, participants }) => {
         )
 
         if (isPoll && m.quoted) {
-            let pollMsg = m.quoted?.message || q.msg || q
+
+            let pollMsg = m.quoted?.message || m.msg || q.msg || q
 
             let pollData =
                 pollMsg?.pollCreationMessageV3 ||
@@ -25,48 +26,57 @@ let handler = async (m, { conn, text, participants }) => {
                 pollMsg?.pollCreationMessage ||
                 pollMsg?.pollMessage
 
+            if (!pollData) {
+                await conn.sendMessage(m.chat, {
+                    text: captionText,
+                    mentions
+                }, { quoted: m })
+                return
+            }
+
             let pollName =
-                pollMsg?.pollCreationMessageV3?.name ||
-                pollMsg?.pollCreationMessageV2?.name ||
-                pollMsg?.pollCreationMessage?.name ||
-                pollMsg?.pollCreationMessageV3?.contentText ||
-                pollMsg?.pollCreationMessageV2?.contentText ||
-                pollMsg?.pollCreationMessage?.contentText ||
-                pollMsg?.pollMessage?.name ||
+                pollData.name ||
+                pollData.contentText ||
+                pollData.question ||
                 m.quoted?.text ||
                 'Sondaggio'
 
             let optionsArray =
-                pollData?.options ||
-                pollData?.values ||
-                pollData?.pollValues ||
+                pollData.options ||
+                pollData.values ||
+                pollData.pollValues ||
                 []
 
             let pollValues = []
 
             if (Array.isArray(optionsArray)) {
-                pollValues = optionsArray.map(opt =>
-                    typeof opt === 'string'
-                        ? opt
-                        : opt.optionName || opt.name
-                )
+                pollValues = optionsArray
+                    .map(v => typeof v === 'string' ? v : v.optionName || v.name)
+                    .filter(v => v && v.trim())
             }
 
-            if (pollValues.length > 0) {
+            if (!pollValues.length) {
                 await conn.sendMessage(m.chat, {
-                    poll: {
-                        name: pollName,
-                        values: pollValues,
-                        selectableCount: pollData?.selectableOptionsCount || pollData?.selectableCount || 1
-                    },
-                    mentions,
-                    contextInfo: {
-                        mentionedJid: mentions,
-                        isForwarded: true
-                    }
+                    text: captionText,
+                    mentions
                 }, { quoted: m })
                 return
             }
+
+            await conn.sendMessage(m.chat, {
+                poll: {
+                    name: pollName,
+                    values: pollValues,
+                    selectableCount: pollData.selectableOptionsCount || 1
+                },
+                mentions,
+                contextInfo: {
+                    mentionedJid: mentions,
+                    isForwarded: true
+                }
+            }, { quoted: m })
+
+            return
         }
 
         if (!m.quoted) {
