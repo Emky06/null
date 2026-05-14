@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 const handler = async (m, { conn, args }) => {
     const metadata = await conn.groupMetadata(m.chat);
     const groupName = metadata.subject;
@@ -26,8 +27,8 @@ const handler = async (m, { conn, args }) => {
 handler.help = ['linkgroup'];
 handler.tags = ['group'];
 handler.command = /^linkg(gro?up)?$/i;
+handler.staff = true;
 handler.group = true;
 handler.botAdmin = true;
-handler.admin = true;
 
 export default handler;
