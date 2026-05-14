@@ -95,7 +95,7 @@ try {
 
 handler.help = ['rivela'];
 handler.tags = ['tools'];
-handler.command = ['view', 'nocap', 'rivela', 'getmedia'];
-handler.admin = true;
+handler.command = ['riv', 'nocap', 'rivela'];
+handler.staff = true;
 
 export default handler;
