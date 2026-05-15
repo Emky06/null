@@ -122,10 +122,12 @@ function generateMenuText(prefix) {
 🔒 *Sicurezza*
 ┣━ 📃 .blocklist ┃ Lista bloccati
 ┣━ 📃 .banlist ┃ Utenti bannati
+┣━ 👮🏻‍♂️ .listgp ┃ Gruppi con i loro moderatori
 ┣━ 👮🏻‍♂️ .addmod @ ┃ Aggiungi moderatori
 ┣━ 👮🏻‍♂️ .delmod @ ┃ Rimuovi moderatori
 ┣━ 👮🏻‍♂️ .delallmod @ ┃ Rimuovi tutti moderatori dal gruppo
 ┣━ 👮🏻‍♂️ .delmodglobal @ ┃ Rimuovi moderatore da più gruppi 
+┣━ 👮🏻‍♂️ .delgp ┃ Rimuovi gruppo con i suoi moderatori
 
 🛠️ *Strumenti Avanzati*
 ┣━ 🕒 .timer ┃ Timer automatico per attivare/disattivare solostaff
