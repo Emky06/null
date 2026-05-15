@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 function ensureDB() {
   if (!global.db)
     global.db = {
@@ -80,13 +81,7 @@ let handler = async (m, { command, text, usedPrefix }) => {
   }
 };
 
-handler.help = [
-  'listgp',
-  'delgp <idgruppo>'
-];
-
-handler.tags = ['owner'];
-
+handler.help = ['listgp', 'delgp <idgruppo>'];
 handler.command = /^(listgp|delgp)$/i;
 handler.owner = true;
 
