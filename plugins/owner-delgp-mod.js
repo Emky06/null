@@ -42,7 +42,7 @@ let handler = async (m, { command, text, usedPrefix }) => {
         let mods = data.prems || [];
 
         txt += `━━━━━━━━━━━━━━━━━━━\n`;
-        txt += `📌 𝐈𝐃 𝐆𝐫𝐮𝐩𝐩𝐨:\n${groupId}\n`;
+        txt += `📌 \`𝐈𝐃 𝐆𝐫𝐮𝐩𝐩𝐨:`\\n${groupId}\n`;
 
         if (mods.length) {
           txt += `👮🏿‍♂️ 𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢:\n`;
