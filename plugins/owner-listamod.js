@@ -18,7 +18,6 @@ let handler = async (m, { conn }) => {
 
         text += `\n● \`𝐆𝐫𝐮𝐩𝐩𝐨\` 💬\n`;
 text += `${groupName}\n`;
-text += `\n`;
 text += `● \`𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢\` 👮🏻‍♂️\n`;
 
 prems.forEach((user, index) => {
