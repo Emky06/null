@@ -78,11 +78,11 @@ let handler = async (m, { command, text, usedPrefix }) => {
       delete groups[groupId];
 
       let modsText = removedMods.length
-  ? removedMods.map(v => `- wa.me/${v}`).join('\n')
+  ? removedMods.map(v => `● wa.me/${v}`).join('\n')
   : '❌ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞';
 
 return m.reply(
-  `✅ 𝐆𝐫𝐮𝐩𝐩𝐨 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐨 𝐝𝐚𝐥 𝐝𝐚𝐭𝐚𝐛𝐚𝐬𝐞.\n\n📌 𝐈𝐃:\n${groupId}\n\n👮🏽‍♂️ 𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐫𝐢𝐦𝐨𝐬𝐬𝐢:\n${modsText}`
+  `✅ 𝐆𝐫𝐮𝐩𝐩𝐨 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐨 𝐝𝐚𝐥 𝐝𝐚𝐭𝐚𝐛𝐚𝐬𝐞.\n\n📌 \`𝐈𝐃:\`\n${groupId}\n\n👮🏽‍♂️ \`𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐫𝐢𝐦𝐨𝐬𝐬𝐢:\`\n${modsText}`
 );
     }
   }
