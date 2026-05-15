@@ -36,7 +36,7 @@ let handler = async (m, { command, text, usedPrefix }) => {
       }
 
       let txt = `╭━━━━━━━━━━━━━━━━━━━╮
-┃ 📂 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐆𝐑𝐔𝐏𝐏𝐈 📂 ┃
+┃ 📂 _𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐆𝐑𝐔𝐏𝐏𝐈_ 📂 ┃
 ╰━━━━━━━━━━━━━━━━━━━╯\n\n`;
 
       for (let groupId in groups) {
