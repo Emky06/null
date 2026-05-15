@@ -16,13 +16,20 @@ let handler = async (m, { conn }) => {
         const groupMetadata = await conn.groupMetadata(chatId).catch(() => null);
         const groupName = groupMetadata?.subject || 'Gruppo senza nome';
 
-        text += `\n• *${groupName}*\n`;
-        prems.forEach(user => {
-            // Assicurati che sia in formato completo per WhatsApp
-            let jid = user.includes('@s.whatsapp.net') ? user : `${user}@s.whatsapp.net`;
-            mentions.push(jid);
-            text += `┣➤ @${jid.split('@')[0]}\n`; // Mostra il numero ma tagga correttamente
-        });
+        text += `\n● \`𝐆𝐫𝐮𝐩𝐩𝐨\` 💬\n`;
+text += `⛧⃟ ${groupName} ⛧⃟\n`;
+text += `⌬\n`;
+text += `● \`𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢\` 👮🏻‍♂️\n`;
+
+prems.forEach((user, index) => {
+    let jid = user.includes('@s.whatsapp.net')
+        ? user
+        : `${user}@s.whatsapp.net`;
+
+    mentions.push(jid);
+
+    text += `${String(index + 1).padStart(2, '0')}. @${jid.split('@')[0]}\n`;
+});
     }
 
     if (text === `╭━━━━━━━━━━━━━━━━━━━╮
@@ -31,7 +38,7 @@ let handler = async (m, { conn }) => {
         return m.reply('𝐍𝐨𝐧 𝐜𝐢 𝐬𝐨𝐧𝐨 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 𝐧𝐞𝐢 𝐠𝐫𝐮𝐩𝐩𝐢.');
     }
 
-    // Manda il messaggio taggando tutti i moderatori
+    
     await conn.sendMessage(m.chat, { text, mentions });
 };
 
