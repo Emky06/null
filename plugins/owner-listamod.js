@@ -16,11 +16,10 @@ let handler = async (m, { conn }) => {
         const groupMetadata = await conn.groupMetadata(chatId).catch(() => null);
         const groupName = groupMetadata?.subject || 'Gruppo senza nome';
 
-text += `━━━━━━━━━━━━━━━━━━━\n`;
+text += `━━━━━━━━━━━━━━━━━━━`;
 text += `\n● \`𝐆𝐫𝐮𝐩𝐩𝐨\` 💬\n`;
 text += `${groupName}\n`;
 text += `● \`𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢\` 👮🏻‍♂️\n`;
-text += `━━━━━━━━━━━━━━━━━━━\n`;
 
 prems.forEach((user, index) => {
     let jid = user.includes('@s.whatsapp.net')
