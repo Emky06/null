@@ -41,6 +41,7 @@ let handler = async (m, { command, text, usedPrefix }) => {
         let data = groups[groupId];
         let mods = data.prems || [];
 
+        txt += `━━━━━━━━━━━━━━━━━━━`;
         txt += `📌 𝐈𝐃 𝐆𝐫𝐮𝐩𝐩𝐨:\n${groupId}\n`;
 
         if (mods.length) {
