@@ -35,7 +35,9 @@ let handler = async (m, { command, text, usedPrefix }) => {
         return m.reply('❌ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨 𝐬𝐚𝐥𝐯𝐚𝐭𝐨 𝐧𝐞𝐥 𝐝𝐚𝐭𝐚𝐛𝐚𝐬𝐞.');
       }
 
-      let txt = '📂 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐆𝐑𝐔𝐏𝐏𝐈\n\n';
+      let txt = '╭━━━━━━━━━━━━━━━━━━━╮
+┃📂 𝐃𝐀𝐓𝐀𝐁𝐀𝐒𝐄 𝐆𝐑𝐔𝐏𝐏𝐈 📂┃
+╰━━━━━━━━━━━━━━━━━━━╯\n\n';
 
       for (let groupId in groups) {
         let data = groups[groupId];
