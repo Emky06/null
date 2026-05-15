@@ -46,7 +46,7 @@ let handler = async (m, { command, text, usedPrefix }) => {
 
         if (mods.length) {
           txt += `👮🏿‍♂️ 𝐌𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢:\n`;
-          txt += mods.map(v => `- wa.me/${v}`).join('\n');
+          txt += mods.map(v => `● wa.me/${v}`).join('\n');
         } else {
           txt += '❌ 𝐍𝐞𝐬𝐬𝐮𝐧 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐞';
         }
