@@ -44,8 +44,8 @@ global.APIs = {
   zenzapis: 'https://zenzapis.xyz',
   akuari: 'https://api.akuari.my.id',
   akuari2: 'https://apimu.my.id',	
-  fgmods: 'https://api-fgmods.ddns.net'
-  google: 'AIzaSyDp0_0MT7ij2KrT6-KRq5tvlxss5MivFbQ'
+  fgmods: 'https://api-fgmods.ddns.net',
+  google: 'AIzaSyDp0_0MT7ij2KrT6-KRq5tvlxss5MivFbQ',
   googleCX: '5021f5ef2ce92434a'
 },
 global.APIKeys = { 
