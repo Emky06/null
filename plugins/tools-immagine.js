@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import axios from 'axios';
 
 let handler = async (m, { conn, text, usedprefix, command }) => {
