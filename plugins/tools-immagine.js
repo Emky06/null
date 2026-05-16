@@ -1,5 +1,4 @@
-import { image_search } from "duckduckgo-images-api";
-import axios from "axios";
+import axios from 'axios';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) {
@@ -12,15 +11,36 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   try {
-    const results = await image_search({ query: text });
+    const url = `https://duckduckgo.com/?q=${encodeURIComponent(text)}&iax=images&ia=images`;
+
+    const res = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0'
+      }
+    });
+
+    const match = res.data.match(/vqd=([\d-]+)/);
+    if (!match) {
+      return m.reply("❌ Nessun risultato trovato");
+    }
+
+    const vqd = match[1];
+
+    const api = `https://duckduckgo.com/i.js?q=${encodeURIComponent(text)}&vqd=${vqd}&o=json&f=,,,&p=1&s=0`;
+
+    const json = await axios.get(api, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        'Referer': 'https://duckduckgo.com/'
+      }
+    });
+
+    const results = json.data.results;
 
     if (!results || results.length === 0) {
       await m.react('❌');
       return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
 ┃ Nessuna immagine trovata per: *${text}*
-┃
-┃ 💡 *Suggerimento:*
-┃ Prova con termini di ricerca diversi
 ╰━━━━━━━━━━━━━━⊱`);
     }
 
@@ -28,45 +48,28 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const albumItems = [];
 
     for (let i = 0; i < maxImages; i++) {
-      const item = results[i];
-      const imageUrl = item.image;
+      const img = results[i];
 
-      try {
-        const imageResponse = await axios.get(imageUrl, {
-          responseType: 'arraybuffer',
-          headers: {
-            'User-Agent': 'Mozilla/5.0'
-          }
-        });
+      const caption = i === 0
+        ? `🔍 Ricerca: ${text}\n> \`DuckDuckGo\``
+        : `🌐 Fonte: DuckDuckGo`;
 
-        const caption = i === 0
-          ? `『 🔍 』 Ricerca: ${text}\n> \`DuckDuckGo Images\``
-          : `『 🌐 』 Sito Origine: DuckDuckGo`;
-
-        albumItems.push({
-          image: Buffer.from(imageResponse.data),
-          caption
-        });
-
-      } catch (e) {
-        console.log('Errore immagine:', e.message);
-      }
+      albumItems.push({
+        image: { url: img.image },
+        caption
+      });
     }
 
-    if (albumItems.length > 0) {
-      await conn.sendMessage(m.chat, {
-        album: albumItems
-      }, { quoted: m });
-    } else {
-      await m.reply('❌ Nessuna immagine valida trovata');
-    }
+    await conn.sendMessage(m.chat, {
+      album: albumItems
+    }, { quoted: m });
 
     await m.react('✅');
 
   } catch (error) {
-    console.log('Errore DuckDuckGo:', error);
+    console.log(error);
     await m.react('❌');
-    return m.reply('❌ Errore durante la ricerca immagini');
+    return m.reply("❌ Errore durante la ricerca immagini");
   }
 };
 
