@@ -1,8 +1,15 @@
 import jimp from 'jimp';
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, text }) => {
   try {
-    let who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
+    let who;
+
+    if (text) {
+      let number = text.replace(/[^\d]/g, '');
+      who = number + '@s.whatsapp.net';
+    } else {
+      who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
+    }
 
     let avatarUrl;
     try {
@@ -17,7 +24,7 @@ let handler = async (m, { conn }) => {
 
     let avatar = await jimp.read(avatarUrl);
 
- 
+
     const avatarWidth = 300;   // larghezza avatar
     const avatarHeight = 300;  // altezza avatar
     const avatarX = (img.bitmap.width - avatarWidth) / 2;   // centrato orizzontalmente
