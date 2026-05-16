@@ -2,7 +2,14 @@ import jimp from 'jimp';
 
 let handler = async (m, { conn, text }) => {
   try {
-    let who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
+    let who;
+
+    if (text) {
+      let number = text.replace(/[^\d]/g, '');
+      who = number + '@s.whatsapp.net';
+    } else {
+      who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
+    }
 
     let avatarUrl;
     try {
