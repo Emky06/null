@@ -5,11 +5,11 @@ let handler = async (m, { conn, text, usedprefix, command }) => {
     const prefix = usedprefix || '.';
 
     if (!text) {
-        return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
-┃ Inserisci il testo per cercare un'immagine
+        return m.reply(`╭━━⊱「 ❌ *𝐄𝐑𝐑𝐎𝐑𝐄* 」
+┃ 𝐈𝐧𝐬𝐞𝐫𝐢𝐬𝐜𝐢 𝐢𝐥 𝐭𝐞𝐬𝐭𝐨 𝐩𝐞𝐫 𝐜𝐞𝐫𝐜𝐚𝐫𝐞 𝐮𝐧'𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞
 ┃
-┃ 📝 *Esempio:*
-┃ ${prefix + command} Ozuna
+┃ 📝 *𝐄𝐬𝐞𝐦𝐩𝐢𝐨:*
+┃ ${prefix + command} 𝐎𝐳𝐮𝐧𝐚
 ╰━━━━━━━━━━━━━━⊱`);
     }
 
@@ -23,11 +23,11 @@ let handler = async (m, { conn, text, usedprefix, command }) => {
 
         if (!vqd) {
             await m.react('❌');
-            return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
-┃ Nessuna immagine trovata per: *${text}*
+            return m.reply(`╭━━⊱「 ❌ *𝐍𝐄𝐒𝐒𝐔𝐍 𝐑𝐈𝐒𝐔𝐋𝐓𝐀𝐓𝐎* 」
+┃ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 𝐩𝐞𝐫: *${text}*
 ┃
-┃ 💡 *Suggerimento:*
-┃ Prova con termini di ricerca diversi
+┃ 💡 *𝐒𝐮𝐠𝐠𝐞𝐫𝐢𝐦𝐞𝐧𝐭𝐨:*
+┃ 𝐏𝐫𝐨𝐯𝐚 𝐜𝐨𝐧 𝐭𝐞𝐫𝐦𝐢𝐧𝐢 𝐝𝐢 𝐫𝐢𝐜𝐞𝐫𝐜𝐚 𝐝𝐢𝐯𝐞𝐫𝐬𝐢
 ╰━━━━━━━━━━━━━━⊱`);
         }
 
@@ -45,8 +45,8 @@ let handler = async (m, { conn, text, usedprefix, command }) => {
 
         if (!images.length) {
             await m.react('❌');
-            return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
-┃ Nessuna immagine trovata per: *${text}*
+            return m.reply(`╭━━⊱「 ❌ *𝐍𝐄𝐒𝐒𝐔𝐍 𝐑𝐈𝐒𝐔𝐋𝐓𝐀𝐓𝐎* 」
+┃ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐭𝐫𝐨𝐯𝐚𝐭𝐚 𝐩𝐞𝐫: *${text}*
 ╰━━━━━━━━━━━━━━⊱`);
         }
 
@@ -56,8 +56,8 @@ let handler = async (m, { conn, text, usedprefix, command }) => {
             return {
                 image: { url: img.image },
                 title: `${index + 1}. ${title}`,
-                body: `『 🔍 』 *Ricerca:* ${text}\n『 🌐 』 *𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 Image Search*`,
-                footer: `𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 Image Search`,
+                body: `『 🔍 』 *Ricerca:* ${text}`,
+                footer: `𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 𝐈𝐦𝐚𝐠𝐞 𝐒𝐞𝐚𝐫𝐜𝐡`,
                 buttons: [
                     {
                         name: 'cta_url',
@@ -79,7 +79,7 @@ let handler = async (m, { conn, text, usedprefix, command }) => {
 
         await conn.sendMessage(jid, {
             text: `『 🔍 』 𝐑𝐢𝐬𝐮𝐥𝐭𝐚𝐭𝐢 𝐭𝐫𝐨𝐯𝐚𝐭𝐢 𝐩𝐞𝐫: *${text}*`,
-            footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 Image Search',
+            footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 𝐈𝐦𝐚𝐠𝐞 𝐒𝐞𝐚𝐫𝐜𝐡',
             cards
         }, { quoted: m });
 
