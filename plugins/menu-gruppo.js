@@ -215,9 +215,10 @@ function generateMenuText(prefix) {
 ┃🧚 ${prefix}𝐰𝐢𝐧𝐱 @
 ┃✨ ${prefix}𝐛𝐞𝐥𝐥𝐨/𝐚 @  
 ┃⚫ ${prefix}𝐧𝐞𝐫𝐨/𝐚 @  
-┃⛓️ ${prefix}𝐣𝐚𝐢𝐥
+┃⛓️ ${prefix}𝐣𝐚𝐢𝐥 @
 ┃⛓️ ${prefix}𝐣𝐚𝐢𝐥𝐩𝐢𝐜
-┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝
+┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝 @
+┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝𝐩𝐢𝐜
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🍔 *𝐂𝐈𝐁𝐎*  
 ┃
