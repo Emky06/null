@@ -96,63 +96,66 @@ function generateMenuText(prefix) {
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📂 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑩𝒐𝒕*
 ┃
-┃ 🔧 .impostanome — Imposta nome bot
-┃ ♻️ .resettanome — Resetta nome bot
-┃ 🖼️ .setfp — Cambia immagine profilo
-┃ 🔗 .join — Entra nel gruppo con link
+┃🔧 .𝐢𝐦𝐩𝐨𝐬𝐭𝐚𝐧𝐨𝐦𝐞 — 𝐈𝐦𝐩𝐨𝐬𝐭𝐚 𝐧𝐨𝐦𝐞 𝐛𝐨𝐭
+┃♻️ .𝐫𝐞𝐬𝐞𝐭𝐭𝐚𝐧𝐨𝐦𝐞 — 𝐑𝐞𝐬𝐞𝐭𝐭𝐚 𝐧𝐨𝐦𝐞 𝐛𝐨𝐭
+┃🖼️ .𝐬𝐞𝐭𝐟𝐩 — 𝐂𝐚𝐦𝐛𝐢𝐚 𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐞 𝐩𝐫𝐨𝐟𝐢𝐥𝐨
+┃🔗 .𝐣𝐨𝐢𝐧 — 𝐄𝐧𝐭𝐫𝐚 𝐧𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐜𝐨𝐧 𝐥𝐢𝐧𝐤
+┃🚪 .𝐛𝐲𝐞𝐛𝐲𝐞 — 𝐈𝐥 𝐛𝐨𝐭 𝐞𝐬𝐜𝐞 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨
+┃⚙️ .𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨 — 𝐂𝐚𝐦𝐛𝐢𝐚 𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨 𝐩𝐞𝐫 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢
+┃⚙️ .𝐫𝐞𝐬𝐞𝐭𝐭𝐚𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨 — 𝐑𝐞𝐬𝐞𝐭𝐭𝐚 𝐩𝐫𝐞𝐟𝐢𝐬𝐬𝐨 𝐩𝐞𝐫 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🙎 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑼𝒕𝒆𝒏𝒕𝒊*
 ┃
-┃ ⛔ .banuser / .unbanuser — Blocca/sblocca utenti
-┃ 🚫 .blockuser / .unblockuser — Blocca/sblocca user
-┃ 📃 .blocklist — Lista utenti bloccati
-┃ 📃 .banlist — Lista utenti bannati
-┃ 📑 .setcategoria — Assegna categoria utente
-┃ 📑 .delcategoria — Rimuovi categoria utente
+┃⛔ .𝐛𝐚𝐧𝐮𝐬𝐞𝐫 — 𝐁𝐥𝐨𝐜𝐜𝐚 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐮𝐭𝐞𝐧𝐭𝐢
+┃✅ .𝐮𝐧𝐛𝐚𝐧𝐮𝐬𝐞𝐫 — 𝐒𝐛𝐥𝐨𝐜𝐜𝐚 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐮𝐭𝐞𝐧𝐭𝐢
+┃🚫 .𝐛𝐥𝐨𝐜𝐤𝐮𝐬𝐞𝐫 — 𝐁𝐥𝐨𝐜𝐜𝐚 𝐮𝐭𝐞𝐧𝐭𝐢
+┃✅ .𝐮𝐧𝐛𝐥𝐨𝐜𝐤𝐮𝐬𝐞𝐫 — 𝐒𝐛𝐥𝐨𝐜𝐜𝐚 𝐮𝐭𝐞𝐧𝐭𝐢
+┃📃 .𝐛𝐥𝐨𝐜𝐤𝐥𝐢𝐬𝐭 — 𝐋𝐢𝐬𝐭𝐚 𝐮𝐭𝐞𝐧𝐭𝐢 𝐛𝐥𝐨𝐜𝐜𝐚𝐭𝐢
+┃📃 .𝐛𝐚𝐧𝐥𝐢𝐬𝐭 — 𝐋𝐢𝐬𝐭𝐚 𝐮𝐭𝐞𝐧𝐭𝐢 𝐛𝐚𝐧𝐧𝐚𝐭𝐢
+┃📑 .𝐬𝐞𝐭𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 — 𝐀𝐬𝐬𝐞𝐠𝐧𝐚 𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐮𝐭𝐞𝐧𝐭𝐞
+┃📑 .𝐝𝐞𝐥𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐢 𝐜𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚 𝐮𝐭𝐞𝐧𝐭𝐞
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📊 *𝑪𝒐𝒏𝒕𝒓𝒐𝒍𝒍𝒐 𝑼𝒕𝒆𝒏𝒕𝒊*
 ┃
-┃ 📉 .azzera — Azzera messaggi utente
-┃ 📉 .azzeramoney — Azzera soldi utente
-┃ 📉 .removeallmoney — Reset soldi gruppo
-┃ 📉 .removeallmsg — Reset messaggi gruppo
-┃ 📉 .removeallblasph — Reset bestemmie gruppo
-┃ ➕ .aggiungi — Aggiunge messaggi
-┃ ➖ .rimuovi — Rimuove messaggi
-┃ ➕💶 .addmoney — Aggiunge soldi
-┃ ➖💶 .rmoney — Rimuove soldi
+┃📉 .𝐚𝐳𝐳𝐞𝐫𝐚 — 𝐀𝐳𝐳𝐞𝐫𝐚 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐮𝐭𝐞𝐧𝐭𝐞
+┃📉 .𝐚𝐳𝐳𝐞𝐫𝐚𝐦𝐨𝐧𝐞𝐲 — 𝐀𝐳𝐳𝐞𝐫𝐚 𝐬𝐨𝐥𝐝𝐢 𝐮𝐭𝐞𝐧𝐭𝐞
+┃📉 .𝐫𝐞𝐦𝐨𝐯𝐞𝐚𝐥𝐥𝐦𝐨𝐧𝐞𝐲 — 𝐑𝐞𝐬𝐞𝐭 𝐬𝐨𝐥𝐝𝐢 𝐠𝐫𝐮𝐩𝐩𝐨
+┃📉 .𝐫𝐞𝐦𝐨𝐯𝐞𝐚𝐥𝐥𝐦𝐬𝐠 — 𝐑𝐞𝐬𝐞𝐭 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢 𝐠𝐫𝐮𝐩𝐩𝐨
+┃📉 .𝐫𝐞𝐦𝐨𝐯𝐞𝐚𝐥𝐥𝐛𝐥𝐚𝐬𝐩𝐡 — 𝐑𝐞𝐬𝐞𝐭 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞 𝐠𝐫𝐮𝐩𝐩𝐨
+┃➕ .𝐚𝐠𝐠𝐢𝐮𝐧𝐠𝐢 — 𝐀𝐠𝐠𝐢𝐮𝐧𝐠𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢
+┃➖ .𝐫𝐢𝐦𝐮𝐨𝐯𝐢 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢
+┃➕💶 .𝐚𝐝𝐝𝐦𝐨𝐧𝐞𝐲 — 𝐀𝐠𝐠𝐢𝐮𝐧𝐠𝐞 𝐬𝐨𝐥𝐝𝐢
+┃➖💶 .𝐫𝐦𝐨𝐧𝐞𝐲 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐞 𝐬𝐨𝐥𝐝𝐢
+┃➕🤬 .𝐚𝐠𝐠𝐢𝐮𝐧𝐠𝐢𝐛 — 𝐀𝐠𝐠𝐢𝐮𝐧𝐠𝐞 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞
+┃➖😇 .𝐫𝐢𝐦𝐮𝐨𝐯𝐢𝐛 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐞 𝐛𝐞𝐬𝐭𝐞𝐦𝐦𝐢𝐞
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 🔒 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑴𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊*
+┃ 👮🏻‍♂️ *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑴𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊*
 ┃
-┃ 👮🏻‍♂️ .listgp — Lista gruppi/mod
-┃ 👮🏻‍♂️ .addmod / .delmod — Gestione moderatori
-┃ 👮🏻‍♂️ .delallmod — Rimuovi tutti i mod
-┃ 👮🏻‍♂️ .delmodglobal — Rimuovi mod globale
-┃ 👮🏻‍♂️ .delgp — Rimuovi gruppo + mod
+┃📋 .𝐥𝐢𝐬𝐭𝐠𝐩 — 𝐋𝐢𝐬𝐭𝐚 𝐠𝐫𝐮𝐩𝐩𝐢/𝐦𝐨𝐝
+┃➕ .𝐚𝐝𝐝𝐦𝐨𝐝 — 𝐀𝐠𝐠𝐢𝐮𝐧𝐠𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢
+┃➖ .𝐝𝐞𝐥𝐦𝐨𝐝 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢
+┃➖ .𝐝𝐞𝐥𝐚𝐥𝐥𝐦𝐨𝐝 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐢 𝐭𝐮𝐭𝐭𝐢 𝐢 𝐦𝐨𝐝
+┃👮🏻‍♂️ .𝐝𝐞𝐥𝐦𝐨𝐝𝐠𝐥𝐨𝐛𝐚𝐥 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐢 𝐦𝐨𝐝 𝐠𝐥𝐨𝐛𝐚𝐥𝐞
+┃👮🏻‍♂️ .𝐝𝐞𝐥𝐠𝐩 — 𝐑𝐢𝐦𝐮𝐨𝐯𝐢 𝐠𝐫𝐮𝐩𝐩𝐨 + 𝐦𝐨𝐝
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🛠️ *𝑺𝒕𝒓𝒖𝒎𝒆𝒏𝒕𝒊 𝑨𝒗𝒂𝒏𝒛𝒂𝒕𝒊*
 ┃
-┃ 🕒 .timer — Attiva timer solostaff
-┃ 🔴 .timeroff — Disattiva timer
-┃ 🚪 .byebye — Il bot esce dal gruppo
-┃ ⚙️ .prefisso / .resettaprefisso — Prefisso
-┃ 👑 .godmode — Auto-admin
+┃🕒 .𝐭𝐢𝐦𝐞𝐫 — 𝐀𝐭𝐭𝐢𝐯𝐚 𝐭𝐢𝐦𝐞𝐫 𝐬𝐨𝐥𝐨𝐬𝐭𝐚𝐟𝐟
+┃🔴 .𝐭𝐢𝐦𝐞𝐫𝐨𝐟𝐟 — 𝐃𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚 𝐭𝐢𝐦𝐞𝐫
+┃📢 .𝐛𝐢𝐠𝐭𝐚𝐠 — 𝐓𝐚𝐠 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐢
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📦 *𝑷𝒍𝒖𝒈𝒊𝒏 & 𝑭𝒊𝒍𝒆*
 ┃
-┃ 📥 .getplugin / .getfile — Scarica file
-┃ ✏️ .editplugin — Modifica plugin
-┃ 💾 .saveplugin — Salva plugin
-┃ 🗑️ .deleteplugin — Elimina plugin
+┃📥 .𝐠𝐩 — 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐟𝐢𝐥𝐞/𝐬𝐜𝐫𝐢𝐩𝐭 𝐝𝐢 𝐮𝐧 𝐩𝐥𝐮𝐠𝐢𝐧
+┃✏️ .𝐞𝐝𝐢𝐭𝐩𝐥𝐮𝐠𝐢𝐧 / .𝐞𝐩 — 𝐌𝐨𝐝𝐢𝐟𝐢𝐜𝐚 𝐩𝐥𝐮𝐠𝐢𝐧
+┃💾 .𝐬𝐚𝐯𝐞𝐩𝐥𝐮𝐠𝐢𝐧 / .𝐬𝐩 — 𝐒𝐚𝐥𝐯𝐚 𝐩𝐥𝐮𝐠𝐢𝐧
+┃🗑️ .𝐝𝐞𝐥𝐞𝐭𝐞𝐩𝐥𝐮𝐠𝐢𝐧 / .𝐝𝐩 — 𝐄𝐥𝐢𝐦𝐢𝐧𝐚 𝐩𝐥𝐮𝐠𝐢𝐧
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 👑 *𝑷𝒆𝒓𝒎𝒆𝒔𝒔𝒊 𝑶𝒘𝒏𝒆𝒓*
 ┃
-┃ 👥 .addowner / .delowner — Gestione owner
-┃ 🛡️ .tempadmin — Admin temporaneo
-┣━━━━━━━━━━━━━━━━━━━━
-┃ 🚀 *𝑬𝒙𝒕𝒓𝒂 𝑻𝒐𝒐𝒍𝒔*
-┃
-┃ 📢 .bigtag — Tag continuo utenti
+┃👥 .𝐚𝐝𝐝𝐨𝐰𝐧𝐞𝐫 / .𝐝𝐞𝐥𝐨𝐰𝐧𝐞𝐫 — 𝐆𝐞𝐬𝐭𝐢𝐨𝐧𝐞 𝐨𝐰𝐧𝐞𝐫
+┃🛡️ .𝐭𝐞𝐦𝐩𝐚𝐝𝐦𝐢𝐧 — 𝐀𝐝𝐦𝐢𝐧 𝐭𝐞𝐦𝐩𝐨𝐫𝐚𝐧𝐞𝐨
+┃👑 .𝐠𝐨𝐝𝐦𝐨𝐝𝐞 — 𝐀𝐮𝐭𝐨-𝐚𝐝𝐦𝐢𝐧
 ╰━━━━━━━━━━━━━━━━━━━╯
 *𝐁𝐲* ${nomebot}
 `.trim();
