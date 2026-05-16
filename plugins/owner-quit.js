@@ -1,11 +1,9 @@
+//Plugin fatto da Axtral_WiZaRd
 let handler = async (m, { conn, text }) => {
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   let linkRegex = /chat.whatsapp.com\/([0-9A-Za-z]{20,24})/i;
   let [_, code] = text.match(linkRegex) || [];
-
-  console.log('[QUIT] Link ricevuto:', text);
-  console.log('[QUIT] Codice estratto:', code);
 
   if (!code) throw `❌ Link non valido!`;
 
@@ -13,30 +11,17 @@ let handler = async (m, { conn, text }) => {
   await delay(3000);
 
   try {
-    console.log('[QUIT] Recupero info gruppo...');
-
     let inviteInfo = await conn.groupGetInviteInfo(code);
-    console.log('[QUIT] Invite info:', inviteInfo);
-
     let groupJid = inviteInfo.id || inviteInfo.jid;
-
-    console.log('[QUIT] Group JID:', groupJid);
 
     if (!groupJid) {
       throw new Error('Group JID non trovato');
     }
 
-    console.log('[QUIT] Sto uscendo dal gruppo...');
-
-    let leave = await conn.groupLeave(groupJid);
-
-    console.log('[QUIT] Risposta groupLeave:', leave);
-
-    m.reply('✅ Uscito dal gruppo.');
+    await conn.groupLeave(groupJid);
 
   } catch (e) {
-    console.error('[QUIT ERROR]', e);
-    throw `⚠️ Non riesco a uscire dal gruppo. Guarda la console.`;
+    throw `⚠️ Non riesco a uscire dal gruppo. Controlla il link o verifica che il bot sia dentro.`;
   }
 };
 
