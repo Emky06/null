@@ -1,9 +1,16 @@
 import axios from 'axios';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  console.log("🟡 [DEBUG] text:", text);
-  console.log("🟡 [DEBUG] googlekey:", global.googlekey);
-  console.log("🟡 [DEBUG] googleCX:", global.googleCX);
+  console.log("🟡 text:", text);
+  console.log("🟡 googlekey:", global.googlekey);
+  console.log("🟡 googleCX:", global.googleCX);
+
+  const GOOGLE_KEY = global.googlekey;
+  const GOOGLE_CX = global.googleCX;
+
+  console.log("🟢 GOOGLE_KEY:", GOOGLE_KEY);
+  console.log("🟢 GOOGLE_CX:", GOOGLE_CX);
+
   if (!text) {
     return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
 ┃ Inserisci il testo per cercare un'immagine
@@ -13,115 +20,69 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 ╰━━━━━━━━━━━━━━⊱`);
   }
 
-const GOOGLE_KEY = global.googlekey;
-const GOOGLE_CX = global.googleCX;
+  if (!GOOGLE_KEY || !GOOGLE_CX) {
+    return m.reply("❌ API Google non configurate");
+  }
+
   try {
     const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
+
+    console.log("🌐 apiUrl:", apiUrl);
+
     const response = await axios.get(apiUrl);
     const data = response.data;
+
+    console.log("📦 keys:", Object.keys(data || {}));
+    console.log("📦 items:", data?.items?.length);
 
     if (!data.items || data.items.length === 0) {
       await m.react('❌');
       return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
 ┃ Nessuna immagine trovata per: *${text}*
-┃
-┃ 💡 *Suggerimento:*
-┃ Prova con termini di ricerca diversi
 ╰━━━━━━━━━━━━━━⊱`);
     }
+
     const maxImages = Math.min(data.items.length, 10);
     const albumItems = [];
 
     for (let i = 0; i < maxImages; i++) {
       const item = data.items[i];
-      const imageUrl = item.link;
-      const imageTitle = item.title || `Immagine ${i + 1}`;
-      const contextLink = item.image?.contextLink || item.displayLink || imageUrl;
-      const shortTitle = imageTitle.length > 35 ?
-        imageTitle.substring(0, 35) + '...' : imageTitle;
 
       try {
-        const imageResponse = await axios.get(imageUrl, {
+        const imageResponse = await axios.get(item.link, {
           responseType: 'arraybuffer',
           headers: {
-            'User-Agent': 'Varebot/2.5 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0'
           }
         });
 
-        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
+        const caption = i === 0
+          ? `🔍 Ricerca: ${text}`
+          : `🌐 ${item.displayLink || item.link}`;
 
         albumItems.push({
           image: Buffer.from(imageResponse.data),
-          caption: caption
+          caption
         });
-      } catch (imageError) {
-        console.error('Errore nel caricamento dell\'immagine:', imageError);
-        let thumbnailUrl = item.image?.thumbnailLink || imageUrl;
-        if (thumbnailUrl.includes('encrypted-tbn') || thumbnailUrl.includes('s=')) {
-          thumbnailUrl = thumbnailUrl.replace(/s=\d+/, 's=1024');
-        }
-        try {
-          const thumbResponse = await axios.get(thumbnailUrl, {
-            responseType: 'arraybuffer',
-            headers: {
-              'User-Agent': 'Varebot/2.5 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-          });
-
-          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
-
-          albumItems.push({
-            image: Buffer.from(thumbResponse.data),
-            caption: caption
-          });
-        } catch (thumbError) {
-          console.error('Errore nel caricamento del thumbnail:', thumbError);
-        }
+      } catch (e) {
+        console.log("❌ image error:", e.message);
       }
     }
 
-    if (albumItems.length > 0) {
-      await conn.sendMessage(m.chat, {
-        album: albumItems
-      }, { quoted: m });
-    } else {
-      await m.reply('❌ Nessuna immagine valida trovata');
+    if (albumItems.length === 0) {
+      return m.reply("❌ Nessuna immagine valida trovata");
     }
+
+    await conn.sendMessage(m.chat, {
+      album: albumItems
+    }, { quoted: m });
 
     await m.react('✅');
 
   } catch (error) {
-    console.error('Errore durante la ricerca di immagini:', error);
+    console.log("🔥 ERROR:", error?.response?.data || error.message);
     await m.react('❌');
-    let errorMessage = `${global.errore}`;
-    
-    if (error.response) {
-      if (error.response.status === 403) {
-        errorMessage = `╭━━⊱「 ❌ *API ERROR* 」
-┃ Quota API esaurita o chiave non valida
-┃
-╰━━━━━━━━━━━━━━⊱`;
-      }
-    }
-    
-    return m.reply(errorMessage);
-  }
-};
-const handleCardButtons = async (m, { conn, text }) => {
-  if (text.startsWith('sendimg_')) {
-    const imageUrl = text.replace('sendimg_', '');
-    try {
-      await conn.sendMessage(m.chat, {
-        image: { url: imageUrl },
-        caption: '『 🖼️ 』 Ecco la tua immagine!'
-      }, { quoted: m });
-    } catch (e) {
-      console.error('Errore invio immagine:', e);
-      m.reply('❌ Errore nel caricare l\'immagine');
-    }
-  } else if (text.startsWith('newsearch_')) {
-    const searchTerm = text.replace('newsearch_', '');
-    m.reply(`🔄 Prova a cercare con termini diversi per "${searchTerm}" o usa il comando di nuovo con parole chiave più specifiche!`);
+    return m.reply("❌ Errore durante la ricerca immagini");
   }
 };
 
