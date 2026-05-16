@@ -1,8 +1,15 @@
 import axios from 'axios';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
+  console.log("🟡 text:", text);
+  console.log("🟡 googlekey:", global.googlekey);
+  console.log("🟡 googleCX:", global.googleCX);
+
   const GOOGLE_KEY = global.googlekey;
   const GOOGLE_CX = global.googleCX;
+
+  console.log("🟢 GOOGLE_KEY:", GOOGLE_KEY);
+  console.log("🟢 GOOGLE_CX:", GOOGLE_CX);
 
   if (!text) {
     return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
@@ -20,8 +27,13 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
     const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
 
+    console.log("🌐 apiUrl:", apiUrl);
+
     const response = await axios.get(apiUrl);
     const data = response.data;
+
+    console.log("📦 keys:", Object.keys(data || {}));
+    console.log("📦 items:", data?.items?.length);
 
     if (!data.items || data.items.length === 0) {
       await m.react('❌');
@@ -52,7 +64,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
           image: Buffer.from(imageResponse.data),
           caption
         });
-      } catch (e) {}
+      } catch (e) {
+        console.log("❌ image error:", e.message);
+      }
     }
 
     if (albumItems.length === 0) {
@@ -66,6 +80,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     await m.react('✅');
 
   } catch (error) {
+    console.log("🔥 ERROR:", error?.response?.data || error.message);
     await m.react('❌');
     return m.reply("❌ Errore durante la ricerca immagini");
   }
