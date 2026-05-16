@@ -92,21 +92,26 @@ export default handler;
 
 function generateMenuText(prefix) {
     return `
-╭━━〔 𝑴𝑬𝑵𝑼 𝑶𝑾𝑵𝑬𝑹 〕━━╮
+╭━━━〔 𝑴𝑬𝑵𝑼 𝑶𝑾𝑵𝑬𝑹 〕━━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📂 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑩𝒐𝒕*
+┃
 ┃ 🔧 .impostanome — Imposta nome bot
 ┃ ♻️ .resettanome — Resetta nome bot
 ┃ 🖼️ .setfp — Cambia immagine profilo
 ┃ 🔗 .join — Entra nel gruppo con link
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🙎 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑼𝒕𝒆𝒏𝒕𝒊*
+┃
 ┃ ⛔ .banuser / .unbanuser — Blocca/sblocca utenti
 ┃ 🚫 .blockuser / .unblockuser — Blocca/sblocca user
+┃ 📃 .blocklist — Lista utenti bloccati
+┃ 📃 .banlist — Lista utenti bannati
 ┃ 📑 .setcategoria — Assegna categoria utente
 ┃ 📑 .delcategoria — Rimuovi categoria utente
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📊 *𝑪𝒐𝒏𝒕𝒓𝒐𝒍𝒍𝒐 𝑼𝒕𝒆𝒏𝒕𝒊*
+┃
 ┃ 📉 .azzera — Azzera messaggi utente
 ┃ 📉 .azzeramoney — Azzera soldi utente
 ┃ 📉 .removeallmoney — Reset soldi gruppo
@@ -117,9 +122,8 @@ function generateMenuText(prefix) {
 ┃ ➕💶 .addmoney — Aggiunge soldi
 ┃ ➖💶 .rmoney — Rimuove soldi
 ┣━━━━━━━━━━━━━━━━━━━━
-┃ 🔒 *𝑺𝒊𝒄𝒖𝒓𝒆𝒛𝒛𝒂*
-┃ 📃 .blocklist — Lista utenti bloccati
-┃ 📃 .banlist — Lista utenti bannati
+┃ 🔒 *𝑮𝒆𝒔𝒕𝒊𝒐𝒏𝒆 𝑴𝒐𝒅𝒆𝒓𝒂𝒕𝒐𝒓𝒊*
+┃
 ┃ 👮🏻‍♂️ .listgp — Lista gruppi/mod
 ┃ 👮🏻‍♂️ .addmod / .delmod — Gestione moderatori
 ┃ 👮🏻‍♂️ .delallmod — Rimuovi tutti i mod
@@ -127,6 +131,7 @@ function generateMenuText(prefix) {
 ┃ 👮🏻‍♂️ .delgp — Rimuovi gruppo + mod
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🛠️ *𝑺𝒕𝒓𝒖𝒎𝒆𝒏𝒕𝒊 𝑨𝒗𝒂𝒏𝒛𝒂𝒕𝒊*
+┃
 ┃ 🕒 .timer — Attiva timer solostaff
 ┃ 🔴 .timeroff — Disattiva timer
 ┃ 🚪 .byebye — Il bot esce dal gruppo
@@ -134,16 +139,19 @@ function generateMenuText(prefix) {
 ┃ 👑 .godmode — Auto-admin
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 📦 *𝑷𝒍𝒖𝒈𝒊𝒏 & 𝑭𝒊𝒍𝒆*
+┃
 ┃ 📥 .getplugin / .getfile — Scarica file
 ┃ ✏️ .editplugin — Modifica plugin
 ┃ 💾 .saveplugin — Salva plugin
 ┃ 🗑️ .deleteplugin — Elimina plugin
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 👑 *𝑷𝒆𝒓𝒎𝒆𝒔𝒔𝒊 𝑶𝒘𝒏𝒆𝒓*
+┃
 ┃ 👥 .addowner / .delowner — Gestione owner
 ┃ 🛡️ .tempadmin — Admin temporaneo
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🚀 *𝑬𝒙𝒕𝒓𝒂 𝑻𝒐𝒐𝒍𝒔*
+┃
 ┃ 📢 .bigtag — Tag continuo utenti
 ╰━━━━━━━━━━━━━━━━━━━╯
 *𝐁𝐲* ${nomebot}
