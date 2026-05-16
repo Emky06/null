@@ -11,31 +11,29 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   try {
-    const url = `https://duckduckgo.com/?q=${encodeURIComponent(text)}&iax=images&ia=images`;
+    const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(text)}&iax=images&ia=images`;
 
-    const res = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0'
-      }
+    const page = await axios.get(searchUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
     });
 
-    const match = res.data.match(/vqd=([\d-]+)/);
-    if (!match) {
+    const vqdMatch = page.data.match(/vqd=([\d-]+)/);
+    if (!vqdMatch) {
       return m.reply("❌ Nessun risultato trovato");
     }
 
-    const vqd = match[1];
+    const vqd = vqdMatch[1];
 
-    const api = `https://duckduckgo.com/i.js?q=${encodeURIComponent(text)}&vqd=${vqd}&o=json&f=,,,&p=1&s=0`;
+    const apiUrl = `https://duckduckgo.com/i.js?q=${encodeURIComponent(text)}&vqd=${vqd}&o=json&f=,,,&p=1&s=0`;
 
-    const json = await axios.get(api, {
+    const res = await axios.get(apiUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0',
         'Referer': 'https://duckduckgo.com/'
       }
     });
 
-    const results = json.data.results;
+    const results = res.data.results;
 
     if (!results || results.length === 0) {
       await m.react('❌');
@@ -44,25 +42,40 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 ╰━━━━━━━━━━━━━━⊱`);
     }
 
-    const maxImages = Math.min(results.length, 10);
+    const maxImages = Math.min(results.length, 5); // 👈 SOLO 5 CARDS
     const albumItems = [];
 
     for (let i = 0; i < maxImages; i++) {
-      const img = results[i];
+      const item = results[i];
 
-      const caption = i === 0
-        ? `🔍 Ricerca: ${text}\n> \`DuckDuckGo\``
-        : `🌐 Fonte: DuckDuckGo`;
+      try {
+        const imageRes = await axios.get(item.image, {
+          responseType: 'arraybuffer',
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
 
-      albumItems.push({
-        image: { url: img.image },
-        caption
-      });
+        const caption =
+          i === 0
+            ? `『 🔍 』 Ricerca: ${text}\n> \`DuckDuckGo\``
+            : `『 🌐 』 Fonte: DuckDuckGo`;
+
+        albumItems.push({
+          image: Buffer.from(imageRes.data),
+          caption
+        });
+
+      } catch (e) {
+        console.log("Errore immagine:", e.message);
+      }
     }
 
-    await conn.sendMessage(m.chat, {
-      album: albumItems
-    }, { quoted: m });
+    if (albumItems.length > 0) {
+      await conn.sendMessage(m.chat, {
+        album: albumItems
+      }, { quoted: m });
+    } else {
+      await m.reply("❌ Nessuna immagine valida trovata");
+    }
 
     await m.react('✅');
 
