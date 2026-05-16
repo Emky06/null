@@ -11,61 +11,88 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   try {
-    const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(text)}&iax=images&ia=images`;
-
-    const page = await axios.get(searchUrl, {
+    const page = await axios.get(`https://duckduckgo.com/?q=${encodeURIComponent(text)}&iax=images&ia=images`, {
       headers: { 'User-Agent': 'Mozilla/5.0' }
     });
 
-    const vqdMatch = page.data.match(/vqd=([\d-]+)/);
-    if (!vqdMatch) {
-      return m.reply("❌ Nessun risultato trovato");
+    const vqd = page.data.match(/vqd=([\d-]+)/)?.[1];
+
+    if (!vqd) {
+      await m.react('❌');
+      return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
+┃ Nessuna immagine trovata per: ${text}
+┃
+┃ 💡 Suggerimento:
+┃ Prova con termini di ricerca diversi
+╰━━━━━━━━━━━━━━⊱`);
     }
 
-    const vqd = vqdMatch[1];
-
-    const apiUrl = `https://duckduckgo.com/i.js?q=${encodeURIComponent(text)}&vqd=${vqd}&o=json&f=,,,&p=1&s=0`;
-
-    const res = await axios.get(apiUrl, {
+    const res = await axios.get(`https://duckduckgo.com/i.js?q=${encodeURIComponent(text)}&vqd=${vqd}&o=json&f=,,,&p=1&s=0`, {
       headers: {
         'User-Agent': 'Mozilla/5.0',
         'Referer': 'https://duckduckgo.com/'
       }
     });
 
-    const results = res.data.results;
+    const data = res.data.results;
 
-    if (!results || results.length === 0) {
-      await m.react('❌');
-      return m.reply(`╭━━⊱「 ❌ *NESSUN RISULTATO* 」
-┃ Nessuna immagine trovata per: *${text}*
-╰━━━━━━━━━━━━━━⊱`);
-    }
-
-    const maxImages = Math.min(results.length, 5); // 👈 SOLO 5 CARDS
+    const maxImages = Math.min(data.length, 10);
     const albumItems = [];
 
     for (let i = 0; i < maxImages; i++) {
-      const item = results[i];
+      const item = data[i];
+      const imageUrl = item.image;
+      const contextLink = item.source || item.image;
+      const imageTitle = item.title || `Immagine ${i + 1}`;
+      const shortTitle = imageTitle.length > 35
+        ? imageTitle.substring(0, 35) + '...'
+        : imageTitle;
 
       try {
-        const imageRes = await axios.get(item.image, {
+        const imageResponse = await axios.get(imageUrl, {
           responseType: 'arraybuffer',
-          headers: { 'User-Agent': 'Mozilla/5.0' }
+          headers: {
+            'User-Agent': 'Mozilla/5.0'
+          }
         });
 
-        const caption =
-          i === 0
-            ? `『 🔍 』 Ricerca: ${text}\n> \`DuckDuckGo\``
-            : `『 🌐 』 Fonte: DuckDuckGo`;
+        const caption = i === 0
+          ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 image search\``
+          : `『 🌐 』 Sito Origine: ${contextLink}`;
 
         albumItems.push({
-          image: Buffer.from(imageRes.data),
+          image: Buffer.from(imageResponse.data),
           caption
         });
 
-      } catch (e) {
-        console.log("Errore immagine:", e.message);
+      } catch (imageError) {
+        console.error('Errore immagine:', imageError);
+
+        let thumbnailUrl = item.thumbnail || imageUrl;
+        if (thumbnailUrl.includes('encrypted-tbn') || thumbnailUrl.includes('s=')) {
+          thumbnailUrl = thumbnailUrl.replace(/s=\d+/, 's=1024');
+        }
+
+        try {
+          const thumbResponse = await axios.get(thumbnailUrl, {
+            responseType: 'arraybuffer',
+            headers: {
+              'User-Agent': 'Mozilla/5.0'
+            }
+          });
+
+          const caption = i === 0
+            ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕 image search\``
+            : `『 🌐 』 Sito Origine: ${contextLink}`;
+
+          albumItems.push({
+            image: Buffer.from(thumbResponse.data),
+            caption
+          });
+
+        } catch (thumbError) {
+          console.error('Errore thumbnail:', thumbError);
+        }
       }
     }
 
@@ -74,15 +101,17 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         album: albumItems
       }, { quoted: m });
     } else {
-      await m.reply("❌ Nessuna immagine valida trovata");
+      await m.reply('❌ Nessuna immagine valida trovata');
     }
 
     await m.react('✅');
 
   } catch (error) {
-    console.log(error);
+    console.error('Errore DuckDuckGo:', error);
     await m.react('❌');
-    return m.reply("❌ Errore durante la ricerca immagini");
+    return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
+┃ Errore durante la ricerca immagini
+╰━━━━━━━━━━━━━━⊱`);
   }
 };
 
