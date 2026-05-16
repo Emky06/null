@@ -11,7 +11,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   try {
-    const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${global.APIs.google}&cx=${global.APIs.googleCX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
+    const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${global.googlekey}&cx=${global.googleCX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
     const response = await axios.get(apiUrl);
     const data = response.data;
 
