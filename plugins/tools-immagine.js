@@ -10,8 +10,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 ╰━━━━━━━━━━━━━━⊱`);
   }
 
+const GOOGLE_KEY = global.googlekey;
+const GOOGLE_CX = global.googleCX;
   try {
-    const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${global.googlekey}&cx=${global.googleCX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
+    const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(text)}&searchType=image&num=10&lr=lang_it`;
     const response = await axios.get(apiUrl);
     const data = response.data;
 
