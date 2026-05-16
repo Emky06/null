@@ -57,6 +57,6 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = /^(wanted)$/i;
+handler.command = /^(wantedpic)$/i;
 
 export default handler;
