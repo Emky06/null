@@ -97,7 +97,7 @@ export default handler;
 
 function generateMenuText(prefix) {
     return `
-╭━━━〔 🛡️ 𝑴𝑬𝑵𝑼 𝑨𝑫𝑴𝑰𝑵 🛡️ 〕━━━╮
+╭━━━〔 𝑴𝑬𝑵𝑼 𝑨𝑫𝑴𝑰𝑵 〕━━━╮
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃ 🎯 *𝑪𝒐𝒎𝒂𝒏𝒅𝒊 𝑴𝒐𝒅𝒆𝒓𝒂𝒛𝒊𝒐𝒏𝒆*
 ┃
