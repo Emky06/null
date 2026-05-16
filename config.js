@@ -6,8 +6,6 @@ import { fileURLToPath } from 'url'
 global.botnumber = ""
 global.confirmCode = ""
 global.browserless = "2UUj5Hx30kQHUHZ661a9116c0763739fd8b80d2f1d1367ee8"
-global.googlekey = "AIzaSyDp0_0MT7ij2KrT6-KRq5tvlxss5MivFbQ"
-global.googleCX = "5021f5ef2ce92434a"
 
 global.owner = [
     ['17577575541', 'Owner', true],
