@@ -99,6 +99,7 @@ function generateModMenuText(prefix) {
 ┃ 📝 ${prefix}𝐦𝐮𝐭𝐚𝐭𝐢 — Lista utenti mutati
 ┃ 📝 ${prefix}𝐥𝐢𝐬𝐭𝐚𝐰𝐚𝐫𝐧 — Lista utenti con warn
 ┃ 🖼️ ${prefix}𝐟𝐨𝐭𝐨 — Prendi foto profilo
+┃ 📷 ${prefix}𝐟𝐩 — Foto utente esterno
 ┃ 👥 ${prefix}𝐭𝐨𝐭𝐚𝐠 — Tagga tutti gli utenti
 ┃ ⏱️ ${prefix}𝐜𝐨𝐮𝐧𝐭𝐝𝐨𝐰𝐧 — Tag con timer
 ┃ ⚠️ ${prefix}𝐚𝐥𝐞𝐫𝐭/𝐫𝐞𝐯𝐨𝐤𝐞 — Aggiungi/rimuovi warn
