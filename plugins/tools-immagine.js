@@ -6,7 +6,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 ┃ Inserisci il testo per cercare un'immagine
 ┃
 ┃ 📝 *Esempio:*
-┃ ${usedPrefix + command} conad city
+┃ ${usedPrefix + command} Ozuna
 ╰━━━━━━━━━━━━━━⊱`);
   }
 
@@ -43,7 +43,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
           }
         });
 
-        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
+        const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
 
         albumItems.push({
           image: Buffer.from(imageResponse.data),
@@ -63,7 +63,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
             }
           });
 
-          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`vare ✧ bot\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
+          const caption = i === 0 ? `『 🔍 』 Ricerca: ${text}\n> \`𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕\`` : `『 🌐 』 Sito Origine: ${contextLink}`;
 
           albumItems.push({
             image: Buffer.from(thumbResponse.data),
