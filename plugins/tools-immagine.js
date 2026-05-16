@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
+  console.log("🟡 [DEBUG] text:", text);
+  console.log("🟡 [DEBUG] googlekey:", global.googlekey);
+  console.log("🟡 [DEBUG] googleCX:", global.googleCX);
   if (!text) {
     return m.reply(`╭━━⊱「 ❌ *ERRORE* 」
 ┃ Inserisci il testo per cercare un'immagine
