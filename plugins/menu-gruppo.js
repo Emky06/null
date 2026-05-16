@@ -145,7 +145,8 @@ function generateMenuText(prefix) {
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐭𝐢𝐤𝐭𝐨𝐤
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐢𝐠
 ┃ⓘ   ${prefix}𝐢𝐧𝐟𝐨  
-┃🌦️ ${prefix}𝐦𝐞𝐭𝐞𝐨 (𝐜𝐢𝐭𝐭𝐚̀)  
+┃🌦️ ${prefix}𝐦𝐞𝐭𝐞𝐨 (𝐜𝐢𝐭𝐭𝐚̀)
+┃🔍 ${prefix}𝐜𝐢 (𝐜𝐞𝐫𝐜𝐚𝐢𝐦𝐦𝐚𝐠𝐢𝐧𝐢)
 ┃🎥 ${prefix}𝐭𝐨𝐯𝐢𝐝𝐞𝐨  
 ┃🖼️ ${prefix}𝐭𝐨𝐠𝐢𝐟  
 ┃📷 ${prefix}𝐭𝐨𝐢𝐦𝐠
