@@ -626,9 +626,24 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
 
             case 'leaderboard': {
                 const groupMembers = await getGroupMembers(conn, m.chat);
-                const validJids = Object.keys(db).filter(jid => groupMembers.includes(jid));
-                
-                if (validJids.length < 2) return m.reply(`❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}`);
+
+const seenLastFmUsers = new Set();
+
+const validJids = Object.keys(db).filter(jid => {
+    if (!groupMembers.includes(jid)) return false;
+
+    const lfUser = db[jid];
+    if (!lfUser || seenLastFmUsers.has(lfUser)) return false;
+
+    seenLastFmUsers.add(lfUser);
+    return true;
+});
+
+if (validJids.length < 2) {
+    return m.reply(
+        `❌ Non ci sono abbastanza utenti registrati in questo gruppo. Trovati: ${validJids.length}`
+    );
+}
 
                 await m.reply("📊 Sto calcolando la classifica del gruppo... ci vorrà qualche secondo!");
 
