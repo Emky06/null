@@ -128,19 +128,43 @@ function generateMenuText(prefix) {
 ┃📜 ${prefix}𝐥𝐢𝐬𝐭𝐚𝐦𝐢𝐜𝐢  
 ┃🦊 ${prefix}𝐫𝐮𝐛𝐚  
 ┣━━━━━━━━━━━━━━━━━━━━
-┃🎵 *𝐅𝐔𝐍𝐙𝐈𝐎𝐍𝐈 𝐕𝐀𝐑𝐈𝐄*  
+┃🎵 *𝐌𝐔𝐒𝐈𝐂𝐀*
+┃
+┃🎧 ${prefix}𝐜𝐮𝐫  
+┃🎧 ${prefix}𝐰𝐡𝐨𝐬𝐩𝐥𝐚𝐲𝐢𝐧𝐠
+┃📃 ${prefix}𝐥𝐲𝐫𝐢𝐜𝐬
+┃🎶 ${prefix}𝐩𝐥𝐚𝐲  
+┃🎶 ${prefix}𝐲𝐭𝐬𝐞𝐚𝐫𝐜𝐡
+┃👑 ${prefix}𝐜𝐫𝐨𝐰𝐧
+┃🌄 ${prefix}𝐚𝐮𝐫𝐚
+┃⚔️ ${prefix}𝐯𝐬
+┃🖼️ ${prefix}𝐦𝐨𝐬𝐚𝐢𝐜
+┃🎯 ${prefix}𝐠𝐨𝐚𝐥
+┃👥 ${prefix}𝐜𝐨𝐦𝐮𝐧𝐢
+┃🧾 ${prefix}𝐫𝐞𝐜𝐞𝐢𝐩𝐭
+┃🔙 ${prefix}𝐭𝐡𝐫𝐨𝐰𝐛𝐚𝐜𝐤
+┃📊 ${prefix}𝐥𝐞𝐚𝐝𝐞𝐫𝐛𝐨𝐚𝐫𝐝
+┃📶 ${prefix}𝐦𝐚𝐠𝐚𝐳𝐢𝐧𝐞
+┃🎟️ ${prefix}𝐭𝐢𝐜𝐤𝐞𝐭
+┃🫆 ${prefix}𝐢𝐝𝐞𝐧𝐭𝐢𝐭𝐲
+┃🗺️ ${prefix}𝐚𝐫𝐭𝐢𝐬𝐭𝐦𝐚𝐩
+┃🪩 ${prefix}𝐟𝐞𝐬𝐭𝐢𝐯𝐚𝐥
+┃💰 ${prefix}𝐫𝐨𝐚𝐬𝐭
+┃👥 ${prefix}𝐬𝐨𝐮𝐥𝐦𝐚𝐭𝐞
+┃💽 ${prefix}𝐯𝐢𝐧𝐲𝐥
+┃📆 ${prefix}𝐰𝐫𝐚𝐩𝐩𝐞𝐝
+┃🔝 ${prefix}𝐭𝐨𝐩𝐚𝐫𝐭𝐢𝐬𝐭
+┃🔝 ${prefix}𝐭𝐨𝐩𝐚𝐫𝐭𝐢𝐬𝐭𝐬
+┣━━━━━━━━━━━━━━━━━━━━
+┃⚒️ *𝐅𝐔𝐍𝐙𝐈𝐎𝐍𝐈 𝐕𝐀𝐑𝐈𝐄*  
 ┃
 ┃🛡️ ${prefix}𝐚𝐝𝐦𝐢𝐧𝐬
 ┃👮🏻‍♂️ ${prefix}𝐦𝐨𝐝𝐬
 ┃👥 ${prefix}𝐬𝐭𝐚𝐟𝐟
-┃🎧 ${prefix}𝐚𝐮𝐝𝐢𝐨
-┃🎧 ${prefix}𝐜𝐮𝐫  
+┃🔈 ${prefix}𝐚𝐮𝐝𝐢𝐨
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
 ┃⏩ ${prefix}𝐬𝐩𝐞𝐞𝐝𝐯𝐢𝐝𝐞𝐨
-┃📃 ${prefix}𝐥𝐲𝐫𝐢𝐜𝐬
-┃🎶 ${prefix}𝐩𝐥𝐚𝐲  
-┃🎶 ${prefix}𝐲𝐭𝐬𝐞𝐚𝐫𝐜𝐡
 ┃🔈 ${prefix}𝐭𝐭𝐬
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐭𝐢𝐤𝐭𝐨𝐤
 ┃🎥 ${prefix}𝐝𝐥𝐝𝐢𝐠
