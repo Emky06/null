@@ -1,5 +1,4 @@
 // Plugin fatto da Axtral_WiZaRd
-
 const handler = async (message, { conn, usedPrefix }) => {
     const menuText = generateMenuText(usedPrefix);
 
