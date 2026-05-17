@@ -19,7 +19,6 @@ const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function (
 global.groupSpam = global.groupSpam || {}
 
 export async function handler(chatUpdate) {
-    this.msgqueque = this.msgqueque || []
     if (!chatUpdate)
         return
     this.pushMessage(chatUpdate.messages).catch(console.error)
@@ -136,6 +135,23 @@ chat.rules = ''
         } catch (e) {
             console.error(e)
         }
+ 
+          // INIZIO BLOCCO MUTA
+        if (global.db.data?.users?.[m.sender]?.muto) {
+            if (m.isGroup) {
+                await this.sendMessage(m.chat, {
+                    delete: {
+                        remoteJid: m.chat,
+                        fromMe: false,
+                        id: m.key.id,
+                        participant: m.key.participant || m.sender
+                    }
+                }).catch(e => console.error("Errore cancellazione muto:", e))
+            }
+            return
+        }
+        // FINE BLOCCO MUTA
+
         if (opts['nyimak'])
             return
         if (opts['pconly'] && m.chat.endsWith('g.us'))
@@ -151,16 +167,6 @@ chat.rules = ''
         const isOwner = isROwner || m.fromMe
         const isMods = isOwner || global.mods.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
         const userId = m.sender.split`@`[0];
-
-        if (opts['queque'] && m.text && !(isMods || isPrems)) {
-            let queque = this.msgqueque, time = 1000 * 5
-            const previousID = queque[queque.length - 1]
-            queque.push(m.id || m.key.id)
-            setInterval(async function () {
-                if (queque.indexOf(previousID) === -1) clearInterval(this)
-                await delay(time)
-            }, time)
-        }
 
         if (m.isBaileys)
             return
@@ -476,25 +482,13 @@ if (
     } catch (e) {
         console.error(e)
     } finally {
-        if (opts['queque'] && m.text) {
-            const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
-            if (quequeIndex !== -1)
-                this.msgqueque.splice(quequeIndex, 1)
-        }
+        
         // conn.sendPresenceUpdate('composing', m.chat) 
         //console.log(global.db.data.users[m.sender])
         let chat, user, stats = global.db.data.stats
         if (m) { let utente = global.db.data.users[m.sender]
 if (m.isCommand) {
 utente.command += 1
-}
-if (utente.muto == true) {
-let bang = m.key.id
-let cancellazzione = m.key.participant
-await conn.sendMessage(m.chat, {
-delete: {
-remoteJid: m.chat, fromMe: false, id: bang, participant: cancellazzione
-}})
 }
             if (m.sender && (user = global.db.data.users[m.sender]) && (chat = global.db.data.chats[m.chat])) {
                 user.exp += m.exp
