@@ -24,7 +24,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     };
 
     const lines = Object.entries(funzioni).map(([key, name]) => {
-        const stato = chatData[key];
+        const stato = chatData?.[key];
         return `┃ ${stato ? '🟢' : '🔴'} » ${name}`;
     });
 
@@ -42,86 +42,22 @@ ${lines.join('\n')}
 ┃${usedPrefix}𝐝𝐢𝐬𝐚𝐛𝐢𝐥𝐢𝐭𝐚/𝟎 <𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐞>
 ╰━━━━━━━━━━━━━━━━━━━╯`.trim();
 
-    const msgID = m.id || m.key?.id;
-    let device = 'Dispositivo sconosciuto 🕵️‍♂️';
-
-    if (!msgID) {
-        device = '⚠️ Impossibile rilevare il dispositivo';
-    } else if (/^[a-zA-Z]+-[a-fA-F0-9]+$/.test(msgID)) {
-        device = '🤖 Messaggio da bot';
-    } else if (msgID.startsWith('false_') || msgID.startsWith('true_')) {
-        device = '💻 WhatsApp Web';
-    } else if (msgID.startsWith('3EB0') && /^[A-Z0-9]+$/.test(msgID)) {
-        device = '💻 WhatsApp Web o bot';
-    } else if (msgID.includes(':')) {
-        device = '🖥️ WhatsApp Desktop';
-    } else if (/^[A-F0-9]{32}$/i.test(msgID)) {
-        device = '📱 Android';
-    } else if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(msgID)) {
-        device = '🍏 iOS';
-    } else if (/^[A-Z0-9]{20,25}$/i.test(msgID) && !msgID.startsWith('3EB0')) {
-        device = '🍏 iOS';
-    } else if (msgID.startsWith('3EB0')) {
-        device = '🤖 Android (vecchio schema)';
-    } else {
-        device = 'Dispositivo sconosciuto 🕵️‍♂️';
-        console.log('[ANALISI] Nuovo ID non riconosciuto:', msgID);
-    }
-
-
-    if (device.includes('iOS')) {
-        await conn.sendMessage(
-            m.chat,
-            {
-                text: menuText,
-                footer: '𝐒𝐜𝐞𝐠𝐥𝐢 𝐮𝐧 𝐦𝐞𝐧𝐮̀:',
-                buttons: [
-                    { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 𝐌𝐞𝐧𝐮̀ 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐚𝐥𝐞" }, type: 1 },
-                    { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧" }, type: 1 },
-                    { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝" }, type: 1 },
-                    { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫" }, type: 1 },
-                    { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨" }, type: 1 },
-                    { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢" }, type: 1 },
-                ]
-            },
-            { quoted: m }
-        );
-    } else if (device.includes('Android') || device.includes('Web')) {
-        await conn.sendMessage(
-            m.chat,
-            {
-                text: menuText,
-                interactiveButtons: [
-                    {
-                        name: 'single_select',
-                        buttonParamsJson: JSON.stringify({
-                            title: '📝 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧 𝐦𝐞𝐧𝐮̀',
-                            sections: [
-                                {
-                                    title: '𝐌𝐞𝐧𝐮̀',
-                                    rows: [
-                                        { title: '🏠 𝐌𝐞𝐧𝐮̀ 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐚𝐥𝐞', description: 'Torna al menu principale', id: `${usedPrefix}menu` },
-                                        { title: '🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧', description: 'Comandi admin', id: `${usedPrefix}admin` },
-                                        { title: '👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝', description: 'Comandi moderatori', id: `${usedPrefix}mod` },
-                                        { title: '🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫', description: 'Comandi proprietario', id: `${usedPrefix}owner` },
-                                        { title: '👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨', description: 'Comandi membri', id: `${usedPrefix}gruppo` },
-                                        { title: '🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢', description: 'Comandi per giochi e intrattenimento', id: `${usedPrefix}giochi` }
-                                    ]
-                                }
-                            ]
-                        })
-                    }
-                ]
-            },
-            { quoted: m }
-        );
-    } else {
-        await conn.sendMessage(
-            m.chat,
-            { text: menuText },
-            { quoted: m }
-        );
-    }
+    await conn.sendMessage(
+        m.chat,
+        {
+            text: menuText,
+            footer: '𝐒𝐜𝐞𝐠𝐥𝐢 𝐮𝐧 𝐦𝐞𝐧𝐮̀:',
+            buttons: [
+                { buttonId: `${usedPrefix}menu`, buttonText: { displayText: "🏠 𝐌𝐞𝐧𝐮̀ 𝐏𝐫𝐢𝐧𝐜𝐢𝐩𝐚𝐥𝐞" }, type: 1 },
+                { buttonId: `${usedPrefix}admin`, buttonText: { displayText: "🛡️ 𝐌𝐞𝐧𝐮̀ 𝐀𝐝𝐦𝐢𝐧" }, type: 1 },
+                { buttonId: `${usedPrefix}mod`, buttonText: { displayText: "👮🏻‍♂️ 𝐌𝐞𝐧𝐮̀ 𝐌𝐨𝐝" }, type: 1 },
+                { buttonId: `${usedPrefix}owner`, buttonText: { displayText: "🔱 𝐌𝐞𝐧𝐮̀ 𝐎𝐰𝐧𝐞𝐫" }, type: 1 },
+                { buttonId: `${usedPrefix}gruppo`, buttonText: { displayText: "👥 𝐌𝐞𝐧𝐮̀ 𝐆𝐫𝐮𝐩𝐩𝐨" }, type: 1 },
+                { buttonId: `${usedPrefix}giochi`, buttonText: { displayText: "🎮 𝐌𝐞𝐧𝐮̀ 𝐆𝐢𝐨𝐜𝐡𝐢" }, type: 1 },
+            ]
+        },
+        { quoted: m }
+    );
 };
 
 handler.help = ["funzioni"];
