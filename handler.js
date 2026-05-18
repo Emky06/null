@@ -170,7 +170,6 @@ chat.rules = ''
 
         if (m.isBaileys)
             return
-        m.exp += Math.ceil(Math.random() * 10)
 
         let usedPrefix
         let _user = global.db.data && global.db.data.users && global.db.data.users[m.sender]
@@ -406,19 +405,9 @@ if (
         return
     }
 }
-                let xp = 'exp' in plugin ? parseInt(plugin.exp) : 17 // XP Earning per command
-                if (xp > 2000) 
-                     m.reply('Exp limit') // Hehehe 
-                 else                
-                 if (plugin.money && global.db.data.users[m.sender].money < plugin.money * 1) { 
-                     fail('senzasoldi', m, this)
-                    continue   
-                 } 
-                    m.exp += xp
+                
 
-                if (plugin.level > _user.level) {
-                    this.reply(m.chat, `livello troppo basso`, m)
-                    continue // If the level has not been reached
+                
                 }
                 let extra = {
                     match,
@@ -445,9 +434,6 @@ if (
                 }
                 try {
                     await plugin.call(this, m, extra)
-                    if (!isPrems)
-                        m.limit = m.limit || plugin.limit || false
-                        m.money = m.money || plugin.money || false 
                 } catch (e) {
                     // Error occured
                     m.error = e
@@ -491,9 +477,6 @@ if (m.isCommand) {
 utente.command += 1
 }
             if (m.sender && (user = global.db.data.users[m.sender]) && (chat = global.db.data.chats[m.chat])) {
-                user.exp += m.exp
-                user.limit -= m.limit * 1
-                user.money -= m.money * 1 
                 user.messaggi +=1
                 chat.messaggi +=1
             }
