@@ -133,22 +133,6 @@ chat.rules = ''
         } catch (e) {
             console.error(e)
         }
- 
-          // INIZIO BLOCCO MUTA
-        if (global.db.data?.users?.[m.sender]?.muto) {
-            if (m.isGroup) {
-                await this.sendMessage(m.chat, {
-                    delete: {
-                        remoteJid: m.chat,
-                        fromMe: false,
-                        id: m.key.id,
-                        participant: m.key.participant || m.sender
-                    }
-                }).catch(e => console.error("Errore cancellazione muto:", e))
-            }
-            return
-        }
-        // FINE BLOCCO MUTA
 
         if (opts['nyimak'])
             return
@@ -275,6 +259,23 @@ chat.rules = ''
                 }))
                     continue
             }
+
+          // INIZIO BLOCCO MUTA
+        if (global.db.data?.users?.[m.sender]?.muto) {
+            if (m.isGroup) {
+                await this.sendMessage(m.chat, {
+                    delete: {
+                        remoteJid: m.chat,
+                        fromMe: false,
+                        id: m.key.id,
+                        participant: m.key.participant || m.sender
+                    }
+                }).catch(e => console.error("Errore cancellazione muto:", e))
+            }
+            return
+        }
+        // FINE BLOCCO MUTA
+
             if (typeof plugin !== 'function')
                 continue
  
