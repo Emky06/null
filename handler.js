@@ -227,7 +227,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
                 }
             }
         }
-
+// INIZIO CONTROLLO MUTATI
         if (global.db.data?.users?.[m.sender]?.muto) {
             if (m.isGroup) {
                 await this.sendMessage(m.chat, {
@@ -241,7 +241,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
             }
             return
         }
-
+// FINE CONTROLLO MUTATI
         for (let name in global.plugins) {
             let plugin = global.plugins[name]
             if (!plugin || plugin.disabled) continue
