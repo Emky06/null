@@ -97,8 +97,7 @@ if (!isNumber(user.regTime)) user.regTime = -1
               if (!isNumber(chat.messaggi)) chat.messaggi = 0
               if (!('name' in chat)) chat.name = m.name
               if (!('name' in chat)) chat.name = this.getName(m.chat)
-              if (!('rules' in chat))
-chat.rules = ''
+              if (!('rules' in chat)) chat.rules = ''
           } else
               global.db.data.chats[m.chat] = {
                   name: this.getName(m.chat),
@@ -275,8 +274,8 @@ chat.rules = ''
             if (typeof plugin !== 'function') continue
  
             if (!m.isGroup && global.db.data.settings[this.user.jid]?.antiprivato && !isOwner && !isROwner) {
-    return;
-}
+                return;
+            }
 
             if ((usedPrefix = (match[0] || '')[0])) {
                 let noPrefix = m.text.replace(usedPrefix, '')
@@ -388,7 +387,7 @@ if (
     if (groupData.count > 3) {
         groupData.isSuspended = true
         await this.sendMessage(m.chat, {
-            text: '> ⚠ 𝐀𝐧𝐭𝐢-𝐬𝐩𝐚𝐦 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 ⚠\n\n𝐑𝐢λ𝐞𝐯𝐚𝐭𝐢 𝐭𝐫𝐨𝐩𝐩𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢, 𝐚𝐬𝐩𝐞𝐭𝐭𝐚𝐭𝐞 𝟏𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐢 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐫𝐢𝐮𝐭𝐢λ𝐢𝐳𝐳𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢.',
+            text: '> ⚠ 𝐀𝐧𝐭𝐢-𝐬𝐩𝐚𝐦 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 ⚠\n\n𝐑𝐢𝐥𝐞𝐯𝐚𝐭𝐢 𝐭𝐫𝐨𝐩𝐩𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢, 𝐚𝐬𝐩𝐞𝐭𝐭𝐚𝐭𝐞 𝟏𝟎 𝐬𝐞𝐜𝐨𝐧𝐝𝐢 𝐩𝐫𝐢𝐦𝐚 𝐝𝐢 𝐫𝐢𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢.',
             mentions: [m.sender]
         })
         setTimeout(() => {
@@ -571,7 +570,6 @@ export async function groupsUpdate(groupsUpdate) {
         let chats = global.db.data.chats[id], text = ''
         if (groupUpdate.icon) text = (chats.sIcon || this.sIcon || conn.sIcon || '```immagine modificata
 ```').replace('@icon', groupUpdate.icon)
-     //   if (groupUpdate.revoke) text = (chats.sRevoke || this.sRevoke || conn.sRevoke || '```link reimpostato```\n@revoke').replace('@revoke', groupUpdate.revoke)
         if (!text) continue
         await this.sendMessage(id, { text, mentions: this.parseMention(text) })
     }
@@ -581,12 +579,11 @@ export async function callUpdate(callUpdate) {
     let isAnticall = global.db.data.settings[this.user.jid].anticall
     if (!isAnticall) return
     for (let nk of callUpdate) {
-    if (nk.isGroup == false) {
-    if (nk.status == "offer") {
-    
-    await this.updateBlockStatus(nk.from, 'block')
-    }
-    }
+        if (nk.isGroup == false) {
+            if (nk.status == "offer") {
+                await this.updateBlockStatus(nk.from, 'block')
+            }
+        }
     }
 }
 
@@ -596,17 +593,18 @@ export async function deleteUpdate(message) {
 
 global.dfail = (type, m, conn) => {
     let msg = {
-        botAdmin: '𝐃𝐞𝐯𝐢 𝐝𝐚𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐚λ 𝐛𝐨𝐭 🤖',
-        rowner: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢λ𝐞 𝐬𝐨λ𝐨 𝐩𝐞𝐫 𝐨𝐰𝐧𝐞𝐫 🔱',
-        owner: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢λ𝐞 𝐬𝐨λ𝐨 𝐩𝐞𝐫 𝐨𝐰𝐧𝐞𝐫 🔱',
-        staff: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢λ𝐞 𝐬𝐨λ𝐨 𝐩𝐞𝐫 λ𝐨 𝐬𝐭𝐚𝐟𝐟 👑',
-        admin: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢λ𝐞 𝐩𝐞𝐫 𝐬𝐨λ𝐢 𝐚𝐝𝐦𝐢𝐧 🛡️',
-        premium: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢λ𝐞 𝐩𝐞𝐫 𝐬𝐨λ𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 👮🏻‍♂️',
-        mods: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 λ𝐨 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐮𝐭𝐢λ𝐢𝐳𝐳𝐚𝐫𝐞 𝐬𝐨λ𝐨 𝐚𝐝𝐦𝐢𝐧 𝐞 𝐨𝐰𝐧𝐞𝐫 ⚙️',
-        group: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐩𝐮𝐨𝐢 𝐮𝐭𝐢λ𝐢𝐳𝐳𝐚𝐫λ𝐨 𝐢𝐧 𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨 👥',
-        private: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐩𝐮𝐨𝐢 𝐮𝐭𝐢λ𝐢𝐳𝐳𝐚𝐫λ𝐨 𝐢𝐧 𝐜𝐡𝐚𝐭 𝐩𝐫𝐢𝐯𝐚𝐭𝐚 👤',
-        
-        restrict: '🔐 𝐑𝐞𝐬𝐭𝐫𝐢𝐜𝐭 𝐞 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨 🔐'}[type]
+        botAdmin: '𝐃𝐞𝐯𝐢 𝐝𝐚𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐚𝐥 𝐛𝐨𝐭 🤖',
+        rowner: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞 𝐬𝐨𝐥𝐨 𝐩𝐞𝐫 𝐨𝐰𝐧𝐞𝐫 🔱',
+        owner: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞 𝐬𝐨𝐥𝐨 𝐩𝐞𝐫 𝐨𝐰𝐧𝐞𝐫 🔱',
+        staff: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞 𝐬𝐨𝐥𝐨 𝐩𝐞𝐫 𝐥𝐨 𝐬𝐭𝐚𝐟𝐟 👑',
+        admin: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞 𝐩𝐞𝐫 𝐬𝐨𝐥𝐢 𝐚𝐝𝐦𝐢𝐧 🛡️',
+        premium: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐞̀ 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞 𝐩𝐞𝐫 𝐬𝐨𝐥𝐢 𝐦𝐨𝐝𝐞𝐫𝐚𝐭𝐨𝐫𝐢 👮🏻‍♂️',
+        mods: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐥𝐨 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐞 𝐬𝐨𝐥𝐨 𝐚𝐝𝐦𝐢𝐧 𝐞 𝐨𝐰𝐧𝐞𝐫 ⚙️',
+        group: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐩𝐮𝐨𝐢 𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐥𝐨 𝐢𝐧 𝐮𝐧 𝐠𝐫𝐮𝐩𝐩𝐨 👥',
+        private: '𝐐𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐩𝐮𝐨𝐢 𝐮𝐭𝐢𝐥𝐢𝐳𝐳𝐚𝐫𝐥𝐨 𝐢𝐧 𝐜𝐡𝐚𝐭 𝐩𝐫𝐢𝐯𝐚𝐭𝐚 👤',
+        restrict: '🔐 𝐑𝐞𝐬𝐭𝐫𝐢𝐜𝐭 𝐞 𝐝𝐢𝐬𝐚𝐭𝐭𝐢𝐯𝐚𝐭𝐨 🔐'
+    }[type]
+    
     if (msg) return conn.sendMessage(m.chat, { text: ' ', contextInfo:{
   "externalAdReply": {"title": `${msg}`, 
  "body": ``, 
