@@ -31,9 +31,7 @@ export async function handler(chatUpdate) {
         m = smsg(this, m) || m
         if (!m)
             return
-      m.exp = 0;
-      m.money = false;
-      m.limit = false;
+
         try {
           
           let user = global.db.data.users[m.sender]
