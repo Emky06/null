@@ -404,8 +404,7 @@ if (
         }, 10000)
         return
     }
-}
-}                               
+}                             
                 let extra = {
                     match,
                     usedPrefix,
