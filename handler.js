@@ -406,7 +406,6 @@ if (
     }
 }
 }                               
-                }
                 let extra = {
                     match,
                     usedPrefix,
