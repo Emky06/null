@@ -22,7 +22,7 @@ const handler = async (_0x498b4a, { conn, text }) => {
     if (mentionedJid === groupOwner)
         throw '𝐈𝐥 𝐜𝐫𝐞𝐚𝐭𝐨𝐫𝐞 𝐝𝐞𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐧𝐨𝐧 𝐩𝐮𝐨̀ 𝐞𝐬𝐬𝐞𝐫𝐞 𝐦𝐮𝐭𝐚𝐭𝐨 ✘';
     if (mentionedJid === botNumber)
-        throw '𝐇𝐚𝐢 𝐚𝐩𝐩𝐞𝐧𝐚 𝐜𝐞𝐫𝐜𝐚𝐭𝐨 𝐝𝐊 𝐦𝐮𝐭𝐚𝐫𝐦𝐢? 𝐒𝐞𝐫𝐢𝐚𝐦𝐞𝐧𝐭𝐞? 🤡';
+        throw '𝐇𝐚𝐢 𝐚𝐩𝐩𝐞𝐧𝐚 𝐜𝐞𝐫𝐜𝐚𝐭𝐨 𝐝𝐢 𝐦𝐮𝐭𝐚𝐫𝐦𝐢? 𝐒𝐞𝐫𝐢𝐚𝐦𝐞𝐧𝐭𝐞? 🤡';
     if (ownerJids.includes(mentionedJid))
         throw '𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐮𝐭𝐚𝐫𝐞 𝐮𝐧 𝐨𝐰𝐧𝐞𝐫 ✘';
 
