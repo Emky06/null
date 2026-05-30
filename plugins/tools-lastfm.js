@@ -177,30 +177,57 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'topartists':
             case 'topartisti': {
                 const limit = 6;
-                const topArtRes = await apiCall('user.gettopartists', { user, limit, period: 'overall' });
+                const topArtRes = await apiCall('user.gettopartists', { user, limit: 1000, period: 'overall' });
+                const topTracksRes = await apiCall('user.gettoptracks', { user, limit: 1000, period: 'overall' });
                 
                 if (topArtRes.error || !topArtRes.topartists?.artist?.length) {
                     throw new Error("Non hai abbastanza dati per generare la classifica.");
                 }
 
-                const artists = topArtRes.topartists.artist;
+                // 1. Mappa base degli artisti ufficiali
+                let stats = {};
+                topArtRes.topartists.artist.forEach(a => {
+                    stats[a.name.toLowerCase()] = { name: a.name, playcount: parseInt(a.playcount) || 0, image: a.image };
+                });
+
+                // 2. Integrazione dei featuring dalle tracce
+                if (topTracksRes.toptracks?.track) {
+                    topTracksRes.toptracks.track.forEach(t => {
+                        const trackPlays = parseInt(t.playcount) || 0;
+                        const match = t.name.match(/\((?:feat|ft|featuring)\.?\s+([^)]+)\)/i) || t.name.match(/(?:feat|ft|featuring)\.?\s+(.+)/i);
+                        if (match) {
+                            const feats = match[1].replace(/\)/g, '').split(/,|\&/).map(s => s.trim());
+                            feats.forEach(f => {
+                                if (f) {
+                                    const key = f.toLowerCase();
+                                    if (stats[key]) {
+                                        stats[key].playcount += trackPlays;
+                                    } else {
+                                        stats[key] = { name: f.charAt(0).toUpperCase() + f.slice(1), playcount: trackPlays };
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Ordina e prendi i primi 6
+                const artists = Object.values(stats).sort((a, b) => b.playcount - a.playcount).slice(0, limit);
                 const topOne = artists[0];
-                const maxPlays = parseInt(topOne.playcount);
+                const maxPlays = topOne.playcount;
                 
-                // Prendiamo la cover del primo in classifica per lo sfondo
                 const mainCover = await fetchCover(topOne.image, topOne.name, true);
 
                 let artistListHtml = '';
                 artists.forEach((art, i) => {
-                    const plays = parseInt(art.playcount);
-                    const percentage = Math.max((plays / maxPlays) * 100, 8);
+                    const percentage = Math.max((art.playcount / maxPlays) * 100, 8);
                     artistListHtml += `
                         <div class="art-row">
                             <div class="art-rank">${i + 1}</div>
                             <div class="art-info">
                                 <div class="art-name-row">
                                     <span class="art-name">${art.name}</span>
-                                    <span class="art-count">${plays.toLocaleString('it-IT')}</span>
+                                    <span class="art-count">${art.playcount.toLocaleString('it-IT')}</span>
                                 </div>
                                 <div class="art-bar-bg">
                                     <div class="art-bar-fill" style="width: ${percentage}%"></div>
@@ -223,7 +250,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                         <div class="list-container">
                             ${artistListHtml}
                         </div>
-                        <div class="footer-msg">Basato sui dati del tuo account Last.fm</div>
+                        <div class="footer-msg">Basato sui dati del tuo account Last.fm (inclusi i featuring)</div>
                     </div>
                 `, `
                     .bg-image { position: absolute; width: 110%; height: 110%; top: -5%; left: -5%; background-size: cover; background-position: center; filter: blur(30px) brightness(0.2); z-index: -2; }
@@ -233,7 +260,6 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                     .subtitle { font-size: 14px; letter-spacing: 5px; color: #0a84ff; font-weight: 800; margin: 0; }
                     .title { font-size: 60px; font-weight: 900; margin: 10px 0; letter-spacing: -2px; }
                     .user-badge { display: inline-block; background: #fff; color: #000; padding: 5px 20px; border-radius: 50px; font-weight: 800; font-size: 16px; }
-                    
                     .list-container { display: flex; flex-direction: column; gap: 25px; }
                     .art-row { display: flex; align-items: center; gap: 25px; }
                     .art-rank { font-size: 35px; font-weight: 900; color: rgba(255,255,255,0.2); width: 40px; font-style: italic; }
@@ -252,9 +278,8 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
             case 'topartist':
             case 'topartista': {
                 const artistQuery = text.trim();
-                if (!artistQuery) return m.reply(`❌ Uso: *${usedPrefix}${command} <nome artista>*\nEsempio: *${usedPrefix}${command} The Weeknd*`);
+                if (!artistQuery) return m.reply(`Uso: *${usedPrefix}${command} <nome artista>*\nEsempio: *${usedPrefix}${command} The Weeknd*`);
 
-                // 1. Otteniamo le info dell'artista (nome esatto, cover e gli ascolti totali dell'utente per questo artista)
                 const artistInfo = await apiCall('artist.getinfo', { artist: artistQuery, username: user });
                 if (artistInfo.error || !artistInfo.artist) throw new Error("Artista non trovato su Last.fm.");
 
@@ -262,26 +287,27 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                 const totalArtistPlays = parseInt(artistInfo.artist.stats?.userplaycount) || 0;
                 const cover = await fetchCover(artistInfo.artist.image, realArtistName, true);
 
-                if (totalArtistPlays === 0) return m.reply(`⚠️ Non hai mai ascoltato ${realArtistName} sul tuo account Last.fm!`);
+                if (totalArtistPlays === 0) return m.reply(`Non hai mai ascoltato ${realArtistName} sul tuo account Last.fm.`);
 
-                // 2. Recuperiamo la Top 1000 generale dell'utente e filtriamo per trovare i brani di questo artista
                 const topTracksRes = await apiCall('user.gettoptracks', { user, limit: 1000, period: 'overall' });
                 if (topTracksRes.error) throw new Error("Errore nel recupero delle tue statistiche.");
 
+                // Modifica qui: cerca corrispondenze parziali nel nome artista e nel titolo della traccia
+                const searchName = realArtistName.toLowerCase();
                 let artistTracks = (topTracksRes.toptracks?.track || []).filter(t => 
-                    t.artist.name.toLowerCase() === realArtistName.toLowerCase()
+                    t.artist.name.toLowerCase().includes(searchName) || 
+                    t.name.toLowerCase().includes(searchName)
                 );
 
-                if (artistTracks.length === 0) return m.reply(`⚠️ ${realArtistName} ha ${totalArtistPlays} ascolti, ma i suoi brani non rientrano nella tua Top 1000 di sempre. Continua ad ascoltarlo!`);
+                if (artistTracks.length === 0) return m.reply(`${realArtistName} ha ${totalArtistPlays} ascolti, ma i suoi brani (o i suoi featuring) non rientrano nella tua Top 1000 assoluta.`);
 
-                // Prendiamo i primi 5 brani
                 const top5 = artistTracks.slice(0, 5);
-                const maxPlays = parseInt(top5[0].playcount); // Il brano più ascoltato fa da 100% per le barre
+                const maxPlays = parseInt(top5[0].playcount); 
 
                 let tracksHtml = '';
                 top5.forEach((t, i) => {
                     const plays = parseInt(t.playcount);
-                    const percentage = Math.max((plays / maxPlays) * 100, 5); // Minimo 5% per estetica
+                    const percentage = Math.max((plays / maxPlays) * 100, 5); 
                     tracksHtml += `
                         <div class="track-row">
                             <div class="track-rank">${i + 1}</div>
@@ -332,7 +358,7 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                     .progress-fill { height: 100%; background: linear-gradient(90deg, #0a84ff, #00d2ff); border-radius: 4px; box-shadow: 0 0 10px rgba(10,132,255,0.5); }
                     .track-plays { font-size: 24px; font-weight: 900; width: 60px; text-align: right; }
                 `);
-                caption = `🎧 *Le tue Top Tracks di ${realArtistName}*\nRichiesto da: @${user}`;
+                caption = `*Le tue Top Tracks di ${realArtistName}*\nRichiesto da: @${user}`;
                 break;
             }
 
