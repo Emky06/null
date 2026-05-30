@@ -1,7 +1,7 @@
 //Plugin fatto da Axtral_WiZaRd
 import fs from 'fs'
 
-const whitelistFile = './autorizzati-antinuke.json'
+const whitelistFile = './storage/file-json/autorizzati-antinuke.json'
 
 const readWhitelist = () => {
   if (!fs.existsSync(whitelistFile)) return {}
