@@ -75,7 +75,7 @@ if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭�
   conn.groupParticipantsUpdate(m.chat, [decodedMention], 'remove')
 }
 
-handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar|nastydomina|pepsicola/i
+handler.customPrefix = /kick|kamehameha|getout|avadakedavra|sparisci|caccola|vongole|puffo|allahuakbar/i
 handler.command = new RegExp
 handler.admin = true
 handler.group = true
