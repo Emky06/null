@@ -70,7 +70,7 @@ if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭�
 ┃ 🩸 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐩𝐢𝐞𝐭𝐚̀ 𝐝𝐚 𝐩𝐚𝐫𝐭𝐞 𝐝𝐢 ${senderTag}
 ┃ ⚡ 𝐌𝐨𝐭𝐢𝐯𝐨: ${motivo}
 ┃ 🕯️ 𝐂𝐡𝐞 𝐢𝐥 𝐠𝐫𝐮𝐩𝐩𝐨 𝐫𝐢𝐭𝐫𝐨𝐯𝐢 𝐥𝐚 𝐩𝐚𝐜𝐞...
-╰━━━━━━━━━━━━━━━━━━━━━━╯`
+╰━━━━━━━━━━━━━━━━━━━━━╯`
 
   conn.reply(m.chat, messaggio, fake, { mentions: [decodedMention, m.sender] })
   conn.groupParticipantsUpdate(m.chat, [decodedMention], 'remove')
