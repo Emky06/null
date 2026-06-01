@@ -54,7 +54,7 @@ if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭�
     key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
     message: {
       locationMessage: {
-        name: '𝐑𝐢𝐦𝐨𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...',
+        name: '☠️ 𝐄𝐬𝐞𝐜𝐮𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...'
         jpegThumbnail: fs.readFileSync('./icone/kick.png')
       }
     },
@@ -65,7 +65,7 @@ if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭�
   const senderTag = `@${m.sender.split`@`[0]}`
 
   const messaggio =
-`╭━━〔 *𝐒𝐌𝐀𝐑𝐓𝐈𝐄𝐒 𝐊𝐈𝐋𝐋𝐄𝐑* 〕━━╮
+`╭━━━〔 *𝐒𝐌𝐀𝐑𝐓𝐈𝐄𝐒 𝐊𝐈𝐋𝐋𝐄𝐑* 〕━━━╮
 ┃ ☠️ ${userTag} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐨.
 ┃ 🩸 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐩𝐢𝐞𝐭𝐚̀ 𝐝𝐚 𝐩𝐚𝐫𝐭𝐞 𝐝𝐢 ${senderTag}
 ┃ ⚡ 𝐌𝐨𝐭𝐢𝐯𝐨: ${motivo}
