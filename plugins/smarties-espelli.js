@@ -54,7 +54,7 @@ if (ownerJids.includes(decodedMention)) return m.reply('> ⚠️ 𝐀𝐧𝐭�
     key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Halo" },
     message: {
       locationMessage: {
-        name: '☠️ 𝐄𝐬𝐞𝐜𝐮𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...'
+        name: '☠️ 𝐄𝐬𝐞𝐜𝐮𝐳𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...',
         jpegThumbnail: fs.readFileSync('./icone/kick.png')
       }
     },
