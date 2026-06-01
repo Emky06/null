@@ -5,7 +5,7 @@ async function handler(m, { conn, isBotAdmin, isOwner, text }) {
   if (!isBotAdmin) return m.reply('ⓘ 𝐃𝐞𝐯𝐨 𝐞𝐬𝐬𝐞𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐩𝐞𝐫 𝐩𝐨𝐭𝐞𝐫 𝐟𝐮𝐧𝐳𝐢𝐨𝐧𝐚𝐫𝐞.')
 
   const mention = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : null)
-  if (!mention) return m.reply('ⓘ 𝐌𝐞𝐧𝐳𝐢𝐨𝐧𝐚 𝐥𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚 𝐝𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞.')
+  if (!mention) return m.reply('☠️ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐩𝐫𝐞𝐝𝐚 𝐬𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚𝐭𝐚... 𝐦𝐞𝐧𝐳𝐢𝐨𝐧𝐚 𝐜𝐡𝐢 𝐝𝐞𝐯𝐞 𝐦𝐨𝐫𝐢𝐫𝐞.')
 
   const motivo = text
     ? text.replace(/@[\d\-]+/, '').trim() || 'non specificato'
