@@ -540,7 +540,7 @@ export async function participantsUpdate({ id, participants, action }) {
                     text,
                     contextInfo: {
                         mentionedJid: [user],
-                        externalAdReply: {
+                        /*externalAdReply: {
                             title: action === 'add'
                                 ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
                                 : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
@@ -549,7 +549,7 @@ export async function participantsUpdate({ id, participants, action }) {
                             thumbnail: apii.data,
                             mediaType: 1,
                             renderLargerThumbnail: false
-                        }
+                        }*/
                     }
                 })
             }
@@ -600,12 +600,12 @@ global.dfail = (type, m, conn) => {
     }[type]
     
     if (msg) return conn.sendMessage(m.chat, { text: ' ', contextInfo:{
-  "externalAdReply": {"title": `${msg}`, 
+  /*"externalAdReply": {"title": `${msg}`, 
  "body": ``, 
   "previewType": "PHOTO",
   "thumbnail": fs.readFileSync('./icone/accessdenied.png'),
   "mediaType": 1,
-  "renderLargerThumbnail": true}}}, {quoted: m})
+  "renderLargerThumbnail": true}*/}}, {quoted: m})
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
