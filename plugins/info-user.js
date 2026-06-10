@@ -95,6 +95,7 @@ const animaliInfo = animaliCount > 0
     const grado = userData.grado || "Sfavillante";
 
     const messaggio = `╭── 📌 *𝐔𝐒𝐄𝐑 𝐈𝐍𝐅𝐎* 📌 ──╮\n` +
+      `👤 *𝐔𝐭𝐞𝐧𝐭𝐞:* ${nomeUtente}\n\n` +
       `🏆 *𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚:* ${categoria}\n` +
       `🔵 *𝐑𝐮𝐨𝐥𝐨:* ${ruolo}\n` + 
       `🔮 *𝐆𝐫𝐚𝐝𝐨:* ${grado}\n` +
