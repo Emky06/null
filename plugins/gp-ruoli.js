@@ -36,12 +36,12 @@ handler.before = async function (message, { conn }) {
             text: `@${senderUsername} 𝐡𝐚 𝐝𝐚𝐭𝐨 𝐢 𝐩𝐨𝐭𝐞𝐫𝐢 𝐚 @${promotedUsername}`,
             contextInfo: {
                 mentionedJid: [sender, promotedUser],
-                externalAdReply: {
+                /*externalAdReply: {
                     title: '𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐩𝐫𝐨𝐦𝐨𝐳𝐢𝐨𝐧𝐞 👑',
                     thumbnail: await fetchBuffer(profilePicture || imageFallback),
                     mediaType: 1,
                     renderLargerThumbnail: false
-                },
+                },*/
             },
         }, { quoted: null });
     }
@@ -64,12 +64,12 @@ handler.before = async function (message, { conn }) {
             text: `@${senderUsername} 𝐡𝐚 𝐥𝐞𝐯𝐚𝐭𝐨 𝐢 𝐩𝐨𝐭𝐞𝐫𝐢 𝐚 @${demotedUsername}`,
             contextInfo: {
                 mentionedJid: [sender, demotedUser],
-                externalAdReply: {
+                /*externalAdReply: {
                     title: '𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞 🙇🏻‍♂️',
                     thumbnail: await fetchBuffer(profilePicture || imageFallback),
                     mediaType: 1,
                     renderLargerThumbnail: false
-                },
+                },*/
             },
         }, { quoted: null });
     }
