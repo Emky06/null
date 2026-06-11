@@ -113,19 +113,34 @@ const animaliInfo = animaliCount > 0
 
     const thumbnailBuffer = typeof profilo === 'string' ? await (await fetch(profilo)).buffer() : profilo;
 
-    await conn.sendMessage(m.chat, {
-      text: messaggio,
-      contextInfo: {
-        mentionedJid: [mention],
-        /*externalAdReply: {
-          title: nomeUtente,
-          body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
-          mediaType: 1,
-          thumbnail: thumbnailBuffer,
-          renderLargerThumbnail: false
-        }*/
-      }
-    }, { quoted: m });
+    const quotedMessage = {
+  key: {
+    participants: "0@s.whatsapp.net",
+    fromMe: false,
+    id: "UserInfo"
+  },
+  message: {
+    locationMessage: {
+      name: nomeUtente, // nome dell'utente
+      jpegThumbnail: thumbnailBuffer, // foto profilo dell'utente
+      vcard: `BEGIN:VCARD
+VERSION:3.0
+N:;${nomeUtente};;;
+FN:${nomeUtente}
+item1.TEL;waid=${mention.split('@')[0]}:+${mention.split('@')[0]}
+item1.X-ABLabel:Utente
+END:VCARD`
+    }
+  },
+  participant: "0@s.whatsapp.net"
+};
+
+await conn.sendMessage(m.chat, {
+  text: messaggio,
+  contextInfo: {
+    mentionedJid: [mention]
+  }
+}, { quoted: quotedMessage });
 
   } catch (error) {
     console.error("Errore in USERINFO:", error);
