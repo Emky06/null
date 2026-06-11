@@ -612,12 +612,12 @@ global.dfail = (type, m, conn) => {
     }[type]
     
     if (msg) return conn.sendMessage(m.chat, { text: ' ', contextInfo:{
-  /*"externalAdReply": {"title": `${msg}`, 
+  "externalAdReply": {"title": `${msg}`, 
  "body": ``, 
   "previewType": "PHOTO",
   "thumbnail": fs.readFileSync('./icone/accessdenied.png'),
   "mediaType": 1,
-  "renderLargerThumbnail": true}*/}}, {quoted: m})
+  "renderLargerThumbnail": true}}}, {quoted: m})
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
