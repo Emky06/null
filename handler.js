@@ -622,12 +622,12 @@ global.dfail = (type, m, conn) => {
         },
         message: {
             locationMessage: {
-                name: `${msg}`,
+                name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
                 jpegThumbnail: fs.readFileSync('./icone/accessdenied.png'),
                 vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;Bot;;;
-FN:Access
+FN:Access Denied
 item1.TEL;waid=11111111111:+1 (111) 111-1111
 item1.X-ABLabel:Bot
 END:VCARD`
@@ -636,7 +636,7 @@ END:VCARD`
         participant: "0@s.whatsapp.net"
     };
 
-    conn.sendMessage(m.chat, {
+    return conn.sendMessage(m.chat, {
         text: msg,
     }, {
         quoted: locationQuote
