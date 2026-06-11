@@ -29,10 +29,10 @@ let handler = async (m, { conn }) => {
           name: 'review_and_pay',
           buttonParamsJson: JSON.stringify({
             currency: 'EUR',
-            payment_configuration: 'varebot.it',
+            payment_configuration: 'axtralbot.it',
             payment_type: 'DEBIT_CARD',
             total_amount: { value: '1050', offset: '100' },
-            reference_id: 'varebot',
+            reference_id: 'axtral_wizard_bot',
             type: 'physical-goods',
             payment_method: 'confirm',
             payment_status: 'captured',
