@@ -515,13 +515,6 @@ export async function participantsUpdate({ id, participants, action }) {
 
     for (let user of participants) {
 
-        let pp = './icone/benvenuto.png'
-        try {
-            pp = await this.profilePictureUrl(user, 'image')
-        } catch {}
-
-        let apii = await this.getFile(pp)
-
         let text = ''
 
         if (action === 'add') {
@@ -567,7 +560,7 @@ export async function participantsUpdate({ id, participants, action }) {
                 message: {
                     contactMessage: {
                         displayName: `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
-                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split '@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
+                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                     }
                 },
                 participant: "0@s.whatsapp.net"
@@ -583,7 +576,6 @@ export async function participantsUpdate({ id, participants, action }) {
             })
         }
     }
-}
 }
 
 export async function groupsUpdate(groupsUpdate) {
