@@ -623,7 +623,7 @@ global.dfail = (type, m, conn) => {
         message: {
             locationMessage: {
                 name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
-                jpegThumbnail: fs.readFileSync('./icone/accessdenied.png'),
+                jpegThumbnail: fs.readFileSync('./icone/accessdenied2.png'),
                 vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;Bot;;;
