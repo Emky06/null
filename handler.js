@@ -1,3 +1,4 @@
+
 //Fatto da Axtral_WiZaRd
 import { generateWAMessageFromContent } from "@whiskeysockets/baileys"
 import { smsg } from './lib/simple.js'
@@ -509,74 +510,54 @@ export async function participantsUpdate({ id, participants, action }) {
     if (global.db.data == null) await loadDatabase()
 
     let chat = global.db.data.chats[id] || {}
-    if (!chat.benvenuto) return
+    let text = ''
 
-    let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
+    switch (action) {
+        case 'add':
+        case 'remove':
+            if (!chat.benvenuto) return
 
-    for (let user of participants) {
+            let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
 
-        let text = ''
+            for (let user of participants) {
+                let pp = './icone/benvenuto.png'
+                try {
+                    pp = await this.profilePictureUrl(user, 'image')
+                } catch {}
 
-        if (action === 'add') {
-            text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
-                .replace('@subject', await this.getName(id))
-                .replace('@desc', groupMetadata.desc?.toString() || '')
-                .replace('@user', '@' + user.split('@')[0])
+                let apii = await this.getFile(pp)
 
-            const contactQuote = {
-                key: {
-                    participants: "0@s.whatsapp.net",
-                    fromMe: false,
-                    id: "WelcomeContact"
-                },
-                message: {
-                    contactMessage: {
-                        displayName: `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻`,
-                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
-                    }
-                },
-                participant: "0@s.whatsapp.net"
-            }
-
-            await this.sendMessage(id, {
-                text,
-                contextInfo: {
-                    mentionedJid: [user],
+                if (action === 'add') {
+                    text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
+                        .replace('@subject', await this.getName(id))
+                        .replace('@desc', groupMetadata.desc?.toString() || '')
+                        .replace('@user', '@' + user.split('@')[0])
+                } else if (action === 'remove') {
+                    text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
+                        .replace('@user', '@' + user.split('@')[0])
                 }
-            }, {
-                quoted: contactQuote
-            })
 
-        } else if (action === 'remove') {
-            text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
-                .replace('@user', '@' + user.split('@')[0])
-
-            const contactQuote = {
-                key: {
-                    participants: "0@s.whatsapp.net",
-                    fromMe: false,
-                    id: "ByeContact"
-                },
-                message: {
-                    contactMessage: {
-                        displayName: `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
-                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
+                await this.sendMessage(id, {
+                    text,
+                    contextInfo: {
+                        mentionedJid: [user],
+                        /*externalAdReply: {
+                            title: action === 'add'
+                                ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
+                                : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
+                            body: '',
+                            previewType: 'PHOTO',
+                            thumbnail: apii.data,
+                            mediaType: 1,
+                            renderLargerThumbnail: false
+                        }*/
                     }
-                },
-                participant: "0@s.whatsapp.net"
+                })
             }
-
-            await this.sendMessage(id, {
-                text,
-                contextInfo: {
-                    mentionedJid: [user],
-                }
-            }, {
-                quoted: contactQuote
-            })
-        }
+            break
     }
 }
+
 
 export async function groupsUpdate(groupsUpdate) {
     for (const groupUpdate of groupsUpdate) {
@@ -633,3 +614,4 @@ watchFile(file, async () => {
     console.log(chalk.redBright("Update 'handler.js'"))
     if (global.reloadHandler) console.log(await global.reloadHandler())
 })
+    
