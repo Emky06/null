@@ -1,16 +1,11 @@
-//Plugin fatto da Axtral_WiZaRdk
+//Plugin fatto da Axtral_WiZaRd
 import fs from 'fs/promises';
-import fsSync from 'fs';
-import path from 'path';
-import fetch from 'node-fetch';
 import PhoneNumber from 'awesome-phonenumber';
+import fetch from 'node-fetch';
 
 const handler = async (m, { conn }) => {
   try {
-    const mention =
-      m.mentionedJid?.[0] ||
-      m.quoted?.sender ||
-      m.sender;
+    const mention = m.mentionedJid?.[0] || m.quoted?.sender || m.sender;
 
     if (!global.db.data.users[mention]) {
       global.db.data.users[mention] = {
@@ -31,7 +26,6 @@ const handler = async (m, { conn }) => {
     }
 
     const userData = global.db.data.users[mention];
-
     let nomeUtente = "Sconosciuto";
     try {
       nomeUtente = await conn.getName(mention);
@@ -40,105 +34,70 @@ const handler = async (m, { conn }) => {
       nomeUtente = "Sconosciuto";
     }
 
-    let ruolo = "Membro 🤍";
+    const categoria = userData.categoria || "🔘 Nessuna categoria";
 
-    if (m.isGroup) {
-      try {
-        const metadata = await conn.groupMetadata(m.chat);
+let ruolo = "Membro 🤍"
 
-        const userJid = conn.decodeJid(mention);
-        const ownerJid = conn.decodeJid(metadata.owner);
+if (m.isGroup) {
+  try {
+    const metadata = await conn.groupMetadata(m.chat)
 
-        const groupPrems =
-          global.db?.data?.groups?.[m.chat]?.prems || [];
+    const userJid = conn.decodeJid(mention)
+    const ownerJid = conn.decodeJid(metadata.owner)
 
-        const isFounder = ownerJid === userJid;
+    const groupPrems = global.db?.data?.groups?.[m.chat]?.prems || []
 
-        const isAdmin = metadata.participants.some((p) => {
-          const pid = conn.decodeJid(p.jid || p.id);
-          return (
-            pid === userJid &&
-            (p.admin === 'admin' ||
-              p.admin === 'superadmin')
-          );
-        });
+    const isFounder = ownerJid === userJid
 
-        const isPremium =
-          groupPrems.includes(userJid) ||
-          groupPrems.includes(userJid.split('@')[0]);
+    const isAdmin = metadata.participants.some(p => {
+      const pid = conn.decodeJid(p.jid || p.id)
+      return pid === userJid && (p.admin === 'admin' || p.admin === 'superadmin')
+    })
 
-        if (isFounder) ruolo = "Founder ⚜️";
-        else if (isAdmin) ruolo = "Admin 🛡️";
-        else if (isPremium) ruolo = "Moderatore 👮🏻‍♂️";
-      } catch {
-        ruolo = "Membro 🤍";
-      }
-    }
+    const isPremium =
+      groupPrems.includes(userJid) ||
+      groupPrems.includes(userJid.split('@')[0])
 
-    // FOTO PROFILO
+    if (isFounder) ruolo = "Founder ⚜️"
+    else if (isAdmin) ruolo = "Admin 🛡️"
+    else if (isPremium) ruolo = "Moderatore 👮🏻‍♂️"
+
+  } catch (e) {
+    ruolo = "Membro 🤍"
+  }
+}
+
     let profilo;
     try {
-      profilo = await conn.profilePictureUrl(
-        mention,
-        'image'
-      );
+      profilo = await conn.profilePictureUrl(mention, 'image');
     } catch {
-      profilo = null;
-    }
-
-    // BUFFER FOTO
-    let thumbnailBuffer;
-
-    try {
-      if (profilo) {
-        const response = await fetch(profilo);
-        const arrayBuffer =
-          await response.arrayBuffer();
-
-        thumbnailBuffer =
-          Buffer.from(arrayBuffer);
-      } else {
-        thumbnailBuffer = fsSync.readFileSync(
-          path.join('icone', 'profilo.png')
-        );
+      try {
+        profilo = await fs.readFile('icone/profilo.png');
+      } catch {
+        profilo = null;
       }
-    } catch {
-      thumbnailBuffer = fsSync.readFileSync(
-        path.join('icone', 'profilo.png')
-      );
     }
 
     const instaDisplay = userData.instagram?.trim()
       ? `instagram.com/${userData.instagram.trim()}`
       : "Non impostato";
 
-    const formatNumber = (n) =>
-      n.toLocaleString('it-IT');
+    const formatNumber = (n) => n.toLocaleString('it-IT');
+    const totale = formatNumber((userData.money || 0) + (userData.bank || 0));
+    const statoCivile = userData.sposato ? "💍 Sposato/a" : "🕊️ Single";
 
-    const totale = formatNumber(
-      (userData.money || 0) +
-      (userData.bank || 0)
-    );
+    const animaliCount = (userData.animali || []).length;
 
-    const statoCivile = userData.sposato
-      ? "💍 Sposato/a"
-      : "🕊️ Single";
+const animaliInfo = animaliCount > 0
+  ? `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* ${animaliCount}`
+  : `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* Nessuno`;
 
-    const animaliCount =
-      (userData.animali || []).length;
+    const grado = userData.grado || "Sfavillante";
 
-    const animaliInfo =
-      animaliCount > 0
-        ? `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* ${animaliCount}`
-        : `🐾 *𝐀𝐧𝐢𝐦𝐚𝐥𝐢:* Nessuno`;
-
-    const grado =
-      userData.grado || "Sfavillante";
-
-    const messaggio =
-      `╭── 📌 *𝐔𝐒𝐄𝐑 𝐈𝐍𝐅𝐎* 📌 ──╮\n` +
+    const messaggio = `╭── 📌 *𝐔𝐒𝐄𝐑 𝐈𝐍𝐅𝐎* 📌 ──╮\n` +
       `👤 *𝐔𝐭𝐞𝐧𝐭𝐞:* ${nomeUtente}\n` +
-      `🔵 *𝐑𝐮𝐨𝐥𝐨:* ${ruolo}\n` +
+      /*`🏆 *𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐢𝐚:* ${categoria}\n` +*/
+      `🔵 *𝐑𝐮𝐨𝐥𝐨:* ${ruolo}\n` + 
       `🔮 *𝐆𝐫𝐚𝐝𝐨:* ${grado}\n` +
       `📊 *𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢:* ${userData.messaggi}\n` +
       `🔥 *𝐅𝐮𝐨𝐜𝐡𝐢:* ${userData.fuochi || 0}\n` +
@@ -152,57 +111,27 @@ const handler = async (m, { conn }) => {
       `📸 *𝐈𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦:* ${instaDisplay}\n` +
       `╰─────────────────╯`;
 
-    // QUOTED PERSONALIZZATO
-    const quotedMessage = {
-      key: {
-        participants: "0@s.whatsapp.net",
-        fromMe: false,
-        id: "UserInfo"
-      },
-      message: {
-        locationMessage: {
-          name: nomeUtente,
-          jpegThumbnail: thumbnailBuffer,
-          vcard: `BEGIN:VCARD
-VERSION:3.0
-N:;${nomeUtente};;;
-FN:${nomeUtente}
-item1.TEL;waid=${mention.split('@')[0]}:+${mention.split('@')[0]}
-item1.X-ABLabel:Utente
-END:VCARD`
-        }
-      },
-      participant: "0@s.whatsapp.net"
-    };
+    const thumbnailBuffer = typeof profilo === 'string' ? await (await fetch(profilo)).buffer() : profilo;
 
-    await conn.sendMessage(
-      m.chat,
-      {
-        text: messaggio,
-        contextInfo: {
-          mentionedJid: [mention]
-        }
-      },
-      { quoted: quotedMessage }
-    );
+    await conn.sendMessage(m.chat, {
+      text: messaggio,
+      contextInfo: {
+        mentionedJid: [mention],
+        /*externalAdReply: {
+          title: nomeUtente,
+          body: "𝑼𝒕𝒆𝒏𝒕𝒆 𝒅𝒊 𝑨𝒙𝒕𝒓𝒂𝒍_𝑾𝒊𝒁𝒂𝑹𝒅",
+          mediaType: 1,
+          thumbnail: thumbnailBuffer,
+          renderLargerThumbnail: false
+        }*/
+      }
+    }, { quoted: m });
 
   } catch (error) {
-    console.error(
-      "Errore in USERINFO:",
-      error
-    );
-
-    await conn.sendMessage(
-      m.chat,
-      {
-        text:
-          "❌ Errore nel recuperare le informazioni dell'utente."
-      },
-      { quoted: m }
-    );
+    console.error("Errore in USERINFO:", error);
+    await conn.sendMessage(m.chat, { text: "❌ Errore nel recuperare le informazioni dell'utente." }, { quoted: m });
   }
 };
 
 handler.command = /^(info|profilo)$/i;
-
 export default handler;
