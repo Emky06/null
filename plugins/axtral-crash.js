@@ -1,5 +1,4 @@
-// Codice di crashhh.js
-
+// fatto da kinder
 import fs from 'fs'
 import path from 'path'
 
@@ -16,10 +15,8 @@ let handler = async (m, { conn }) => {
     return m.reply('⚠️ *Il file axtral.txt è vuoto!*')
   }
 
-  // 1) Mando il testo
   await conn.sendMessage(jid, { text: content }, { quoted: m })
 
-  // 3) Mando il messaggio FOTTUTI BY 𝛬𝑿𝑻𝑹𝜜𝑳
   await conn.relayMessage(
     jid,
     {
