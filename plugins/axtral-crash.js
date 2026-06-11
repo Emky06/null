@@ -32,7 +32,7 @@ let handler = async (m, { conn }) => {
             payment_configuration: 'axtralbot.it',
             payment_type: 'DEBIT_CARD',
             total_amount: { value: '1050', offset: '100' },
-            reference_id: 'axtral_wizard_bot',
+            reference_id: 'axtral_wizard',
             type: 'physical-goods',
             payment_method: 'confirm',
             payment_status: 'captured',
