@@ -509,51 +509,79 @@ export async function participantsUpdate({ id, participants, action }) {
     if (global.db.data == null) await loadDatabase()
 
     let chat = global.db.data.chats[id] || {}
-    let text = ''
+    if (!chat.benvenuto) return
 
-    switch (action) {
-        case 'add':
-        case 'remove':
-            if (!chat.benvenuto) return
+    let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
 
-            let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
+    for (let user of participants) {
 
-            for (let user of participants) {
-                let pp = './icone/benvenuto.png'
-                try {
-                    pp = await this.profilePictureUrl(user, 'image')
-                } catch {}
+        let pp = './icone/benvenuto.png'
+        try {
+            pp = await this.profilePictureUrl(user, 'image')
+        } catch {}
 
-                let apii = await this.getFile(pp)
+        let apii = await this.getFile(pp)
 
-                if (action === 'add') {
-                    text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
-                        .replace('@subject', await this.getName(id))
-                        .replace('@desc', groupMetadata.desc?.toString() || '')
-                        .replace('@user', '@' + user.split('@')[0])
-                } else if (action === 'remove') {
-                    text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
-                        .replace('@user', '@' + user.split('@')[0])
-                }
+        let text = ''
 
-                await this.sendMessage(id, {
-                    text,
-                    contextInfo: {
-                        mentionedJid: [user],
-                        /*externalAdReply: {
-                            title: action === 'add'
-                                ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
-                                : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
-                            body: '',
-                            previewType: 'PHOTO',
-                            thumbnail: apii.data,
-                            mediaType: 1,
-                            renderLargerThumbnail: false
-                        }*/
+        if (action === 'add') {
+            text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
+                .replace('@subject', await this.getName(id))
+                .replace('@desc', groupMetadata.desc?.toString() || '')
+                .replace('@user', '@' + user.split('@')[0])
+
+            const contactQuote = {
+                key: {
+                    participants: "0@s.whatsapp.net",
+                    fromMe: false,
+                    id: "WelcomeContact"
+                },
+                message: {
+                    contactMessage: {
+                        displayName: `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻`,
+                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                     }
-                })
+                },
+                participant: "0@s.whatsapp.net"
             }
-            break
+
+            await this.sendMessage(id, {
+                text,
+                contextInfo: {
+                    mentionedJid: [user],
+                }
+            }, {
+                quoted: contactQuote
+            })
+
+        } else if (action === 'remove') {
+            text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
+                .replace('@user', '@' + user.split('@')[0])
+
+            const contactQuote = {
+                key: {
+                    participants: "0@s.whatsapp.net",
+                    fromMe: false,
+                    id: "ByeContact"
+                },
+                message: {
+                    contactMessage: {
+                        displayName: `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
+                        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${user.split('@')[0]};;;\nFN:${user.split('@')[0]}\nitem1.TEL;waid=${user.split '@')[0]}:${user.split('@')[0]}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
+                    }
+                },
+                participant: "0@s.whatsapp.net"
+            }
+
+            await this.sendMessage(id, {
+                text,
+                contextInfo: {
+                    mentionedJid: [user],
+                }
+            }, {
+                quoted: contactQuote
+            })
+        }
     }
 }
 
