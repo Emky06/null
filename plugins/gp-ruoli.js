@@ -1,13 +1,12 @@
-1//Plugin fatto da Axtral_WiZaRd
+// Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
 
 const handler = m => m;
 
 handler.before = async function (message, { conn }) {
-    const imageFallback = 'icone/profilo.png'; 
+    const imageFallback = 'icone/profilo.png';
 
     const fetchBuffer = async (url) => {
-        if (!url) return null;
         if (url.startsWith('http')) {
             const res = await fetch(url);
             return await res.buffer();
@@ -16,48 +15,30 @@ handler.before = async function (message, { conn }) {
         }
     };
 
-    const getPP = async (jid) => {
-        try {
-            return await conn.profilePictureUrl(jid, 'image');
-        } catch {
-            return null;
-        }
-    };
-
     const chat = global.db.data.chats[message.chat] || {};
     const detectEnabled = chat.detect;
 
-    // PROMOZIONE
     if (message.messageStubType === 29 && detectEnabled) {
-
-        let profilePicture;
-        try {
-            profilePicture = await conn.profilePictureUrl(message.messageStubParameters[0], 'image');
-        } catch (e) {
-            profilePicture = null;
-        }
 
         const promotedUser = message.messageStubParameters[0];
         const sender = message.sender;
+
         const promotedUsername = promotedUser.split('@')[0];
         const senderUsername = sender.split('@')[0];
 
-        const pp = await getPP(promotedUser);
-
-        const quotedMessage = {
+        const contactQuote = {
             key: {
                 participants: "0@s.whatsapp.net",
                 fromMe: false,
-                id: 'Promo'
+                id: "PromoContact"
             },
             message: {
-                locationMessage: {
-                    name: `${nomebot}`,
-                    jpegThumbnail: pp ? await fetchBuffer(pp) : null,
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Bot;;;\nFN:Bot\nEND:VCARD"
+                contactMessage: {
+                    displayName: `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐩𝐫𝐨𝐦𝐨𝐳𝐢𝐨𝐧𝐞 👑`,
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${promotedUsername};;;\nFN:${promotedUsername}\nitem1.TEL;waid=${promotedUsername}:${promotedUsername}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                 }
             },
-            participant: '0@s.whatsapp.net'
+            participant: "0@s.whatsapp.net"
         };
 
         await conn.sendMessage(message.chat, {
@@ -65,40 +46,32 @@ handler.before = async function (message, { conn }) {
             contextInfo: {
                 mentionedJid: [sender, promotedUser],
             },
-        }, { quoted: quotedMessage });
+        }, {
+            quoted: contactQuote
+        });
     }
 
-    // DEMOZIONE
     if (message.messageStubType === 30 && detectEnabled) {
-
-        let profilePicture;
-        try {
-            profilePicture = await conn.profilePictureUrl(message.messageStubParameters[0], 'image');
-        } catch (e) {
-            profilePicture = null;
-        }
 
         const demotedUser = message.messageStubParameters[0];
         const sender = message.sender;
+
         const demotedUsername = demotedUser.split('@')[0];
         const senderUsername = sender.split('@')[0];
 
-        const pp = await getPP(demotedUser);
-
-        const quotedMessage = {
+        const contactQuote = {
             key: {
                 participants: "0@s.whatsapp.net",
                 fromMe: false,
-                id: 'Demote'
+                id: "DemoteContact"
             },
             message: {
-                locationMessage: {
-                    name: `${nomebot}`,
-                    jpegThumbnail: pp ? await fetchBuffer(pp) : null,
-                    vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Bot;;;\nFN:Bot\nEND:VCARD"
+                contactMessage: {
+                    displayName: `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞 🙇🏻‍♂️`,
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${demotedUsername};;;\nFN:${demotedUsername}\nitem1.TEL;waid=${demotedUsername}:${demotedUsername}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                 }
             },
-            participant: '0@s.whatsapp.net'
+            participant: "0@s.whatsapp.net"
         };
 
         await conn.sendMessage(message.chat, {
@@ -106,7 +79,9 @@ handler.before = async function (message, { conn }) {
             contextInfo: {
                 mentionedJid: [sender, demotedUser],
             },
-        }, { quoted: quotedMessage });
+        }, {
+            quoted: contactQuote
+        });
     }
 };
 
