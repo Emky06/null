@@ -34,7 +34,7 @@ handler.before = async function (message, { conn }) {
             },
             message: {
                 contactMessage: {
-                    displayName: `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐩𝐫𝐨𝐦𝐨𝐳𝐢𝐨𝐧𝐞 👑`,
+                    displayName: `𝐏𝐫𝐨𝐦𝐨𝐳𝐢𝐨𝐧𝐞 👑`,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${promotedUsername};;;\nFN:${promotedUsername}\nitem1.TEL;waid=${promotedUsername}:${promotedUsername}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                 }
             },
@@ -67,7 +67,7 @@ handler.before = async function (message, { conn }) {
             },
             message: {
                 contactMessage: {
-                    displayName: `𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨 𝐝𝐢 𝐫𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞 🙇🏻‍♂️`,
+                    displayName: `𝐑𝐞𝐭𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐨𝐧𝐞 🙇🏻‍♂️`,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;${demotedUsername};;;\nFN:${demotedUsername}\nitem1.TEL;waid=${demotedUsername}:${demotedUsername}\nitem1.X-ABLabel:WhatsApp\nEND:VCARD`
                 }
             },
