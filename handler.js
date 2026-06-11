@@ -542,7 +542,7 @@ case 'remove':
             message: {
                 contactMessage: {
                     displayName: action === 'add'
-                        ? `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎 👋🏻`
+                        ? `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻`
                         : `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
                     vcard: `BEGIN:VCARD
 VERSION:3.0
