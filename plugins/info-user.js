@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da Axtral_WiZaRdk
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
