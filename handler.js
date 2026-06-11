@@ -514,47 +514,59 @@ export async function participantsUpdate({ id, participants, action }) {
 
     switch (action) {
         case 'add':
-        case 'remove':
-            if (!chat.benvenuto) return
+case 'remove':
+    if (!chat.benvenuto) return
 
-            let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
+    let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
 
-            for (let user of participants) {
-                let pp = './icone/benvenuto.png'
-                try {
-                    pp = await this.profilePictureUrl(user, 'image')
-                } catch {}
+    for (let user of participants) {
 
-                let apii = await this.getFile(pp)
+        let text = ''
 
-                if (action === 'add') {
-                    text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
-                        .replace('@subject', await this.getName(id))
-                        .replace('@desc', groupMetadata.desc?.toString() || '')
-                        .replace('@user', '@' + user.split('@')[0])
-                } else if (action === 'remove') {
-                    text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
-                        .replace('@user', '@' + user.split('@')[0])
+        if (action === 'add') {
+            text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
+                .replace('@subject', await this.getName(id))
+                .replace('@desc', groupMetadata.desc?.toString() || '')
+                .replace('@user', '@' + user.split('@')[0])
+
+        } else if (action === 'remove') {
+            text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
+                .replace('@user', '@' + user.split('@')[0])
+        }
+
+        const contactQuote = {
+            key: {
+                participants: "0@s.whatsapp.net",
+                fromMe: false,
+                id: action === 'add' ? "WelcomeContact" : "ByeContact"
+            },
+            message: {
+                contactMessage: {
+                    displayName: action === 'add'
+                        ? `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎 👋🏻`
+                        : `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
+                    vcard: `BEGIN:VCARD
+VERSION:3.0
+N:;${user.split('@')[0]};;;
+FN:${user.split('@')[0]}
+item1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}
+item1.X-ABLabel:WhatsApp
+END:VCARD`
                 }
+            },
+            participant: "0@s.whatsapp.net"
+        };
 
-                await this.sendMessage(id, {
-                    text,
-                    contextInfo: {
-                        mentionedJid: [user],
-                        /*externalAdReply: {
-                            title: action === 'add'
-                                ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
-                                : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
-                            body: '',
-                            previewType: 'PHOTO',
-                            thumbnail: apii.data,
-                            mediaType: 1,
-                            renderLargerThumbnail: false
-                        }*/
-                    }
-                })
+        await this.sendMessage(id, {
+            text,
+            contextInfo: {
+                mentionedJid: [user],
             }
-            break
+        }, {
+            quoted: contactQuote
+        });
+    }
+    break
     }
 }
 
