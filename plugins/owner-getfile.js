@@ -13,7 +13,6 @@ Esempi:
   ${usedPrefix}getfile config.js
   `.trim()
 
-  // Separiamo correttamente fileArg e option
   const args = text.trim().split(' ')
   let option = ''
   if (args.length > 1 && (args[args.length - 1].toLowerCase() === 'file' || args[args.length - 1].toLowerCase() === 'script')) {
@@ -44,7 +43,7 @@ Esempi:
       fileContent = await _fs.readFile(pathFile)
     }
 
-    // Se non è stata specificata opzione, mostriamo i pulsanti
+    
     if (!option) {
       await conn.sendMessage(m.chat, {
         text: `📂 Vuoi ricevere *${filename}* come file o come script?`,
@@ -66,7 +65,7 @@ Esempi:
       return
     }
 
-    // Invia file o script in base all'opzione
+    
     if (option === 'file') {
       const contentToSend = isJS ? header + fileContent : fileContent
       await conn.sendMessage(m.chat, {
@@ -76,13 +75,19 @@ Esempi:
         caption: isPlugin ? `Ecco il plugin: ${filename}` : `Ecco il file: ${filename}`
       }, { quoted: m })
     } else if (option === 'script') {
-      if (!isJS) throw '❌ L\'opzione script è disponibile solo per file JavaScript.'
-      await m.reply(`// Codice di ${filename}\n\n${fileContent}`)
-    } else {
+  if (!isJS) {
+    throw '❌ L\'opzione script è disponibile solo per file JavaScript.'
+  }
+
+  await conn.sendMessage(m.chat, {
+    document: Buffer.from(fileContent, 'utf8'),
+    mimetype: 'application/javascript',
+    fileName: filename
+  }, { quoted: m })
+} else {
       throw '❌ Opzione non valida! Usa "file" o "script".'
     }
 
-    // Controllo sintassi JS
     if (isJS) {
       const error = syntaxError(fileContent, filename, {
         sourceType: 'module',
