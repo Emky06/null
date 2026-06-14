@@ -16,9 +16,9 @@ Esempi:
   const args = text.trim().split(' ')
   let option = ''
   if (args.length > 1 && (args[args.length - 1].toLowerCase() === 'file' || args[args.length - 1].toLowerCase() === 'script')) {
-    option = args.pop().toLowerCase() // prende l'ultimo elemento
+    option = args.pop().toLowerCase() 
   }
-  const fileArg = args.join(' ') // ricompone il nome del file senza "file"/"script"
+  const fileArg = args.join(' ') 
 
   let isPlugin = /p(lugin)?/i.test(command)
   let filename, pathFile
@@ -75,14 +75,9 @@ Esempi:
         caption: isPlugin ? `Ecco il plugin: ${filename}` : `Ecco il file: ${filename}`
       }, { quoted: m })
     } else if (option === 'script') {
-  if (!isJS) {
-    throw '❌ Solo file JavaScript.'
-  }
-
-  await conn.sendMessage(m.chat, {
-    text: `\`\`\`javascript\n${fileContent}\n\`\`\``
-  }, { quoted: m })
-} else {
+      if (!isJS) throw '❌ L\'opzione script è disponibile solo per file JavaScript.'
+      await m.reply(`// Codice di ${filename}\n\n${fileContent}`)
+    } else {
       throw '❌ Opzione non valida! Usa "file" o "script".'
     }
 
