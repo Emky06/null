@@ -76,13 +76,11 @@ Esempi:
       }, { quoted: m })
     } else if (option === 'script') {
   if (!isJS) {
-    throw '❌ L\'opzione script è disponibile solo per file JavaScript.'
+    throw '❌ Solo file JavaScript.'
   }
 
   await conn.sendMessage(m.chat, {
-    document: Buffer.from(fileContent, 'utf8'),
-    mimetype: 'application/javascript',
-    fileName: filename
+    text: `\`\`\`javascript\n${fileContent}\n\`\`\``
   }, { quoted: m })
 } else {
       throw '❌ Opzione non valida! Usa "file" o "script".'
