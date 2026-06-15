@@ -150,7 +150,7 @@ Se l'utente ti chiede cosa sta ascoltando qualcuno o chiede di scarica o cercare
 - Per sapere cosa sta ascoltando un'altra persona: [CMD:curc NUMERO_REALE] (prendi l'ID_SEGRETO reale della persona!)
 - Per scaricare audio: [CMD:playaudio NOME_CANZONE]
 - Per vedere il profilo di un'altra persona: [CMD:profilolastfmc NUMERO_REALE] (prendi l'ID_SEGRETO reale della persona!)
-- Per cercare una canzone: [CMD:play NOME_CANZONE]
+- Per cercare una canzone: [CMD:playk NOME_CANZONE]
 - Per scaricare video: [CMD:playvideo NOME_CANZONE]
 Non aggiungere NESSUN'ALTRA parola prima o dopo il codice.`
                 }
