@@ -1,3 +1,4 @@
+//Plugin fatto da Axtral_WiZaRd
 import Jimp from 'jimp'
 import fetch from 'node-fetch'
 import fs from 'fs'
@@ -116,46 +117,54 @@ async function generateProfileImageBrowserless(user) {
                       'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
 
     const registeredDate = new Date(user.registered?.unixtime * 1000).toLocaleDateString('it-IT')
+    const age = user.age > 0 ? user.age : 'N/A'
+    const gender = user.gender === 'm' ? 'Maschio' : user.gender === 'f' ? 'Femmina' : 'N/A'
+    const subscriber = user.subscriber === '1' ? 'Sì' : 'No'
+    const realname = user.realname || user.name
+    const country = user.country || 'N/A'
+    const playcount = parseInt(user.playcount || 0).toLocaleString()
+    const playlists = user.playlists || 0
 
     const html = `
-    <html>    
-    <head>    
-        <style>    
-            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');    
-            body { margin: 0; padding: 0; width: 1000px; height: 600px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; }    
-            .background { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }    
-            .glass-card { position: relative; width: 880px; height: 480px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; display: flex; align-items: center; padding: 45px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }    
-            .avatar { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }    
-            .details { flex: 1; margin-left: 50px; color: white; }    
-            .username { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 10px; }    
-            .stats { margin-top: 20px; }    
-            .stat-item { display: flex; align-items: baseline; margin-bottom: 15px; }    
-            .stat-label { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); width: 120px; }    
-            .stat-value { font-size: 28px; font-weight: 800; color: #32d74b; }    
-            .country { font-size: 18px; color: rgba(255,255,255,0.6); margin-top: 10px; display: flex; align-items: center; gap: 8px; }    
-        </style>    
-    </head>    
-    <body>    
-        <div class="background"></div>    
-        <div class="glass-card">    
-            <img src="${avatarUrl}" class="avatar" />    
-            <div class="details">    
-                <div class="username">@${user.name}</div>    
-                <div class="stats">    
-                    <div class="stat-item">    
-                        <div class="stat-label">ASCOLTI</div>    
-                        <div class="stat-value">${parseInt(user.playcount).toLocaleString()}</div>    
-                    </div>    
-                    <div class="stat-item">    
-                        <div class="stat-label">ARTISTI</div>    
-                        <div class="stat-value">${parseInt(user.artist_count).toLocaleString()}</div>    
-                    </div>    
-                    <div class="country">🌍 ${user.country || 'N/A'}</div>    
-                    <div class="country">📅 Registrato: ${registeredDate}</div>    
-                </div>    
-            </div>    
-        </div>    
-    </body>    
+    <html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+            body { margin: 0; padding: 0; width: 1000px; height: 600px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; background: #000; overflow: hidden; }
+            .background { position: absolute; width: 100%; height: 100%; background: url('${avatarUrl}') center/cover; filter: blur(30px) brightness(0.7); opacity: 0.7; }
+            .glass-card { position: relative; width: 880px; height: 480px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; display: flex; align-items: center; padding: 35px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+            .album-art { width: 340px; height: 340px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); object-fit: cover; }
+            .details { flex: 1; margin-left: 45px; color: white; display: flex; flex-direction: column; justify-content: center; }
+            .status { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #0a84ff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+            .track-name { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; letter-spacing: -1.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 420px; }
+            .artist-name { font-size: 22px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 20px; }
+            .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            .stat-item { background: rgba(255, 255, 255, 0.04); padding: 12px 15px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.05); }
+            .stat-item:last-child { grid-column: span 2; } 
+            .stat-label { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; font-weight: 800; margin-bottom: 2px; }
+            .stat-value { font-size: 18px; font-weight: 700; color: #fff; }
+        </style>
+    </head>
+    <body>
+        <div class="background"></div>
+        <div class="glass-card">
+            <img src="${avatarUrl}" class="album-art" />
+            <div class="details">
+                <div class="status"><span style="width:10px; height:10px; background:currentColor; border-radius:50%; box-shadow: 0 0 1px currentColor;"></span>Profilo Utente</div>
+                <div class="track-name">${user.name}</div>
+                <div class="artist-name">${realname}</div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-label">Paese</div><div class="stat-value">${country}</div></div>
+                    <div class="stat-item"><div class="stat-label">Età</div><div class="stat-value">${age}</div></div>
+                    <div class="stat-item"><div class="stat-label">Genere</div><div class="stat-value">${gender}</div></div>
+                    <div class="stat-item"><div class="stat-label">Iscritto Dal</div><div class="stat-value">${registeredDate}</div></div>
+                    <div class="stat-item"><div class="stat-label">Ascolti Totali</div><div class="stat-value">${playcount}</div></div>
+                    <div class="stat-item"><div class="stat-label">Subscriber</div><div class="stat-value">${subscriber}</div></div>
+                    <div class="stat-item"><div class="stat-label">Playlists</div><div class="stat-value">${playlists}</div></div>
+                </div>
+            </div>
+        </div>
+    </body>
     </html>`
 
     for (let i = 0; i < 5; i++) {
@@ -408,6 +417,5 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 }
 
 handler.command = ['curc', 'profilolastfmc', 'firec']
-
 
 export default handler
