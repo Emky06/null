@@ -348,26 +348,26 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     }
 
     if (command === 'profilolastfmc') {
-        let targetUser = actualSender;
+    let targetUser = actualSender;
 
-        if (m.mentionedJid?.length) {
-            targetUser = m.mentionedJid[0];
-        } else if (m.quoted?.sender) {
-            targetUser = m.quoted.sender;
-        } else if (actualText.includes('@')) {
-            const tagMatch = actualText.match(/@(\d+)/);
-            if (tagMatch) {
-                targetUser = tagMatch[1] + '@s.whatsapp.net';
-            }
+    if (m.mentionedJid?.length) {
+        targetUser = m.mentionedJid[0];
+    } else if (m.quoted?.sender) {
+        targetUser = m.quoted.sender;
+    } else if (actualText.includes('@')) {
+        const tagMatch = actualText.match(/@(\d+)/);
+        if (tagMatch) {
+            targetUser = tagMatch[1] + '@s.whatsapp.net';
         }
+    }
 
-        const user = getLastfmUsername(targetUser)
+    const user = getLastfmUsername(targetUser)
 
-        if (!user) {
-            await conn.sendMessage(
-                targetChat,
-                {
-                    text: `🎵 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐳𝐢𝐨𝐧𝐞 Last.fm 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐚
+    if (!user) {
+        await conn.sendMessage(
+            targetChat,
+            {
+                text: `🎵 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐳𝐢𝐨𝐧𝐞 Last.fm 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐚
 
 @${targetUser.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
 
@@ -376,44 +376,52 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 
 💡 𝐍𝐨𝐧 𝐡𝐚𝐢 Last.fm?
 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢 𝐬𝐮𝐥 𝐬𝐢𝐭𝐨, 𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐢 𝐬𝐮 𝐒𝐩𝐨𝐭𝐢𝐟𝐲 𝐞 𝐢𝐧𝐢𝐳𝐢𝐚 𝐚 𝐟𝐚𝐫𝐞 𝐬𝐜𝐫𝐨𝐛𝐛𝐥𝐢𝐧𝐠 𝐝𝐞𝐥𝐥𝐚 𝐭𝐮𝐚 𝐦𝐮𝐬𝐢𝐜𝐚!`,
-                    mentions: [targetUser]
-                },
-                { quoted: targetQuote }
-            )
-            return
-        }
-
-        const userInfo = await getUserInfo(user)
-
-        if (!userInfo || userInfo.error) {
-            await conn.sendMessage(targetChat, { text: '❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐞𝐜𝐮𝐩𝐞𝐫𝐚𝐫𝐞 𝐢𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨.' }, { quoted: targetQuote })
-            return
-        }
-
-        let buffer
-
-        try {
-            if (BROWSERLESS_KEY) {
-                buffer = await generateProfileImageBrowserless(userInfo)
-            } else {
-                throw new Error('Browserless key non configurata')
-            }
-        } catch (e) {
-            console.error('Browserless failed for profile:', e.message)
-            await conn.sendMessage(targetChat, {
-                text: `👤 *${userInfo.name}*\n🌍 ${userInfo.country || 'N/A'}\n🎵 Ascolti totali: ${parseInt(userInfo.playcount).toLocaleString()}\n🎤 Artisti ascoltati: ${parseInt(userInfo.artist_count).toLocaleString()}\n📅 Registrato: ${new Date(userInfo.registered?.unixtime * 1000).toLocaleDateString('it-IT')}`,
                 mentions: [targetUser]
-            }, { quoted: targetQuote })
-            return
-        }
+            },
+            { quoted: targetQuote }
+        )
+        return
+    }
 
+    const userInfo = await getUserInfo(user)
+
+    if (!userInfo || userInfo.error) {
+        await conn.sendMessage(targetChat, { text: '❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐞𝐜𝐮𝐩𝐞𝐫𝐚𝐫𝐞 𝐢𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨.' }, { quoted: targetQuote })
+        return
+    }
+
+    let buffer
+
+    try {
+        if (BROWSERLESS_KEY) {
+            buffer = await generateProfileImageBrowserless(userInfo)
+        } else {
+            throw new Error('Browserless key non configurata')
+        }
+    } catch (e) {
+        console.error('Browserless failed for profile:', e.message)
         await conn.sendMessage(targetChat, {
-            image: buffer,
-            caption: `👤 *Profilo Last.fm di @${targetUser.split('@')[0]}*`,
+            text: `👤 *${userInfo.name}*\n🌍 ${userInfo.country || 'N/A'}\n🎵 Ascolti totali: ${parseInt(userInfo.playcount).toLocaleString()}\n🎤 Artisti ascoltati: ${parseInt(userInfo.artist_count).toLocaleString()}\n📅 Registrato: ${new Date(userInfo.registered?.unixtime * 1000).toLocaleDateString('it-IT')}`,
             mentions: [targetUser]
         }, { quoted: targetQuote })
         return
     }
+
+    let cleanUser = targetUser.split('@')[0];
+    const caption = `👤 *Profilo di* @${cleanUser}
+👤 *Nome:* ${userInfo.name}
+🌍 *Paese:* ${userInfo.country || 'N/A'}
+
+> \`𝑶𝒓𝒊𝒈𝒊𝒏✦\``;
+
+    await conn.sendMessage(targetChat, {
+        image: buffer,
+        caption: caption,
+        footer: '𝑶𝒓𝒊𝒈𝒊𝒏✦',
+        mentions: [targetUser]
+    }, { quoted: targetQuote })
+    return
+}
 }
 
 handler.command = ['curc', 'profilolastfmc', 'firec']
