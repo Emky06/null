@@ -412,12 +412,12 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 👤 *Nome:* ${userInfo.name}
 🌍 *Paese:* ${userInfo.country || 'N/A'}
 
-> \`𝑶𝒓𝒊𝒈𝒊𝒏✦\``;
+> 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕;
 
     await conn.sendMessage(targetChat, {
         image: buffer,
         caption: caption,
-        footer: '𝑶𝒓𝒊𝒈𝒊𝒏✦',
+        footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
         mentions: [targetUser]
     }, { quoted: targetQuote })
     return
