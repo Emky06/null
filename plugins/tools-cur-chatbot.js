@@ -335,7 +335,9 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
                 {
                     buttonId: `${usedPrefix}firec ${targetUser}|${current.name}`,
                     buttonText: { displayText: "🔥" },
-       
+                {
+                    buttonId: `${usedPrefix}play1 ${current.artist['#text']} ${current.name}`,
+                    buttonText: { displayText: "⬇️ 𝐒𝐜𝐚𝐫𝐢𝐜𝐚 𝐚𝐮𝐝𝐢𝐨" },
           type: 1
         }
       ],
