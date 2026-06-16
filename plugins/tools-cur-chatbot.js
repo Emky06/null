@@ -1,4 +1,3 @@
-//Plugin fatto da Axtral_WiZaRd
 import Jimp from 'jimp'
 import fetch from 'node-fetch'
 import fs from 'fs'
@@ -28,6 +27,12 @@ function getLastfmUsername(userId) {
         }
     }
     return null
+}
+
+function setLastfmUsername(userId, username) {
+    const users = getLastfmUsers()
+    users[userId] = username
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2))
 }
 
 async function getRecentTracks(username, limit = 2) {
@@ -214,14 +219,51 @@ function getTargetJid(m, text) {
 }
 
 const handler = async (m, { conn, args, usedPrefix, text, command }) => {
-    let targetChat = m.chat
-    let targetQuote = m
+    let db = getLastfmUsers();
+    
+    // ================= GHOST ROUTING LOGIC =================
+    let targetChat = m.chat;
+    let targetQuote = m;
+    let actualSender = m.sender;
+    let actualText = text || '';
 
-    if (command === 'firec') {
-        const targetJid = getTargetJid(m, text)
-        const trackName = args.slice(1).join(' ') || 'brano'
+    if (text && text.includes('| ROUTE:')) {
+        const parts = text.split('| ROUTE:');
+        actualText = parts[0].trim();
+        const routeInfo = parts[1];
+        const routeMatch = routeInfo.match(/(.+) \| QUOTE:(.+) \| SENDER:(.+)/);
+        if (routeMatch) {
+            targetChat = routeMatch[1].trim();
+            const quoteId = routeMatch[2].trim();
+            actualSender = routeMatch[3].trim();
+            targetQuote = { key: { remoteJid: targetChat, fromMe: false, id: quoteId, participant: actualSender }, message: { conversation: "Origin Request" } };
+        }
+    }
+    text = actualText;
+    // =======================================================
 
-        if (targetJid === m.sender) {
+    if (command === 'setuser') {
+        const username = text.trim()
+        if (!username) {
+            await conn.sendMessage(targetChat, { text: `❌ 𝐔𝐬𝐚 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐜𝐨𝐬𝐢̀: ${usedPrefix}setuser <username>` }, { quoted: targetQuote })
+            return
+        }
+        setLastfmUsername(actualSender, username)
+        await conn.sendMessage(targetChat, { text: `✅ 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 *${username}* 𝐬𝐚𝐥𝐯𝐚𝐭𝐨!` }, { quoted: targetQuote })
+        return
+    }
+
+    if (command === 'fire') {
+        const [target, track] = text.split('|').map(t => t?.trim())
+        
+        if (!target || !track) {
+            await conn.sendMessage(targetChat, { text: `❌ 𝐔𝐬𝐨: ${usedPrefix}fire @utente|brano` }, { quoted: targetQuote })
+            return
+        }
+
+        const targetJid = target.includes('@') ? target.trim() : target.trim() + '@s.whatsapp.net'
+
+        if (targetJid === actualSender) {
             await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: targetQuote })
             return
         }
@@ -233,15 +275,27 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         global.db.data.users[targetJid].fuochi = (global.db.data.users[targetJid].fuochi || 0) + 1
 
         await conn.sendMessage(targetChat, {
-            text: `🔥 @${m.sender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 🔥 𝐚 *"${trackName}"* 𝐝𝐢 @${targetJid.split('@')[0]}`,
-            mentions: [m.sender, targetJid]
+            text: `🔥 @${actualSender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 🔥 𝐚 *"${track}"* 𝐝𝐢 @${targetJid.split('@')[0]}`,
+            mentions: [actualSender, targetJid]
         }, { quoted: targetQuote })
         return
     }
 
-    if (command === 'curc') {
-        const targetJid = getTargetJid(m, text)
-        const user = getLastfmUsername(targetJid)
+    if (command === 'cur') {
+        let targetUser = actualSender;
+
+        if (m.mentionedJid?.length) {
+            targetUser = m.mentionedJid[0];
+        } else if (m.quoted?.sender) {
+            targetUser = m.quoted.sender;
+        } else if (actualText.includes('@')) {
+            const tagMatch = actualText.match(/@(\d+)/);
+            if (tagMatch) {
+                targetUser = tagMatch[1] + '@s.whatsapp.net';
+            }
+        }
+
+        const user = getLastfmUsername(targetUser)
 
         if (!user) {
             await conn.sendMessage(
@@ -249,14 +303,14 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
                 {
                     text: `🎵 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐳𝐢𝐨𝐧𝐞 Last.fm 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐚
 
-@${targetJid.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
+@${targetUser.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
 
 📱 𝐔𝐬𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨:
 .setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>
 
 💡 𝐍𝐨𝐧 𝐡𝐚𝐢 Last.fm?
 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢 𝐬𝐮𝐥 𝐬𝐢𝐭𝐨, 𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐢 𝐬𝐮 𝐒𝐩𝐨𝐭𝐢𝐟𝐲 𝐞 𝐢𝐧𝐢𝐳𝐢𝐚 𝐚 𝐟𝐚𝐫𝐞 𝐬𝐜𝐫𝐨𝐛𝐛𝐥𝐢𝐧𝐠 𝐝𝐞𝐥𝐥𝐚 𝐭𝐮𝐚 𝐦𝐮𝐬𝐢𝐜𝐚!`,
-                    mentions: [targetJid]
+                    mentions: [targetUser]
                 },
                 { quoted: targetQuote }
             )
@@ -265,7 +319,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 
         const tracks = await getRecentTracks(user, 2)
         if (!tracks.length) {
-            await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐭𝐫𝐚𝐜𝐜𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
+            await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐭𝐫𝐚𝐜𝐜𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' }, { quoted: targetQuote })
             return
         }
 
@@ -290,33 +344,45 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         }
 
         const caption = current['@attr']?.nowplaying === 'true'
-            ? `🎧 𝐈𝐧 𝐫𝐢𝐩𝐫𝐨𝐝𝐮𝐳𝐢𝐨𝐧𝐞 𝐨𝐫𝐚 • @${targetJid.split('@')[0]}\n\n` +
+            ? `🎧 𝐈𝐧 𝐫𝐢𝐩𝐫𝐨𝐝𝐮𝐳𝐢𝐨𝐧𝐞 𝐨𝐫𝐚 • @${targetUser.split('@')[0]}\n\n` +
               `🎵 *${current.name}*\n🎤 ${current.artist['#text']}\n💿 ${current.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
               `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
-            : `⏹️ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐛𝐫𝐚𝐧𝐨 𝐝𝐢 @${targetJid.split('@')[0]}:\n\n` +
+            : `⏹️ 𝐔𝐥𝐭𝐢𝐦𝐨 𝐛𝐫𝐚𝐧𝐨 𝐝𝐢 @${targetUser.split('@')[0]}:\n\n` +
               `🎵 *${current.name}*\n🎤 ${current.artist['#text']}\n💿 ${current.album?.['#text'] || '𝐀𝐥𝐛𝐮𝐦 𝐬𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨'}\n\n` +
               `🔁 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐩𝐞𝐫𝐬𝐨𝐧𝐚𝐥𝐢 ${userPlaycount}\n🌍 𝐀𝐬𝐜𝐨𝐥𝐭𝐢 𝐠𝐥𝐨𝐛𝐚𝐥𝐢 ${globalPlaycount.toLocaleString()}\n👥 𝐀𝐬𝐜𝐨𝐥𝐭𝐚𝐭𝐨𝐫𝐢 ${globalListeners.toLocaleString()}`
 
         await conn.sendMessage(targetChat, {
             image: buffer,
             caption: caption,
-            mentions: [targetJid],
+            mentions: [targetUser],
             footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
             buttons: [
                 {
-                    buttonId: `${usedPrefix}firec ${targetJid}|${current.name}`,
+                    buttonId: `${usedPrefix}fire ${targetUser}|${current.name}`,
                     buttonText: { displayText: "🔥" },
                     type: 1
                 }
             ],
             headerType: 4
-        })
+        }, { quoted: targetQuote })
         return
     }
 
-    if (command === 'profilolastfmc') {
-        const targetJid = getTargetJid(m, text)
-        const user = getLastfmUsername(targetJid)
+    if (command === 'profilolastfm') {
+        let targetUser = actualSender;
+
+        if (m.mentionedJid?.length) {
+            targetUser = m.mentionedJid[0];
+        } else if (m.quoted?.sender) {
+            targetUser = m.quoted.sender;
+        } else if (actualText.includes('@')) {
+            const tagMatch = actualText.match(/@(\d+)/);
+            if (tagMatch) {
+                targetUser = tagMatch[1] + '@s.whatsapp.net';
+            }
+        }
+
+        const user = getLastfmUsername(targetUser)
 
         if (!user) {
             await conn.sendMessage(
@@ -324,14 +390,14 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
                 {
                     text: `🎵 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐳𝐢𝐨𝐧𝐞 Last.fm 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐚
 
-@${targetJid.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
+@${targetUser.split('@')[0]}, 𝐩𝐞𝐫 𝐮𝐬𝐚𝐫𝐞 𝐢 𝐜𝐨𝐦𝐚𝐧𝐝𝐢 𝐦𝐮𝐬𝐢𝐜𝐚𝐥𝐢 𝐝𝐞𝐯𝐢 𝐫𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞 Last.fm.
 
 📱 𝐔𝐬𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨:
 .setuser <𝐭𝐮𝐨_𝐮𝐬𝐞𝐫𝐧𝐚𝐦𝐞>
 
 💡 𝐍𝐨𝐧 𝐡𝐚𝐢 Last.fm?
 𝐑𝐞𝐠𝐢𝐬𝐭𝐫𝐚𝐭𝐢 𝐬𝐮𝐥 𝐬𝐢𝐭𝐨, 𝐜𝐨𝐧𝐧𝐞𝐭𝐭𝐢 𝐬𝐮 𝐒𝐩𝐨𝐭𝐢𝐟𝐲 𝐞 𝐢𝐧𝐢𝐳𝐢𝐚 𝐚 𝐟𝐚𝐫𝐞 𝐬𝐜𝐫𝐨𝐛𝐛𝐥𝐢𝐧𝐠 𝐝𝐞𝐥𝐥𝐚 𝐭𝐮𝐚 𝐦𝐮𝐬𝐢𝐜𝐚!`,
-                    mentions: [targetJid]
+                    mentions: [targetUser]
                 },
                 { quoted: targetQuote }
             )
@@ -341,7 +407,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         const userInfo = await getUserInfo(user)
 
         if (!userInfo || userInfo.error) {
-            await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐞𝐬𝐬𝐮𝐧𝐚 𝐭𝐫𝐚𝐜𝐜𝐢𝐚 𝐭𝐫𝐨𝐯𝐚𝐭𝐚.' })
+            await conn.sendMessage(targetChat, { text: '❌ 𝐄𝐫𝐫𝐨𝐫𝐞 𝐧𝐞𝐥 𝐫𝐞𝐜𝐮𝐩𝐞𝐫𝐚𝐫𝐞 𝐢𝐥 𝐩𝐫𝐨𝐟𝐢𝐥𝐨.' }, { quoted: targetQuote })
             return
         }
 
@@ -357,20 +423,20 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
             console.error('Browserless failed for profile:', e.message)
             await conn.sendMessage(targetChat, {
                 text: `👤 *${userInfo.name}*\n🌍 ${userInfo.country || 'N/A'}\n🎵 Ascolti totali: ${parseInt(userInfo.playcount).toLocaleString()}\n🎤 Artisti ascoltati: ${parseInt(userInfo.artist_count).toLocaleString()}\n📅 Registrato: ${new Date(userInfo.registered?.unixtime * 1000).toLocaleDateString('it-IT')}`,
-                mentions: [targetJid]
+                mentions: [targetUser]
             }, { quoted: targetQuote })
             return
         }
 
         await conn.sendMessage(targetChat, {
             image: buffer,
-            caption: `👤 *Profilo Last.fm di @${targetJid.split('@')[0]}*`,
-            mentions: [targetJid]
+            caption: `👤 *Profilo Last.fm di @${targetUser.split('@')[0]}*`,
+            mentions: [targetUser]
         }, { quoted: targetQuote })
         return
     }
 }
 
-handler.command = ['curc', 'profilolastfmc', 'firec']
+handler.command = ['setuser', 'cur', 'profilolastfm', 'fire']
 
 export default handler
