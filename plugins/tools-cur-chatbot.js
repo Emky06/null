@@ -117,8 +117,6 @@ async function generateProfileImageBrowserless(user) {
                       'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
 
     const registeredDate = new Date(user.registered?.unixtime * 1000).toLocaleDateString('it-IT')
-    const age = user.age > 0 ? user.age : 'N/A'
-    const gender = user.gender === 'm' ? 'Maschio' : user.gender === 'f' ? 'Femmina' : 'N/A'
     const subscriber = user.subscriber === '1' ? 'Sì' : 'No'
     const realname = user.realname || user.name
     const country = user.country || 'N/A'
@@ -155,8 +153,6 @@ async function generateProfileImageBrowserless(user) {
                 <div class="artist-name">${realname}</div>
                 <div class="stats-grid">
                     <div class="stat-item"><div class="stat-label">Paese</div><div class="stat-value">${country}</div></div>
-                    <div class="stat-item"><div class="stat-label">Età</div><div class="stat-value">${age}</div></div>
-                    <div class="stat-item"><div class="stat-label">Genere</div><div class="stat-value">${gender}</div></div>
                     <div class="stat-item"><div class="stat-label">Iscritto Dal</div><div class="stat-value">${registeredDate}</div></div>
                     <div class="stat-item"><div class="stat-label">Ascolti Totali</div><div class="stat-value">${playcount}</div></div>
                     <div class="stat-item"><div class="stat-label">Subscriber</div><div class="stat-value">${subscriber}</div></div>
