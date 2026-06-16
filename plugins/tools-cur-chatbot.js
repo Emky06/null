@@ -412,7 +412,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 👤 *Nome:* ${userInfo.name}
 🌍 *Paese:* ${userInfo.country || 'N/A'}
 
-> 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕;
+> 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕`;
 
     await conn.sendMessage(targetChat, {
         image: buffer,
