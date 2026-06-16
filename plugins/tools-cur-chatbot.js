@@ -29,12 +29,6 @@ function getLastfmUsername(userId) {
     return null
 }
 
-function setLastfmUsername(userId, username) {
-    const users = getLastfmUsers()
-    users[userId] = username
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2))
-}
-
 async function getRecentTracks(username, limit = 2) {
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${LASTFM_API_KEY}&format=json&limit=${limit}`
     const res = await fetch(url)
@@ -210,18 +204,8 @@ function normalizeJid(input) {
     return num + '@s.whatsapp.net'
 }
 
-function getTargetJid(m, text) {
-    if (m.quoted?.sender) return m.quoted.sender
-    if (m.mentionedJid?.length) return m.mentionedJid[0]
-    const jid = normalizeJid(text)
-    if (jid) return jid
-    return m.sender
-}
-
 const handler = async (m, { conn, args, usedPrefix, text, command }) => {
-    let db = getLastfmUsers();
-    
-    // ================= GHOST ROUTING LOGIC =================
+   
     let targetChat = m.chat;
     let targetQuote = m;
     let actualSender = m.sender;
@@ -240,48 +224,34 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         }
     }
     text = actualText;
-    // =======================================================
 
-    if (command === 'setuser') {
-        const username = text.trim()
-        if (!username) {
-            await conn.sendMessage(targetChat, { text: `❌ 𝐔𝐬𝐚 𝐢𝐥 𝐜𝐨𝐦𝐚𝐧𝐝𝐨 𝐜𝐨𝐬𝐢̀: ${usedPrefix}setuser <username>` }, { quoted: targetQuote })
-            return
-        }
-        setLastfmUsername(actualSender, username)
-        await conn.sendMessage(targetChat, { text: `✅ 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 *${username}* 𝐬𝐚𝐥𝐯𝐚𝐭𝐨!` }, { quoted: targetQuote })
+    if (command === 'firec') {
+    const [target, track] = text.split('|').map(t => t?.trim())
+    
+    if (!target || !track) {
+        await conn.sendMessage(targetChat, { text: `❌ 𝐔𝐬𝐨: ${usedPrefix}firec @utente|brano` }, { quoted: targetQuote })
         return
     }
 
-    if (command === 'fire') {
-        const [target, track] = text.split('|').map(t => t?.trim())
-        
-        if (!target || !track) {
-            await conn.sendMessage(targetChat, { text: `❌ 𝐔𝐬𝐨: ${usedPrefix}fire @utente|brano` }, { quoted: targetQuote })
-            return
-        }
+    const targetJid = target.includes('@') ? target.trim() : target.trim() + '@s.whatsapp.net'
 
-        const targetJid = target.includes('@') ? target.trim() : target.trim() + '@s.whatsapp.net'
-
-        if (targetJid === actualSender) {
-            await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: targetQuote })
-            return
-        }
-
-        if (!global.db.data.users[targetJid]) {
-            global.db.data.users[targetJid] = {}
-        }
-
-        global.db.data.users[targetJid].fuochi = (global.db.data.users[targetJid].fuochi || 0) + 1
-
-        await conn.sendMessage(targetChat, {
-            text: `🔥 @${actualSender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 🔥 𝐚 *"${track}"* 𝐝𝐢 @${targetJid.split('@')[0]}`,
-            mentions: [actualSender, targetJid]
-        }, { quoted: targetQuote })
+    if (targetJid === actualSender) {
+        await conn.sendMessage(targetChat, { text: '❌ 𝐍𝐨𝐧 𝐩𝐮𝐨𝐢 𝐦𝐞𝐭𝐭𝐞𝐫𝐭𝐢 🔥 𝐝𝐚 𝐬𝐨𝐥𝐨' }, { quoted: targetQuote })
         return
     }
 
-    if (command === 'cur') {
+    if (!global.db.data.users[targetJid]) return
+
+    global.db.data.users[targetJid].fuochi = (global.db.data.users[targetJid].fuochi || 0) + 1
+
+    await conn.sendMessage(targetChat, {
+        text: `🔥 @${actualSender.split('@')[0]} 𝐡𝐚 𝐦𝐞𝐬𝐬𝐨 𝐥𝐢𝐤𝐞 𝐚 *"${track}"* 𝐝𝐢 @${targetJid.split('@')[0]}`,
+        mentions: [actualSender, targetJid]
+    }, { quoted: targetQuote })
+    return
+}
+
+    if (command === 'curc') {
         let targetUser = actualSender;
 
         if (m.mentionedJid?.length) {
@@ -358,7 +328,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
             footer: '𝐁𝐲 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕',
             buttons: [
                 {
-                    buttonId: `${usedPrefix}fire ${targetUser}|${current.name}`,
+                    buttonId: `${usedPrefix}firec ${targetUser}|${current.name}`,
                     buttonText: { displayText: "🔥" },
                     type: 1
                 }
@@ -368,7 +338,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
         return
     }
 
-    if (command === 'profilolastfm') {
+    if (command === 'profilolastfmc') {
         let targetUser = actualSender;
 
         if (m.mentionedJid?.length) {
@@ -437,6 +407,7 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
     }
 }
 
-handler.command = ['setuser', 'cur', 'profilolastfm', 'fire']
+handler.command = ['curc', 'profilolastfmc', 'firec']
+
 
 export default handler
