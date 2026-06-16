@@ -64,7 +64,7 @@ const handler = async (m, { conn, command, text, usedPrefix }) => {
       }
       if (isVideo) {
         const file = await ytmp4(videoUrl);
-        await conn.sendMessage(targetChat, { video: fs.readFileSync(file), mimetype: 'video/mp4', caption: '> `𝑶𝒓𝒊𝒈𝒊𝒏✦`' }, { quoted: targetQuote });
+        await conn.sendMessage(targetChat, { video: fs.readFileSync(file), mimetype: 'video/mp4', caption: '> 𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕' }, { quoted: targetQuote });
         if (fs.existsSync(file)) fs.unlinkSync(file); 
       } else {
         const file = await ytmp3(videoUrl);
@@ -88,7 +88,7 @@ const handler = async (m, { conn, command, text, usedPrefix }) => {
         { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: '🎬 Video', id: `${prefix}playvideo ${v.url}` }) }
       ]
     }));
-    await conn.sendMessage(targetChat, { text: `『 🔍 』 Risultati per: ${text}`, footer: '𝑶𝒓𝒊𝒈𝒊𝒏✦', cards }, { quoted: targetQuote });
+    await conn.sendMessage(targetChat, { text: `『 🔍 』 Risultati per: ${text}`, footer: '𝔸𝕩𝕥𝕣𝕒𝕝_𝕎𝕚ℤ𝕒ℝ𝕕', cards }, { quoted: targetQuote });
   } catch (e) {
     await react('❌');
     await reply(`❌ Errore.`);
