@@ -372,6 +372,5 @@ const handler = async (m, { conn, args, usedPrefix, text, command }) => {
 }
 
 handler.command = ['curc', 'profilolastfmc', 'firec']
-handler.group = true
 
 export default handler
