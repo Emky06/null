@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+/*Plugin fatto da Axtral_WiZaRd
 let handler = m => m;
 
 handler.all = async function (m) {
@@ -28,4 +28,4 @@ handler.all = async function (m) {
   return !0;
 };
 
-export default handler;
+export default handler;*/
