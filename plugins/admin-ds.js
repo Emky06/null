@@ -1,4 +1,4 @@
-//Plugin fatto da Axtral_WiZaRd
+//Plugin fatto da kinder mod axtral
 import fs from 'fs';
 import path from 'path';
 
