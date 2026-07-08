@@ -97,9 +97,7 @@ return conn.sendMessage(
 );
 };
 
-handler.command = ['guardami'];
-handler.tags = ['gruppo'];
-handler.help = ['guardami'];
+handler.command = ['ds2'];
 handler.group = true;
 handler.admin = true;
 
