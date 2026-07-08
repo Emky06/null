@@ -86,7 +86,7 @@ return conn.sendMessage(
     text:
       recreatedCount === 0
         ? "ⓘ 𝐋𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢 𝐬𝐨𝐧𝐨 𝐯𝐮𝐨𝐭𝐞, 𝐫𝐢𝐩𝐫𝐨𝐯𝐚 𝐭𝐫𝐚 𝐩𝐨𝐜𝐨‼️"
-        : `🔄 𝐒𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐞 𝐫𝐢𝐜𝐫𝐞𝐚𝐭𝐞 {recreatedCount} 𝐚𝐫𝐜𝐡𝐢𝐯𝐢 𝐝𝐞𝐥𝐥𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢`,
+        : `🔄 𝐒𝐨𝐧𝐨 𝐬𝐭𝐚𝐭𝐞 𝐫𝐢𝐜𝐫𝐞𝐚𝐭𝐞 ${recreatedCount} 𝐚𝐫𝐜𝐡𝐢𝐯𝐢 𝐝𝐞𝐥𝐥𝐞 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢`,
     buttons,
     headerType: 1
   },
