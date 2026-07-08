@@ -55,7 +55,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   }
 
   const buttons = [
-  { buttonId: `${usedPrefix}ds2`, buttonText: { displayText: "🔄 𝐑𝐢𝐜𝐫𝐞𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
+  { buttonId: `${usedPrefix}rs`, buttonText: { displayText: "🔄 𝐑𝐢𝐜𝐫𝐞𝐚 𝐬𝐞𝐬𝐬𝐢𝐨𝐧𝐢" }, type: 1 },
   { buttonId: `${usedPrefix}ping`, buttonText: { displayText: "⚡ 𝐏𝐢𝐧𝐠" }, type: 1 },
   { buttonId: `${usedPrefix}pong`, buttonText: { displayText: "🏓 𝐏𝐨𝐧𝐠" }, type: 1 },
   { buttonId: `${usedPrefix}speed`, buttonText: { displayText: "📊 𝐒𝐩𝐞𝐞𝐝" }, type: 1 }
@@ -97,7 +97,7 @@ return conn.sendMessage(
 );
 };
 
-handler.command = ['ds2'];
+handler.command = ['rs'];
 handler.group = true;
 handler.admin = true;
 
