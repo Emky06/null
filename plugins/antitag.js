@@ -6,6 +6,9 @@ let handler = m => m;
 handler.before = async function (m, { conn, participants, groupMetadata, isAdmin, isPrems, isBotAdmin, isOwner, isROwner }) {
     if (!m.isGroup) return false;
     
+    const chat = global.db.data.chats[m.chat];
+if (!chat?.antitag) return false;
+
     const botNumber = conn.decodeJid(conn.user?.jid || conn.user?.id || '');
     const isBot = m.sender === botNumber;
     
