@@ -12,6 +12,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         solostaff: '𝐬𝐨𝐥𝐨𝐬𝐭𝐚𝐟𝐟',
         soloviewonce: '𝐬𝐨𝐥𝐨𝐯𝐢𝐞𝐰𝐨𝐧𝐜𝐞',
         antispam: '𝐚𝐧𝐭𝐢𝐬𝐩𝐚𝐦',
+        antitag: '𝐚𝐧𝐭𝐢𝐭𝐚𝐠',
         antisondaggi: '𝐚𝐧𝐭𝐢𝐬𝐨𝐧𝐝𝐚𝐠𝐠𝐢',
         antigiochi: '𝐚𝐧𝐭𝐢𝐠𝐢𝐨𝐜𝐡𝐢',
         antitrava: '𝐚𝐧𝐭𝐢𝐭𝐫𝐚𝐯𝐚',
