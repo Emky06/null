@@ -54,7 +54,7 @@ END:VCARD`
     }
 
 
-    const sessionDir = './Sessioni'
+    const sessionDir = './sessioni'
 
 
     if (!fs.existsSync(sessionDir)) {
