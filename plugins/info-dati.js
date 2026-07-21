@@ -15,9 +15,10 @@ const handler = async (m, { conn }) => {
     const vittoriePrefissi = user.vittoriePrefissi || 0;
     const vittorieic = user.vittorieic || 0;
     const vittorieTris = user.vittorieTris || 0;
-    const vittorieImpiccato = user.vittorieImpiccato || 0;   
+    const vittorieImpiccato = user.vittorieImpiccato || 0;
 
     let nomeUtente = "Utente sconosciuto";
+
     try {
       nomeUtente = await conn.getName(who);
       if (!nomeUtente) nomeUtente = "Utente sconosciuto";
@@ -25,15 +26,8 @@ const handler = async (m, { conn }) => {
       nomeUtente = "Utente sconosciuto";
     }
 
-    let pic;
-    try {
-      pic = await conn.profilePictureUrl(who, 'image');
-      pic = await (await fetch(pic)).buffer();
-    } catch {
-      pic = fs.readFileSync(path.join('./icone/profilo.png'));
-    }
-
     let text = `
+      🕹️ 𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️
 𖦹━━━━━━ ☾︎•♦️•☽︎ ━━━━━━𖦹
 ↆ   *𝐃𝐀𝐓𝐈 𝐃𝐈* @${who.split('@')[0]}   ↆ
 
@@ -49,20 +43,36 @@ const handler = async (m, { conn }) => {
 𖦹━━━━━━ ☾︎•♦️•☽︎ ━━━━━━𖦹
 `.trim();
 
+    const contatto = {
+      key: {
+        participants: "0@s.whatsapp.net",
+        fromMe: false,
+        id: "Halo"
+      },
+      message: {
+        contactMessage: {
+          displayName: nomeUtente,
+          vcard: `BEGIN:VCARD
+VERSION:3.0
+N:${nomeUtente};;;;
+FN:${nomeUtente}
+item1.TEL;waid=${who.split('@')[0]}:${who.split('@')[0]}
+item1.X-ABLabel:Telefono
+END:VCARD`
+        }
+      },
+      participant: "0@s.whatsapp.net"
+    };
+
     await conn.sendMessage(m.chat, {
       text,
       mentions: [who],
       contextInfo: {
-        mentionedJid: [who],
-        externalAdReply: {
-          title: nomeUtente, 
-          body: '𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒉𝒆 𝒅𝒆𝒊 𝒈𝒊𝒐𝒄𝒉𝒊 🕹️',
-          thumbnail: pic, 
-          mediaType: 1,
-          renderLargerThumbnail: false
-        }
+        mentionedJid: [who]
       }
-    }, { quoted: m });
+    }, {
+      quoted: contatto
+    });
 
   } catch (e) {
     console.error(e);
