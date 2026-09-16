@@ -12,7 +12,7 @@ let handler = async (m, { conn, text }) => {
 
   const frames = [
     `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄̶͞ ̶͞ ̶͞ لں͞`,
     `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
     `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
     `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
@@ -34,7 +34,7 @@ let handler = async (m, { conn, text }) => {
     })
   }
 
-  
+
   await delay(800)
   await conn.sendMessage(m.chat, {
     text: `${frames[frames.length - 1]}\n\n🤤@${user.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐚/𝐨 𝐬𝐜𝐨𝐩𝐚𝐭𝐚/𝐨 𝐟𝐨𝐫𝐭𝐞 𝐚 90 𝐞 𝐨𝐫𝐚 𝐞̀ 𝐩𝐢𝐞𝐧𝐚/𝐨 𝐝𝐢 𝐬𝐛𝐨𝐫𝐫𝐚🥵`,
