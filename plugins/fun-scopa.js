@@ -11,17 +11,17 @@ let handler = async (m, { conn, text }) => {
   if (!user) throw '🤤𝐓𝐚𝐠𝐠𝐚 𝐜𝐡𝐢 𝐬𝐜𝐨𝐩𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨🥵'
 
   const frames = [
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
-    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
-    `● █▀█▄💦Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 0: Fuori (visibile)
+    `● █▀█▄                     لں͞`,    // 1: Dentro (spazi fissi per bloccare il testo)
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 2: Fuori
+    `● █▀█▄                     لں͞`,    // 3: Dentro
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 4: Fuori
+    `● █▀█▄                     لں͞`,    // 5: Dentro
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 6: Fuori
+    `● █▀█▄                     لں͞`,    // 7: Dentro
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 8: Fuori
+    `● █▀█▄                     لں͞`,    // 9: Dentro
+    `● █▀█▄💦Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,   // 10: Finale con sborra
   ]
 
   let msg = await conn.reply(m.chat, frames[0], m)
@@ -45,5 +45,3 @@ let handler = async (m, { conn, text }) => {
 
 handler.command = ['scopa']
 export default handler
-
-perché ci sono alcune sequenze che si mettono al contrario?
