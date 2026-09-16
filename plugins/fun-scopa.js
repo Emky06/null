@@ -11,17 +11,17 @@ let handler = async (m, { conn, text }) => {
   if (!user) throw '🤤𝐓𝐚𝐠𝐠𝐚 𝐜𝐡𝐢 𝐬𝐜𝐨𝐩𝐚𝐫𝐞 𝐨 𝐫𝐢𝐬𝐩𝐨𝐧𝐝𝐢 𝐚 𝐮𝐧 𝐬𝐮𝐨 𝐦𝐞𝐬𝐬𝐚𝐠𝐠𝐢𝐨🥵'
 
   const frames = [
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 0: Fuori (visibile)
-    `● █▀█▄                     لں͞`,    // 1: Dentro (spazi fissi per bloccare il testo)
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 2: Fuori
-    `● █▀█▄                     لں͞`,    // 3: Dentro
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 4: Fuori
-    `● █▀█▄                     لں͞`,    // 5: Dentro
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 6: Fuori
-    `● █▀█▄                     لں͞`,    // 7: Dentro
-    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,    // 8: Fuori
-    `● █▀█▄                     لں͞`,    // 9: Dentro
-    `● █▀█▄💦Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,   // 10: Finale con sborra
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
+    `● Ɑ͞ ̶█▀█▄̶͞ ̶͞ ̶͞ لں͞`,
+    `● █▀█▄💦Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞`,
   ]
 
   let msg = await conn.reply(m.chat, frames[0], m)
@@ -34,7 +34,7 @@ let handler = async (m, { conn, text }) => {
     })
   }
 
-  // Aspetta 1 secondo e poi aggiungi la frase sotto
+  
   await delay(800)
   await conn.sendMessage(m.chat, {
     text: `${frames[frames.length - 1]}\n\n🤤@${user.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐚/𝐨 𝐬𝐜𝐨𝐩𝐚𝐭𝐚/𝐨 𝐟𝐨𝐫𝐭𝐞 𝐚 90 𝐞 𝐨𝐫𝐚 𝐞̀ 𝐩𝐢𝐞𝐧𝐚/𝐨 𝐝𝐢 𝐬𝐛𝐨𝐫𝐫𝐚🥵`,
