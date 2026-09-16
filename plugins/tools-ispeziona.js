@@ -1,5 +1,5 @@
 //Plugin fatto da Axtral_WiZaRd
-import * as baileys from '@whiskeysockets/baileys'
+import * as baileys from '@axtral_wizard/baileys'
 
 let handler = async (m, { conn, text }) => {
   let [, code] =

@@ -1,7 +1,7 @@
 //Plugin fatto da Axtral_WiZaRd
 import os from 'os';
 import 'util';
-import '@whiskeysockets/baileys';
+import '@axtral_wizard/baileys';
 import { performance } from 'perf_hooks';
 
 let handler = async (m, { conn, usedPrefix }) => {

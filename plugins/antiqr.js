@@ -1,6 +1,6 @@
 // Plugin fatto da Axtral_WiZaRd
 import fs from 'fs';
-import { downloadContentFromMessage } from '@whiskeysockets/baileys';
+import { downloadContentFromMessage } from '@axtral_wizard/baileys';
 
 const imagePath = './icone/link.png';
 const thumbnail = fs.existsSync(imagePath) ? fs.readFileSync(imagePath) : null;

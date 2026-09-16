@@ -1,4 +1,4 @@
-import * as baileys from '@whiskeysockets/baileys';
+import * as baileys from '@axtral_wizard/baileys';
 
 function delay(ms) {
   return new Promise(res => setTimeout(res, ms));

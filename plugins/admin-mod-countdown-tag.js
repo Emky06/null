@@ -1,5 +1,5 @@
 //Crediti: Onix, di Riad 
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys'
+import { generateWAMessageFromContent } from '@axtral_wizard/baileys'
 import fs from 'fs'
 
 let countdowns = {}; 

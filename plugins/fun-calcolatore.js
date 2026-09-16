@@ -1,5 +1,5 @@
 import jimp from "jimp"
-import { generateWAMessageFromContent } from "@whiskeysockets/baileys"
+import { generateWAMessageFromContent } from "@axtral_wizard/baileys"
 import fs from "fs"
 
 let handler = async (m, { conn, command, text, usedPrefix }) => {

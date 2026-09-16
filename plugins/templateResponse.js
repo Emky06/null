@@ -1,6 +1,6 @@
-// @type {import('@whiskeysockets/baileys')}
+// @type {import('@axtral_wizard/baileys')}
 
-const { proto, generateWAMessage, areJidsSameUser, decryptPollVote, } = (await import('@whiskeysockets/baileys')).default;
+const { proto, generateWAMessage, areJidsSameUser, decryptPollVote, } = (await import('@axtral_wizard/baileys')).default;
 export async function all(m, chatUpdate) {
 if (m.isBaileys) {
 return

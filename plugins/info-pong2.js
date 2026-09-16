@@ -1,6 +1,6 @@
 //by kinderino + axtral + edo
 import { performance } from 'perf_hooks';
-import '@whiskeysockets/baileys';
+import '@axtral_wizard/baileys';
 
 let handler = async (m, { conn }) => {
   try {

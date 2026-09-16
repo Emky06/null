@@ -1,5 +1,5 @@
 import { sticker } from '../lib/sticker.js'
-import MessageType from '@whiskeysockets/baileys'
+import MessageType from '@axtral_wizard/baileys'
 import fetch from 'node-fetch'
 
 let handler = async (m, { conn, text }) => {

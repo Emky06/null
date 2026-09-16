@@ -9,7 +9,7 @@
 },
 "dependencies": {
 "@vitalets/google-translate-api": "^8.0.0",
-"@whiskeysockets/baileys": "npm:@chatunity/baileys",
+"@axtral_wizard/baileys": "npm:@chatunity/baileys",
 "archiver": "^7.0.1",
 "awesome-phonenumber": "^2.68.0",
 "axios": "^1.12.2",

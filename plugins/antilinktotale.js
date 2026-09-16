@@ -2,7 +2,7 @@
 
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import { downloadContentFromMessage } from '@whiskeysockets/baileys'
+import { downloadContentFromMessage } from '@axtral_wizard/baileys'
 
 const linkRegex = /\b(?:https?:\/\/|www\.)[^\s]+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,6}(?:\/[^\s]*)?\b/gi
 const safeDomains = ['whatsapp.com', 'instagram.com', 'instagr.am', 'tiktok.com']

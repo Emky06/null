@@ -2,7 +2,7 @@
 import fs from 'fs'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import { downloadContentFromMessage } from '@whiskeysockets/baileys'
+import { downloadContentFromMessage } from '@axtral_wizard/baileys'
 
 // Canali permessi
 let allowedChannels = [
