@@ -614,29 +614,14 @@ global.dfail = (type, m, conn) => {
 
     if (!msg) return
 
-    const locationQuote = {
-    key: {
-        participants: "0@s.whatsapp.net",
-        fromMe: false,
-        id: "AccessDenied"
-    },
-    message: {
-        locationMessage: {
-            degreesLatitude: 0,
-            degreesLongitude: 0,
-            name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
-            jpegThumbnail: fs.readFileSync('./icone/accessdenied2.png')
-        }
-    },
-    participant: "0@s.whatsapp.net"
-};
-
-    return conn.sendMessage(m.chat, {
-        text: msg,
-    }, {
-        quoted: locationQuote
-    });
-};
+    conn.sendMessage(m.chat, { text: ' ', contextInfo:{
+  "externalAdReply": {"title": `${msg}`, 
+ "body": ``, 
+  "previewType": "PHOTO",
+  "thumbnail": fs.readFileSync('./icone/accessdenied.png'),
+  "mediaType": 1,
+  "renderLargerThumbnail": true}}}, {quoted: m})
+}
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
     unwatchFile(file)
