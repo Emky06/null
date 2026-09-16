@@ -625,7 +625,7 @@ global.dfail = (type, m, conn) => {
             degreesLatitude: 0,
             degreesLongitude: 0,
             name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
-            jpegThumbnail: fs.readFileSync('./icone/accessdenied2.jpg')
+            jpegThumbnail: fs.readFileSync('./icone/accessdenied2.png')
         }
     },
     participant: "0@s.whatsapp.net"
