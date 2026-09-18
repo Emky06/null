@@ -116,6 +116,7 @@ function generateMenuText(prefix) {
 ┃🤝 *𝐈𝐍𝐓𝐄𝐑𝐀𝐙𝐈𝐎𝐍𝐈*  
 ┃
 ┃🤗 ${prefix}𝐚𝐛𝐛𝐫𝐚𝐜𝐜𝐢𝐚 @  
+┃💋 ${prefix}𝐛𝐚𝐜𝐢𝐚 @
 ┃🦷 ${prefix}𝐦𝐨𝐫𝐝𝐢 @  
 ┃🔨 ${prefix}𝐛𝐨𝐧𝐤 @  
 ┃💞 ${prefix}𝐜𝐫𝐞𝐚𝐜𝐨𝐩𝐩𝐢𝐚  
@@ -244,6 +245,7 @@ function generateMenuText(prefix) {
 ┃⛓️ ${prefix}𝐣𝐚𝐢𝐥𝐩𝐢𝐜
 ┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝 @
 ┃💰 ${prefix}𝐰𝐚𝐧𝐭𝐞𝐝𝐩𝐢𝐜
+┃🫯 ${prefix}𝐳𝐢𝐳𝐳𝐚𝐧𝐢𝐚
 ┣━━━━━━━━━━━━━━━━━━━━
 ┃🍔 *𝐂𝐈𝐁𝐎*  
 ┃
