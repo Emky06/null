@@ -161,6 +161,7 @@ function generateMenuText(prefix) {
 ┃🛡️ ${prefix}𝐚𝐝𝐦𝐢𝐧𝐬
 ┃👮🏻‍♂️ ${prefix}𝐦𝐨𝐝𝐬
 ┃👥 ${prefix}𝐬𝐭𝐚𝐟𝐟
+┃❗ ${prefix}𝐬𝐞𝐠𝐧𝐚𝐥𝐚
 ┃🔈 ${prefix}𝐚𝐮𝐝𝐢𝐨
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞  
 ┃🔄 ${prefix}𝐫𝐞𝐯𝐞𝐫𝐬𝐞𝐯𝐢𝐝
