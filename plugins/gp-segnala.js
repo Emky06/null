@@ -1,4 +1,4 @@
-// Codice di elixir
+//Plugin fatto da 888
 let handler = async (m, { conn, text, command, usedPrefix }) => {
 
     if (!text) {
