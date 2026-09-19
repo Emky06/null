@@ -638,10 +638,12 @@ END:VCARD`
     };
 
     return conn.sendMessage(m.chat, {
-        text: msg,
-    }, {
-        quoted: locationQuote
-    });
+    text: msg,
+    buttons: [{ buttonId: 'ok', buttonText: { displayText: '𝐎𝐊' }, type: 1 }],
+    headerType: 1
+}, {
+    quoted: locationQuote
+}),
 
 };
 let file = global.__filename(import.meta.url, true)
