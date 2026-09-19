@@ -509,63 +509,77 @@ export async function participantsUpdate({ id, participants, action }) {
     if (global.db.data == null) await loadDatabase()
 
     let chat = global.db.data.chats[id] || {}
-    let text = ''
 
     switch (action) {
         case 'add':
-case 'remove':
-    if (!chat.benvenuto) return
+        case 'remove': {
+            if (!chat.benvenuto) return
 
-    let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
+            let groupMetadata = await this.groupMetadata(id).catch(_ => null) || (conn.chats[id] || {}).metadata || {}
 
-    for (let user of participants) {
+            for (let user of participants) {
 
-        let text = ''
+                let text = ''
 
-        if (action === 'add') {
-            text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
-                .replace('@subject', await this.getName(id))
-                .replace('@desc', groupMetadata.desc?.toString() || '')
-                .replace('@user', '@' + user.split('@')[0])
+                if (action === 'add') {
+                    text = (chat.sWelcome || this.benvenuto || conn.benvenuto || 'Benvenuto/a @user!')
+                        .replace('@subject', await this.getName(id))
+                        .replace('@desc', groupMetadata.desc?.toString() || '')
+                        .replace('@user', '@' + user.split('@')[0])
+                } else if (action === 'remove') {
+                    text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
+                        .replace('@user', '@' + user.split('@')[0])
+                }
 
-        } else if (action === 'remove') {
-            text = (chat.sBye || this.bye || conn.bye || 'Addio @user!')
-                .replace('@user', '@' + user.split('@')[0])
-        }
-
-        const contactQuote = {
-            key: {
-                participants: "0@s.whatsapp.net",
-                fromMe: false,
-                id: action === 'add' ? "WelcomeContact" : "ByeContact"
-            },
-            message: {
-                contactMessage: {
-                    displayName: action === 'add'
-                        ? `𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻`
-                        : `𝐀𝐃𝐃𝐈𝐎 👋🏻`,
-                    vcard: `BEGIN:VCARD
+                const contactQuote = {
+                    key: {
+                        participant: "0@s.whatsapp.net",
+                        fromMe: false,
+                        id: action === 'add' ? "WelcomeContact" : "ByeContact"
+                    },
+                    message: {
+                        contactMessage: {
+                            displayName: action === 'add'
+                                ? '𝐁𝐄𝐍𝐕𝐄𝐍𝐔𝐓𝐎/𝐀 👋🏻'
+                                : '𝐀𝐃𝐃𝐈𝐎 👋🏻',
+                            vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;${user.split('@')[0]};;;
 FN:${user.split('@')[0]}
+ORG:WhatsApp
+TITLE:
 item1.TEL;waid=${user.split('@')[0]}:${user.split('@')[0]}
 item1.X-ABLabel:WhatsApp
+X-WA-BIZ-NAME:${user.split('@')[0]}
 END:VCARD`
+                        }
+                    },
+                    participant: "0@s.whatsapp.net"
                 }
-            },
-            participant: "0@s.whatsapp.net"
-        };
 
-        await this.sendMessage(id, {
-            text,
-            contextInfo: {
-                mentionedJid: [user],
+                const fakeViewOnce = await generateWAMessageFromContent(id, {
+                    viewOnceMessage: {
+                        message: {
+                            messageContextInfo: {
+                                deviceListMetadata: {},
+                                deviceListMetadataVersion: 2
+                            },
+                            extendedTextMessage: {
+                                text,
+                                contextInfo: {
+                                    mentionedJid: [user]
+                                }
+                            }
+                        }
+                    }
+                }, { quoted: contactQuote, userJid: this.user.jid })
+
+                await this.relayMessage(id, fakeViewOnce.message, {
+                    messageId: fakeViewOnce.key.id
+                })
             }
-        }, {
-            quoted: contactQuote
-        });
-    }
-    break
+            break
+        }
     }
 }
 
