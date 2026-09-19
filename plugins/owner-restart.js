@@ -42,7 +42,7 @@ let handler = async (m, { conn }) => {
         await delay(1000)
         await conn.sendMessage(m.chat, {
             text: `
-╭━━━〔 ✅ 𝐁𝐎𝐓 𝐑𝐈𝐀𝐕𝐕𝐈𝐀𝐓𝐎 〕━━━⬣
+╭━━━〔 ✅ 𝐑𝐈𝐀𝐕𝐕𝐈𝐀𝐓𝐎 〕━━━⬣
 ┃
 ┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: @${sender.split('@')[0]}
 ┃ 🕒 𝐎𝐫𝐚: ${orario}
