@@ -654,7 +654,6 @@ END:VCARD`
         return await conn.sendMessage(m.chat, { text: msg }, { quoted: m });
     }
 };
-};
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
     unwatchFile(file)
