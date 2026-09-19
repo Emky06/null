@@ -627,7 +627,7 @@ global.dfail = async (type, m, conn) => {
                     name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
 
                     jpegThumbnail: fs.readFileSync(path.join('icone', 'accessdenied2.png')),
-
+l
                     vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;Access Denied;;;
