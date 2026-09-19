@@ -597,7 +597,7 @@ export async function deleteUpdate(message) {
     return; 
 }
 
-global.dfail = async (type, m, conn) => {
+global.dfail = (type, m, conn) => {
 
     let msg = {
         botAdmin: '𝐃𝐞𝐯𝐢 𝐝𝐚𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐚𝐥 𝐛𝐨𝐭 🤖',
@@ -614,45 +614,35 @@ global.dfail = async (type, m, conn) => {
 
     if (!msg) return
 
-    try {
-        const locationQuote = {
-            key: {
-                remoteJid: 'status@broadcast', 
-                participant: "0@s.whatsapp.net", 
-                fromMe: false,
-                id: "AccessDenied"
-            },
-            message: {
-                locationMessage: {
-                    name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
-
-                    jpegThumbnail: fs.readFileSync(path.join('icone', 'accessdenied2.png')),
-l
-                    vcard: `BEGIN:VCARD
+   
+ const locationQuote = {
+        key: {
+            participants: "0@s.whatsapp.net",
+            fromMe: false,
+            id: "AccessDenied"
+        },
+        message: {
+            locationMessage: {
+                name: "🚫 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃 🚫",
+                jpegThumbnail: fs.readFileSync('./icone/accessdenied2.png'),
+                vcard: `BEGIN:VCARD
 VERSION:3.0
-N:;Access Denied;;;
+N:;Bot;;;
 FN:Access Denied
-ORG:Access Denied
-TITLE:
 item1.TEL;waid=11111111111:+1 (111) 111-1111
 item1.X-ABLabel:Bot
-X-WA-BIZ-NAME:Access Denied
 END:VCARD`
-                }
             }
-        };
+        },
+        participant: "0@s.whatsapp.net"
+    };
 
-        return await conn.sendMessage(m.chat, {
-            text: msg,
-        }, {
-            quoted: locationQuote
-        });
+    return conn.sendMessage(m.chat, {
+        text: msg,
+    }, {
+        quoted: locationQuote
+    });
 
-    } catch (e) {
-        console.error("Errore nel caricare l'immagine AccessDenied:", e);
-        
-        return await conn.sendMessage(m.chat, { text: msg }, { quoted: m });
-    }
 };
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
