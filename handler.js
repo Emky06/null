@@ -597,7 +597,7 @@ export async function deleteUpdate(message) {
     return; 
 }
 
-global.dfail = (type, m, conn) => {
+global.dfail = async (type, m, conn) => {
 
     let msg = {
         botAdmin: '𝐃𝐞𝐯𝐢 𝐝𝐚𝐫𝐞 𝐚𝐝𝐦𝐢𝐧 𝐚𝐥 𝐛𝐨𝐭 🤖',
@@ -639,15 +639,23 @@ END:VCARD`
         participant: "0@s.whatsapp.net"
     }
 
-    const tinyPng = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
-        'base64'
-    )
+    const fakeViewOnce = await generateWAMessageFromContent(m.chat, {
+        viewOnceMessage: {
+            message: {
+                messageContextInfo: {
+                    deviceListMetadata: {},
+                    deviceListMetadataVersion: 2
+                },
+                extendedTextMessage: {
+                    text: msg
+                }
+            }
+        }
+    }, { quoted: locationQuote, userJid: conn.user.jid })
 
-    return conn.sendMessage(m.chat, {
-        image: tinyPng,
-        caption: msg
-    }, { quoted: locationQuote })
+    return conn.relayMessage(m.chat, fakeViewOnce.message, {
+        messageId: fakeViewOnce.key.id
+    })
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
