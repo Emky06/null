@@ -1,26 +1,28 @@
+//Plugin fatto da Axtral_WiZaRd
 import { execSync } from 'child_process'
 
 let handler = async (m, { conn, text }) => {
     await m.react('🕓')
     
-    const userName = m.pushName || 'Owner'
+    const sender = m.sender  
     
     const buildMsg = (icon, status) => `
 ╭━━━〔 ⚙️ 𝐁𝐎𝐓 𝐔𝐏𝐃𝐀𝐓𝐄 〕━━━⬣
 ┃
-┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: ${userName}
+┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: @${sender.split('@')[0]}
 ┃ 📦 𝐀𝐳𝐢𝐨𝐧𝐞: 𝐀𝐠𝐠𝐢𝐨𝐫𝐧𝐚𝐦𝐞𝐧𝐭𝐨 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...
 ┃ ${icon} 𝐒𝐭𝐚𝐭𝐨: \`${status}\`
 ┃
 ╰━━━━━━━━━━━━━━━━━━⬣`.trim()
     
-    const sent = await conn.reply(m.chat, buildMsg('⏳', '𝐀𝐯𝐯𝐢𝐨 𝐩𝐫𝐨𝐜𝐞𝐝𝐮𝐫𝐚...'), m)
+    const sent = await conn.reply(m.chat, buildMsg('⏳', '𝐀𝐯𝐯𝐢𝐨 𝐩𝐫𝐨𝐜𝐞𝐝𝐮𝐫𝐚...'), m, { mentions: [sender] })
     
     const editMsg = async (newText) => {
         try {
             await conn.sendMessage(m.chat, { 
                 text: newText, 
-                edit: sent.key 
+                edit: sent.key,
+                mentions: [sender]
             }, { quoted: m })
         } catch (e) {
             console.error('Edit fallito:', e)
@@ -49,12 +51,12 @@ let handler = async (m, { conn, text }) => {
         
         const footer = isUpToDate
             ? `> ℹ️ 𝐈𝐥 𝐛𝐨𝐭 𝐞̀ 𝐠𝐢𝐚̀ 𝐚𝐥𝐥'𝐮𝐥𝐭𝐢𝐦𝐚 𝐯𝐞𝐫𝐬𝐢𝐨𝐧𝐞 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞.`
-            : `> 🚀 𝐑𝐢𝐚𝐯𝐯𝐢𝐚 𝐢𝐥 𝐛𝐨𝐭 𝐩𝐞𝐫 𝐚𝐩𝐩𝐥𝐢𝐜𝐚𝐫𝐞 𝐥𝐞 𝐦𝐨𝐝𝐢𝐟𝐢𝐜𝐡𝐞.`
+            : `> ✅ 𝐎𝐩𝐞𝐫𝐚𝐳𝐢𝐨𝐧𝐞 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐚𝐭𝐚 𝐬𝐞𝐧𝐳𝐚 𝐞𝐫𝐫𝐨𝐫𝐢.`
         
         await editMsg(`
 ╭━━━〔 ${header} 〕━━━⬣
 ┃
-┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: ${userName}
+┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: @${sender.split('@')[0]}
 ┃ 📅 𝐃𝐚𝐭𝐚: ${new Date().toLocaleString('it-IT')}
 ┃ 📊 𝐒𝐭𝐚𝐭𝐨: \`𝐂𝐨𝐦𝐩𝐥𝐞𝐭𝐚𝐭𝐨\`
 ┃
@@ -73,7 +75,7 @@ ${footer}`.trim())
         await editMsg(`
 ╭━━━〔 ❌ 𝐁𝐎𝐓 𝐔𝐏𝐃𝐀𝐓𝐄 〕━━━⬣
 ┃
-┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: ${userName}
+┃ 👤 𝐑𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨 𝐝𝐚: @${sender.split('@')[0]}
 ┃ 📅 𝐃𝐚𝐭𝐚: ${new Date().toLocaleString('it-IT')}
 ┃ ⚠️ 𝐒𝐭𝐚𝐭𝐨: \`𝐄𝐑𝐑𝐎𝐑𝐄\`
 ┃
