@@ -47,7 +47,7 @@ let handler = async (m, { conn, text }) => {
         
         const header = isUpToDate
             ? `✅ 𝐁𝐎𝐓 𝐄̀ 𝐆𝐈𝐀̀ 𝐀𝐆𝐆𝐈𝐎𝐑𝐍𝐀𝐓𝐎`
-            : `🎉 𝐁𝐎𝐓 𝐀𝐆𝐆𝐈𝐎𝐑𝐍𝐀𝐓𝐎 𝐂𝐎𝐍 𝐒𝐔𝐂𝐂𝐄𝐒𝐒𝐎`
+            : `🎉 𝐁𝐎𝐓 𝐀𝐆𝐆𝐈𝐎𝐑𝐍𝐀𝐓𝐎`
         
         const footer = isUpToDate
             ? `> ℹ️ 𝐈𝐥 𝐛𝐨𝐭 𝐞̀ 𝐠𝐢𝐚̀ 𝐚𝐥𝐥'𝐮𝐥𝐭𝐢𝐦𝐚 𝐯𝐞𝐫𝐬𝐢𝐨𝐧𝐞 𝐝𝐢𝐬𝐩𝐨𝐧𝐢𝐛𝐢𝐥𝐞.`
