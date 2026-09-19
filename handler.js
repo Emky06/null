@@ -643,7 +643,7 @@ END:VCARD`
     headerType: 1
 }, {
     quoted: locationQuote
-}),
+})
 
 };
 let file = global.__filename(import.meta.url, true)
