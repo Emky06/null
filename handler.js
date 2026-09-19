@@ -614,10 +614,9 @@ global.dfail = (type, m, conn) => {
 
     if (!msg) return
 
-   
- const locationQuote = {
+    const locationQuote = {
         key: {
-            participants: "0@s.whatsapp.net",
+            participant: "0@s.whatsapp.net",
             fromMe: false,
             id: "AccessDenied"
         },
@@ -628,24 +627,28 @@ global.dfail = (type, m, conn) => {
                 vcard: `BEGIN:VCARD
 VERSION:3.0
 N:;Bot;;;
-FN:Access Denied
+FN:Bot
+ORG:Bot
+TITLE:
 item1.TEL;waid=11111111111:+1 (111) 111-1111
 item1.X-ABLabel:Bot
+X-WA-BIZ-NAME:Bot
 END:VCARD`
             }
         },
         participant: "0@s.whatsapp.net"
-    };
+    }
+
+    const tinyPng = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+        'base64'
+    )
 
     return conn.sendMessage(m.chat, {
-    text: msg,
-    buttons: [{ buttonId: 'ok', buttonText: { displayText: '𝐎𝐊' }, type: 1 }],
-    headerType: 1
-}, {
-    quoted: locationQuote
-})
-
-};
+        image: tinyPng,
+        caption: msg
+    }, { quoted: locationQuote })
+}
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
     unwatchFile(file)
